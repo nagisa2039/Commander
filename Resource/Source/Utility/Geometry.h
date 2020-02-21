@@ -1,10 +1,12 @@
 #pragma once
+#include <DirectXMath.h>
+
 struct Vector2;
 
 struct Vector2Int
 {
 	int x, y;
-	Vector2Int() {}
+	Vector2Int() :x(0), y(0) {}
 	Vector2Int(int x, int y) :x(x), y(y) {}
 	void operator*=(const float scale);
 
@@ -14,13 +16,13 @@ struct Vector2Int
 	Vector2 ToFloatVector() const;
 };
 
-Vector2Int operator+(const Vector2Int& lval, const float rval);
 Vector2Int operator+(const Vector2Int &lval, const Vector2Int& rval);
 Vector2Int operator-(const Vector2Int &lval, const Vector2Int& rval);
 Vector2Int operator*(const Vector2Int &lval, const Vector2Int& rval);
 Vector2Int operator%(const Vector2Int &lval, const Vector2Int& rval);
 Vector2Int operator/(const Vector2Int &lval, const Vector2Int& rval);
 Vector2Int operator*(const Vector2Int &lval, const float& rval);
+Vector2Int operator+(const Vector2Int& lval, const int& rval);
 bool operator==(const Vector2Int &lval, const Vector2Int& rval);
 bool operator!=(const Vector2Int &lval, const Vector2Int& rval);
 
@@ -29,6 +31,7 @@ struct Vector2
 	float x, y;
 	Vector2() {}
 	Vector2(const float x, const float y) :x(x), y(y) {}
+	Vector2(const DirectX::XMFLOAT2& xy): x(xy.x), y(xy.y){}
 
 	Vector2 operator-(void);
 
@@ -46,6 +49,7 @@ struct Vector2
 	Vector2 Normalized()const;
 
 	Vector2Int ToIntVector()const;
+	DirectX::XMFLOAT2 ToXMFLOAT2()const;
 };
 
 float Dot(const Vector2 &lval, const Vector2& rval);
@@ -66,8 +70,10 @@ struct Vector3
 	float x, y, z;
 	Vector3() {}
 	Vector3(const float x, const float y, const float z) :x(x), y(y), z(z) {}
+	Vector3(const DirectX::XMFLOAT3& xyz):x(xyz.x), y(xyz.y), z(xyz.z) {}
+	Vector3(const DirectX::XMFLOAT4& xyzw) :x(xyzw.x), y(xyzw.y), z(xyzw.z) {}
 
-	Vector3 operator-(void);
+	Vector3 operator-(void)const;
 
 	void operator+=(const Vector3& val);
 	void operator-=(const Vector3& val);
@@ -80,12 +86,24 @@ struct Vector3
 	void operator/=(float scale);
 
 	float Length()const;
-	void Normalize();
+	Vector3 Normalize();
 	Vector3 Normalized()const;
+
+	DirectX::XMVECTOR ToXMVECTOR()const;
+	DirectX::XMFLOAT3 ToXMFLOAT3()const;
 };
 
 float Dot(const Vector3 &lval, const Vector3& rval);
 Vector3 Cross(const Vector3 &lval, const Vector3& rval);
+
+// 反射ベクトルを作る
+Vector3 ReflectionVector(const Vector3& baseVector, const Vector3& norm);
+
+// 屈折ベクトルを作る
+Vector3 RefractionVector(const Vector3& baseVector, const Vector3& norm, float parsent);
+
+// 線形補完
+Vector3 Lerp(const Vector3& start, const Vector3& end, const float parsent);
 
 Vector3 operator+(const Vector3 &lval, const Vector3& rval);
 Vector3 operator-(const Vector3 &lval, const Vector3& rval);
@@ -96,6 +114,25 @@ Vector3 operator+(const Vector3 &lval, const float& rval);
 Vector3 operator-(const Vector3 &lval, const float& rval);
 Vector3 operator*(const Vector3 &lval, const float& rval);
 Vector3 operator/(const Vector3 &lval, const float& rval);
+
+Vector3 operator+(const Vector3& lval, const Vector2& rval);
+
+Vector3 RotateVector(const Vector3& baseVector, const Vector3& rotate);
+
+Vector3 XMVECTORtoVec3(DirectX::XMVECTOR& vec);
+
+float Lerp(const float lval, const float rval, const float parsent);
+DirectX::XMFLOAT2 Lerp(const DirectX::XMFLOAT2 lval, const DirectX::XMFLOAT2 rval, const float parsent);
+
+// 三角形の面積の算出
+float TriangleArea(const Vector3& p0, const Vector3& p1, const Vector3& p2);
+
+struct Vector4
+{
+	float x, y, z, w;
+	Vector4() {};
+	Vector4(const float x, const float y, const float z, const float w) :x(x), y(y), z(z), w(w){}
+};
 
 struct Size
 {
@@ -150,3 +187,8 @@ struct Segment
 	float Grad(void)const;
 };
 
+
+// 値を最大値と最小値を考慮した値に加工する
+float Clamp(const float in, const float min = 0.0f, const float max = 1.0f);
+
+Vector3 Clamp(const Vector3& in, const float min = 0.0f, const float max = 1.0f);

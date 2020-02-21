@@ -11,8 +11,6 @@
 class Camera;
 class Charactor;
 
-struct Astar::ResultPos;
-
 class MapCtrl
 {
 public:
@@ -34,9 +32,11 @@ public:
 		DrawData drawData;
 		int moveCost;
 
-		MapChipData() {};
+		MapChipData() : drawData(DrawData()), moveCost(0){};
 		MapChipData(const DrawData& dd, const int mc) :
 			drawData(dd), moveCost(mc) {};
+
+		void operator=(const MapChipData& mcd);
 	};
 
 private:
@@ -54,7 +54,7 @@ private:
 	void DrawToMapChipScreen();
 
 public:
-	MapCtrl(std::vector<std::shared_ptr<Charactor>> charactors);
+	MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors);
 	~MapCtrl();
 
 	void Draw(const Camera& camera, const bool edit = false);

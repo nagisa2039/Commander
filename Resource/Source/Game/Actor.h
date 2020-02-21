@@ -7,7 +7,7 @@ class Camera;
 class Actor
 {
 protected:
-	Vector2 pos;
+	Vector2 _pos;
 
 public:
 	Actor();

@@ -15,12 +15,26 @@ Camera::~Camera()
 
 void Camera::Update()
 {
-	Vector2 pos = {0.0f, 0.0f};
+	// ƒJƒƒ‰‚ÌêŠ‚ğŒˆ‚ß‚é
+	Vector2 pos2D = {0.0f, 0.0f};
 	for (auto& target : _targets)
 	{
-		pos += target->GetActorPos();
+		pos2D += target->GetActorPos();
 	}
-	_rect.center = (pos / _targets.size()).ToIntVector();
+	Vector3 targetPos = Vector3(pos2D.x, pos2D.y, 0) / _targets.size();
+	targetPos = Lerp(_pos, targetPos, 0.2f);
+
+	_rect.center = Vector2Int(targetPos.x, targetPos.y);
+
+	// ”ÍˆÍ§Œä
+	if (_rect.center.x < _rect.Width() / 2)
+	{
+		_rect.center.x = _rect.Width() / 2;
+	}
+	if (_rect.center.y < _rect.Height() / 2)
+	{
+		_rect.center.y = _rect.Height() / 2;
+	}
 }
 
 void Camera::AddTargetActor(std::shared_ptr<Actor> target)

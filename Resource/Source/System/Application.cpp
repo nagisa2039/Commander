@@ -8,6 +8,7 @@
 #include "../System/FileSystem.h"
 #include "../Scene/PlayScene.h"
 #include "../Scene/MapEditScene.h"
+#include "../Scene/PlayScene.h"
 
 using namespace std;
 
@@ -53,8 +54,8 @@ bool Application::Initialize()
 
 	_fileSystem = make_shared<FileSystem>();
 	_sceneController = make_unique<SceneController>();
-	//_sceneController->ChangeScene(make_unique<PlayScene>(*_sceneController));
-	_sceneController->ChangeScene(make_unique<MapEditScene>(*_sceneController));
+	_sceneController->ChangeScene(make_unique<PlayScene>(*_sceneController));
+	//_sceneController->ChangeScene(make_unique<MapEditScene>(*_sceneController));
 
 	// input‚Ì‰Šú‰»
 	_input = make_unique<Input>();

@@ -11,6 +11,8 @@ private:
 	Rect _rect;
 	std::vector<std::shared_ptr<Actor>> _targets;
 
+	Vector3 _pos;
+
 public:
 	Camera(const Rect& rect);
 	~Camera();

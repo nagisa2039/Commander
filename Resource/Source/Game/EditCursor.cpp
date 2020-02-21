@@ -7,7 +7,7 @@
 EditCursor::EditCursor(MapCtrl& mapCtrl): _mapCrtl(mapCtrl)
 {
 	_mapPos = Vector2Int(0, 0);
-	pos = Vector2(0, 0);
+	_pos = Vector2(0, 0);
 	_mapChip = Forest;
 	_animCnt = 0;
 }
@@ -64,7 +64,7 @@ void EditCursor::Update(const Input& input)
 	}
 
 	_animCnt+=5;
-	pos = (_mapPos * _mapCrtl.GetChipSize().ToIntVector()).ToFloatVector();
+	_pos = (_mapPos * _mapCrtl.GetChipSize().ToIntVector()).ToFloatVector();
 }
 
 void EditCursor::Draw(const Camera& camera)

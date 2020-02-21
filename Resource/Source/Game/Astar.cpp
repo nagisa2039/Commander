@@ -38,8 +38,8 @@ std::list<Astar::ResultPos> Astar::RouteSearch(const Vector2Int & startMapPos, c
 	seachIdxList.clear();
 
 	seachIdxList.emplace_front(startMapPos);
-	int moveCnt = 0;
 
+	_serchPosVec2[startMapPos.y][startMapPos.x].moveCnt = 0;
 	for (auto it = seachIdxList.begin(); it != seachIdxList.end();)
 	{
 		auto idx = *it;
@@ -65,9 +65,11 @@ std::list<Astar::ResultPos> Astar::RouteSearch(const Vector2Int & startMapPos, c
 			}
 
 			_serchPosVec2[checkPos.y][checkPos.x]
-				= SearchPos(checkPos, nowPos, Astar::SearchState::Serch, moveCnt + mapData[checkPos.y][checkPos.x]);
+				= SearchPos(checkPos, nowPos, Astar::SearchState::Serch, 
+					_serchPosVec2[nowPos.y][nowPos.x].moveCnt + mapData[checkPos.y][checkPos.x]);
+			auto moveCnt = _serchPosVec2[checkPos.y][checkPos.x].moveCnt;
 
-			if (moveCnt + mapData[checkPos.y][checkPos.x] > move)
+			if (moveCnt > move)
 			{
 				result.emplace_back(ResultPos(true, checkPos));
 			}

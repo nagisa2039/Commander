@@ -46,7 +46,7 @@ void MapCtrl::DrawToMapFloorScreen()
 	SetDrawScreen(DX_SCREEN_BACK);
 }
 
-MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>> charactors) : _charactors(charactors), imageFolderPath("Resource/Image/MapChip/")
+MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charactors(charactors), imageFolderPath("Resource/Image/MapChip/")
 {
 	_astar = make_shared<Astar>();
 	_mapChipH = MakeScreen(100 * CHIP_SIZE_W, 100 * CHIP_SIZE_H, true);
@@ -62,6 +62,7 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>> charactors) : _characto
 		}
 	}
 
+	_mapChipData[None].moveCost = 1;
 	_mapChipData[Floor_Meadow]		= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip0.png"), +1);
 	_mapChipData[Forest]			= MapChipData( DrawData(Vector2Int(32, 32), Size(32, 32), "mapchip0.png"), +2);
 	_mapChipData[River_Pond]		= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip1.png"), -1);
@@ -212,3 +213,8 @@ std::list<Astar::ResultPos> MapCtrl::RouteSearch(const Vector2Int& startMapPos, 
 	return _astar->RouteSearch(startMapPos, move, mapVec2);
 }
 
+void MapCtrl::MapChipData::operator=(const MapChipData& mcd)
+{
+	this->drawData = mcd.drawData;
+	this->moveCost = mcd.moveCost;
+}

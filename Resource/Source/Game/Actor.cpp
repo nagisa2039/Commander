@@ -10,5 +10,5 @@ Actor::~Actor()
 
 Vector2 Actor::GetActorPos() const
 {
-	return pos;
+	return _pos;
 }

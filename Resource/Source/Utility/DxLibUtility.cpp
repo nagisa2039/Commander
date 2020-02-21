@@ -15,3 +15,8 @@ void DrawGraph(const Vector2Int& leftup, const int handle, const bool transFlag)
 {
 	DxLib::DrawGraph(leftup.x, leftup.y, handle, transFlag);
 }
+
+void DrawCircle(const Vector2Int& center, const int radius, const unsigned int color, const bool fillFlag)
+{
+	DxLib::DrawCircle(center.x, center.y, radius, color, fillFlag);
+}

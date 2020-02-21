@@ -10,7 +10,7 @@ using namespace std;
 MapEditScene::MapEditScene(SceneController& controller):Scene(controller)
 {
     _camera = make_shared<Camera>(Rect(Vector2Int(), Application::Instance().GetWindowSize()));
-    _mapCtrl = make_shared<MapCtrl>();
+    _mapCtrl = make_shared<MapCtrl>(_charactors);
     _editCursor = make_shared<EditCursor>(*_mapCtrl);
 
    _camera->AddTargetActor(_editCursor);

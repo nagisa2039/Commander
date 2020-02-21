@@ -1,6 +1,7 @@
 #include <cmath>
 #include "Geometry.h"
 #include <DxLib.h>
+#include <algorithm>
 
 Vector2 Vector2::operator-(void)
 {
@@ -68,9 +69,9 @@ Vector2Int Vector2::ToIntVector()const
 	return Vector2Int(static_cast<int>(this->x),static_cast<int>(this->y));
 }
 
-Vector2Int operator+(const Vector2Int& lval, const float rval)
+DirectX::XMFLOAT2 Vector2::ToXMFLOAT2() const
 {
-	return Vector2Int(lval.x + rval, lval.y + rval);
+	return DirectX::XMFLOAT2(x,y);
 }
 
 Vector2Int operator+(const Vector2Int & lval, const Vector2Int & rval)
@@ -101,6 +102,11 @@ Vector2Int operator/(const Vector2Int & lval, const Vector2Int & rval)
 Vector2Int operator*(const Vector2Int & lval, const float & rval)
 {
 	return Vector2Int(static_cast<int>(lval.x * rval), static_cast<int>(lval.y * rval));
+}
+
+Vector2Int operator+(const Vector2Int& lval, const int& rval)
+{
+	return Vector2Int(lval.x + rval, lval.y + rval);
 }
 
 bool operator==(const Vector2Int & lval, const Vector2Int & rval)
@@ -295,7 +301,7 @@ Vector2Int Size::ToIntVector() const
 	return Vector2Int(this->w,this->h);
 }
 
-Vector3 Vector3::operator-(void)
+Vector3 Vector3::operator-(void)const
 {
 	return Vector3(-x,-y,-z);
 }
@@ -355,21 +361,32 @@ void Vector3::operator/=(float scale)
 
 float Vector3::Length() const
 {
-	return std::hypot(this->x, this->y, this->z);
+	return std::hypot((const float)this->x, (const float)this->y, (const float)this->z);
 }
 
-void Vector3::Normalize()
+Vector3 Vector3::Normalize()
 {
 	auto len = this->Length();
 	this->x/=len;
 	this->y/=len;
 	this->z/=len;
+	return *this;
 }
 
 Vector3 Vector3::Normalized() const
 {
 	auto len = this->Length();
 	return Vector3(this->x / len, this->y / len, this->z / len);
+}
+
+DirectX::XMVECTOR Vector3::ToXMVECTOR() const
+{
+	return DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(x,y,z));
+}
+
+DirectX::XMFLOAT3 Vector3::ToXMFLOAT3() const
+{
+	return DirectX::XMFLOAT3(x,y,z);
 }
 
 float Dot(const Vector3 & lval, const Vector3 & rval)
@@ -382,6 +399,23 @@ Vector3 Cross(const Vector3 & lval, const Vector3 & rval)
 	return Vector3(lval.y * rval.z - lval.z * rval.y, 
 		lval.z * rval.x - lval.x * rval.z, 
 		lval.x * rval.y - lval.y * rval.x);
+}
+
+Vector3 ReflectionVector(const Vector3 & baseVector, const Vector3 & norm)
+{
+	return baseVector + norm * (2 * Dot(baseVector*-1, norm));
+}
+
+Vector3 RefractionVector(const Vector3 & baseVector, const Vector3 & norm, float parsent)
+{
+	float vn = Dot(baseVector, norm);
+	float d = 1 - pow((1 + vn), 2) / pow(parsent,2);
+	return norm * (-vn/parsent - sqrtf(d)) + baseVector * (1 / parsent);
+}
+
+Vector3 Lerp(const Vector3 & start, const Vector3 & end, const float parsent)
+{
+	return start + (end - start) * parsent;
 }
 
 Vector3 operator+(const Vector3 & lval, const Vector3 & rval)
@@ -422,4 +456,67 @@ Vector3 operator*(const Vector3 & lval, const float & rval)
 Vector3 operator/(const Vector3 & lval, const float & rval)
 {
 	return Vector3(lval.x / rval, lval.y / rval, lval.z / rval);
+}
+
+Vector3 operator+(const Vector3& lval, const Vector2& rval)
+{
+	return Vector3(lval.x + rval.x, lval.y + rval.y, lval.z);
+}
+
+Vector3 RotateVector(const Vector3& baseVector, const Vector3& rotate)
+{
+	auto DxVECTOR = VGet(baseVector.x, baseVector.y, baseVector.z);
+	auto DxMATRIX = MGetIdent();
+
+	const float deg2rad = DX_PI / 180.0f;
+	auto rotaX = MGetRotX(rotate.x * deg2rad);
+	auto rotaY = MGetRotY(rotate.y * deg2rad);
+	auto rotaZ = MGetRotZ(rotate.z * deg2rad);
+
+	DxMATRIX = MMult(MMult(rotaX, rotaY), rotaZ);
+	
+	DxVECTOR = VTransform(DxVECTOR, DxMATRIX);
+
+	return Vector3(DxVECTOR.x, DxVECTOR.y, DxVECTOR.z);
+}
+
+Vector3 XMVECTORtoVec3(DirectX::XMVECTOR & vec)
+{
+	DirectX::XMFLOAT3 f3;
+	DirectX::XMStoreFloat3(&f3, vec);
+	return Vector3(f3.x, f3.y, f3.z);
+}
+
+float Lerp(const float lval, const float rval, const float parsent)
+{
+	return lval + (rval - lval) * parsent;
+}
+
+DirectX::XMFLOAT2 Lerp(const DirectX::XMFLOAT2 lval, const DirectX::XMFLOAT2 rval, const float parsent)
+{
+	return DirectX::XMFLOAT2(Lerp(lval.x, rval.y, parsent), Lerp(lval.y, rval.y, parsent));
+}
+
+float TriangleArea(const Vector3 & p0, const Vector3 & p1, const Vector3 & p2)
+{
+	// éOï”ÇÃí∑Ç≥ÇãÅÇﬂÇÈ
+	auto e0 = (p1 - p0).Length();
+	auto e1 = (p2 - p0).Length();
+	auto e2 = (p2 - p1).Length();
+
+	// ÉwÉçÉìÇÃåˆéÆÇ≈ñ êœÇåvéZ
+	auto s = (e0 + e1 + e2) / 2.0f;
+
+	auto area = sqrtf(s*(s - e0)*(s - e1)*(s - e2));
+	return area;
+}
+
+float Clamp(const float in, const float min, const float max)
+{
+	return min(max(in, min), max);
+}
+
+Vector3 Clamp(const Vector3 & in, const float min, const float max)
+{
+	return Vector3(Clamp(in.x, min, max), Clamp(in.y, min, max), Clamp(in.z, min, max));
 }

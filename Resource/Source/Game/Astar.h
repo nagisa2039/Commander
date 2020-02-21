@@ -1,14 +1,22 @@
 #pragma once
 #include <list>
 #include <vector>
-#include "../Geometry.h"
-
-class MapMng;
+#include <array>
+#include "../Utility/Geometry.h"
 
 class Astar
 {
+public:
+	struct ResultPos
+	{
+		bool attack;
+		Vector2Int mapPos;
+
+		ResultPos() :attack(false), mapPos(Vector2Int()) {};
+		ResultPos(const bool atc, const Vector2Int mapP):attack(atc), mapPos(mapP) {};
+	};
+
 private:
-	const MapMng& _mapMng;
 
 	enum class SearchState
 	{
@@ -17,29 +25,38 @@ private:
 		move	// 探索済み
 	};
 
-	struct SearchPos
+	enum Dir
 	{
-		Vector2Int mapPos;
-		Vector2Int parentPos;	// 親のマス
-		int fromStart;	// スタート地点からの距離
-		int fromEnd;	// エンド地点からの距離
-		SearchState state;
-		SearchPos();
-		SearchPos(const Vector2Int& mapPos, const int start, const int end, const Vector2Int& parent, const SearchState state);
+		left,
+		right,
+		up,
+		down,
+		max
 	};
 
-	std::vector<SearchPos> _serchPosVec;
+	struct SearchPos
+	{
+		Vector2Int mapPos;	//マップ上の座標
+		Vector2Int parentPos;	// 親のマップ上の座標
+		SearchState state;	// Search状況
+		int moveCnt;	// 消費する移動量
+		SearchPos();
+		SearchPos(const Vector2Int& mapPos, const Vector2Int& parent, const SearchState state, const int moveCnt);
+	};
 
-	const SearchPos GetSearchPos(const Vector2Int& mapPos)const;
-	void SetSearchPos(const Vector2Int& nowPos, const int fromtStart, const Vector2Int& endMapPos, const Vector2Int& parent, const SearchState state);
+	
 
+	std::vector<std::vector<SearchPos>> _serchPosVec2;
+	std::array<Vector2Int, Dir::max> _dirTable;
+
+	void ResetSerchPosVec2D(const std::vector<std::vector<int>>& mapData);
 
 public:
-	Astar(const MapMng& mapMng);
+	Astar();
 	~Astar();
 
 	// 開始位置から終端位置までのマスをリストに格納して返す。見つからなかった場合はリストを空にして返す
-	std::list<Vector2Int> RouteSearch(const Vector2Int& startMapPos, const Vector2Int& endMapPos);
+	std::list<Astar::ResultPos> RouteSearch(const Vector2Int& startMapPos, const int move, const std::vector<std::vector<int>>& mapData);
 
 
 };

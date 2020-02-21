@@ -4,8 +4,14 @@
 #include <array>
 #include "../Utility/Geometry.h"
 #include "MapChip.h"
+#include <list>
+#include <memory>
+#include "Astar.h"
 
 class Camera;
+class Charactor;
+
+struct Astar::ResultPos;
 
 class MapCtrl
 {
@@ -23,9 +29,22 @@ public:
 
 	};
 
+	struct MapChipData
+	{
+		DrawData drawData;
+		int moveCost;
+
+		MapChipData() {};
+		MapChipData(const DrawData& dd, const int mc) :
+			drawData(dd), moveCost(mc) {};
+	};
+
 private:
 	std::vector<std::vector<Map_Chip>> _mapData;			// マップデータ
-	std::array<DrawData, Map_Chip_Max> _mapChipDrawData;	// DrawRectGraphの時に使うデータ
+	std::array<MapChipData, Map_Chip_Max> _mapChipData;	// マップチップのデータ
+	std::shared_ptr<Astar> _astar;
+
+	std::vector<std::shared_ptr<Charactor>>& _charactors;
 
 	int _mapFloorH;
 	int _mapChipH;
@@ -35,7 +54,7 @@ private:
 	void DrawToMapChipScreen();
 
 public:
-	MapCtrl();
+	MapCtrl(std::vector<std::shared_ptr<Charactor>> charactors);
 	~MapCtrl();
 
 	void Draw(const Camera& camera, const bool edit = false);
@@ -48,5 +67,7 @@ public:
 
 	bool SaveMap(const std::string fileName);
 	bool LoadMap(const std::string fileName);
+
+	std::list<Astar::ResultPos> RouteSearch(const Vector2Int& startMapPos, const int move);
 };
 

@@ -116,6 +116,18 @@ Size MapCtrl::GetMapSize() const
 	return Size(_mapData[0].size(), _mapData.size());
 }
 
+Charactor* MapCtrl::GetMapPosChar(const Vector2Int mapPos)
+{
+	for (auto& charactor : _charactors)
+	{
+		if (mapPos == charactor->GetMapPos())
+		{
+			return &(*charactor);
+		}
+	}
+	return nullptr;
+}
+
 bool MapCtrl::SetMapChip(const Vector2Int& mapPos, const Map_Chip mapChip)
 {
 	if (mapPos.x >= 0 && mapPos.x < _mapData[0].size()

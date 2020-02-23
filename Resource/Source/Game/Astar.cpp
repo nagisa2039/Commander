@@ -27,11 +27,11 @@ Astar::~Astar()
 {
 }
 
-std::list<Astar::ResultPos> Astar::RouteSearch(const Vector2Int & startMapPos, const int move, const std::vector<std::vector<int>>& mapData)
+std::list<Astar::ResultPos> Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const std::vector<std::vector<int>>& mapData)
 {
 	auto result = list<Astar::ResultPos>();
 	result.clear();
-	result.emplace_back(ResultPos(false, startMapPos, nullptr, Dir::max));
+	result.emplace_back(ResultPos(false, startMapPos, nullptr, Dir::max, 0));
 
 	ResetSerchPosVec2D(mapData);
 
@@ -79,7 +79,7 @@ std::list<Astar::ResultPos> Astar::RouteSearch(const Vector2Int & startMapPos, c
 			// ˆÚ“®•s‰Â
 			if (mapData[checkPos.y][checkPos.x] < 0)
 			{
-				result.emplace_back(ResultPos(true, checkPos, &(*parentIt), static_cast<Dir>(j)));
+				result.emplace_back(ResultPos(true, checkPos, &(*parentIt), static_cast<Dir>(j), parentIt->moveCnt));
 				continue;
 			}
 
@@ -88,12 +88,12 @@ std::list<Astar::ResultPos> Astar::RouteSearch(const Vector2Int & startMapPos, c
 
 			if (moveCnt > move)
 			{
-				result.emplace_back(ResultPos(true, checkPos, &(*parentIt), static_cast<Dir>(j)));
+				result.emplace_back(ResultPos(true, checkPos, &(*parentIt), static_cast<Dir>(j), parentIt->moveCnt));
 			}
 			else
 			{
 				seachIdxList.emplace_back(checkPos);
-				result.emplace_back(ResultPos(false, checkPos, &(*parentIt), static_cast<Dir>(j)));
+				result.emplace_back(ResultPos(false, checkPos, &(*parentIt), static_cast<Dir>(j), moveCnt));
 			}
 		}
 

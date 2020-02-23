@@ -22,6 +22,18 @@ public:
 		MoveInf(const Dir d, const bool at) : dir(d), attack(at) {};
 	};
 
+	struct Status
+	{
+		uint8_t level;
+		uint8_t health;
+		uint8_t power;
+		uint8_t move;
+
+		Status(): level(1), health(1), power(1), move(1) {};
+		Status(const uint8_t lv, const uint8_t he, const uint8_t pw, const uint8_t mv)
+			: level(lv), health(he), power(pw), move(mv) {};
+	};
+
 protected:
 	struct DirInf
 	{
@@ -42,15 +54,19 @@ protected:
 	std::list<MoveInf> _moveDirList;
 	std::array<DirInf, Dir::max> _dirTable;
 
+	bool _canMove;
+
 	int _moveSpeed;
 	bool _isSelect;
 	Dir _dir;
+
+	Status _status; 
+	Status _startStatus;
 
 	void Move();
 
 	unsigned int GetTeamColor()const;
 	void DrawMovableMass(const Camera& camera)const;
-
 
 public:
 	Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl);
@@ -64,6 +80,13 @@ public:
 	bool MoveMapPos(const Vector2Int& mapPos);
 
 	bool GetIsSelect()const;
+	bool GetCanMove()const;
+	Status GetStatus()const;
+
 	void SetIsSelect(const bool select);
+	void MoveEnd();
+
+	void RouteSearch();
+	void TurnReset();
 };
 

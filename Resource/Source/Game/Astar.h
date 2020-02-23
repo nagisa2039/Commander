@@ -14,10 +14,11 @@ public:
 		Vector2Int mapPos;
 		ResultPos* parent;
 		Dir dir;
+		int moveCnt;	// Á”ï‚·‚éˆÚ“®—Ê
 
-		ResultPos() :attack(false), mapPos(Vector2Int()), parent(nullptr), dir(left){};
-		ResultPos(const bool atc, const Vector2Int& mapP, ResultPos* parent, const Dir d)
-			:attack(atc), mapPos(mapP), parent(parent), dir(d) {};
+		ResultPos() :attack(false), mapPos(Vector2Int()), parent(nullptr), dir(Dir::left), moveCnt(0){};
+		ResultPos(const bool atc, const Vector2Int& mapP, ResultPos* parent, const Dir d, const unsigned int mc)
+			:attack(atc), mapPos(mapP), parent(parent), dir(d), moveCnt(mc) {};
 	};
 
 private:

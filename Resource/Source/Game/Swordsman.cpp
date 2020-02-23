@@ -21,6 +21,9 @@ Swordsman::Swordsman(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl
 	_dirTable[Dir::down].animName = "DownWalk";
 
 	_dir = Dir::down;
+
+	_status.move = 5;
+	_startStatus = _status;
 }
 
 Swordsman::~Swordsman()
@@ -42,6 +45,9 @@ void Swordsman::Draw(const Camera& camera)
 
 	DrawMovableMass(camera);
 
-	_animator->Draw(offset + _pos.ToVector2Int());
-	//DrawCircle(offset + _pos.ToVector2Int() + chipSize * 0.5, chipSize.x / 3, GetTeamColor(), true);
+	auto imgSize = _animator->GetAnimRect().size.ToVector2Int();
+	_animator->Draw(offset + _pos.ToVector2Int() - imgSize + chipSize);
+
+	auto circleOffset = Vector2Int(0, -chipSize.y/2);
+	DrawCircle(circleOffset + offset + _pos.ToVector2Int() + chipSize * 0.5, chipSize.x / 4, GetTeamColor(), true);
 }

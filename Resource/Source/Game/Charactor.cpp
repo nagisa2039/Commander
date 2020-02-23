@@ -8,24 +8,30 @@ using namespace std;
 
 void Charactor::Move()
 {
-	if (!isMoveAnim)
+	if (!isMoveAnim || _moveDirList.size() == 0)
 	{
 		return;
 	}
 
-	if (_moveDirList.size() == 0)
+	auto moveAnimEnd = [&]()
 	{
 		isMoveAnim = false;
-		_resutlPosList = _mapCtrl.RouteSearch(GetMapPos(), 5);
-		return;
-	}
+		RouteSearch();
+	};
 
 	auto it = _moveDirList.begin();
 	_dir = it->dir;
 	if (it->attack)
 	{
-		isMoveAnim = false;
-		_resutlPosList = _mapCtrl.RouteSearch(GetMapPos(), 5);
+		// ÇªÇÃÉ}ÉXÇ…ìGÇ™Ç¢ÇΩÇÁêÌì¨
+		auto charactor = _mapCtrl.GetMapPosChar(GetMapPos() + _dirTable[it->dir].moveVec);
+		if (charactor != nullptr && _team != charactor->GetTeam())
+		{
+			// êÌì¨
+			//charactor
+			MoveEnd();
+		}
+		moveAnimEnd();
 		return;
 	}
 
@@ -33,6 +39,10 @@ void Charactor::Move()
 	if (_pos.ToVector2Int() % _mapCtrl.GetChipSize().ToVector2Int() == Vector2Int(0, 0))
 	{
 		_moveDirList.pop_front();
+		if (_moveDirList.size() <= 0)
+		{
+			moveAnimEnd();
+		}
 	}
 }
 
@@ -40,12 +50,10 @@ unsigned int Charactor::GetTeamColor() const
 {
 	switch (_team)
 	{
-	case Team::Red:
-		return 0xff0000;
-	case Team::Green:
-		return 0x00ff00;
-	case Team::Blue:
+	case Team::Player:
 		return 0x0000ff;
+	case Team::Enemy:
+		return 0xff0000;
 	default:
 		return 0xffffff;
 	}
@@ -53,7 +61,7 @@ unsigned int Charactor::GetTeamColor() const
 
 void Charactor::DrawMovableMass(const Camera& camera) const
 {
-	if (!_isSelect)
+	if (!_isSelect || !_canMove)
 	{
 		return;
 	}
@@ -74,12 +82,39 @@ bool Charactor::GetIsSelect() const
 	return _isSelect;
 }
 
+bool Charactor::GetCanMove() const
+{
+	return _canMove;
+}
+
+Charactor::Status Charactor::GetStatus() const
+{
+	return _status;
+}
+
 void Charactor::SetIsSelect(const bool select)
 {
 	_isSelect = select;
 }
 
-Charactor::Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl): _team(team), _mapCtrl(mapCtrl)
+void Charactor::MoveEnd()
+{
+	_canMove = false;
+}
+
+void Charactor::RouteSearch()
+{
+	_resutlPosList = _mapCtrl.RouteSearch(GetMapPos(), _status.move);
+}
+
+void Charactor::TurnReset()
+{
+	_status.move = _startStatus.move;
+	_canMove = true;
+}
+
+Charactor::Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl)
+	: _team(team), _mapCtrl(mapCtrl)
 {
 	_pos = (mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToFloatVector();
 	isMoveAnim = false;
@@ -91,8 +126,8 @@ Charactor::Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl
 
 	_moveSpeed = 4;
 	_isSelect = false;
+	_canMove = false;
 
-	_resutlPosList = _mapCtrl.RouteSearch(mapPos, 5);
 	_animator = make_shared<Animator>();
 }
 
@@ -131,6 +166,7 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 				rp = rp->parent;
 			}
 			isMoveAnim = true;
+			_status.move -= resultPos.moveCnt;
 			return true;
 		}
 	}

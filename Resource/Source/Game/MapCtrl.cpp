@@ -188,6 +188,8 @@ bool MapCtrl::LoadMap(const std::string fileName)
 
 	fclose(fp);
 
+	DrawToMapChipScreen();
+
 	return true;
 }
 

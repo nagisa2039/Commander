@@ -13,10 +13,10 @@ class Charactor :
 public:
 	enum class Team
 	{
-		Team_Blue,
-		Team_Red,
-		Team_Green,
-		TeamMax
+		Blue,
+		Red,
+		Green,
+		Max
 	};
 
 	struct MoveInf
@@ -38,8 +38,13 @@ protected:
 	std::array<Vector2Int, Dir::max> _dirTable;
 
 	int _moveSpeed;
+	bool _isSelect;
 
 	void Move();
+
+	unsigned int GetTeamColor()const;
+	void DrawMovableMass(const Camera& camera)const;
+
 
 public:
 	Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl);
@@ -51,5 +56,8 @@ public:
 	Team GetTeam()const;
 
 	bool MoveMapPos(const Vector2Int& mapPos);
+
+	bool GetIsSelect()const;
+	void SetIsSelect(const bool select);
 };
 

@@ -1,5 +1,7 @@
 #include "Charactor.h"
 #include "MapCtrl.h"
+#include "Camera.h"
+#include "../Utility/DxLibUtility.h"
 
 void Charactor::Move()
 {
@@ -30,6 +32,49 @@ void Charactor::Move()
 	}
 }
 
+unsigned int Charactor::GetTeamColor() const
+{
+	switch (_team)
+	{
+	case Team::Red:
+		return 0xff0000;
+	case Team::Green:
+		return 0x00ff00;
+	case Team::Blue:
+		return 0x0000ff;
+	default:
+		return 0xffffff;
+	}
+}
+
+void Charactor::DrawMovableMass(const Camera& camera) const
+{
+	if (!_isSelect)
+	{
+		return;
+	}
+
+	auto offset = camera.GetCameraOffset();
+	auto chipSize = _mapCtrl.GetChipSize().ToVector2Int();
+
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+	for (const auto& movePos : _resutlPosList)
+	{
+		DrawBox(offset + movePos.mapPos * chipSize, offset + (movePos.mapPos + 1) * chipSize, movePos.attack ? 0xff0000 : 0x0000ff);
+	}
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+}
+
+bool Charactor::GetIsSelect() const
+{
+	return _isSelect;
+}
+
+void Charactor::SetIsSelect(const bool select)
+{
+	_isSelect = select;
+}
+
 Charactor::Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl): _team(team), _mapCtrl(mapCtrl)
 {
 	_pos = (mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToFloatVector();
@@ -41,6 +86,7 @@ Charactor::Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl
 	_dirTable[Dir::down] = Vector2Int(0, 1);
 
 	_moveSpeed = 4;
+	_isSelect = false;
 
 	_resutlPosList = _mapCtrl.RouteSearch(mapPos, 5);
 }

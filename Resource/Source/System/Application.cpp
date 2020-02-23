@@ -54,8 +54,8 @@ bool Application::Initialize()
 
 	_fileSystem = make_shared<FileSystem>();
 	_sceneController = make_unique<SceneController>();
-	_sceneController->ChangeScene(make_unique<PlayScene>(*_sceneController));
-	//_sceneController->ChangeScene(make_unique<MapEditScene>(*_sceneController));
+	//_sceneController->ChangeScene(make_unique<PlayScene>(*_sceneController));
+	_sceneController->ChangeScene(make_unique<MapEditScene>(*_sceneController));
 
 	// input‚Ì‰Šú‰»
 	_input = make_unique<Input>();
@@ -81,6 +81,9 @@ void Application::KeySetUp()
 	_input->AddCommand(0, "debug", 0, KEY_INPUT_D);
 	_input->AddCommand(0, "space", 0, KEY_INPUT_SPACE);
 	_input->AddCommand(0, "F1", 0, KEY_INPUT_F1);
+	_input->AddCommand(0, "F2", 0, KEY_INPUT_F2);
+	_input->AddCommand(0, "F3", 0, KEY_INPUT_F3);
+	_input->AddCommand(0, "F4", 0, KEY_INPUT_F4);
 	_input->AddCommand(0, "F5", 0, KEY_INPUT_F5);
 	_input->AddCommand(0, "F6", 0, KEY_INPUT_F6);
 

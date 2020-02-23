@@ -58,17 +58,11 @@ std::list<Astar::ResultPos> Astar::RouteSearch(const Vector2Int & startMapPos, c
 
 			// ˆÚ“®Ï‚İ‚©ˆÚ“®•s‰Â‚ÌêŠ‚É‚ÍˆÚ“®‚µ‚È‚¢
 			if (_serchPosVec2[checkPos.y][checkPos.x].state != Astar::SearchState::non
-				|| checkPos == startMapPos
-				|| mapData[checkPos.y][checkPos.x] == -1)
+				|| checkPos == startMapPos)
 			{
 				continue;
 			}
 
-			_serchPosVec2[checkPos.y][checkPos.x]
-				= SearchPos(checkPos, nowPos, Astar::SearchState::Serch, 
-					_serchPosVec2[nowPos.y][nowPos.x].moveCnt + mapData[checkPos.y][checkPos.x]);
-			auto moveCnt = _serchPosVec2[checkPos.y][checkPos.x].moveCnt;
-			
 			auto parentIt = result.begin();
 			for(; parentIt != result.end(); parentIt++)
 			{
@@ -77,6 +71,20 @@ std::list<Astar::ResultPos> Astar::RouteSearch(const Vector2Int & startMapPos, c
 					break;
 				}
 			}
+
+			_serchPosVec2[checkPos.y][checkPos.x]
+				= SearchPos(checkPos, nowPos, Astar::SearchState::Serch, 
+					_serchPosVec2[nowPos.y][nowPos.x].moveCnt + mapData[checkPos.y][checkPos.x]);
+
+			// ˆÚ“®•s‰Â
+			if (mapData[checkPos.y][checkPos.x] < 0)
+			{
+				result.emplace_back(ResultPos(true, checkPos, &(*parentIt), static_cast<Dir>(j)));
+				continue;
+			}
+
+
+			auto moveCnt = _serchPosVec2[checkPos.y][checkPos.x].moveCnt;
 
 			if (moveCnt > move)
 			{

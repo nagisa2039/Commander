@@ -10,7 +10,9 @@ class PlayerCursor :
 {
 private:
 	std::vector<std::shared_ptr<Charactor>>& _charactors;
-	int _charIdx;
+	Charactor* _selectChar;
+
+	void CharactorControl(const Input& input);
 
 public:
 	PlayerCursor(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl);

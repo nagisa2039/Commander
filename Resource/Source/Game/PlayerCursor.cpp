@@ -8,7 +8,7 @@
 PlayerCursor::PlayerCursor(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl)
 	:_charactors(charactors), MapCursor(mapCtrl)
 {
-	_charIdx = -1;
+	_selectChar = nullptr;
 }
 
 PlayerCursor::~PlayerCursor()
@@ -19,22 +19,27 @@ void PlayerCursor::Update(const Input& input)
 {
 	CursorMove(input);
 
+	CharactorControl(input);
+}
+
+void PlayerCursor::CharactorControl(const Input& input)
+{
 	if (input.GetButtonDown(0, "space"))
 	{
-		if (_charIdx >= 0)
+		for (auto& charactor : _charactors)
 		{
-			_charactors[_charIdx]->MoveMapPos(_mapPos);
-		}
-		else
-		{
-			for (int idx = 0; idx < _charactors.size(); idx++)
+			if (_mapPos == charactor->GetMapPos())
 			{
-				if (_mapPos == _charactors[idx]->GetMapPos())
-				{
-					_charIdx = idx;
-					break;
-				}
+				_selectChar = &*charactor;
+				_selectChar->SetIsSelect(true);
+				return;
 			}
+		}
+
+		if (_selectChar != nullptr)
+		{
+			_selectChar->MoveMapPos(_mapPos);
+			return;
 		}
 	}
 }

@@ -37,11 +37,14 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	_camera = make_shared<Camera>(Rect(Vector2Int(), Application::Instance().GetWindowSize()));
 	_playerCursor = make_shared<PlayerCursor>(_charactors, *_mapCtrl);
 
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(), Charactor::Team::Team_Blue, *_mapCtrl));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(0,0), Charactor::Team::Blue, *_mapCtrl));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(1,3), Charactor::Team::Blue, *_mapCtrl));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(10, 5), Charactor::Team::Red,  *_mapCtrl));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(10, 7), Charactor::Team::Red,  *_mapCtrl));
 
-	_camera->AddTargetActor(_charactors[0]);
-	_camera->RemoveTargetActor(_charactors[0]);
 	_camera->AddTargetActor(_playerCursor);
+
+	_mapCtrl->LoadMap("map0");
 }
 
 

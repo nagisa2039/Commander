@@ -7,6 +7,7 @@
 #include "../Game/Camera.h"
 #include "../Game/MapCtrl.h"
 #include "../Game/Swordsman.h"
+#include "../Game/PlayerCursor.h"
 
 using namespace std;
 
@@ -23,6 +24,7 @@ void PlayScene::PlayUpdate(const Input& input)
 	{
 		charactor->Update(input);
 	}
+	_playerCursor->Update(input);
 }
 PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 {
@@ -33,12 +35,13 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 
 	_mapCtrl = make_shared<MapCtrl>(_charactors);
 	_camera = make_shared<Camera>(Rect(Vector2Int(), Application::Instance().GetWindowSize()));
-
+	_playerCursor = make_shared<PlayerCursor>(_charactors, *_mapCtrl);
 
 	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(), Charactor::Team::Team_Blue, *_mapCtrl));
 
 	_camera->AddTargetActor(_charactors[0]);
-
+	_camera->RemoveTargetActor(_charactors[0]);
+	_camera->AddTargetActor(_playerCursor);
 }
 
 
@@ -60,6 +63,7 @@ void PlayScene::Draw(void)
 	{
 		charactor->Draw(*_camera);
 	}
+	_playerCursor->Draw(*_camera);
 
 	if (debug)
 	{

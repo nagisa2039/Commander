@@ -8,7 +8,7 @@ class EditCursor :
 	public Actor
 {
 private:
-	MapCtrl& _mapCrtl;
+	MapCtrl& _mapCtrl;
 	Map_Chip _mapChip;
 
 	Vector2Int _mapPos;

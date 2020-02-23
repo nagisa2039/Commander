@@ -64,7 +64,7 @@ Vector2 Vector2::Normalized() const
 	return Vector2(this->x/mag, this->y/mag);
 }
 
-Vector2Int Vector2::ToIntVector()const
+Vector2Int Vector2::ToVector2Int()const
 {
 	return Vector2Int(static_cast<int>(this->x),static_cast<int>(this->y));
 }
@@ -296,7 +296,7 @@ Vector2 Vector2Int::ToFloatVector() const
 	return Vector2(static_cast<float>(this->x), static_cast<float>(this->y));
 }
 
-Vector2Int Size::ToIntVector() const
+Vector2Int Size::ToVector2Int() const
 {
 	return Vector2Int(this->w,this->h);
 }

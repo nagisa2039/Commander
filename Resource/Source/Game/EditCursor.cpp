@@ -4,7 +4,7 @@
 #include "../Utility/DxLibUtility.h"
 #include "Camera.h"
 
-EditCursor::EditCursor(MapCtrl& mapCtrl): _mapCrtl(mapCtrl)
+EditCursor::EditCursor(MapCtrl& mapCtrl): _mapCtrl(mapCtrl)
 {
 	_mapPos = Vector2Int(0, 0);
 	_pos = Vector2(0, 0);
@@ -20,7 +20,7 @@ void EditCursor::Update(const Input& input)
 {
 	auto Move = [&](const std::string& key, const Vector2Int& move)
 	{
-		auto mapSize = _mapCrtl.GetMapSize();
+		auto mapSize = _mapCtrl.GetMapSize();
 		if ((_mapPos + move).x >= 0 && (_mapPos + move).x < mapSize.w
 			&& (_mapPos + move).y >= 0 && (_mapPos + move).y < mapSize.h)
 		{
@@ -60,11 +60,11 @@ void EditCursor::Update(const Input& input)
 
 	if (input.GetButtonDown(0, "space"))
 	{
-		_mapCrtl.SetMapChip(_mapPos, _mapChip);
+		_mapCtrl.SetMapChip(_mapPos, _mapChip);
 	}
 
 	_animCnt+=5;
-	_pos = (_mapPos * _mapCrtl.GetChipSize().ToIntVector()).ToFloatVector();
+	_pos = (_mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToFloatVector();
 }
 
 void EditCursor::Draw(const Camera& camera)
@@ -76,10 +76,10 @@ void EditCursor::Draw(const Camera& camera)
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 	if (_mapChip != None)
 	{
-		_mapCrtl.DrawMapChip(_mapPos, _mapChip, offset);
+		_mapCtrl.DrawMapChip(_mapPos, _mapChip, offset);
 	}
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - alpha);
-	auto chipSize = _mapCrtl.GetChipSize().ToIntVector();
+	auto chipSize = _mapCtrl.GetChipSize().ToVector2Int();
 	DrawBox(offset + _mapPos * chipSize, offset + (_mapPos +1) * chipSize, 0xffffff, true);
 
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);

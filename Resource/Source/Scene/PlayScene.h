@@ -8,6 +8,7 @@
 class Charactor;
 class MapCtrl;
 class Camera;
+class PlayerCursor;
 
 class PlayScene :
 	public Scene
@@ -19,6 +20,7 @@ private:
 	std::shared_ptr<MapCtrl> _mapCtrl;
 	std::shared_ptr<Camera> _camera;
 	std::vector<std::shared_ptr<Charactor>> _charactors;
+	std::shared_ptr<PlayerCursor> _playerCursor;
 
 	void PlayUpdate(const Input& input);
 	void(PlayScene::*_updater)(const Input& input);

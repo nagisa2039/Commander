@@ -48,7 +48,7 @@ struct Vector2
 	float Length()const;
 	Vector2 Normalized()const;
 
-	Vector2Int ToIntVector()const;
+	Vector2Int ToVector2Int()const;
 	DirectX::XMFLOAT2 ToXMFLOAT2()const;
 };
 
@@ -139,7 +139,7 @@ struct Size
 	int w, h;
 	Size() {}
 	Size(const int w, const int h) :w(w), h(h) {}
-	Vector2Int ToIntVector()const;
+	Vector2Int ToVector2Int()const;
 };
 
 struct Rect 

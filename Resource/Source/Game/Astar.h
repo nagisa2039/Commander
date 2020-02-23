@@ -3,6 +3,7 @@
 #include <vector>
 #include <array>
 #include "../Utility/Geometry.h"
+#include "../Utility/Dir.h"
 
 class Astar
 {
@@ -11,9 +12,12 @@ public:
 	{
 		bool attack;
 		Vector2Int mapPos;
+		ResultPos* parent;
+		Dir dir;
 
-		ResultPos() :attack(false), mapPos(Vector2Int()) {};
-		ResultPos(const bool atc, const Vector2Int mapP):attack(atc), mapPos(mapP) {};
+		ResultPos() :attack(false), mapPos(Vector2Int()), parent(nullptr), dir(left){};
+		ResultPos(const bool atc, const Vector2Int& mapP, ResultPos* parent, const Dir d)
+			:attack(atc), mapPos(mapP), parent(parent), dir(d) {};
 	};
 
 private:
@@ -25,15 +29,6 @@ private:
 		move	// 探索済み
 	};
 
-	enum Dir
-	{
-		left,
-		right,
-		up,
-		down,
-		max
-	};
-
 	struct SearchPos
 	{
 		Vector2Int mapPos;	//マップ上の座標
@@ -43,8 +38,6 @@ private:
 		SearchPos();
 		SearchPos(const Vector2Int& mapPos, const Vector2Int& parent, const SearchState state, const int moveCnt);
 	};
-
-	
 
 	std::vector<std::vector<SearchPos>> _serchPosVec2;
 	std::array<Vector2Int, Dir::max> _dirTable;

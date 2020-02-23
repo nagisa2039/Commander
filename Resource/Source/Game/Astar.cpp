@@ -17,10 +17,10 @@ void Astar::ResetSerchPosVec2D(const std::vector<std::vector<int>>& mapData)
 
 Astar::Astar()
 {
-	_dirTable[left]		= Vector2Int(-1,  0);
-	_dirTable[right]	= Vector2Int( 1,  0);
-	_dirTable[up]		= Vector2Int( 0, -1);
-	_dirTable[down]		= Vector2Int( 0,  1);
+	_dirTable[Dir::left]		= Vector2Int(-1,  0);
+	_dirTable[Dir::right]	= Vector2Int( 1,  0);
+	_dirTable[Dir::up]		= Vector2Int( 0, -1);
+	_dirTable[Dir::down]		= Vector2Int( 0,  1);
 }
 
 Astar::~Astar()
@@ -31,6 +31,7 @@ std::list<Astar::ResultPos> Astar::RouteSearch(const Vector2Int & startMapPos, c
 {
 	auto result = list<Astar::ResultPos>();
 	result.clear();
+	result.emplace_back(ResultPos(false, startMapPos, nullptr, Dir::max));
 
 	ResetSerchPosVec2D(mapData);
 
@@ -42,8 +43,7 @@ std::list<Astar::ResultPos> Astar::RouteSearch(const Vector2Int & startMapPos, c
 	_serchPosVec2[startMapPos.y][startMapPos.x].moveCnt = 0;
 	for (auto it = seachIdxList.begin(); it != seachIdxList.end();)
 	{
-		auto idx = *it;
-		Vector2Int nowPos = _serchPosVec2[idx.y][idx.x].mapPos;
+		Vector2Int nowPos = *it;
 
 		// 開始地点から四方向のサーチを行う
 		for (int j = 0; j < Dir::max; j++)
@@ -68,18 +68,27 @@ std::list<Astar::ResultPos> Astar::RouteSearch(const Vector2Int & startMapPos, c
 				= SearchPos(checkPos, nowPos, Astar::SearchState::Serch, 
 					_serchPosVec2[nowPos.y][nowPos.x].moveCnt + mapData[checkPos.y][checkPos.x]);
 			auto moveCnt = _serchPosVec2[checkPos.y][checkPos.x].moveCnt;
+			
+			auto parentIt = result.begin();
+			for(; parentIt != result.end(); parentIt++)
+			{
+				if (parentIt->mapPos == nowPos)
+				{
+					break;
+				}
+			}
 
 			if (moveCnt > move)
 			{
-				result.emplace_back(ResultPos(true, checkPos));
+				result.emplace_back(ResultPos(true, checkPos, &(*parentIt), static_cast<Dir>(j)));
 			}
 			else
 			{
 				seachIdxList.emplace_back(checkPos);
+				result.emplace_back(ResultPos(false, checkPos, &(*parentIt), static_cast<Dir>(j)));
 			}
 		}
 
-		result.emplace_back(ResultPos(false, *it));
 		it = seachIdxList.erase(it);
 	}
 

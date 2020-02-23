@@ -207,7 +207,7 @@ std::list<Astar::ResultPos> MapCtrl::RouteSearch(const Vector2Int& startMapPos, 
 	for (const auto& charactor : _charactors)
 	{
 		auto mapPos = charactor->GetMapPos();
-		mapVec2[mapPos.x][mapPos.y] = -1;
+		mapVec2[mapPos.y][mapPos.x] = -1;
 	}
 
 	return _astar->RouteSearch(startMapPos, move, mapVec2);

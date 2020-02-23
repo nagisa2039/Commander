@@ -2,6 +2,7 @@
 #include "MapCursor.h"
 #include <memory>
 #include <vector>
+#include "Team.h"
 
 class Charactor;
 
@@ -11,6 +12,7 @@ class PlayerCursor :
 private:
 	std::vector<std::shared_ptr<Charactor>>& _charactors;
 	Charactor* _selectChar;
+	Team _ctrlTeam;
 
 	void CharactorControl(const Input& input);
 

@@ -4,6 +4,7 @@
 #include "Astar.h"
 #include <array>
 #include "../Utility/Dir.h"
+#include "Team.h"
 
 class MapCtrl;
 
@@ -11,14 +12,6 @@ class Charactor :
 	public Actor
 {
 public:
-	enum class Team
-	{
-		Blue,
-		Red,
-		Green,
-		Max
-	};
-
 	struct MoveInf
 	{
 		Dir dir;

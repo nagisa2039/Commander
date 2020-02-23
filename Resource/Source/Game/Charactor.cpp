@@ -100,7 +100,7 @@ Vector2Int Charactor::GetMapPos() const
 	return _pos.ToVector2Int() / _mapCtrl.GetChipSize().ToVector2Int();
 }
 
-Charactor::Team Charactor::GetTeam() const
+Team Charactor::GetTeam() const
 {
 	return _team;
 }

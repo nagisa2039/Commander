@@ -9,6 +9,7 @@ PlayerCursor::PlayerCursor(std::vector<std::shared_ptr<Charactor>>& charactors, 
 	:_charactors(charactors), MapCursor(mapCtrl)
 {
 	_selectChar = nullptr;
+	_ctrlTeam = Team::Blue;
 }
 
 PlayerCursor::~PlayerCursor()
@@ -26,13 +27,27 @@ void PlayerCursor::CharactorControl(const Input& input)
 {
 	if (input.GetButtonDown(0, "space"))
 	{
+		// そのマスにユニットがいないか探す
 		for (auto& charactor : _charactors)
 		{
-			if (_mapPos == charactor->GetMapPos())
+			if (_mapPos == charactor->GetMapPos()
+				&& charactor->GetTeam() == _ctrlTeam)
 			{
-				_selectChar = &*charactor;
-				_selectChar->SetIsSelect(true);
-				return;
+				// 未選択ならそのキャラを選択中にする
+				if (_selectChar == nullptr )
+				{
+					_selectChar = &*charactor;
+					_selectChar->SetIsSelect(true);
+					return;
+				}
+
+				// 選択中のキャラではないか
+				if (_selectChar != &*charactor)
+				{
+					_selectChar->SetIsSelect(false);
+					_selectChar = &*charactor;
+					_selectChar->SetIsSelect(true);
+				}
 			}
 		}
 

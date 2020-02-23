@@ -52,6 +52,7 @@
     <ClInclude Include="Resource\Source\Game\MapCursor.h" />
     <ClInclude Include="Resource\Source\Game\PlayerCursor.h" />
     <ClInclude Include="Resource\Source\Game\Swordsman.h" />
+    <ClInclude Include="Resource\Source\Game\Team.h" />
     <ClInclude Include="Resource\Source\Scene\MapEditScene.h" />
     <ClInclude Include="Resource\Source\Scene\PlayScene.h" />
     <ClInclude Include="Resource\Source\Scene\Scene.h" />

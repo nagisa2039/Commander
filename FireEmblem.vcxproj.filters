@@ -170,5 +170,8 @@
     <ClInclude Include="Resource\Source\Utility\Dir.h">
       <Filter>ヘッダー ファイル\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Team.h">
+      <Filter>ヘッダー ファイル\Game</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

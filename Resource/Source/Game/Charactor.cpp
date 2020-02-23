@@ -2,6 +2,9 @@
 #include "MapCtrl.h"
 #include "Camera.h"
 #include "../Utility/DxLibUtility.h"
+#include "Animator.h"
+
+using namespace std;
 
 void Charactor::Move()
 {
@@ -18,6 +21,7 @@ void Charactor::Move()
 	}
 
 	auto it = _moveDirList.begin();
+	_dir = it->dir;
 	if (it->attack)
 	{
 		isMoveAnim = false;
@@ -25,7 +29,7 @@ void Charactor::Move()
 		return;
 	}
 
-	_pos += (_dirTable[it->dir] * _moveSpeed).ToFloatVector();
+	_pos += (_dirTable[it->dir].moveVec * _moveSpeed).ToFloatVector();
 	if (_pos.ToVector2Int() % _mapCtrl.GetChipSize().ToVector2Int() == Vector2Int(0, 0))
 	{
 		_moveDirList.pop_front();
@@ -80,15 +84,16 @@ Charactor::Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl
 	_pos = (mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToFloatVector();
 	isMoveAnim = false;
 
-	_dirTable[Dir::left] = Vector2Int(-1,0);
-	_dirTable[Dir::right] = Vector2Int(1, 0);
-	_dirTable[Dir::up] = Vector2Int(0, -1);
-	_dirTable[Dir::down] = Vector2Int(0, 1);
+	_dirTable[Dir::left].moveVec	= Vector2Int(-1,0);
+	_dirTable[Dir::right].moveVec	= Vector2Int(1, 0);
+	_dirTable[Dir::up].moveVec		= Vector2Int(0, -1);
+	_dirTable[Dir::down].moveVec	= Vector2Int(0, 1);
 
 	_moveSpeed = 4;
 	_isSelect = false;
 
 	_resutlPosList = _mapCtrl.RouteSearch(mapPos, 5);
+	_animator = make_shared<Animator>();
 }
 
 Charactor::~Charactor()

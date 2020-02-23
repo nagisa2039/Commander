@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Resource\Source\Game\Actor.cpp" />
+    <ClCompile Include="Resource\Source\Game\Animator.cpp" />
     <ClCompile Include="Resource\Source\Game\Astar.cpp" />
     <ClCompile Include="Resource\Source\Game\Camera.cpp" />
     <ClCompile Include="Resource\Source\Game\Charactor.cpp" />
@@ -43,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Game\Actor.h" />
+    <ClInclude Include="Resource\Source\Game\Animator.h" />
     <ClInclude Include="Resource\Source\Game\Astar.h" />
     <ClInclude Include="Resource\Source\Game\Camera.h" />
     <ClInclude Include="Resource\Source\Game\Charactor.h" />

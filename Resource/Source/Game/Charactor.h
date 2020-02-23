@@ -6,6 +6,7 @@
 #include "../Utility/Dir.h"
 #include "Team.h"
 
+class Animator;
 class MapCtrl;
 
 class Charactor :
@@ -22,16 +23,28 @@ public:
 	};
 
 protected:
+	struct DirInf
+	{
+		Vector2Int moveVec;
+		std::string animName;
+
+		DirInf() : moveVec(Vector2Int()), animName("") {};
+		DirInf(const Vector2Int& vec2Int, const std::string& animN)
+			: moveVec(vec2Int), animName(animN) {};
+	};
+
 	Team _team;
 	MapCtrl& _mapCtrl;
 	std::list<Astar::ResultPos> _resutlPosList;
+	std::shared_ptr<Animator> _animator;
 
 	bool isMoveAnim;	// 移動アニメーション中
 	std::list<MoveInf> _moveDirList;
-	std::array<Vector2Int, Dir::max> _dirTable;
+	std::array<DirInf, Dir::max> _dirTable;
 
 	int _moveSpeed;
 	bool _isSelect;
+	Dir _dir;
 
 	void Move();
 

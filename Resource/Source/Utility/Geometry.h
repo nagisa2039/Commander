@@ -2,6 +2,7 @@
 #include <DirectXMath.h>
 
 struct Vector2;
+struct Vector3;
 
 struct Vector2Int
 {
@@ -13,7 +14,7 @@ struct Vector2Int
 	void operator+=(const Vector2Int& pos);
 	void operator-=(const Vector2Int& pos);
 
-	Vector2 ToFloatVector() const;
+	Vector2 ToVector2() const;
 };
 
 Vector2Int operator+(const Vector2Int &lval, const Vector2Int& rval);
@@ -32,6 +33,7 @@ struct Vector2
 	Vector2():x(0),y(0) {}
 	Vector2(const float x, const float y) :x(x), y(y) {}
 	Vector2(const DirectX::XMFLOAT2& xy): x(xy.x), y(xy.y){}
+	Vector2(const Vector3& vec3);
 
 	Vector2 operator-(void);
 
@@ -72,6 +74,7 @@ struct Vector3
 	Vector3(const float x, const float y, const float z) :x(x), y(y), z(z) {}
 	Vector3(const DirectX::XMFLOAT3& xyz):x(xyz.x), y(xyz.y), z(xyz.z) {}
 	Vector3(const DirectX::XMFLOAT4& xyzw) :x(xyzw.x), y(xyzw.y), z(xyzw.z) {}
+	Vector3(const Vector2& vec2): x(vec2.x), y(vec2.y), z(0) {}
 
 	Vector3 operator-(void)const;
 
@@ -137,13 +140,17 @@ struct Vector4
 struct Size
 {
 	int w, h;
-	Size() {}
+	Size() :w(0), h(0) {}
 	Size(const int w, const int h) :w(w), h(h) {}
 	Vector2Int ToVector2Int()const;
+	Size operator-(const Size& size);
 };
 
 Size operator+(const Size& lval, const Size& rval);
 Size operator*(const Size& lval, const Size& rval);
+
+Size operator+(const Size& lval, const float& rval);
+Size operator*(const Size& lval, const float& rval);
 
 struct Rect 
 {

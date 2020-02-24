@@ -8,6 +8,7 @@ class Actor
 {
 protected:
 	Vector2 _pos;
+	bool _delete;
 
 public:
 	Actor();
@@ -17,5 +18,6 @@ public:
 	virtual void Draw(const Camera& camera) = 0;
 
 	Vector2 GetActorPos()const;
+	bool GetDelete()const;
 };
 

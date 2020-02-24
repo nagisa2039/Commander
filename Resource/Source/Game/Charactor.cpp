@@ -5,19 +5,20 @@
 #include "Animator.h"
 #include "../Scene/SceneController.h"
 #include "../Scene/BattleScene.h"
+#include "Effect.h"
 
 using namespace std;
 
 void Charactor::Move()
 {
-	if (!isMoveAnim || _moveDirList.size() == 0)
+	if (!_isMoveAnim || _moveDirList.size() == 0)
 	{
 		return;
 	}
 
 	auto moveAnimEnd = [&]()
 	{
-		isMoveAnim = false;
+		_isMoveAnim = false;
 		RouteSearch();
 	};
 
@@ -37,7 +38,7 @@ void Charactor::Move()
 		return;
 	}
 
-	_pos += (_dirTable[it->dir].moveVec * _moveSpeed).ToFloatVector();
+	_pos += (_dirTable[it->dir].moveVec * _moveSpeed).ToVector2();
 	if (_pos.ToVector2Int() % _mapCtrl.GetChipSize().ToVector2Int() == Vector2Int(0, 0))
 	{
 		_moveDirList.pop_front();
@@ -104,6 +105,11 @@ Dir Charactor::GetDir() const
 	return _dir;
 }
 
+Vector2Int Charactor::GetCenterPos() const
+{
+	return Vector2Int(_pos.ToVector2Int() - (_mapCtrl.GetChipSize() - (_animator->GetAnimRect().size*0.5)).ToVector2Int());
+}
+
 void Charactor::SetIsSelect(const bool select)
 {
 	_isSelect = select;
@@ -122,6 +128,7 @@ void Charactor::SetDir(const Dir dir)
 void Charactor::MoveEnd()
 {
 	_canMove = false;
+	_isMoveAnim = false;
 }
 
 void Charactor::RouteSearch()
@@ -135,11 +142,12 @@ void Charactor::TurnReset()
 	_canMove = true;
 }
 
-Charactor::Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl)
-	: _team(team), _mapCtrl(mapCtrl), _controller(ctrl)
+Charactor::Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl, 
+	std::vector<std::shared_ptr<Effect>>& effects)
+	: _team(team), _mapCtrl(mapCtrl), _controller(ctrl), _effects(effects)
 {
-	_pos = (mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToFloatVector();
-	isMoveAnim = false;
+	_pos = (mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToVector2();
+	_isMoveAnim = false;
 
 	_dirTable[Dir::left].moveVec	= Vector2Int(-1,0);
 	_dirTable[Dir::right].moveVec	= Vector2Int(1, 0);
@@ -180,7 +188,7 @@ Team Charactor::GetTeam() const
 
 bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 {
-	if (mapPos == GetMapPos() || isMoveAnim)
+	if (mapPos == GetMapPos() || _isMoveAnim)
 	{
 		return false;
 	}
@@ -198,7 +206,7 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 				_moveDirList.emplace_front(MoveInf(rp->dir, rp->attack));
 				rp = rp->parent;
 			}
-			isMoveAnim = true;
+			_isMoveAnim = true;
 			_status.move -= resultPos.moveCnt;
 			return true;
 		}

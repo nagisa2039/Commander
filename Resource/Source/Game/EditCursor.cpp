@@ -64,7 +64,7 @@ void EditCursor::Update(const Input& input)
 	}
 
 	_animCnt+=5;
-	_pos = (_mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToFloatVector();
+	_pos = (_mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToVector2();
 }
 
 void EditCursor::Draw(const Camera& camera)

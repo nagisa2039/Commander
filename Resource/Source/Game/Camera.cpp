@@ -19,14 +19,17 @@ Camera::~Camera()
 
 void Camera::Update()
 {
-	// ƒJƒƒ‰‚ÌêŠ‚ðŒˆ‚ß‚é
-	Vector2 pos2D = {0.0f, 0.0f};
-	for (auto& target : _targets)
+	if (_targets.size() > 0)
 	{
-		pos2D += target->GetActorPos();
+		// ƒJƒƒ‰‚ÌêŠ‚ðŒˆ‚ß‚é
+		Vector2 pos2D = { 0.0f, 0.0f };
+		for (auto& target : _targets)
+		{
+			pos2D += target->GetActorPos();
+		}
+		Vector3 targetPos = Vector3(pos2D.x, pos2D.y, 0) / _targets.size();
+		_pos = Lerp(_pos, targetPos, 0.05f);
 	}
-	Vector3 targetPos = Vector3(pos2D.x, pos2D.y, 0) / _targets.size();
-	_pos = Lerp(_pos, targetPos, 0.05f);
 
 	_rect.center = Vector2Int(_pos.x, _pos.y);
 
@@ -72,6 +75,11 @@ Vector2Int Camera::GetCameraOffset() const
 {
 	auto wsize = Application::Instance().GetWindowSize();
 	return Vector2Int(wsize.w/2 - _rect.center.x, wsize.h/2 - _rect.center.y);
+}
+
+void Camera::SetPos(const Vector3& pos)
+{
+	_pos = pos;
 }
 
 void Camera::SetLimitRect(const Rect& rect)

@@ -61,7 +61,7 @@ void PlayerCursor::CharactorControl(const Input& input)
 			}
 		}
 
-		if (_selectChar != nullptr)
+		if (_selectChar != nullptr && _selectChar->GetCanMove())
 		{
 			_selectChar->MoveMapPos(_mapPos);
 			return;

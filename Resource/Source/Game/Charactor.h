@@ -5,10 +5,12 @@
 #include <array>
 #include "../Utility/Dir.h"
 #include "Team.h"
+#include <vector>
 
 class Animator;
 class MapCtrl;
 class SceneController;
+class Effect;
 
 class Charactor :
 	public Actor
@@ -51,8 +53,9 @@ protected:
 	SceneController& _controller;
 	std::list<Astar::ResultPos> _resutlPosList;
 	std::shared_ptr<Animator> _animator;
+	std::vector<std::shared_ptr<Effect>>& _effects;
 
-	bool isMoveAnim;	// 移動アニメーション中
+	bool _isMoveAnim;	// 移動アニメーション中
 	std::list<MoveInf> _moveDirList;
 	std::array<DirInf, Dir::max> _dirTable;
 
@@ -72,13 +75,15 @@ protected:
 	void DrawMovableMass(const Camera& camera)const;
 
 public:
-	Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl);
+	Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl, 
+		std::vector<std::shared_ptr<Effect>>& effects);
 	~Charactor();
 
 	virtual void Update(const Input& input)override = 0;
 	virtual void Draw(const Camera& camera)override = 0;
 
 	void BattleDraw(const Vector2Int& buttonCenter, const Size& size);
+	virtual std::shared_ptr<Effect> AddAttackEffect(const Vector2Int& effectPos) = 0;
 	void AnimRestart();
 
 	Vector2Int GetMapPos()const;
@@ -91,6 +96,8 @@ public:
 	Status GetStatus()const;
 	bool GetIsDying()const;
 	Dir GetDir()const;
+	Vector2Int GetCenterPos()const;
+	Rect GetSize();
 
 	void SetIsSelect(const bool select);
 	void SetIsDying(const bool dying);

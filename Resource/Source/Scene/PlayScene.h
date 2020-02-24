@@ -5,11 +5,13 @@
 #include "Scene.h"
 #include "../Utility/Geometry.h"
 #include "../Game/Team.h"
+#include <list>
 
 class Charactor;
 class MapCtrl;
 class Camera;
 class PlayerCursor;
+class Effect;
 
 class PlayScene :
 	public Scene
@@ -23,6 +25,7 @@ private:
 	std::shared_ptr<Camera> _camera;
 	std::vector<std::shared_ptr<Charactor>> _charactors;
 	std::shared_ptr<PlayerCursor> _playerCursor;
+	std::vector<std::shared_ptr<Effect>> _effects;
 
 	void PlayUpdate(const Input& input);
 	void(PlayScene::*_updater)(const Input& input);

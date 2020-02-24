@@ -2,7 +2,11 @@
 #include "Scene.h"
 #include "../Utility/Dir.h"
 #include "../Utility/Geometry.h"
+#include <vector>
+#include <memory>
 
+class Camera;
+class Effect;
 class Charactor;
 
 class BattleScene :
@@ -13,6 +17,7 @@ private:
 	{
 		Charactor& charactor;
 		Dir dir;
+		Vector2Int drawPos;
 
 		CharInf(Charactor& charactor);
 	};
@@ -21,8 +26,10 @@ private:
 	CharInf _rCharInf;
 
 	const Size _screenSize;
-
 	int _screenH;
+	std::shared_ptr<Camera> _camera;
+
+	std::vector<std::shared_ptr<Effect>> _effects;
 
 public:
 	BattleScene(Charactor& lChar, Charactor& rchar, SceneController& ctrl);

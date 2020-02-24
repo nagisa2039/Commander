@@ -4,9 +4,13 @@
 #include "Camera.h"
 #include "Animator.h"
 #include "../Scene/SceneController.h"
+#include "SlashingEffect.h"
 
-Swordsman::Swordsman(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl)
-	:Charactor(mapPos, team, mapCtrl, ctrl)
+using namespace std;
+
+Swordsman::Swordsman(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl, 
+	std::vector<std::shared_ptr<Effect>>& effects)
+	:Charactor(mapPos, team, mapCtrl, ctrl, effects)
 {
 	const Size divSize = Size(32,32);
 	_animator->SetImage("Resource/Image/Charactor/charactor.png");
@@ -69,4 +73,9 @@ void Swordsman::Draw(const Camera& camera)
 
 	auto circleOffset = Vector2Int(0, -chipSize.y/2);
 	DrawCircle(circleOffset + offset + _pos.ToVector2Int() + chipSize * 0.5, chipSize.x / 4, GetTeamColor(), true);
+}
+
+std::shared_ptr<Effect> Swordsman::AddAttackEffect(const Vector2Int& effectPos)
+{
+	return make_shared<SlashingEffect>(effectPos);
 }

@@ -23,7 +23,7 @@ void MapCursor::CursorMove(const Input& input)
 	Move("down", Vector2Int(0, 1));
 	Move("left", Vector2Int(-1, 0));
 	Move("right", Vector2Int(1, 0));
-	_pos = (_mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToFloatVector();
+	_pos = (_mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToVector2();
 }
 
 MapCursor::MapCursor(MapCtrl& mapCtrl):_mapCtrl(mapCtrl), _inputItvMax(30)

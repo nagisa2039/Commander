@@ -3,6 +3,10 @@
 #include <DxLib.h>
 #include <algorithm>
 
+Vector2::Vector2(const Vector3& vec3): x(vec3.x), y(vec3.y)
+{
+}
+
 Vector2 Vector2::operator-(void)
 {
 	return Vector2(-this->x,-this->y);
@@ -291,7 +295,7 @@ void Vector2Int::operator-=(const Vector2Int & pos)
 	this->y -= pos.y;
 }
 
-Vector2 Vector2Int::ToFloatVector() const
+Vector2 Vector2Int::ToVector2() const
 {
 	return Vector2(static_cast<float>(this->x), static_cast<float>(this->y));
 }
@@ -299,6 +303,11 @@ Vector2 Vector2Int::ToFloatVector() const
 Vector2Int Size::ToVector2Int() const
 {
 	return Vector2Int(this->w,this->h);
+}
+
+Size Size::operator-(const Size& size)
+{
+	return Size(-size.w, -size.h);
 }
 
 Vector3 Vector3::operator-(void)const
@@ -519,6 +528,16 @@ Size operator+(const Size& lval, const Size& rval)
 Size operator*(const Size& lval, const Size& rval)
 {
 	return Size(lval.w * rval.w, lval.h * rval.h);
+}
+
+Size operator+(const Size& lval, const float& rval)
+{
+	return Size(lval.w + rval, lval.h + rval);
+}
+
+Size operator*(const Size& lval, const float& rval)
+{
+	return Size(lval.w * rval, lval.h * rval);
 }
 
 float Clamp(const float in, const float min, const float max)

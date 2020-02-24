@@ -24,6 +24,7 @@ public:
 	void RemoveTargetActor(std::shared_ptr<Actor> target);
 
 	Vector2Int GetCameraOffset()const;
+	void SetPos(const Vector3& pos);
 	void SetLimitRect(const Rect& rect);
 };
 

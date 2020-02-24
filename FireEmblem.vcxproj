@@ -25,9 +25,11 @@
     <ClCompile Include="Resource\Source\Game\Camera.cpp" />
     <ClCompile Include="Resource\Source\Game\Charactor.cpp" />
     <ClCompile Include="Resource\Source\Game\EditCursor.cpp" />
+    <ClCompile Include="Resource\Source\Game\Effect.cpp" />
     <ClCompile Include="Resource\Source\Game\MapCtrl.cpp" />
     <ClCompile Include="Resource\Source\Game\MapCursor.cpp" />
     <ClCompile Include="Resource\Source\Game\PlayerCursor.cpp" />
+    <ClCompile Include="Resource\Source\Game\SlashingEffect.cpp" />
     <ClCompile Include="Resource\Source\Game\Swordsman.cpp" />
     <ClCompile Include="Resource\Source\Scene\BattleScene.cpp" />
     <ClCompile Include="Resource\Source\Scene\MapEditScene.cpp" />
@@ -50,10 +52,12 @@
     <ClInclude Include="Resource\Source\Game\Camera.h" />
     <ClInclude Include="Resource\Source\Game\Charactor.h" />
     <ClInclude Include="Resource\Source\Game\EditCursor.h" />
+    <ClInclude Include="Resource\Source\Game\Effect.h" />
     <ClInclude Include="Resource\Source\Game\MapChip.h" />
     <ClInclude Include="Resource\Source\Game\MapCtrl.h" />
     <ClInclude Include="Resource\Source\Game\MapCursor.h" />
     <ClInclude Include="Resource\Source\Game\PlayerCursor.h" />
+    <ClInclude Include="Resource\Source\Game\SlashingEffect.h" />
     <ClInclude Include="Resource\Source\Game\Swordsman.h" />
     <ClInclude Include="Resource\Source\Game\Team.h" />
     <ClInclude Include="Resource\Source\Scene\BattleScene.h" />
@@ -81,14 +85,14 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -101,7 +105,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -139,6 +143,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>Resource\Source\System;Resource\Source\Utility;Resource\Source\Scene;Resource\Source\Game;$(DXLIB_DIR)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -151,7 +157,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DXLIB_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Resource\Source\System;Resource\Source\Utility;Resource\Source\Scene;Resource\Source\Game;$(DXLIB_DIR)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
@@ -169,6 +175,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>Resource\Source\System;Resource\Source\Utility;Resource\Source\Scene;Resource\Source\Game;$(DXLIB_DIR)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -185,8 +193,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DXLIB_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Resource\Source\System;Resource\Source\Utility;Resource\Source\Scene;Resource\Source\Game;$(DXLIB_DIR)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

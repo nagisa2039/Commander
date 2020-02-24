@@ -29,7 +29,7 @@ bool operator!=(const Vector2Int &lval, const Vector2Int& rval);
 struct Vector2
 {
 	float x, y;
-	Vector2() {}
+	Vector2():x(0),y(0) {}
 	Vector2(const float x, const float y) :x(x), y(y) {}
 	Vector2(const DirectX::XMFLOAT2& xy): x(xy.x), y(xy.y){}
 
@@ -68,7 +68,7 @@ Vector2 operator/(const Vector2 &lval, const float& rval);
 struct Vector3
 {
 	float x, y, z;
-	Vector3() {}
+	Vector3():x(0),y(0),z(0) {}
 	Vector3(const float x, const float y, const float z) :x(x), y(y), z(z) {}
 	Vector3(const DirectX::XMFLOAT3& xyz):x(xyz.x), y(xyz.y), z(xyz.z) {}
 	Vector3(const DirectX::XMFLOAT4& xyzw) :x(xyzw.x), y(xyzw.y), z(xyzw.z) {}
@@ -141,6 +141,9 @@ struct Size
 	Size(const int w, const int h) :w(w), h(h) {}
 	Vector2Int ToVector2Int()const;
 };
+
+Size operator+(const Size& lval, const Size& rval);
+Size operator*(const Size& lval, const Size& rval);
 
 struct Rect 
 {

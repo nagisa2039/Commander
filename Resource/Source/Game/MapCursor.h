@@ -10,6 +10,9 @@ protected:
 	Vector2Int _mapPos;
 	MapCtrl& _mapCtrl;
 
+	int _inputItv;	// “ü—Íó•t‚Ü‚Å‚ÌƒtƒŒ[ƒ€”
+	const int _inputItvMax;
+
 	void CursorMove(const Input& input);
 
 public:

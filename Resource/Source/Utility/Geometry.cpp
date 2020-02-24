@@ -511,6 +511,16 @@ float TriangleArea(const Vector3 & p0, const Vector3 & p1, const Vector3 & p2)
 	return area;
 }
 
+Size operator+(const Size& lval, const Size& rval)
+{
+	return Size(lval.w + rval.w, lval.h + rval.h);
+}
+
+Size operator*(const Size& lval, const Size& rval)
+{
+	return Size(lval.w * rval.w, lval.h * rval.h);
+}
+
 float Clamp(const float in, const float min, const float max)
 {
 	return min(max(in, min), max);

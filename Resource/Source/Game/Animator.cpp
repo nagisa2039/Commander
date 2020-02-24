@@ -56,6 +56,17 @@ void Animator::Draw(const Vector2Int & pos)
 	DrawRectGraph(pos.x, pos.y, rect.Left(), rect.Top(), rect.Width(), rect.Height(), _imageH, true);
 }
 
+void Animator::Draw(const Vector2Int& pos, Size size)
+{
+	if (_animInfoMap.find(_animName) == _animInfoMap.end())
+	{
+		return;
+	}
+
+	auto rect = GetAnimRect();
+	DrawRectExtendGraph(pos.x, pos.y, pos.x + size.h, pos.y + size.w, rect.Left(), rect.Top(), rect.Width(), rect.Height(), _imageH, true);
+}
+
 void Animator::AddAnim(const std::string& animName, const AnimInfo& animInfo)
 {
 	_animInfoMap.emplace(animName, animInfo);
@@ -98,8 +109,13 @@ void Animator::ChangeAnim(std::string animName)
 	{
 		return;
 	}
-	_animEnd = false;
 	_animName = animName;
+	AnimRestart();
+}
+
+void Animator::AnimRestart()
+{
+	_animEnd = false;
 	_animFrame = 0;
 }
 

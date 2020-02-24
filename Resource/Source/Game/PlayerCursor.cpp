@@ -9,6 +9,7 @@ PlayerCursor::PlayerCursor(std::vector<std::shared_ptr<Charactor>>& charactors, 
 	:_charactors(charactors), _ctrlTeam(ctrlTeam), MapCursor(mapCtrl)
 {
 	_selectChar = nullptr;
+	_pos = Vector2();
 }
 
 PlayerCursor::~PlayerCursor()

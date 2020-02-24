@@ -8,6 +8,7 @@
 
 class Animator;
 class MapCtrl;
+class SceneController;
 
 class Charactor :
 	public Actor
@@ -47,6 +48,7 @@ protected:
 
 	Team _team;
 	MapCtrl& _mapCtrl;
+	SceneController& _controller;
 	std::list<Astar::ResultPos> _resutlPosList;
 	std::shared_ptr<Animator> _animator;
 
@@ -59,6 +61,7 @@ protected:
 	int _moveSpeed;
 	bool _isSelect;
 	Dir _dir;
+	bool _isDying;//	死亡アニメーション中
 
 	Status _status; 
 	Status _startStatus;
@@ -69,11 +72,15 @@ protected:
 	void DrawMovableMass(const Camera& camera)const;
 
 public:
-	Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl);
+	Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl);
 	~Charactor();
 
 	virtual void Update(const Input& input)override = 0;
 	virtual void Draw(const Camera& camera)override = 0;
+
+	void BattleDraw(const Vector2Int& buttonCenter, const Size& size);
+	void AnimRestart();
+
 	Vector2Int GetMapPos()const;
 	Team GetTeam()const;
 
@@ -82,8 +89,13 @@ public:
 	bool GetIsSelect()const;
 	bool GetCanMove()const;
 	Status GetStatus()const;
+	bool GetIsDying()const;
+	Dir GetDir()const;
 
 	void SetIsSelect(const bool select);
+	void SetIsDying(const bool dying);
+	void SetDir(const Dir dir);
+
 	void MoveEnd();
 
 	void RouteSearch();

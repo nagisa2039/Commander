@@ -60,7 +60,7 @@ public:
 	void Draw(const Camera& camera, const bool edit = false);
 
 	Size GetChipSize()const;
-	Size GetMapSize()const;
+	Size GetMapCnt()const;
 
 	// そのマスにいるキャラクターを返す
 	Charactor* GetMapPosChar(const Vector2Int mapPos);

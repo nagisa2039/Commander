@@ -29,6 +29,7 @@
     <ClCompile Include="Resource\Source\Game\MapCursor.cpp" />
     <ClCompile Include="Resource\Source\Game\PlayerCursor.cpp" />
     <ClCompile Include="Resource\Source\Game\Swordsman.cpp" />
+    <ClCompile Include="Resource\Source\Scene\BattleScene.cpp" />
     <ClCompile Include="Resource\Source\Scene\MapEditScene.cpp" />
     <ClCompile Include="Resource\Source\Scene\PlayScene.cpp" />
     <ClCompile Include="Resource\Source\Scene\Scene.cpp" />
@@ -55,6 +56,7 @@
     <ClInclude Include="Resource\Source\Game\PlayerCursor.h" />
     <ClInclude Include="Resource\Source\Game\Swordsman.h" />
     <ClInclude Include="Resource\Source\Game\Team.h" />
+    <ClInclude Include="Resource\Source\Scene\BattleScene.h" />
     <ClInclude Include="Resource\Source\Scene\MapEditScene.h" />
     <ClInclude Include="Resource\Source\Scene\PlayScene.h" />
     <ClInclude Include="Resource\Source\Scene\Scene.h" />

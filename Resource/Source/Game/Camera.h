@@ -12,6 +12,7 @@ private:
 	std::vector<std::shared_ptr<Actor>> _targets;
 
 	Vector3 _pos;
+	Rect _limitRect;
 
 public:
 	Camera(const Rect& rect);
@@ -23,5 +24,6 @@ public:
 	void RemoveTargetActor(std::shared_ptr<Actor> target);
 
 	Vector2Int GetCameraOffset()const;
+	void SetLimitRect(const Rect& rect);
 };
 

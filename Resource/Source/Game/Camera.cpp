@@ -7,6 +7,10 @@ using namespace std;
 
 Camera::Camera(const Rect& rect) :_rect(rect)
 {
+	_pos = Vector3(0,0,0);
+
+	// size.w == 0 ÇÕêßå¿Ç»Çµ
+	_limitRect.size.w = 0;
 }
 
 Camera::~Camera()
@@ -22,18 +26,34 @@ void Camera::Update()
 		pos2D += target->GetActorPos();
 	}
 	Vector3 targetPos = Vector3(pos2D.x, pos2D.y, 0) / _targets.size();
-	targetPos = Lerp(_pos, targetPos, 0.2f);
+	_pos = Lerp(_pos, targetPos, 0.05f);
 
-	_rect.center = Vector2Int(targetPos.x, targetPos.y);
+	_rect.center = Vector2Int(_pos.x, _pos.y);
 
-	// îÕàÕêßå‰
-	if (_rect.center.x < _rect.Width() / 2)
+	// size.w == 0 ÇÕêßå¿Ç»Çµ
+	if (_limitRect.Width() != 0)
 	{
-		_rect.center.x = _rect.Width() / 2;
-	}
-	if (_rect.center.y < _rect.Height() / 2)
-	{
-		_rect.center.y = _rect.Height() / 2;
+		// îÕàÕêßå‰
+		if (_rect.Left() < _limitRect.Left())
+		{
+			_rect.center.x = _limitRect.Left() + _rect.Width() / 2;
+			_pos.x = _rect.center.x;
+		}
+		if (_rect.Right() > _limitRect.Right())
+		{
+			_rect.center.x = _limitRect.Right() - _rect.Width() / 2;
+			_pos.x = _rect.center.x;
+		}
+		if (_rect.Top() < _limitRect.Top())
+		{
+			_rect.center.y = _limitRect.Top() + _rect.Height() / 2;
+			_pos.y = _rect.center.y;
+		}
+		if (_rect.Botton() > _limitRect.Botton())
+		{
+			_rect.center.y = _limitRect.Botton() - _rect.Height() / 2;
+			_pos.y = _rect.center.y;
+		}
 	}
 }
 
@@ -52,4 +72,9 @@ Vector2Int Camera::GetCameraOffset() const
 {
 	auto wsize = Application::Instance().GetWindowSize();
 	return Vector2Int(wsize.w/2 - _rect.center.x, wsize.h/2 - _rect.center.y);
+}
+
+void Camera::SetLimitRect(const Rect& rect)
+{
+	_limitRect = rect;
 }

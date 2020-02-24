@@ -20,7 +20,7 @@ void EditCursor::Update(const Input& input)
 {
 	auto Move = [&](const std::string& key, const Vector2Int& move)
 	{
-		auto mapSize = _mapCtrl.GetMapSize();
+		auto mapSize = _mapCtrl.GetMapCnt();
 		if ((_mapPos + move).x >= 0 && (_mapPos + move).x < mapSize.w
 			&& (_mapPos + move).y >= 0 && (_mapPos + move).y < mapSize.h)
 		{

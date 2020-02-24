@@ -7,9 +7,11 @@
 
 using namespace std;
 
-constexpr auto CHIP_SIZE_W = 32;
-constexpr auto CHIP_SIZE_H = 32;
+constexpr auto CHIP_SIZE_W = 32*2;
+constexpr auto CHIP_SIZE_H = 32*2;
 
+constexpr auto MAP_CHIP_CNT_W = 30;
+constexpr auto MAP_CHIP_CNT_H = 20;
 
 void MapCtrl::DrawToMapChipScreen()
 {
@@ -52,10 +54,10 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 	_mapChipH = MakeScreen(100 * CHIP_SIZE_W, 100 * CHIP_SIZE_H, true);
 	_mapFloorH = MakeScreen(100 * CHIP_SIZE_W, 100 * CHIP_SIZE_H, true);
 
-	_mapData.resize(20);
+	_mapData.resize(MAP_CHIP_CNT_H);
 	for (auto& mapDataX : _mapData)
 	{
-		mapDataX.resize(25);
+		mapDataX.resize(MAP_CHIP_CNT_W);
 		for (auto& mapData : mapDataX)
 		{
 			mapData = None;
@@ -92,7 +94,7 @@ void MapCtrl::Draw(const Camera& camera, const bool edit)
 
 	if (edit)
 	{
-		auto mapSize = GetMapSize();
+		auto mapSize = GetMapCnt();
 		for (int h = 0; h <= mapSize.h; h++)
 		{
 			DrawLine(Vector2Int(0, h * CHIP_SIZE_H) + offset, 
@@ -111,7 +113,7 @@ Size MapCtrl::GetChipSize()const
 	return Size(CHIP_SIZE_W, CHIP_SIZE_H);
 }
 
-Size MapCtrl::GetMapSize() const
+Size MapCtrl::GetMapCnt() const
 {
 	return Size(_mapData[0].size(), _mapData.size());
 }
@@ -145,7 +147,8 @@ bool MapCtrl::DrawMapChip(const Vector2Int& mapPos, const Map_Chip mapChip, cons
 	auto drawData = _mapChipData[mapChip].drawData;
 
 	auto graphH = Application::Instance().GetFileSystem()->GetImageHandle((imageFolderPath + drawData.path).c_str());
-	DrawRectGraph(offset.x + CHIP_SIZE_W * mapPos.x, offset.y + CHIP_SIZE_H * mapPos.y,
+	DrawRectExtendGraph(offset.x + CHIP_SIZE_W * mapPos.x, offset.y + CHIP_SIZE_H * mapPos.y,
+		offset.x + CHIP_SIZE_W * mapPos.x + CHIP_SIZE_W, offset.y + CHIP_SIZE_H * mapPos.y + CHIP_SIZE_H,
 		drawData.leftup.x, drawData.leftup.y, drawData.size.w, drawData.size.h,
 		graphH, true);
 
@@ -164,7 +167,7 @@ bool MapCtrl::SaveMap(const std::string fileName)
 		return false;
 	}
 
-	auto mapSize = GetMapSize();
+	auto mapSize = GetMapCnt();
 	fwrite(&mapSize, sizeof(mapSize), 1, fp);
 
 	for (const auto& mapChipVec : _mapData)

@@ -48,12 +48,15 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	_camera = make_shared<Camera>(Rect(Vector2Int(), Application::Instance().GetWindowSize()));
 	_playerCursor = make_shared<PlayerCursor>(_charactors, *_mapCtrl, Team::Player);
 
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(0,0), Team::Player, *_mapCtrl));
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(1,3), Team::Player, *_mapCtrl));
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(10, 5), Team::Enemy,  *_mapCtrl));
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(10, 7), Team::Enemy,  *_mapCtrl));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(0,0),	Team::Player, *_mapCtrl, _controller));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(1,3),	Team::Player, *_mapCtrl, _controller));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(4, 5),	Team::Enemy,  *_mapCtrl, _controller));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(4, 7),	Team::Enemy,  *_mapCtrl, _controller));
 
 	_camera->AddTargetActor(_playerCursor);
+
+	auto mapSize = _mapCtrl->GetMapCnt() * _mapCtrl->GetChipSize();
+	_camera->SetLimitRect(Rect(mapSize.ToVector2Int() * 0.5, mapSize));
 
 	_mapCtrl->LoadMap("map0");
 
@@ -85,8 +88,6 @@ void PlayScene::Update(const Input & input)
 
 void PlayScene::Draw(void)
 {
-	DrawBox(0, 0, 50, 50, 0x114514, true);
-
 	_mapCtrl->Draw(*_camera);
 	for (auto& charactor : _charactors)
 	{

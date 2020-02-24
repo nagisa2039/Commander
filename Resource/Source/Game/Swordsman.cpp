@@ -3,16 +3,35 @@
 #include "../Utility/DxLibUtility.h"
 #include "Camera.h"
 #include "Animator.h"
+#include "../Scene/SceneController.h"
 
-Swordsman::Swordsman(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl) :Charactor(mapPos, team, mapCtrl)
+Swordsman::Swordsman(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl)
+	:Charactor(mapPos, team, mapCtrl, ctrl)
 {
 	const Size divSize = Size(32,32);
 	_animator->SetImage("Resource/Image/Charactor/charactor.png");
 
-	_animator->AddAnimDiv("DownWalk",	Rect(Vector2Int(16, 16 + 32 * 0), divSize), 2, 30, true, false);
-	_animator->AddAnimDiv("LeftWalk",	Rect(Vector2Int(16, 16 + 32 * 1), divSize), 2, 30, true, false);
-	_animator->AddAnimDiv("RightWalk",	Rect(Vector2Int(16, 16 + 32 * 2), divSize), 2, 30, true, false);
-	_animator->AddAnimDiv("UpWalk",		Rect(Vector2Int(16, 16 + 32 * 3), divSize), 2, 30, true, false);
+	int cnt = 0;
+	auto nextRectCenterOffset = [&](std::vector<Rect>& animRectVec, int cnt)
+	{
+		for (auto& rect : animRectVec)
+		{
+			rect.center.y += divSize.h;
+		}
+	};
+
+	std::vector<Rect> animRectVec;
+	animRectVec.emplace_back(Rect(Vector2Int(16, 16), divSize));
+	animRectVec.emplace_back(Rect(Vector2Int(16 + divSize.w * 2, 16), divSize));
+
+	_animator->AddAnim("DownWalk", animRectVec, 30, true);
+	nextRectCenterOffset(animRectVec, ++cnt);
+	_animator->AddAnim("LeftWalk", animRectVec, 30, true);
+	nextRectCenterOffset(animRectVec, ++cnt);
+	_animator->AddAnim("RightWalk", animRectVec, 30, true);
+	nextRectCenterOffset(animRectVec, ++cnt);
+	_animator->AddAnim("UpWalk", animRectVec, 30, true);
+
 	_animator->ChangeAnim("LeftWalk");
 
 	_dirTable[Dir::left].animName = "LeftWalk";
@@ -46,7 +65,7 @@ void Swordsman::Draw(const Camera& camera)
 	DrawMovableMass(camera);
 
 	auto imgSize = _animator->GetAnimRect().size.ToVector2Int();
-	_animator->Draw(offset + _pos.ToVector2Int() - imgSize + chipSize);
+	_animator->Draw(offset + _pos.ToVector2Int(), _mapCtrl.GetChipSize());
 
 	auto circleOffset = Vector2Int(0, -chipSize.y/2);
 	DrawCircle(circleOffset + offset + _pos.ToVector2Int() + chipSize * 0.5, chipSize.x / 4, GetTeamColor(), true);

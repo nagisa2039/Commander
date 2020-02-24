@@ -3,6 +3,8 @@
 #include "Camera.h"
 #include "../Utility/DxLibUtility.h"
 #include "Animator.h"
+#include "../Scene/SceneController.h"
+#include "../Scene/BattleScene.h"
 
 using namespace std;
 
@@ -28,7 +30,7 @@ void Charactor::Move()
 		if (charactor != nullptr && _team != charactor->GetTeam())
 		{
 			// êÌì¨
-			//charactor
+			_controller.PushScene(make_shared<BattleScene>(*this, *charactor, _controller));
 			MoveEnd();
 		}
 		moveAnimEnd();
@@ -92,9 +94,29 @@ Charactor::Status Charactor::GetStatus() const
 	return _status;
 }
 
+bool Charactor::GetIsDying() const
+{
+	return _isDying;
+}
+
+Dir Charactor::GetDir() const
+{
+	return _dir;
+}
+
 void Charactor::SetIsSelect(const bool select)
 {
 	_isSelect = select;
+}
+
+void Charactor::SetIsDying(const bool dying)
+{
+	_isDying = dying;
+}
+
+void Charactor::SetDir(const Dir dir)
+{
+	_dir = dir;
 }
 
 void Charactor::MoveEnd()
@@ -113,8 +135,8 @@ void Charactor::TurnReset()
 	_canMove = true;
 }
 
-Charactor::Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl)
-	: _team(team), _mapCtrl(mapCtrl)
+Charactor::Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl)
+	: _team(team), _mapCtrl(mapCtrl), _controller(ctrl)
 {
 	_pos = (mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToFloatVector();
 	isMoveAnim = false;
@@ -127,12 +149,23 @@ Charactor::Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl
 	_moveSpeed = 4;
 	_isSelect = false;
 	_canMove = false;
+	_isDying = false;;
 
 	_animator = make_shared<Animator>();
 }
 
 Charactor::~Charactor()
 {
+}
+
+void Charactor::BattleDraw(const Vector2Int& buttonCenter, const Size& size)
+{
+	_animator->Draw(buttonCenter - Vector2Int(size.w/2, size.h), size);
+}
+
+void Charactor::AnimRestart()
+{
+	_animator->AnimRestart();
 }
 
 Vector2Int Charactor::GetMapPos() const

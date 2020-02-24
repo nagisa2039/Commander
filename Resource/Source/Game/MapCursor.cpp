@@ -6,7 +6,7 @@ void MapCursor::CursorMove(const Input& input)
 {
 	auto Move = [&](const std::string& key, const Vector2Int& move)
 	{
-		auto mapSize = _mapCtrl.GetMapSize();
+		auto mapSize = _mapCtrl.GetMapCnt();
 		if ((_mapPos + move).x >= 0 && (_mapPos + move).x < mapSize.w
 			&& (_mapPos + move).y >= 0 && (_mapPos + move).y < mapSize.h)
 		{
@@ -26,10 +26,11 @@ void MapCursor::CursorMove(const Input& input)
 	_pos = (_mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToFloatVector();
 }
 
-MapCursor::MapCursor(MapCtrl& mapCtrl):_mapCtrl(mapCtrl)
+MapCursor::MapCursor(MapCtrl& mapCtrl):_mapCtrl(mapCtrl), _inputItvMax(30)
 {
 	_pos = Vector2();
 	_mapPos = Vector2Int();
+	_inputItv = 0;
 }
 
 MapCursor::~MapCursor()

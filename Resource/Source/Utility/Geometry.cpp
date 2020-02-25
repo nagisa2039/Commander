@@ -173,6 +173,11 @@ Vector2 operator/(const Vector2 & lval, const float & rval)
 	return Vector2(lval.x / rval, lval.y / rval);
 }
 
+Vector2 Lerp(const Vector2& start, const Vector2& end, const float parsent)
+{
+	return start + (end - start) * parsent;
+}
+
 Rect::Rect():center(Vector2Int()),size(Size())
 {
 }

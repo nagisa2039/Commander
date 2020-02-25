@@ -26,7 +26,7 @@ private:
 	enum class SearchState
 	{
 		non,	// –¢’Tõ
-		Serch,	// ’Tõ’†
+		serch,	// ’Tõ’†
 		move	// ’TõÏ‚İ
 	};
 

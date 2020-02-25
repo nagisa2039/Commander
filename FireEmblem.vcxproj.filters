@@ -126,6 +126,12 @@
     <ClCompile Include="Resource\Source\Game\SlashingEffect.cpp">
       <Filter>ソース ファイル\Game\Actor\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\System\FontLoader.cpp">
+      <Filter>ソース ファイル\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\FlyText.cpp">
+      <Filter>ソース ファイル\Game\Actor\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -207,6 +213,12 @@
       <Filter>ヘッダー ファイル\Game\Actor\Effect</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\SlashingEffect.h">
+      <Filter>ヘッダー ファイル\Game\Actor\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\System\FontLoader.h">
+      <Filter>ヘッダー ファイル\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\FlyText.h">
       <Filter>ヘッダー ファイル\Game\Actor\Effect</Filter>
     </ClInclude>
   </ItemGroup>

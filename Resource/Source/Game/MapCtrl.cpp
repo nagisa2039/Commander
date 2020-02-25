@@ -4,6 +4,7 @@
 #include "../System/FileSystem.h"
 #include "../Game/Camera.h"
 #include "Charactor.h"
+#include "DxLib.h"
 
 using namespace std;
 

@@ -3,6 +3,7 @@
 #include "MapCtrl.h"
 #include "../Utility/DxLibUtility.h"
 #include "Camera.h"
+#include <DxLib.h>
 
 EditCursor::EditCursor(MapCtrl& mapCtrl): _mapCtrl(mapCtrl)
 {

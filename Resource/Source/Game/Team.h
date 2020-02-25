@@ -2,9 +2,9 @@
 
 enum class Team
 {
-	Player,
-	Enemy,
-	Max
+	player,
+	enemy,
+	max
 };
 
 //Team operator+(const Team lval, const int rval)

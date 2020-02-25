@@ -67,6 +67,8 @@ Vector2 operator-(const Vector2 &lval, const float& rval);
 Vector2 operator*(const Vector2 &lval, const float& rval);
 Vector2 operator/(const Vector2 &lval, const float& rval);
 
+Vector2 Lerp(const Vector2& start, const Vector2& end, const float parsent);
+
 struct Vector3
 {
 	float x, y, z;
@@ -151,6 +153,20 @@ Size operator*(const Size& lval, const Size& rval);
 
 Size operator+(const Size& lval, const float& rval);
 Size operator*(const Size& lval, const float& rval);
+
+enum class Anker
+{
+	leftup,
+	leftcenter,
+	leftdown,
+	centerup,
+	center,
+	centerdown,
+	rightup,
+	rightcenter,
+	rightdown,
+	max,
+};
 
 struct Rect 
 {

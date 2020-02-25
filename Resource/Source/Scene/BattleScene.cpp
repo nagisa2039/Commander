@@ -6,6 +6,8 @@
 #include "../System/FileSystem.h"
 #include "Effect.h"
 #include "Camera.h"
+#include <DxLib.h>
+#include "FlyText.h"
 
 constexpr auto game_screen_size_x = 1280;
 constexpr auto game_screen_size_y = 720;
@@ -39,6 +41,7 @@ BattleScene::BattleScene(Charactor& lChar, Charactor& rChar, SceneController& ct
 	auto charSize = Size(128, 128);
 	_effects.emplace_back(_lCharInf.charactor.AddAttackEffect(_rCharInf.drawPos - Vector2Int(0, charSize.h/2)));
 
+	_effects.emplace_back(make_shared<FlyText>("50", _rCharInf.drawPos - Vector2Int(0, charSize.h / 2), 60 * 1));
 }
 
 BattleScene::~BattleScene()

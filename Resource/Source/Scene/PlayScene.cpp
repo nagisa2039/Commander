@@ -9,6 +9,7 @@
 #include "../Game/Swordsman.h"
 #include "../Game/PlayerCursor.h"
 #include "Effect.h"
+#include "FlyText.h"
 
 using namespace std;
 
@@ -33,7 +34,7 @@ void PlayScene::PlayUpdate(const Input& input)
 	}
 	if (cnt <= 0)
 	{
-		TurnReset(Team::Player);
+		TurnReset(Team::player);
 		_playerCursor->TurnReset();
 	}
 	_playerCursor->Update(input);
@@ -57,12 +58,12 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 
 	_mapCtrl = make_shared<MapCtrl>(_charactors);
 	_camera = make_shared<Camera>(Rect(Vector2Int(), Application::Instance().GetWindowSize()));
-	_playerCursor = make_shared<PlayerCursor>(_charactors, *_mapCtrl, Team::Player);
+	_playerCursor = make_shared<PlayerCursor>(_charactors, *_mapCtrl, Team::player);
 
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(0,0),	Team::Player, *_mapCtrl, _controller, _effects));
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(1,3),	Team::Player, *_mapCtrl, _controller, _effects));
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(4, 5),	Team::Enemy,  *_mapCtrl, _controller, _effects));
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(4, 7),	Team::Enemy,  *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(0,0),	Team::player, *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(1,3),	Team::player, *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(4, 5),	Team::enemy,  *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(4, 7),	Team::enemy,  *_mapCtrl, _controller, _effects));
 
 	_camera->AddTargetActor(_playerCursor);
 
@@ -71,8 +72,7 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 
 	_mapCtrl->LoadMap("map0");
 
-	TurnReset(Team::Player);
-
+	TurnReset(Team::player);
 }
 
 
@@ -110,6 +110,7 @@ void PlayScene::Draw(void)
 		effect->Draw(*_camera);
 	}
 	_playerCursor->Draw(*_camera);
+
 
 	if (debug)
 	{

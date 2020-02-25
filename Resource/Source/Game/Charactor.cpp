@@ -6,6 +6,7 @@
 #include "../Scene/SceneController.h"
 #include "../Scene/BattleScene.h"
 #include "Effect.h"
+#include <DxLib.h>
 
 using namespace std;
 
@@ -53,9 +54,9 @@ unsigned int Charactor::GetTeamColor() const
 {
 	switch (_team)
 	{
-	case Team::Player:
+	case Team::player:
 		return 0x0000ff;
-	case Team::Enemy:
+	case Team::enemy:
 		return 0xff0000;
 	default:
 		return 0xffffff;

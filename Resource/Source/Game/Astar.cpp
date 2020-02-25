@@ -73,7 +73,7 @@ std::list<Astar::ResultPos> Astar::RouteSearch(const Vector2Int& startMapPos, co
 			}
 
 			_serchPosVec2[checkPos.y][checkPos.x]
-				= SearchPos(checkPos, nowPos, Astar::SearchState::Serch, 
+				= SearchPos(checkPos, nowPos, Astar::SearchState::serch, 
 					_serchPosVec2[nowPos.y][nowPos.x].moveCnt + mapData[checkPos.y][checkPos.x]);
 
 			// ˆÚ“®•s‰Â

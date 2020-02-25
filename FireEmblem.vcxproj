@@ -26,6 +26,7 @@
     <ClCompile Include="Resource\Source\Game\Charactor.cpp" />
     <ClCompile Include="Resource\Source\Game\EditCursor.cpp" />
     <ClCompile Include="Resource\Source\Game\Effect.cpp" />
+    <ClCompile Include="Resource\Source\Game\FlyText.cpp" />
     <ClCompile Include="Resource\Source\Game\MapCtrl.cpp" />
     <ClCompile Include="Resource\Source\Game\MapCursor.cpp" />
     <ClCompile Include="Resource\Source\Game\PlayerCursor.cpp" />
@@ -38,6 +39,7 @@
     <ClCompile Include="Resource\Source\Scene\SceneController.cpp" />
     <ClCompile Include="Resource\Source\System\Application.cpp" />
     <ClCompile Include="Resource\Source\System\FileSystem.cpp" />
+    <ClCompile Include="Resource\Source\System\FontLoader.cpp" />
     <ClCompile Include="Resource\Source\System\ImageLoader.cpp" />
     <ClCompile Include="Resource\Source\System\Loader.cpp" />
     <ClCompile Include="Resource\Source\System\main.cpp" />
@@ -53,6 +55,7 @@
     <ClInclude Include="Resource\Source\Game\Charactor.h" />
     <ClInclude Include="Resource\Source\Game\EditCursor.h" />
     <ClInclude Include="Resource\Source\Game\Effect.h" />
+    <ClInclude Include="Resource\Source\Game\FlyText.h" />
     <ClInclude Include="Resource\Source\Game\MapChip.h" />
     <ClInclude Include="Resource\Source\Game\MapCtrl.h" />
     <ClInclude Include="Resource\Source\Game\MapCursor.h" />
@@ -67,6 +70,7 @@
     <ClInclude Include="Resource\Source\Scene\SceneController.h" />
     <ClInclude Include="Resource\Source\System\Application.h" />
     <ClInclude Include="Resource\Source\System\FileSystem.h" />
+    <ClInclude Include="Resource\Source\System\FontLoader.h" />
     <ClInclude Include="Resource\Source\System\ImageLoader.h" />
     <ClInclude Include="Resource\Source\System\Loader.h" />
     <ClInclude Include="Resource\Source\Utility\Dir.h" />

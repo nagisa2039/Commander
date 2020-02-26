@@ -108,22 +108,31 @@ public:
 	void TurnReset();
 };
 
-class BattleCharactor :
-	public Actor
+class BattleScene;
+
+class BattleCharactor
 {
 protected:
 	Charactor& _charactor;
 	Dir _dir;
 	Vector2 _startPos;
+	Vector2 _pos;
 	Size _size;
 	std::shared_ptr<Animator> _animator;
+
+	int _attackAnimCnt;
+	int _attackAnimCntMax;
 
 public:
 	BattleCharactor(Charactor& charactor);
 	~BattleCharactor();
 
-	virtual void Update(const Input& input)override;
-	virtual void Draw(const Camera& camera)override;
+	virtual void AnimUpdate();
+	virtual void AttackUpdate(BattleScene& battleScene);
+	virtual void Draw();
+
+	void StartAttackAnim();
+	bool GetAnimEnd();
 
 	Size GetSize()const;
 	Vector2Int GetCenterPos()const;

@@ -220,20 +220,48 @@ BattleCharactor::BattleCharactor(Charactor& charactor)
 {
 	SetStartPos(Vector2());
 	_animator = make_shared<Animator>();
+
+	_attackAnimCnt = -1;
+	_attackAnimCntMax = 15;
 }
 
 BattleCharactor::~BattleCharactor()
 {
 }
 
-void BattleCharactor::Update(const Input& input)
+void BattleCharactor::AnimUpdate()
 {
 	_animator->Update();
 }
 
-void BattleCharactor::Draw(const Camera& camera)
+void BattleCharactor::AttackUpdate(BattleScene& battleScene)
+{
+	if(_attackAnimCnt >= 0)
+	{
+		Vector2 dir = _dir == Dir::left ? Vector2(1, 0) : Vector2(-1, 0);
+		float per = _attackAnimCnt / static_cast<float>(_attackAnimCntMax);
+		per = 1.0f - abs(0.5f - per)*2;
+		_pos = Lerp(_startPos, _startPos + dir * 50, per);
+		if (_attackAnimCnt++ >= _attackAnimCntMax)
+		{
+			_attackAnimCnt = -1;
+		}
+	}
+}
+
+void BattleCharactor::Draw()
 {
 	_animator->Draw(GetDrawPos(_pos.ToVector2Int(), _size, Anker::centerdown), _size);
+}
+
+void BattleCharactor::StartAttackAnim()
+{
+	_attackAnimCnt = 0;
+}
+
+bool BattleCharactor::GetAnimEnd()
+{
+	return _attackAnimCnt < 0;
 }
 
 Size BattleCharactor::GetSize() const

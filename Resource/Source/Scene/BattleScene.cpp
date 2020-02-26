@@ -14,6 +14,33 @@ constexpr auto game_screen_size_y = 720;
 
 using namespace std;
 
+void BattleScene::LeftTurn(const Input& input)
+{
+	_leftBC.AttackUpdate(*this);
+	if (_leftBC.GetAnimEnd())
+	{
+		_rightBC.StartAttackAnim();
+		_updater = &BattleScene::RightTuen;
+
+		_effects.emplace_back(_leftBC.CreateAttackEffect(_rightBC.GetCenterPos()));
+		_effects.emplace_back(make_shared<FlyText>("50", _rightBC.GetCenterPos(), 60 * 1));
+	}
+}
+
+void BattleScene::RightTuen(const Input& input)
+{
+	_rightBC.AttackUpdate(*this);
+	if (_rightBC.GetAnimEnd())
+	{
+		_leftBC.StartAttackAnim();
+		_updater = &BattleScene::LeftTurn;
+
+		_effects.emplace_back(_rightBC.CreateAttackEffect(_leftBC.GetCenterPos()));
+		_effects.emplace_back(make_shared<FlyText>("50", _leftBC.GetCenterPos(), 60 * 1));
+	}
+
+}
+
 BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, SceneController& ctrl)
 	: Scene(ctrl), _screenSize(Application::Instance().GetWindowSize()), _leftBC(leftBC), _rightBC(rightBC)
 {
@@ -36,8 +63,8 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 	_rightBC.SetStartPos(Vector2(screenCenter.x + 200, floorY));
 	_rightBC.SetDir(Dir::right);
 
-	_effects.emplace_back(_leftBC.CreateAttackEffect(_rightBC.GetCenterPos()));
-	_effects.emplace_back(make_shared<FlyText>("50", _rightBC.GetCenterPos(), 60 * 1));
+	_leftBC.StartAttackAnim();
+	_updater = &BattleScene::LeftTurn;
 }
 
 BattleScene::~BattleScene()
@@ -47,13 +74,11 @@ BattleScene::~BattleScene()
 void BattleScene::Update(const Input& input)
 {
 	_camera->Update();
-	_leftBC.Update(input);
-	_rightBC.Update(input);
-	if (input.GetButtonDown(0, "space"))
-	{
-		_controller.PopScene();
-		return;
-	}
+
+	_leftBC.AnimUpdate();
+	_rightBC.AnimUpdate();
+
+	(this->*_updater)(input);
 
 	for (auto& effect : _effects)
 	{
@@ -62,6 +87,13 @@ void BattleScene::Update(const Input& input)
 	auto newEnd = remove_if(_effects.begin(), _effects.end(),
 		[](const std::shared_ptr<Effect>& effect) { return effect->GetDelete(); });
 	_effects.erase(newEnd, _effects.end());
+
+
+	if (input.GetButtonDown(0, "space"))
+	{
+		_controller.PopScene();
+		return;
+	}
 }
 
 void BattleScene::Draw(void)
@@ -78,8 +110,8 @@ void BattleScene::Draw(void)
 
 	auto charSize = Size(128, 128);
 
-	_leftBC.Draw(*_camera);
-	_rightBC.Draw(*_camera);
+	_leftBC.Draw();
+	_rightBC.Draw();
 
 	for (auto& effect : _effects)
 	{

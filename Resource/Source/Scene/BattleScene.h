@@ -23,6 +23,11 @@ private:
 
 	std::vector<std::shared_ptr<Effect>> _effects;
 
+	void LeftTurn(const Input& input);
+	void RightTuen(const Input& input);
+
+	void(BattleScene::* _updater)(const Input& input);
+
 public:
 	BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, SceneController& ctrl);
 	~BattleScene();

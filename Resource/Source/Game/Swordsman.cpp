@@ -109,6 +109,10 @@ SwordBC::~SwordBC()
 {
 }
 
+void SwordBC::Update(BattleScene& battleScene)
+{
+}
+
 void SwordBC::SetDir(const Dir dir)
 {
 	_dir = dir;

@@ -21,6 +21,8 @@ public:
 	SwordBC(Charactor& charactor);
 	~SwordBC();
 
+	void Update(BattleScene& battleScene);
+
 	void SetDir(const Dir dir)override;
 	std::shared_ptr<Effect> CreateAttackEffect(const Vector2Int& effectPos)override final;
 };

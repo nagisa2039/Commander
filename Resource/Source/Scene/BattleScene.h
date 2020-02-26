@@ -8,22 +8,14 @@
 class Camera;
 class Effect;
 class Charactor;
+class BattleCharactor;
 
 class BattleScene :
 	public Scene
 {
 private:
-	struct CharInf
-	{
-		Charactor& charactor;
-		Dir dir;
-		Vector2Int drawPos;
-
-		CharInf(Charactor& charactor);
-	};
-
-	CharInf _lCharInf;
-	CharInf _rCharInf;
+	BattleCharactor& _leftBC;
+	BattleCharactor& _rightBC;
 
 	const Size _screenSize;
 	int _screenH;
@@ -32,7 +24,7 @@ private:
 	std::vector<std::shared_ptr<Effect>> _effects;
 
 public:
-	BattleScene(Charactor& lChar, Charactor& rchar, SceneController& ctrl);
+	BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, SceneController& ctrl);
 	~BattleScene();
 
 	void Update(const Input& input) override final;

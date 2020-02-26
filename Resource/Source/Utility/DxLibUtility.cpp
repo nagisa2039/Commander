@@ -26,59 +26,29 @@ void DrawFormatStringToHandle(const Vector2Int& leftup, unsigned int Color, cons
 	DxLib::DrawFormatStringToHandle(leftup.x, leftup.y, Color, FontHandle, FormatString);
 }
 
-CalDrawPos::CalDrawPos()
+Vector2Int GetDrawPos(const Vector2Int& drawPos, const Size& size, const Anker anker)
 {
-	_calFunArray[static_cast<int>(Anker::leftup)] = [](const Vector2Int& drawPos, const Size& size) 
+	switch (anker)
 	{
+	case Anker::leftup:
 		return drawPos;
-	};
-
-	_calFunArray[static_cast<int>(Anker::leftcenter)] = [](const Vector2Int& drawPos, const Size& size)
-	{
-		return drawPos + Vector2Int(0, - size.h/2);
-	};
-
-	_calFunArray[static_cast<int>(Anker::leftdown)] = [](const Vector2Int& drawPos, const Size& size)
-	{
+	case Anker::leftcenter:
+		return drawPos + Vector2Int(0, -size.h / 2);
+	case Anker::leftdown:
 		return drawPos + Vector2Int(0, -size.h);
-	};
-
-	_calFunArray[static_cast<int>(Anker::centerup)] = [](const Vector2Int& drawPos, const Size& size)
-	{
-		return drawPos + Vector2Int(-size.w/2, 0);
-	};
-
-	_calFunArray[static_cast<int>(Anker::center)] = [](const Vector2Int& drawPos, const Size& size)
-	{
+	case Anker::centerup:
+		return drawPos + Vector2Int(-size.w / 2, 0);
+	case Anker::center:
 		return drawPos + Vector2Int(-size.w / 2, -size.h / 2);
-	};
-
-	_calFunArray[static_cast<int>(Anker::centerdown)] = [](const Vector2Int& drawPos, const Size& size)
-	{
+	case Anker::centerdown:
 		return drawPos + Vector2Int(-size.w / 2, -size.h);
-	};
-
-	_calFunArray[static_cast<int>(Anker::rightup)] = [](const Vector2Int& drawPos, const Size& size)
-	{
+	case Anker::rightup:
 		return drawPos + Vector2Int(-size.w, 0);
-	};
-
-	_calFunArray[static_cast<int>(Anker::rightcenter)] = [](const Vector2Int& drawPos, const Size& size)
-	{
+	case Anker::rightcenter:
 		return drawPos + Vector2Int(-size.w, -size.h / 2);
-	}; 
-
-	_calFunArray[static_cast<int>(Anker::rightdown)] = [](const Vector2Int& drawPos, const Size& size)
-	{
+	case Anker::rightdown:
 		return drawPos + Vector2Int(-size.w, -size.h);
-	}; 
-}
-
-CalDrawPos::~CalDrawPos()
-{
-}
-
-Vector2Int CalDrawPos::GetDrawPos(const Vector2Int& drawPos, const Size& size, const Anker anker)
-{
-	return _calFunArray[static_cast<int>(anker)](drawPos, size);
+	default:
+		return Vector2Int();
+	}
 }

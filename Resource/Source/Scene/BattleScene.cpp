@@ -14,8 +14,8 @@ constexpr auto game_screen_size_y = 720;
 
 using namespace std;
 
-BattleScene::BattleScene(Charactor& lChar, Charactor& rChar, SceneController& ctrl)
-	: _lCharInf(lChar), _rCharInf(rChar), Scene(ctrl), _screenSize(Application::Instance().GetWindowSize())
+BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, SceneController& ctrl)
+	: Scene(ctrl), _screenSize(Application::Instance().GetWindowSize()), _leftBC(leftBC), _rightBC(rightBC)
 {
 	auto wsize = Application::Instance().GetWindowSize();
 	auto cameraPos = wsize.ToVector2Int() * 0.5;
@@ -30,18 +30,14 @@ BattleScene::BattleScene(Charactor& lChar, Charactor& rChar, SceneController& ct
 	auto floorY = _screenSize.h / 3 * 2;
 	auto screenCenter = _screenSize.ToVector2Int() * 0.5f;
 
-	_lCharInf.drawPos = Vector2Int(screenCenter.x - 200, floorY);
-	_lCharInf.charactor.SetDir(Dir::right);
-	_lCharInf.charactor.AnimRestart();
+	_leftBC.SetStartPos(Vector2(screenCenter.x - 200, floorY));
+	_leftBC.SetDir(Dir::left);
 
-	_rCharInf.drawPos = Vector2Int(screenCenter.x + 200, floorY);
-	_rCharInf.charactor.SetDir(Dir::left);
-	_rCharInf.charactor.AnimRestart();
+	_rightBC.SetStartPos(Vector2(screenCenter.x + 200, floorY));
+	_rightBC.SetDir(Dir::right);
 
-	auto charSize = Size(128, 128);
-	_effects.emplace_back(_lCharInf.charactor.AddAttackEffect(_rCharInf.drawPos - Vector2Int(0, charSize.h/2)));
-
-	_effects.emplace_back(make_shared<FlyText>("50", _rCharInf.drawPos - Vector2Int(0, charSize.h / 2), 60 * 1));
+	_effects.emplace_back(_leftBC.CreateAttackEffect(_rightBC.GetCenterPos()));
+	_effects.emplace_back(make_shared<FlyText>("50", _rightBC.GetCenterPos(), 60 * 1));
 }
 
 BattleScene::~BattleScene()
@@ -51,8 +47,8 @@ BattleScene::~BattleScene()
 void BattleScene::Update(const Input& input)
 {
 	_camera->Update();
-	_lCharInf.charactor.Update(input);
-	_rCharInf.charactor.Update(input);
+	_leftBC.Update(input);
+	_rightBC.Update(input);
 	if (input.GetButtonDown(0, "space"))
 	{
 		_controller.PopScene();
@@ -82,8 +78,8 @@ void BattleScene::Draw(void)
 
 	auto charSize = Size(128, 128);
 
-	_lCharInf.charactor.BattleDraw(_lCharInf.drawPos, charSize);
-	_rCharInf.charactor.BattleDraw(_rCharInf.drawPos, charSize);
+	_leftBC.Draw(*_camera);
+	_rightBC.Draw(*_camera);
 
 	for (auto& effect : _effects)
 	{
@@ -94,9 +90,4 @@ void BattleScene::Draw(void)
 
 	DrawGraph(0,0,_screenH, true);
 	ScreenFlip();
-}
-
-BattleScene::CharInf::CharInf(Charactor& charactor)
-	:charactor(charactor), dir(charactor.GetDir()), drawPos(Vector2Int())
-{
 }

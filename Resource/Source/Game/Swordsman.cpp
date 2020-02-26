@@ -12,6 +12,8 @@ Swordsman::Swordsman(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl
 	std::vector<std::shared_ptr<Effect>>& effects)
 	:Charactor(mapPos, team, mapCtrl, ctrl, effects)
 {
+	_battleC = make_shared<SwordBC>(*this);
+
 	const Size divSize = Size(32,32);
 	_animator->SetImage("Resource/Image/Charactor/charactor.png");
 
@@ -75,7 +77,53 @@ void Swordsman::Draw(const Camera& camera)
 	DrawCircle(circleOffset + offset + _pos.ToVector2Int() + chipSize * 0.5, chipSize.x / 4, GetTeamColor(), true);
 }
 
-std::shared_ptr<Effect> Swordsman::AddAttackEffect(const Vector2Int& effectPos)
+SwordBC::SwordBC(Charactor& charactor): BattleCharactor(charactor)
+{
+	const Size divSize = Size(32, 32);
+	_animator->SetImage("Resource/Image/Charactor/charactor.png"); 
+	
+	int cnt = 0;
+	auto nextRectCenterOffset = [&](std::vector<Rect>& animRectVec, int cnt)
+	{
+		for (auto& rect : animRectVec)
+		{
+			rect.center.y += divSize.h;
+		}
+	};
+
+	std::vector<Rect> animRectVec;
+	animRectVec.clear();
+
+	animRectVec.emplace_back(Rect(Vector2Int(16,				 16 + 32 * 1), divSize));
+	animRectVec.emplace_back(Rect(Vector2Int(16 + divSize.w * 2, 16 + 32 * 1), divSize));
+	_animator->AddAnim("LeftWalk", animRectVec, 30, true);
+	animRectVec.clear();
+
+	animRectVec.emplace_back(Rect(Vector2Int(16,				 16 + 32 * 2), divSize));
+	animRectVec.emplace_back(Rect(Vector2Int(16 + divSize.w * 2, 16 + 32 * 2), divSize));
+	_animator->AddAnim("RightWalk", animRectVec, 30, true);
+
+}
+
+SwordBC::~SwordBC()
+{
+}
+
+void SwordBC::SetDir(const Dir dir)
+{
+	_dir = dir;
+
+	if (dir == Dir::right)
+	{
+		_animator->ChangeAnim("LeftWalk");
+	}
+	else
+	{
+		_animator->ChangeAnim("RightWalk");
+	}
+}
+
+std::shared_ptr<Effect> SwordBC::CreateAttackEffect(const Vector2Int& effectPos)
 {
 	return make_shared<SlashingEffect>(effectPos);
 }

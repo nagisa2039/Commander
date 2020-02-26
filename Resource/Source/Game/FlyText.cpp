@@ -11,8 +11,6 @@ FlyText::FlyText(const string& str, const Vector2Int& pos, const int lifeCnt)
 	:Effect(pos), _str(str), _lifeCntMax(lifeCnt), _lifeCnt(lifeCnt), 
 	_anker(Anker::center), _startPos(pos.ToVector2()), _move(0, -50)
 {
-	_calDrawPos = make_shared<CalDrawPos>();
-
 	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin", 40, 1, true, true);
 	_fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin");
 
@@ -43,7 +41,7 @@ void FlyText::Draw(const Camera& camera)
 	int lineCnt = 0;
 	GetDrawStringSizeToHandle(&size.w, &size.h, &lineCnt, _str.c_str(), len, _fontHandle);
 
-	auto drawPos = _calDrawPos->GetDrawPos(_pos.ToVector2Int(), size, _anker);
+	auto drawPos = GetDrawPos(_pos.ToVector2Int(), size, _anker);
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, _lifeCnt-- / static_cast<float>(_lifeCntMax) * 255);
 	DrawFormatStringToHandle(drawPos, _color, _fontHandle, _str.c_str());

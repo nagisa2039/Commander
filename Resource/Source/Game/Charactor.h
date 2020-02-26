@@ -3,14 +3,15 @@
 #include <list>
 #include "Astar.h"
 #include <array>
-#include "../Utility/Dir.h"
+#include "Dir.h"
 #include "Team.h"
 #include <vector>
 
 class Animator;
 class MapCtrl;
 class SceneController;
-class Effect;
+class Effect; 
+class BattleCharactor;
 
 class Charactor :
 	public Actor
@@ -54,6 +55,7 @@ protected:
 	std::list<Astar::ResultPos> _resutlPosList;
 	std::shared_ptr<Animator> _animator;
 	std::vector<std::shared_ptr<Effect>>& _effects;
+	std::shared_ptr<BattleCharactor> _battleC;
 
 	bool _isMoveAnim;	// 移動アニメーション中
 	std::list<MoveInf> _moveDirList;
@@ -81,9 +83,6 @@ public:
 
 	virtual void Update(const Input& input)override = 0;
 	virtual void Draw(const Camera& camera)override = 0;
-
-	void BattleDraw(const Vector2Int& buttonCenter, const Size& size);
-	virtual std::shared_ptr<Effect> AddAttackEffect(const Vector2Int& effectPos) = 0;
 	void AnimRestart();
 
 	Vector2Int GetMapPos()const;
@@ -97,7 +96,7 @@ public:
 	bool GetIsDying()const;
 	Dir GetDir()const;
 	Vector2Int GetCenterPos()const;
-	Rect GetSize();
+	BattleCharactor& GetBattleC()const;
 
 	void SetIsSelect(const bool select);
 	void SetIsDying(const bool dying);
@@ -107,5 +106,31 @@ public:
 
 	void RouteSearch();
 	void TurnReset();
+};
+
+class BattleCharactor :
+	public Actor
+{
+protected:
+	Charactor& _charactor;
+	Dir _dir;
+	Vector2 _startPos;
+	Size _size;
+	std::shared_ptr<Animator> _animator;
+
+public:
+	BattleCharactor(Charactor& charactor);
+	~BattleCharactor();
+
+	virtual void Update(const Input& input)override;
+	virtual void Draw(const Camera& camera)override;
+
+	Size GetSize()const;
+	Vector2Int GetCenterPos()const;
+
+	void SetStartPos(const Vector2& startPos);
+	virtual void SetDir(const Dir dir) = 0;
+
+	virtual std::shared_ptr<Effect> CreateAttackEffect(const Vector2Int& effectPos) = 0;
 };
 

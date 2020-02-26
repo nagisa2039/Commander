@@ -13,14 +13,4 @@ void DrawCircle(const Vector2Int& center, const int radius, const unsigned int c
 
 void DrawFormatStringToHandle(const Vector2Int& leftup, unsigned int Color, const int FontHandle, const char* FormatString);
 
-class CalDrawPos
-{
-private:
-	std::array<std::function<Vector2Int(const Vector2Int&, const Size&)>, static_cast<int>(Anker::max)> _calFunArray;
-
-public:
-	CalDrawPos();
-	~CalDrawPos();
-
-	Vector2Int GetDrawPos(const Vector2Int& drawPos, const Size& size, const Anker anker);
-};
+Vector2Int GetDrawPos(const Vector2Int& drawPos, const Size& size, const Anker anker);

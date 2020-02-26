@@ -12,6 +12,16 @@ public:
 	void Update(const Input& input)override final;
 	void Draw(const Camera& camera)override final;
 
-	std::shared_ptr<Effect> AddAttackEffect(const Vector2Int& effectPos)override final;
+};
+
+class SwordBC : 
+	public BattleCharactor
+{
+public:
+	SwordBC(Charactor& charactor);
+	~SwordBC();
+
+	void SetDir(const Dir dir)override;
+	std::shared_ptr<Effect> CreateAttackEffect(const Vector2Int& effectPos)override final;
 };
 

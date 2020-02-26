@@ -10,7 +10,6 @@ private:
 	int _lifeCnt;
 	const int _lifeCntMax;
 	Anker _anker;
-	std::shared_ptr<CalDrawPos> _calDrawPos;
 	Vector2 _move;
 	Vector2 _startPos;
 	std::string _str;

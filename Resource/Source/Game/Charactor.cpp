@@ -32,7 +32,7 @@ void Charactor::Move()
 		if (charactor != nullptr && _team != charactor->GetTeam())
 		{
 			// êÌì¨
-			_controller.PushScene(make_shared<BattleScene>(*this, *charactor, _controller));
+			_controller.PushScene(make_shared<BattleScene>(GetBattleC(), charactor->GetBattleC(), _controller));
 			MoveEnd();
 		}
 		moveAnimEnd();
@@ -111,6 +111,11 @@ Vector2Int Charactor::GetCenterPos() const
 	return Vector2Int(_pos.ToVector2Int() - (_mapCtrl.GetChipSize() - (_animator->GetAnimRect().size*0.5)).ToVector2Int());
 }
 
+BattleCharactor& Charactor::GetBattleC() const
+{
+	return *_battleC;
+}
+
 void Charactor::SetIsSelect(const bool select)
 {
 	_isSelect = select;
@@ -167,11 +172,6 @@ Charactor::~Charactor()
 {
 }
 
-void Charactor::BattleDraw(const Vector2Int& buttonCenter, const Size& size)
-{
-	_animator->Draw(buttonCenter - Vector2Int(size.w/2, size.h), size);
-}
-
 void Charactor::AnimRestart()
 {
 	_animator->AnimRestart();
@@ -213,4 +213,41 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 		}
 	}
 	return false;
+}
+
+BattleCharactor::BattleCharactor(Charactor& charactor)
+	: _charactor(charactor), _size(128,128)
+{
+	SetStartPos(Vector2());
+	_animator = make_shared<Animator>();
+}
+
+BattleCharactor::~BattleCharactor()
+{
+}
+
+void BattleCharactor::Update(const Input& input)
+{
+	_animator->Update();
+}
+
+void BattleCharactor::Draw(const Camera& camera)
+{
+	_animator->Draw(GetDrawPos(_pos.ToVector2Int(), _size, Anker::centerdown), _size);
+}
+
+Size BattleCharactor::GetSize() const
+{
+	return _size;
+}
+
+Vector2Int BattleCharactor::GetCenterPos() const
+{
+	return Vector2Int(_pos.ToVector2Int() - Vector2Int(0, _size.h/2));
+}
+
+void BattleCharactor::SetStartPos(const Vector2& startPos)
+{
+	_startPos = startPos;
+	_pos = startPos;
 }

@@ -23,6 +23,8 @@ public:
 
 	void Update(BattleScene& battleScene);
 
+	void UIDraw()override final;
+
 	void SetDir(const Dir dir)override;
 	std::shared_ptr<Effect> CreateAttackEffect(const Vector2Int& effectPos)override final;
 };

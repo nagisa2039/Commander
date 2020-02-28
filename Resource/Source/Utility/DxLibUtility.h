@@ -11,6 +11,4 @@ void DrawGraph(const Vector2Int& leftup, const int handle, const bool transFlag 
 
 void DrawCircle(const Vector2Int& center, const int radius, const unsigned int color, const bool fillFlag = true);
 
-void DrawFormatStringToHandle(const Vector2Int& leftup, unsigned int Color, const int FontHandle, const char* FormatString);
-
 Vector2Int GetDrawPos(const Vector2Int& drawPos, const Size& size, const Anker anker);

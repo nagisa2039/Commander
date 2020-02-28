@@ -73,6 +73,8 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	_mapCtrl->LoadMap("map0");
 
 	TurnReset(Team::player);
+
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin", 40, 1, true, true);
 }
 
 

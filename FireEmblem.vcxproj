@@ -32,6 +32,7 @@
     <ClCompile Include="Resource\Source\Game\PlayerCursor.cpp" />
     <ClCompile Include="Resource\Source\Game\SlashingEffect.cpp" />
     <ClCompile Include="Resource\Source\Game\Swordsman.cpp" />
+    <ClCompile Include="Resource\Source\Game\Team.cpp" />
     <ClCompile Include="Resource\Source\Scene\BattleScene.cpp" />
     <ClCompile Include="Resource\Source\Scene\MapEditScene.cpp" />
     <ClCompile Include="Resource\Source\Scene\PlayScene.cpp" />

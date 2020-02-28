@@ -5,6 +5,9 @@
 #include "Animator.h"
 #include "../Scene/SceneController.h"
 #include "SlashingEffect.h"
+#include "Application.h"
+#include <DxLib.h>
+#include "FileSystem.h"
 
 using namespace std;
 
@@ -47,7 +50,7 @@ Swordsman::Swordsman(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl
 
 	_dir = Dir::down;
 
-	_status.move = 5;
+	_status = Status(1, 100, 10, 5, 5, 5, 5, 5);
 	_startStatus = _status;
 }
 
@@ -111,6 +114,59 @@ SwordBC::~SwordBC()
 
 void SwordBC::Update(BattleScene& battleScene)
 {
+}
+
+void SwordBC::UIDraw()
+{
+	auto wsize = Application::Instance().GetWindowSize();
+	auto status = _selfChar.GetStatus();
+	auto targetStatus = _targetChar->GetSelfCharacotr().GetStatus();
+	auto teamColor = GetTeamColor(_selfChar.GetTeam());
+	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin");
+
+	// UIÇÃç∂è„ÇÃç¿ïW
+	Vector2Int dirDownPos;
+	Vector2Int paramDrawPos;
+	Size paramUISize(_uiSize.w / 3, 120);
+
+	if (_dir == Dir::left)
+	{
+		dirDownPos = GetDrawPos(Vector2Int(0, wsize.h), _uiSize, Anker::leftdown);
+		paramDrawPos = GetDrawPos(Vector2Int(0, wsize.h - _uiSize.h/2), paramUISize, Anker::leftdown);
+	}
+	else
+	{
+		dirDownPos = GetDrawPos(wsize.ToVector2Int(), _uiSize, Anker::rightdown);
+		paramDrawPos = GetDrawPos(wsize.ToVector2Int() - Vector2Int(0, _uiSize.h/2), paramUISize, Anker::rightdown);
+	}
+	// âÊñ â∫UIÇÃóÃàÊï`âÊ
+	DrawBox(dirDownPos, dirDownPos + _uiSize.ToVector2Int(), teamColor, true);
+
+	// çUåÇóÕ, ñΩíÜó¶, ïKéE, ÇÃï`âÊ
+	Rect _paramRect(paramDrawPos + paramUISize.ToVector2Int()*0.5, paramUISize);
+	_paramRect.Draw(teamColor);
+	_paramRect.Draw(0xffffff, false);
+	auto drawParam = [&](const int itemNum, const int fontH, const unsigned int color, const char* string, const int num)
+	{
+		Size strSize;
+		int lineCnt;
+		GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, fontH, "%d", num);
+		Vector2Int paramNumDrawPos = GetDrawPos(Vector2Int(_paramRect.Right(), _paramRect.Top()), strSize, Anker::rightup);
+		DrawFormatStringToHandle(paramDrawPos.x + 10,		paramDrawPos.y + 40 * itemNum,		color, fontH, string);
+		DrawFormatStringToHandle(paramNumDrawPos.x - 10,	paramNumDrawPos.y + 40 * itemNum,	color, fontH, "%d", num);
+	};
+
+	int itemNum = 0;
+	// çUåÇóÕ
+	drawParam(itemNum++, fontHandle, 0xaaaaaa, "ATK", status.GetDamage(targetStatus));
+	// ñΩíÜ
+	drawParam(itemNum++, fontHandle, 0xaaaaaa, "HIT", 100);
+	// ïKéE
+	drawParam(itemNum++, fontHandle, 0xaaaaaa, "CRT", 100);
+
+	// HPÇÃêîílï\é¶
+	auto hpDrawPos = dirDownPos + Vector2Int(20, 20) + Vector2Int(0, _uiSize.h/2);
+	DrawFormatStringToHandle(hpDrawPos.x, hpDrawPos.y, 0xaaaaaa, fontHandle, "%d", status.health);
 }
 
 void SwordBC::SetDir(const Dir dir)

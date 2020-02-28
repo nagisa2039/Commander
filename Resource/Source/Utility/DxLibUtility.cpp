@@ -21,11 +21,6 @@ void DrawCircle(const Vector2Int& center, const int radius, const unsigned int c
 	DxLib::DrawCircle(center.x, center.y, radius, color, fillFlag);
 }
 
-void DrawFormatStringToHandle(const Vector2Int& leftup, unsigned int Color, const int FontHandle, const char* FormatString)
-{
-	DxLib::DrawFormatStringToHandle(leftup.x, leftup.y, Color, FontHandle, FormatString);
-}
-
 Vector2Int GetDrawPos(const Vector2Int& drawPos, const Size& size, const Anker anker)
 {
 	switch (anker)

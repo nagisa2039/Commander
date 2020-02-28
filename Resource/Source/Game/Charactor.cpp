@@ -7,6 +7,9 @@
 #include "../Scene/BattleScene.h"
 #include "Effect.h"
 #include <DxLib.h>
+#include "Application.h"
+#include "FlyText.h"
+#include <algorithm>
 
 using namespace std;
 
@@ -131,6 +134,11 @@ void Charactor::SetDir(const Dir dir)
 	_dir = dir;
 }
 
+void Charactor::SetStatus(const Status& status)
+{
+	_status = status;
+}
+
 void Charactor::MoveEnd()
 {
 	_canMove = false;
@@ -166,6 +174,8 @@ Charactor::Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl
 	_isDying = false;;
 
 	_animator = make_shared<Animator>();
+
+	_status = Status();
 }
 
 Charactor::~Charactor()
@@ -216,13 +226,19 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 }
 
 BattleCharactor::BattleCharactor(Charactor& charactor)
-	: _charactor(charactor), _size(128,128)
+	: _selfChar(charactor), _size(128,128)
 {
 	SetStartPos(Vector2());
 	_animator = make_shared<Animator>();
 
 	_attackAnimCnt = -1;
 	_attackAnimCntMax = 15;
+
+	auto wsize = Application::Instance().GetWindowSize();
+	_uiSize = Size(wsize.w / 2, 200);
+
+	_targetChar = nullptr;
+	_createEffect = false;
 }
 
 BattleCharactor::~BattleCharactor()
@@ -246,17 +262,39 @@ void BattleCharactor::AttackUpdate(BattleScene& battleScene)
 		{
 			_attackAnimCnt = -1;
 		}
+		if (!_createEffect && _attackAnimCnt >= _attackAnimCntMax / 2)
+		{
+			if (_targetChar != nullptr)
+			{
+				_createEffect = true;
+
+				auto targetCenterPos = _targetChar->GetCenterPos();
+				battleScene.GetEffectVec().emplace_back(CreateAttackEffect(targetCenterPos));
+
+				int damage = _selfChar.GetStatus().GetDamage(_targetChar->GetSelfCharacotr().GetStatus());
+				char damageText[10];
+				sprintf_s(damageText, 10, "%d", damage);
+				battleScene.GetEffectVec().emplace_back(make_shared<FlyText>(damageText, targetCenterPos, 60 * 1));
+				_targetChar->AddDamage(damage);
+			}
+		}
 	}
 }
 
 void BattleCharactor::Draw()
 {
 	_animator->Draw(GetDrawPos(_pos.ToVector2Int(), _size, Anker::centerdown), _size);
+	UIDraw();
+}
+
+void BattleCharactor::UIDraw()
+{
 }
 
 void BattleCharactor::StartAttackAnim()
 {
 	_attackAnimCnt = 0;
+	_createEffect = false;
 }
 
 bool BattleCharactor::GetAnimEnd()
@@ -274,8 +312,40 @@ Vector2Int BattleCharactor::GetCenterPos() const
 	return Vector2Int(_pos.ToVector2Int() - Vector2Int(0, _size.h/2));
 }
 
+Charactor& BattleCharactor::GetSelfCharacotr()
+{
+	return _selfChar;
+}
+
 void BattleCharactor::SetStartPos(const Vector2& startPos)
 {
 	_startPos = startPos;
 	_pos = startPos;
+}
+
+void BattleCharactor::SetTargetCharactor(BattleCharactor* target)
+{
+	_targetChar = target;
+}
+
+void BattleCharactor::AddDamage(const int damage)
+{
+	auto status = _selfChar.GetStatus();
+	status.health -= damage;
+	_selfChar.SetStatus(status);
+}
+
+int Charactor::Status::GetDamage(const Status& target)const
+{
+	return max(power - target.defense, 0);
+}
+
+int Charactor::Status::GetHit(const Status& target) const
+{
+	return max(100, 0);
+}
+
+int Charactor::Status::GetCritical(const Status& target) const
+{
+	return max(100, 0);
 }

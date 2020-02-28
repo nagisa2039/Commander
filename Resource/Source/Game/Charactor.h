@@ -31,11 +31,20 @@ public:
 		uint8_t level;
 		uint8_t health;
 		uint8_t power;
+		uint8_t defense;
+		uint8_t speed;
+		uint8_t skill;
+		uint8_t luck;
 		uint8_t move;
 
-		Status(): level(1), health(1), power(1), move(1) {};
-		Status(const uint8_t lv, const uint8_t he, const uint8_t pw, const uint8_t mv)
-			: level(lv), health(he), power(pw), move(mv) {};
+		Status(): level(1), health(1), power(1), defense(1), speed(1), skill(1), luck(1), move(1) {};
+		Status(const uint8_t lv, const uint8_t he, const uint8_t pw, const uint8_t df, 
+			const uint8_t sp, const uint8_t sk, const uint8_t lu, const uint8_t mv)
+			: level(lv), health(he), power(pw), defense(df), speed(sp), skill(sk), luck(lu), move(mv) {};
+
+		int GetDamage(const Status& target)const;	// ダメージ
+		int GetHit(const Status& target)const;	// 命中率
+		int GetCritical(const Status& target)const;	// 必殺率
 	};
 
 protected:
@@ -101,6 +110,7 @@ public:
 	void SetIsSelect(const bool select);
 	void SetIsDying(const bool dying);
 	void SetDir(const Dir dir);
+	void SetStatus(const Status& status);
 
 	void MoveEnd();
 
@@ -113,12 +123,17 @@ class BattleScene;
 class BattleCharactor
 {
 protected:
-	Charactor& _charactor;
+	Charactor& _selfChar;
+	BattleCharactor* _targetChar;
+
 	Dir _dir;
 	Vector2 _startPos;
 	Vector2 _pos;
 	Size _size;
 	std::shared_ptr<Animator> _animator;
+	bool _createEffect;
+
+	Size _uiSize;
 
 	int _attackAnimCnt;
 	int _attackAnimCntMax;
@@ -131,14 +146,21 @@ public:
 	virtual void AttackUpdate(BattleScene& battleScene);
 	virtual void Draw();
 
+	virtual void UIDraw();
+
 	void StartAttackAnim();
 	bool GetAnimEnd();
 
+
 	Size GetSize()const;
 	Vector2Int GetCenterPos()const;
+	Charactor& GetSelfCharacotr();
 
-	void SetStartPos(const Vector2& startPos);
-	virtual void SetDir(const Dir dir) = 0;
+	void SetStartPos(const Vector2& startPos);	// 描画する座標(中央下)
+	virtual void SetDir(const Dir dir) = 0;	//  攻撃か守備の設定
+	void SetTargetCharactor(BattleCharactor* target);	// 戦う相手のポインター
+
+	void AddDamage(const int damage);	// ダメージを与える
 
 	virtual std::shared_ptr<Effect> CreateAttackEffect(const Vector2Int& effectPos) = 0;
 };

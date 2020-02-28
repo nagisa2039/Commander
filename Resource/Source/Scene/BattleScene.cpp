@@ -21,9 +21,6 @@ void BattleScene::LeftTurn(const Input& input)
 	{
 		_rightBC.StartAttackAnim();
 		_updater = &BattleScene::RightTuen;
-
-		_effects.emplace_back(_leftBC.CreateAttackEffect(_rightBC.GetCenterPos()));
-		_effects.emplace_back(make_shared<FlyText>("50", _rightBC.GetCenterPos(), 60 * 1));
 	}
 }
 
@@ -34,9 +31,6 @@ void BattleScene::RightTuen(const Input& input)
 	{
 		_leftBC.StartAttackAnim();
 		_updater = &BattleScene::LeftTurn;
-
-		_effects.emplace_back(_rightBC.CreateAttackEffect(_leftBC.GetCenterPos()));
-		_effects.emplace_back(make_shared<FlyText>("50", _leftBC.GetCenterPos(), 60 * 1));
 	}
 
 }
@@ -54,14 +48,16 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 	_effects.clear();
 
 
-	auto floorY = _screenSize.h / 3 * 2;
+	_floatY = _screenSize.h / 2;
 	auto screenCenter = _screenSize.ToVector2Int() * 0.5f;
 
-	_leftBC.SetStartPos(Vector2(screenCenter.x - 200, floorY));
+	_leftBC.SetStartPos(Vector2(screenCenter.x - 200, _floatY));
 	_leftBC.SetDir(Dir::left);
+	_leftBC.SetTargetCharactor(&rightBC);
 
-	_rightBC.SetStartPos(Vector2(screenCenter.x + 200, floorY));
+	_rightBC.SetStartPos(Vector2(screenCenter.x + 200, _floatY));
 	_rightBC.SetDir(Dir::right);
+	_rightBC.SetTargetCharactor(&leftBC);
 
 	_leftBC.StartAttackAnim();
 	_updater = &BattleScene::LeftTurn;
@@ -101,11 +97,10 @@ void BattleScene::Draw(void)
 	SetDrawScreen(_screenH);
 	ClsDrawScreen();
 
-	auto floorY = _screenSize.h / 3 * 2;
 	auto screenCenter = _screenSize.ToVector2Int() * 0.5f;
 
 	// °‚Ì•`‰æ
-	DrawRotaGraph(screenCenter.x, floorY, 1.0, 0.0,
+	DrawRotaGraph(screenCenter.x, _floatY, 1.0, 0.0,
 		Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/Battle/floor.png"), true);
 
 	auto charSize = Size(128, 128);
@@ -122,4 +117,9 @@ void BattleScene::Draw(void)
 
 	DrawGraph(0,0,_screenH, true);
 	ScreenFlip();
+}
+
+std::vector<std::shared_ptr<Effect>>& BattleScene::GetEffectVec()
+{
+	return _effects;
 }

@@ -23,6 +23,8 @@ private:
 
 	std::vector<std::shared_ptr<Effect>> _effects;
 
+	float _floatY;
+
 	void LeftTurn(const Input& input);
 	void RightTuen(const Input& input);
 
@@ -34,5 +36,7 @@ public:
 
 	void Update(const Input& input) override final;
 	void Draw(void) override final;
+
+	std::vector<std::shared_ptr<Effect>>& GetEffectVec();
 };
 

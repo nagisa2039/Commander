@@ -132,6 +132,9 @@
     <ClCompile Include="Resource\Source\Game\FlyText.cpp">
       <Filter>ソース ファイル\Game\Actor\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Game\Team.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">

@@ -78,6 +78,7 @@ DirectX::XMFLOAT2 Vector2::ToXMFLOAT2() const
 	return DirectX::XMFLOAT2(x,y);
 }
 
+
 Vector2Int operator+(const Vector2Int & lval, const Vector2Int & rval)
 {
 	return Vector2Int(lval.x + rval.x, lval.y + rval.y);
@@ -121,6 +122,11 @@ bool operator==(const Vector2Int & lval, const Vector2Int & rval)
 bool operator!=(const Vector2Int & lval, const Vector2Int & rval)
 {
 	return lval.x != rval.x || lval.y != rval.y;
+}
+
+Vector2Int operator+(const Vector2Int& lval, const Size& rval)
+{
+	return Vector2Int(lval.x + rval.w, lval.y + rval.h);
 }
 
 float Dot(const Vector2 & lval, const Vector2 & rval)

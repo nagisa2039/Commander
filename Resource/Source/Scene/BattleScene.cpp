@@ -17,22 +17,41 @@ using namespace std;
 void BattleScene::LeftTurn(const Input& input)
 {
 	_leftBC.AttackUpdate(*this);
-	if (_leftBC.GetAnimEnd())
+	if (_leftBC.GetAttackAnimEnd())
 	{
-		_rightBC.StartAttackAnim();
-		_updater = &BattleScene::RightTuen;
+		_rightBC.StartHPAnim();
+		_updater = &BattleScene::RightHPAnim;
+	}
+}
+
+void BattleScene::LeftHPAnim(const Input& input)
+{
+	_leftBC.UIAnimUpdate();
+	if (_leftBC.GetHPAnimEnd())
+	{
+		_leftBC.StartAttackAnim();
+		_updater = &BattleScene::LeftTurn;
 	}
 }
 
 void BattleScene::RightTuen(const Input& input)
 {
 	_rightBC.AttackUpdate(*this);
-	if (_rightBC.GetAnimEnd())
+	if (_rightBC.GetAttackAnimEnd())
 	{
-		_leftBC.StartAttackAnim();
-		_updater = &BattleScene::LeftTurn;
+		_leftBC.StartHPAnim();
+		_updater = &BattleScene::LeftHPAnim;
 	}
+}
 
+void BattleScene::RightHPAnim(const Input& input)
+{
+	_rightBC.UIAnimUpdate();
+	if (_rightBC.GetHPAnimEnd())
+	{
+		_rightBC.StartAttackAnim();
+		_updater = &BattleScene::RightTuen;
+	}
 }
 
 BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, SceneController& ctrl)
@@ -51,15 +70,10 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 	_floatY = _screenSize.h / 2;
 	auto screenCenter = _screenSize.ToVector2Int() * 0.5f;
 
-	_leftBC.SetStartPos(Vector2(screenCenter.x - 200, _floatY));
-	_leftBC.SetDir(Dir::left);
-	_leftBC.SetTargetCharactor(&rightBC);
+	_leftBC.Init(Vector2(screenCenter.x - 200, _floatY),  Dir::left,  &rightBC);
+	_rightBC.Init(Vector2(screenCenter.x + 200, _floatY), Dir::right, &leftBC);
 
-	_rightBC.SetStartPos(Vector2(screenCenter.x + 200, _floatY));
-	_rightBC.SetDir(Dir::right);
-	_rightBC.SetTargetCharactor(&leftBC);
-
-	_leftBC.StartAttackAnim();
+	_rightBC.StartAttackAnim();
 	_updater = &BattleScene::LeftTurn;
 }
 

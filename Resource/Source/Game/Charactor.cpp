@@ -228,21 +228,31 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 BattleCharactor::BattleCharactor(Charactor& charactor)
 	: _selfChar(charactor), _size(128,128)
 {
+	auto wsize = Application::Instance().GetWindowSize();
 	SetStartPos(Vector2());
 	_animator = make_shared<Animator>();
-
-	_attackAnimCnt = -1;
-	_attackAnimCntMax = 15;
-
-	auto wsize = Application::Instance().GetWindowSize();
 	_uiSize = Size(wsize.w / 2, 200);
 
 	_targetChar = nullptr;
-	_createEffect = false;
 }
 
 BattleCharactor::~BattleCharactor()
 {
+}
+
+void BattleCharactor::Init(const Vector2& startPos, const Dir dir, BattleCharactor* target)
+{
+	SetStartPos(startPos);
+	SetDir(dir);
+	SetTargetCharactor(target);
+
+	_attackAnimCnt = -1;
+	_attackAnimCntMax = 15;
+
+	_createEffect = false;
+
+	_animHealth = _selfChar.GetStatus().health;
+	_animHealthCnt = 0;
 }
 
 void BattleCharactor::AnimUpdate()
@@ -287,6 +297,20 @@ void BattleCharactor::Draw()
 	UIDraw();
 }
 
+void BattleCharactor::UIAnimUpdate()
+{
+	uint8_t statusHp = _selfChar.GetStatus().health;
+	if (statusHp == _animHealth)
+	{
+		return;
+	}
+
+	if (_animHealthCnt++ % 3 == 0)
+	{
+		_animHealth += _animHealth > statusHp ? -1 : 1;
+	}
+}
+
 void BattleCharactor::UIDraw()
 {
 }
@@ -295,11 +319,22 @@ void BattleCharactor::StartAttackAnim()
 {
 	_attackAnimCnt = 0;
 	_createEffect = false;
+	_animHealth = _selfChar.GetStatus().health;
 }
 
-bool BattleCharactor::GetAnimEnd()
+bool BattleCharactor::GetAttackAnimEnd()
 {
 	return _attackAnimCnt < 0;
+}
+
+void BattleCharactor::StartHPAnim()
+{
+	_animHealthCnt = 0;
+}
+
+bool BattleCharactor::GetHPAnimEnd()
+{
+	return _animHealth == _selfChar.GetStatus().health;
 }
 
 Size BattleCharactor::GetSize() const

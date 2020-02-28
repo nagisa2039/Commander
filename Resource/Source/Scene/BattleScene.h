@@ -26,7 +26,10 @@ private:
 	float _floatY;
 
 	void LeftTurn(const Input& input);
+	void LeftHPAnim(const Input& input);
+
 	void RightTuen(const Input& input);
+	void RightHPAnim(const Input& input);
 
 	void(BattleScene::* _updater)(const Input& input);
 

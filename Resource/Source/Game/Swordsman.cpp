@@ -128,16 +128,23 @@ void SwordBC::UIDraw()
 	Vector2Int dirDownPos;
 	Vector2Int paramDrawPos;
 	Size paramUISize(_uiSize.w / 3, 120);
+	Vector2Int nameDrawPos;
+	Size nameBoxSize(300, 50);
+	Vector2Int sideupPos;
 
 	if (_dir == Dir::left)
 	{
+		sideupPos = Vector2Int(0,0);
 		dirDownPos = GetDrawPos(Vector2Int(0, wsize.h), _uiSize, Anker::leftdown);
 		paramDrawPos = GetDrawPos(Vector2Int(0, wsize.h - _uiSize.h/2), paramUISize, Anker::leftdown);
+		nameDrawPos = GetDrawPos(sideupPos, nameBoxSize, Anker::leftup);
 	}
 	else
 	{
+		sideupPos = Vector2Int(wsize.w, 0);
 		dirDownPos = GetDrawPos(wsize.ToVector2Int(), _uiSize, Anker::rightdown);
 		paramDrawPos = GetDrawPos(wsize.ToVector2Int() - Vector2Int(0, _uiSize.h/2), paramUISize, Anker::rightdown);
+		nameDrawPos = GetDrawPos(sideupPos, nameBoxSize, Anker::rightup);
 	}
 	// 画面下UIの領域描画
 	DrawBox(dirDownPos, dirDownPos + _uiSize.ToVector2Int(), teamColor, true);
@@ -165,8 +172,28 @@ void SwordBC::UIDraw()
 	drawParam(itemNum++, fontHandle, 0xaaaaaa, "CRT", 100);
 
 	// HPの数値表示
+	auto health = _animHealth;
 	auto hpDrawPos = dirDownPos + Vector2Int(20, 20) + Vector2Int(0, _uiSize.h/2);
-	DrawFormatStringToHandle(hpDrawPos.x, hpDrawPos.y, 0xaaaaaa, fontHandle, "%d", status.health);
+	DrawFormatStringToHandle(hpDrawPos.x, hpDrawPos.y, 0xaaaaaa, fontHandle, "%d", health);
+
+	Size hpPerDot(5,30);
+	int linePerHp = 40;
+	int berCnt = ceil(health / 40.0f);
+	auto hpBerDrawPos = GetDrawPos(hpDrawPos + Vector2Int(100, 30), Size(0, berCnt * hpPerDot.h), Anker::leftcenter);
+	for (int idx = 0; idx < berCnt; idx++)
+	{
+		Size berSize = Size( min((health - linePerHp * (berCnt - idx-1)), linePerHp), 1) * hpPerDot;
+		DrawBox(hpBerDrawPos, hpBerDrawPos + berSize, 0x4eb79c, true);
+		DrawBox(hpBerDrawPos, hpBerDrawPos + berSize, 0x000000, false);
+		hpBerDrawPos.y += hpPerDot.h;
+	};
+	
+	// 名前表示
+	Rect nameBox(nameDrawPos + nameBoxSize*0.5, nameBoxSize);
+	nameBox.Draw(teamColor);
+	nameBox.Draw(0x000000, false);
+	DrawFormatStringToHandle(nameDrawPos.x+5, nameDrawPos.y+5, 0xaaaaaa, fontHandle, "Swordsman");
+
 }
 
 void SwordBC::SetDir(const Dir dir)

@@ -138,18 +138,27 @@ protected:
 	int _attackAnimCnt;
 	int _attackAnimCntMax;
 
+	uint8_t _animHealth;
+	int _animHealthCnt;
+
 public:
 	BattleCharactor(Charactor& charactor);
 	~BattleCharactor();
+
+	virtual void Init(const Vector2& startPos, const Dir dir, BattleCharactor* target);
 
 	virtual void AnimUpdate();
 	virtual void AttackUpdate(BattleScene& battleScene);
 	virtual void Draw();
 
+	virtual void UIAnimUpdate();
 	virtual void UIDraw();
 
 	void StartAttackAnim();
-	bool GetAnimEnd();
+	bool GetAttackAnimEnd();
+
+	void StartHPAnim();
+	bool GetHPAnimEnd();
 
 
 	Size GetSize()const;

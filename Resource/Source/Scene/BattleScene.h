@@ -24,14 +24,18 @@ private:
 	std::vector<std::shared_ptr<Effect>> _effects;
 
 	float _floatY;
+	bool _pursuit;	// ’ÇŒ‚”»’è‚ğs‚Á‚½‚©
 
-	void LeftTurn(const Input& input);
-	void LeftHPAnim(const Input& input);
+	bool LeftTurn(const Input& input);
+	bool LeftHPAnim(const Input& input);
 
-	void RightTuen(const Input& input);
-	void RightHPAnim(const Input& input);
+	bool RightTurn(const Input& input);
+	bool RightHPAnim(const Input& input);
 
-	void(BattleScene::* _updater)(const Input& input);
+	bool(BattleScene::* _updater)(const Input& input);
+
+	// ’ÇŒ‚‚ğ‚·‚é‚©	”­¶‚·‚é‘¤‚ğ•Ô‚·	‚µ‚È‚¢ê‡‚Ímax‚ª•Ô‚Á‚Ä‚­‚é
+	bool PursuitAttack();
 
 public:
 	BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, SceneController& ctrl);

@@ -74,12 +74,15 @@ void Charactor::DrawMovableMass(const Camera& camera) const
 	}
 
 	auto offset = camera.GetCameraOffset();
-	auto chipSize = _mapCtrl.GetChipSize().ToVector2Int();
+	auto chipSize = _mapCtrl.GetChipSize();
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
 	for (const auto& movePos : _resutlPosList)
 	{
-		DrawBox(offset + movePos.mapPos * chipSize, offset + (movePos.mapPos + 1) * chipSize, movePos.attack ? 0xff0000 : 0x0000ff);
+		Rect box(offset + (movePos.mapPos * chipSize.ToVector2Int() + chipSize*0.5) +-1, chipSize);
+		unsigned int color = movePos.attack ? 0xff0000 : 0x0000ff;
+		box.Draw(color);
+		box.Draw(color, false);
 	}
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }

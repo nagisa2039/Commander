@@ -73,8 +73,14 @@ void Swordsman::Draw(const Camera& camera)
 
 	DrawMovableMass(camera);
 
+	if (!_canMove)
+	{
+		SetDrawBright(128,128,128);
+	}
 	auto imgSize = _animator->GetAnimRect().size.ToVector2Int();
 	_animator->Draw(offset + _pos.ToVector2Int(), _mapCtrl.GetChipSize());
+
+	SetDrawBright(255, 255, 255);
 
 	auto circleOffset = Vector2Int(0, -chipSize.y/2);
 	DrawCircle(circleOffset + offset + _pos.ToVector2Int() + chipSize * 0.5, chipSize.x / 4, GetTeamColor(), true);
@@ -192,8 +198,12 @@ void SwordBC::UIDraw()
 	Rect nameBox(nameDrawPos + nameBoxSize*0.5, nameBoxSize);
 	nameBox.Draw(teamColor);
 	nameBox.Draw(0x000000, false);
-	DrawFormatStringToHandle(nameDrawPos.x+5, nameDrawPos.y+5, 0xaaaaaa, fontHandle, "Swordsman");
-
+	const char* str = "Swordsman";
+	Size strSize;
+	int lineCnt;
+	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, fontHandle, str);
+	nameDrawPos = GetDrawPos(nameBox.center, strSize, Anker::center) + Vector2Int(5,5);
+	DrawFormatStringToHandle(nameDrawPos.x, nameDrawPos.y, 0xaaaaaa, fontHandle, str);
 }
 
 void SwordBC::SetDir(const Dir dir)

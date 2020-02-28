@@ -14,7 +14,7 @@ constexpr auto game_screen_size_y = 720;
 
 using namespace std;
 
-void BattleScene::LeftTurn(const Input& input)
+bool BattleScene::LeftTurn(const Input& input)
 {
 	_leftBC.AttackUpdate(*this);
 	if (_leftBC.GetAttackAnimEnd())
@@ -22,19 +22,28 @@ void BattleScene::LeftTurn(const Input& input)
 		_rightBC.StartHPAnim();
 		_updater = &BattleScene::RightHPAnim;
 	}
+	return true;
 }
 
-void BattleScene::LeftHPAnim(const Input& input)
+bool BattleScene::LeftHPAnim(const Input& input)
 {
 	_leftBC.UIAnimUpdate();
 	if (_leftBC.GetHPAnimEnd())
 	{
-		_leftBC.StartAttackAnim();
-		_updater = &BattleScene::LeftTurn;
+		if (_pursuit)
+		{
+			return false;
+		}
+		else
+		{
+			PursuitAttack();
+			_pursuit = true;
+		}
 	}
+	return true;
 }
 
-void BattleScene::RightTuen(const Input& input)
+bool BattleScene::RightTurn(const Input& input)
 {
 	_rightBC.AttackUpdate(*this);
 	if (_rightBC.GetAttackAnimEnd())
@@ -42,16 +51,44 @@ void BattleScene::RightTuen(const Input& input)
 		_leftBC.StartHPAnim();
 		_updater = &BattleScene::LeftHPAnim;
 	}
+	return true;
 }
 
-void BattleScene::RightHPAnim(const Input& input)
+bool BattleScene::RightHPAnim(const Input& input)
 {
 	_rightBC.UIAnimUpdate();
 	if (_rightBC.GetHPAnimEnd())
 	{
+		if (_pursuit)
+		{
+			return false;
+		}
 		_rightBC.StartAttackAnim();
-		_updater = &BattleScene::RightTuen;
+		_updater = &BattleScene::RightTurn;
 	}
+	return true;
+}
+
+bool BattleScene::PursuitAttack()
+{
+	auto leftStatus = _leftBC.GetSelfCharacotr().GetStatus();
+	auto rightStatus = _rightBC.GetSelfCharacotr().GetStatus();
+	if (leftStatus.speed - rightStatus.speed >= 4)
+	{
+		_leftBC.StartAttackAnim();
+		_updater = &BattleScene::LeftTurn;
+		return true;
+	}
+	else
+	{
+		if (rightStatus.speed - leftStatus.speed >= 4)
+		{
+			_leftBC.StartAttackAnim();
+			_updater = &BattleScene::RightTurn;
+			return true;
+		}
+	}
+	return false;
 }
 
 BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, SceneController& ctrl)
@@ -73,8 +110,10 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 	_leftBC.Init(Vector2(screenCenter.x - 200, _floatY),  Dir::left,  &rightBC);
 	_rightBC.Init(Vector2(screenCenter.x + 200, _floatY), Dir::right, &leftBC);
 
-	_rightBC.StartAttackAnim();
+	_leftBC.StartAttackAnim();
 	_updater = &BattleScene::LeftTurn;
+
+	_pursuit = false;
 }
 
 BattleScene::~BattleScene()
@@ -88,7 +127,11 @@ void BattleScene::Update(const Input& input)
 	_leftBC.AnimUpdate();
 	_rightBC.AnimUpdate();
 
-	(this->*_updater)(input);
+	if (!(this->*_updater)(input))
+	{
+		_controller.PopScene();
+		return;
+	}
 
 	for (auto& effect : _effects)
 	{

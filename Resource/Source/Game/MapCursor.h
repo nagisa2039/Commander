@@ -1,5 +1,6 @@
 #pragma once
 #include "Actor.h"
+#include <string>
 
 class MapCtrl;
 
@@ -10,10 +11,17 @@ protected:
 	Vector2Int _mapPos;
 	MapCtrl& _mapCtrl;
 
-	int _inputItv;	// 入力受付までのフレーム数
-	const int _inputItvMax;
+	int _moveItv;	// 入力受付までのフレーム数
+	int _moveItvCurrentMax;
+	const int _moveItvMax;
+
+	int _putItv;
+	int _putItvCurrentMax;
+	const int _putItvMax;
 
 	void CursorMove(const Input& input);
+
+	bool PutCheck(const Input& input, const std::string& key);
 
 public:
 	MapCursor(MapCtrl& mapCtrl);

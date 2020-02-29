@@ -178,19 +178,25 @@ void SwordBC::UIDraw()
 	drawParam(itemNum++, fontHandle, 0xaaaaaa, "CRT", 100);
 
 	// HPÇÃêîílï\é¶
+	auto startHealth = _selfChar.GetStartStatus().health;
 	auto health = _animHealth;
 	auto hpDrawPos = dirDownPos + Vector2Int(20, 20) + Vector2Int(0, _uiSize.h/2);
 	DrawFormatStringToHandle(hpDrawPos.x, hpDrawPos.y, 0xaaaaaa, fontHandle, "%d", health);
 
 	Size hpPerDot(5,30);
 	int linePerHp = 40;
-	int berCnt = ceil(health / 40.0f);
+	int berCnt = ceil(startHealth / 40.0f);
 	auto hpBerDrawPos = GetDrawPos(hpDrawPos + Vector2Int(100, 30), Size(0, berCnt * hpPerDot.h), Anker::leftcenter);
 	for (int idx = 0; idx < berCnt; idx++)
 	{
-		Size berSize = Size( min((health - linePerHp * (berCnt - idx-1)), linePerHp), 1) * hpPerDot;
-		DrawBox(hpBerDrawPos, hpBerDrawPos + berSize, 0x4eb79c, true);
-		DrawBox(hpBerDrawPos, hpBerDrawPos + berSize, 0x000000, false);
+		Size startSize = Size( min((startHealth - linePerHp * (berCnt - idx-1)), linePerHp), 1) * hpPerDot;
+		Size currentSize = Size(min((health - linePerHp * (berCnt - idx - 1)), linePerHp), 1) * hpPerDot;
+		DrawBox(hpBerDrawPos, hpBerDrawPos + startSize, 0xaaaaaa, true);
+		if (currentSize.w > 0)
+		{
+			DrawBox(hpBerDrawPos, hpBerDrawPos + currentSize, 0x4eb79c, true);
+		}
+		DrawBox(hpBerDrawPos, hpBerDrawPos + startSize, 0x000000, false);
 		hpBerDrawPos.y += hpPerDot.h;
 	};
 	

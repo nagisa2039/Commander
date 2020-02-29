@@ -36,7 +36,6 @@ void Charactor::Move()
 		{
 			// êÌì¨
 			_controller.PushScene(make_shared<BattleScene>(GetBattleC(), charactor->GetBattleC(), _controller));
-			MoveEnd();
 		}
 		moveAnimEnd();
 		return;
@@ -95,6 +94,11 @@ bool Charactor::GetIsSelect() const
 bool Charactor::GetCanMove() const
 {
 	return _canMove;
+}
+
+Charactor::Status Charactor::GetStartStatus() const
+{
+	return _startStatus;
 }
 
 Charactor::Status Charactor::GetStatus() const
@@ -173,8 +177,8 @@ Charactor::Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl
 
 	_moveSpeed = 4;
 	_isSelect = false;
-	_canMove = false;
-	_isDying = false;;
+	_canMove = true;
+	_isDying = false;
 
 	_animator = make_shared<Animator>();
 

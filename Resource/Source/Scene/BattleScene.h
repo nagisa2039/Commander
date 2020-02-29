@@ -42,6 +42,7 @@ public:
 	~BattleScene();
 
 	void Update(const Input& input) override final;
+	void BattleEnd();
 	void Draw(void) override final;
 
 	std::vector<std::shared_ptr<Effect>>& GetEffectVec();

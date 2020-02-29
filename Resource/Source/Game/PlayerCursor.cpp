@@ -4,6 +4,7 @@
 #include "../Utility/Input.h"
 #include "Charactor.h"
 #include "MapCtrl.h"
+#include <DxLib.h>
 
 PlayerCursor::PlayerCursor(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam)
 	:_charactors(charactors), _ctrlTeam(ctrlTeam), MapCursor(mapCtrl)
@@ -73,7 +74,10 @@ void PlayerCursor::Draw(const Camera& camera)
 {
 	auto chipSize = _mapCtrl.GetChipSize().ToVector2Int();
 	auto offset = camera.GetCameraOffset();
-	DrawBox(offset + _pos.ToVector2Int(), offset + _pos.ToVector2Int() + chipSize, 0xaaaaaa, false);
+	DrawBox(offset + _pos.ToVector2Int(), offset + _pos.ToVector2Int() + chipSize, 0xaaaaaa, true);
+
+	DrawFormatString(10,10,0xffffff, "moveItv : %d", _moveItv);
+	DrawFormatString(10, 20, 0xffffff, "moveItvCurrentMax : %d", _moveItvCurrentMax);
 }
 
 Vector2Int PlayerCursor::GetMapPos() const

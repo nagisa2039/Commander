@@ -129,7 +129,7 @@ void BattleScene::Update(const Input& input)
 
 	if (!(this->*_updater)(input))
 	{
-		_controller.PopScene();
+		BattleEnd();
 		return;
 	}
 
@@ -140,13 +140,12 @@ void BattleScene::Update(const Input& input)
 	auto newEnd = remove_if(_effects.begin(), _effects.end(),
 		[](const std::shared_ptr<Effect>& effect) { return effect->GetDelete(); });
 	_effects.erase(newEnd, _effects.end());
+}
 
-
-	if (input.GetButtonDown(0, "space"))
-	{
-		_controller.PopScene();
-		return;
-	}
+void BattleScene::BattleEnd()
+{
+	_leftBC.GetSelfCharacotr().MoveEnd();
+	_controller.PopScene();
 }
 
 void BattleScene::Draw(void)

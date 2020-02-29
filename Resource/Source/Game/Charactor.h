@@ -101,6 +101,7 @@ public:
 
 	bool GetIsSelect()const;
 	bool GetCanMove()const;
+	Status GetStartStatus()const;
 	Status GetStatus()const;
 	bool GetIsDying()const;
 	Dir GetDir()const;

@@ -21,6 +21,11 @@ void PlayScene::PlayUpdate(const Input& input)
 		debug = !debug;
 	}
 
+	if (input.GetButtonDown(0, "ok"))
+	{
+		TurnReset(Team::player);
+	}
+
 	_camera->Update();
 	int cnt = 0;
 	for (auto& charactor : _charactors)
@@ -68,7 +73,7 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	_camera->AddTargetActor(_playerCursor);
 
 	auto mapSize = _mapCtrl->GetMapCnt() * _mapCtrl->GetChipSize();
-	_camera->SetLimitRect(Rect(mapSize.ToVector2Int() * 0.5, mapSize));
+	//_camera->SetLimitRect(Rect(mapSize.ToVector2Int() * 0.5, mapSize));
 
 	_mapCtrl->LoadMap("map0");
 

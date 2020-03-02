@@ -5,6 +5,7 @@
 #include "Team.h"
 
 class Charactor;
+class Animator;
 
 class PlayerCursor :
 	public MapCursor
@@ -13,6 +14,7 @@ private:
 	std::vector<std::shared_ptr<Charactor>>& _charactors;
 	Charactor* _selectChar;
 	const Team _ctrlTeam;
+	int _animCnt;
 
 	void CharactorControl(const Input& input);
 

@@ -126,6 +126,11 @@ BattleCharactor& Charactor::GetBattleC() const
 	return *_battleC;
 }
 
+bool Charactor::GetIsMoveAnim() const
+{
+	return _isMoveAnim;
+}
+
 void Charactor::SetIsSelect(const bool select)
 {
 	_isSelect = select;

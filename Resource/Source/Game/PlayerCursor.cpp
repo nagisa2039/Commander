@@ -5,12 +5,18 @@
 #include "Charactor.h"
 #include "MapCtrl.h"
 #include <DxLib.h>
+#include "Animator.h"
+#include "Application.h"
+#include "FileSystem.h"
+
+using namespace std;
 
 PlayerCursor::PlayerCursor(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam)
 	:_charactors(charactors), _ctrlTeam(ctrlTeam), MapCursor(mapCtrl)
 {
 	_selectChar = nullptr;
 	_pos = Vector2();
+	_animCnt = 0;
 }
 
 PlayerCursor::~PlayerCursor()
@@ -22,10 +28,17 @@ void PlayerCursor::Update(const Input& input)
 	CursorMove(input);
 
 	CharactorControl(input);
+	_animCnt++;
 }
 
 void PlayerCursor::CharactorControl(const Input& input)
 {
+	// 選択中のキャラが移動中なら選択を無効にする
+	if (_selectChar != nullptr && _selectChar->GetIsMoveAnim())
+	{
+		return;
+	}
+
 	if (input.GetButtonDown(0, "space"))
 	{
 		// そのマスにユニットがいないか探す
@@ -72,12 +85,14 @@ void PlayerCursor::CharactorControl(const Input& input)
 
 void PlayerCursor::Draw(const Camera& camera)
 {
-	auto chipSize = _mapCtrl.GetChipSize().ToVector2Int();
+	auto chipSize = _mapCtrl.GetChipSize();
 	auto offset = camera.GetCameraOffset();
-	DrawBox(offset + _pos.ToVector2Int(), offset + _pos.ToVector2Int() + chipSize, 0xaaaaaa, true);
-
-	DrawFormatString(10,10,0xffffff, "moveItv : %d", _moveItv);
-	DrawFormatString(10, 20, 0xffffff, "moveItvCurrentMax : %d", _moveItvCurrentMax);
+	auto handle = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/MapChip/cursor.png");
+	Size graphSize;
+	GetGraphSize(handle, graphSize);
+	
+	DrawRectRotaGraph(offset + _mapPos * chipSize + chipSize*0.5, Vector2Int(0, 0), graphSize, 
+		((_animCnt/30)%2 ? 0.8f : 1.0f) * chipSize.w / graphSize.w, 0.0f, handle);
 }
 
 Vector2Int PlayerCursor::GetMapPos() const

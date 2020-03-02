@@ -107,6 +107,7 @@ public:
 	Dir GetDir()const;
 	Vector2Int GetCenterPos()const;
 	BattleCharactor& GetBattleC()const;
+	bool GetIsMoveAnim()const;
 
 	void SetIsSelect(const bool select);
 	void SetIsDying(const bool dying);

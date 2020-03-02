@@ -7,13 +7,46 @@
 #include "../Game/Camera.h"
 #include "../Game/MapCtrl.h"
 #include "../Game/Swordsman.h"
-#include "../Game/PlayerCursor.h"
+#include "PlayerCommander.h"
 #include "Effect.h"
 #include "FlyText.h"
 
 using namespace std;
 
-void PlayScene::PlayUpdate(const Input& input)
+PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
+{
+	_effects.clear();
+	_charactors.clear();
+	_charactors.reserve(30);
+	_turnUpdater = &PlayScene::PlayerTurn;
+	debug = false; 
+
+	_mapCtrl = make_shared<MapCtrl>(_charactors);
+	_camera = make_shared<Camera>(Rect(Vector2Int(), Application::Instance().GetWindowSize()));
+	_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player);
+
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(0,0),	Team::player, *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(1,3),	Team::player, *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(4, 5),	Team::enemy,  *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(4, 7),	Team::enemy,  *_mapCtrl, _controller, _effects));
+
+	_camera->AddTargetActor(_playerCommander);
+
+	auto mapSize = _mapCtrl->GetMapCnt() * _mapCtrl->GetChipSize();
+	//_camera->SetLimitRect(Rect(mapSize.ToVector2Int() * 0.5, mapSize));
+
+	_mapCtrl->LoadMap("map0");
+
+	_playerCommander->TurnReset();
+
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin", 40, 1, true, true);
+}
+
+PlayScene::~PlayScene()
+{
+}
+
+void PlayScene::Update(const Input & input)
 {
 	// デバッグ
 	if (input.GetButtonDown(0, "debug"))
@@ -21,88 +54,47 @@ void PlayScene::PlayUpdate(const Input& input)
 		debug = !debug;
 	}
 
-	if (input.GetButtonDown(0, "ok"))
+	if (debug)
 	{
-		TurnReset(Team::player);
-	}
-
-	_camera->Update();
-	int cnt = 0;
-	for (auto& charactor : _charactors)
-	{
-		charactor->Update(input);
-		if (_turn == charactor->GetTeam() 
-		&& charactor->GetCanMove())
+		if (input.GetButtonDown(0, "ok"))
 		{
-			cnt++;
+			
 		}
 	}
-	if (cnt <= 0)
-	{
-		TurnReset(Team::player);
-		_playerCursor->TurnReset();
-	}
-	_playerCursor->Update(input);
 
+	(this->*_turnUpdater)(input);
+
+	_camera->Update();
 	for (auto& effect : _effects)
 	{
 		effect->Update(input);
 	}
-	auto newEnd = remove_if(_effects.begin(), _effects.end(), 
-		[](const std::shared_ptr<Effect>& effect){ return effect->GetDelete(); });
+	auto newEnd = remove_if(_effects.begin(), _effects.end(),
+		[](const std::shared_ptr<Effect>& effect) { return effect->GetDelete(); });
 	_effects.erase(newEnd, _effects.end());
-
-}
-PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
-{
-	_effects.clear();
-	_charactors.clear();
-	_charactors.reserve(30);
-	_updater = &PlayScene::PlayUpdate;
-	debug = false; 
-
-	_mapCtrl = make_shared<MapCtrl>(_charactors);
-	_camera = make_shared<Camera>(Rect(Vector2Int(), Application::Instance().GetWindowSize()));
-	_playerCursor = make_shared<PlayerCursor>(_charactors, *_mapCtrl, Team::player);
-
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(0,0),	Team::player, *_mapCtrl, _controller, _effects));
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(1,3),	Team::player, *_mapCtrl, _controller, _effects));
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(4, 5),	Team::enemy,  *_mapCtrl, _controller, _effects));
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(4, 7),	Team::enemy,  *_mapCtrl, _controller, _effects));
-
-	_camera->AddTargetActor(_playerCursor);
-
-	auto mapSize = _mapCtrl->GetMapCnt() * _mapCtrl->GetChipSize();
-	//_camera->SetLimitRect(Rect(mapSize.ToVector2Int() * 0.5, mapSize));
-
-	_mapCtrl->LoadMap("map0");
-
-	TurnReset(Team::player);
-
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin", 40, 1, true, true);
 }
 
-
-
-PlayScene::~PlayScene()
+void PlayScene::PlayerTurn(const Input& input)
 {
-}
-
-void PlayScene::TurnReset(const Team turn)
-{
-	_turn = turn;
-	for (auto charactor : _charactors)
+	bool end = true;
+	for (auto& charactor : _charactors)
 	{
-		if (_turn == charactor->GetTeam())
+		charactor->Update(input);
+		if (Team::player == charactor->GetTeam())
 		{
-			charactor->TurnReset();
+			end = end && !charactor->GetCanMove();
 		}
+		
 	}
+	if (end)
+	{
+		_playerCommander->TurnReset();
+	}
+	_playerCommander->Update(input);
 }
 
-void PlayScene::Update(const Input & input)
+void PlayScene::EnemyTurn(const Input& input)
 {
-	(this->*_updater)(input);
 }
 
 void PlayScene::Draw(void)
@@ -116,7 +108,7 @@ void PlayScene::Draw(void)
 	{
 		effect->Draw(*_camera);
 	}
-	_playerCursor->Draw(*_camera);
+	_playerCommander->Draw(*_camera);
 
 
 	if (debug)

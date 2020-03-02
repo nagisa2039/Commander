@@ -49,6 +49,12 @@
     <Filter Include="ヘッダー ファイル\Game\Actor\Effect">
       <UniqueIdentifier>{c0253d92-506e-43b9-b544-c43351476d4b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Game\Actor\Commander">
+      <UniqueIdentifier>{128d5c71-9092-43e5-9920-d3bffa98e686}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Game\Actor\Commander">
+      <UniqueIdentifier>{ea11d55e-b96c-4abf-8062-7e3cefc25ff7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Resource\Source\System\FileSystem.cpp">
@@ -111,9 +117,6 @@
     <ClCompile Include="Resource\Source\Game\MapCursor.cpp">
       <Filter>ソース ファイル\Game\Actor</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Game\PlayerCursor.cpp">
-      <Filter>ソース ファイル\Game\Actor</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Source\Game\Swordsman.cpp">
       <Filter>ソース ファイル\Game\Actor</Filter>
     </ClCompile>
@@ -134,6 +137,15 @@
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\Team.cpp">
       <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\Commander.cpp">
+      <Filter>ソース ファイル\Game\Actor\Commander</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\EnemyCommander.cpp">
+      <Filter>ソース ファイル\Game\Actor\Commander</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\PlayerCommander.cpp">
+      <Filter>ソース ファイル\Game\Actor\Commander</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -206,9 +218,6 @@
     <ClInclude Include="Resource\Source\Game\MapCursor.h">
       <Filter>ヘッダー ファイル\Game\Actor</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Source\Game\PlayerCursor.h">
-      <Filter>ヘッダー ファイル\Game\Actor</Filter>
-    </ClInclude>
     <ClInclude Include="Resource\Source\Game\Swordsman.h">
       <Filter>ヘッダー ファイル\Game\Actor</Filter>
     </ClInclude>
@@ -223,6 +232,15 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\FlyText.h">
       <Filter>ヘッダー ファイル\Game\Actor\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Commander.h">
+      <Filter>ヘッダー ファイル\Game\Actor\Commander</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\EnemyCommander.h">
+      <Filter>ヘッダー ファイル\Game\Actor\Commander</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\PlayerCommander.h">
+      <Filter>ヘッダー ファイル\Game\Actor\Commander</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

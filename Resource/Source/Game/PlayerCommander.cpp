@@ -1,4 +1,4 @@
-#include "PlayerCursor.h"
+#include "PlayerCommander.h"
 #include "../Utility/DxLibUtility.h"
 #include "Camera.h"
 #include "../Utility/Input.h"
@@ -9,29 +9,17 @@
 #include "Application.h"
 #include "FileSystem.h"
 
-using namespace std;
 
-PlayerCursor::PlayerCursor(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam)
-	:_charactors(charactors), _ctrlTeam(ctrlTeam), MapCursor(mapCtrl)
-{
-	_selectChar = nullptr;
-	_pos = Vector2();
-	_animCnt = 0;
-}
-
-PlayerCursor::~PlayerCursor()
+PlayerCommander::PlayerCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam):
+	Commander(charactors, mapCtrl, ctrlTeam)
 {
 }
 
-void PlayerCursor::Update(const Input& input)
+PlayerCommander::~PlayerCommander()
 {
-	CursorMove(input);
-
-	CharactorControl(input);
-	_animCnt++;
 }
 
-void PlayerCursor::CharactorControl(const Input& input)
+void PlayerCommander::CharactorControl(const Input& input)
 {
 	// 選択中のキャラが移動中なら選択を無効にする
 	if (_selectChar != nullptr && _selectChar->GetIsMoveAnim())
@@ -55,7 +43,7 @@ void PlayerCursor::CharactorControl(const Input& input)
 				};
 
 				// 未選択ならそのキャラを選択中にする
-				if (_selectChar == nullptr )
+				if (_selectChar == nullptr)
 				{
 					SetSelectChar(charactor);
 					return;
@@ -83,24 +71,31 @@ void PlayerCursor::CharactorControl(const Input& input)
 	}
 }
 
-void PlayerCursor::Draw(const Camera& camera)
+void PlayerCommander::Update(const Input& input)
+{
+	CursorMove(input);
+
+	CharactorControl(input);
+	_animCnt++;
+}
+
+void PlayerCommander::Draw(const Camera& camera)
 {
 	auto chipSize = _mapCtrl.GetChipSize();
 	auto offset = camera.GetCameraOffset();
 	auto handle = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/MapChip/cursor.png");
 	Size graphSize;
 	GetGraphSize(handle, graphSize);
-	
-	DrawRectRotaGraph(offset + _mapPos * chipSize + chipSize*0.5, Vector2Int(0, 0), graphSize, 
-		((_animCnt/30)%2 ? 0.8f : 1.0f) * chipSize.w / graphSize.w, 0.0f, handle);
+
+	int itv = 60;
+	float alpha = 1.0f - 2.0f * abs(0.5f - (_animCnt % itv) / static_cast<float>(itv));
+	DrawFormatString(0,0, 0xffffff, "%f", alpha);
+
+	DrawRectRotaGraph(offset + _mapPos * chipSize + chipSize * 0.5, Vector2Int(0, 0), graphSize,
+		(Lerp(0.8f, 1.0f, alpha)) * chipSize.w / graphSize.w, 0.0f, handle);
 }
 
-Vector2Int PlayerCursor::GetMapPos() const
-{
-	return _mapPos;
-}
-
-void PlayerCursor::TurnReset()
+void PlayerCommander::TurnReset()
 {
 	if (_selectChar == nullptr)
 	{
@@ -108,4 +103,12 @@ void PlayerCursor::TurnReset()
 	}
 	_selectChar->SetIsSelect(false);
 	_selectChar = nullptr;
+
+	for (auto& charactor : _charactors)
+	{
+		if (charactor->GetTeam() == _ctrlTeam)
+		{
+			charactor->TurnReset();
+		}
+	}
 }

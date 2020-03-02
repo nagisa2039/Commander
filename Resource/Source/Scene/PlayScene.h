@@ -10,7 +10,7 @@
 class Charactor;
 class MapCtrl;
 class Camera;
-class PlayerCursor;
+class Commander;
 class Effect;
 
 class PlayScene :
@@ -19,18 +19,16 @@ class PlayScene :
 private:
 	bool debug;
 	int _gameH;	// ƒQ[ƒ€‰æ–Ê‚Ìƒnƒ“ƒhƒ‹
-	Team _turn;
 	
 	std::shared_ptr<MapCtrl> _mapCtrl;
 	std::shared_ptr<Camera> _camera;
 	std::vector<std::shared_ptr<Charactor>> _charactors;
-	std::shared_ptr<PlayerCursor> _playerCursor;
+	std::shared_ptr<Commander> _playerCommander;
 	std::vector<std::shared_ptr<Effect>> _effects;
 
-	void PlayUpdate(const Input& input);
-	void(PlayScene::*_updater)(const Input& input);
-
-	void TurnReset(const Team turn);
+	void PlayerTurn(const Input& input);
+	void EnemyTurn(const Input& input);
+	void(PlayScene::*_turnUpdater)(const Input& input);
 
 public:
 	PlayScene(SceneController & ctrl);

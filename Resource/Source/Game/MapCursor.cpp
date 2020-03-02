@@ -85,3 +85,8 @@ MapCursor::MapCursor(MapCtrl& mapCtrl):_mapCtrl(mapCtrl), _moveItvMax(30), _putI
 MapCursor::~MapCursor()
 {
 }
+
+Vector2Int MapCursor::GetMapPos() const
+{
+	return _mapPos;
+}

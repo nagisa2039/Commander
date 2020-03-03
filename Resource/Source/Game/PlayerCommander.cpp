@@ -94,21 +94,3 @@ void PlayerCommander::Draw(const Camera& camera)
 	DrawRectRotaGraph(offset + _mapPos * chipSize + chipSize * 0.5, Vector2Int(0, 0), graphSize,
 		(Lerp(0.8f, 1.0f, alpha)) * chipSize.w / graphSize.w, 0.0f, handle);
 }
-
-void PlayerCommander::TurnReset()
-{
-	if (_selectChar == nullptr)
-	{
-		return;
-	}
-	_selectChar->SetIsSelect(false);
-	_selectChar = nullptr;
-
-	for (auto& charactor : _charactors)
-	{
-		if (charactor->GetTeam() == _ctrlTeam)
-		{
-			charactor->TurnReset();
-		}
-	}
-}

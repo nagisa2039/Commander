@@ -23,6 +23,8 @@ public:
 	virtual void Update(const Input& input)override = 0;
 	virtual void Draw(const Camera& camera)override = 0;
 
-	virtual void TurnReset() = 0;
+	bool CheckEnd()const;
+
+	void TurnReset();
 };
 

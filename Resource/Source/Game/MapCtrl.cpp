@@ -5,6 +5,7 @@
 #include "../Game/Camera.h"
 #include "Charactor.h"
 #include "DxLib.h"
+#include <algorithm>
 
 using namespace std;
 
@@ -212,7 +213,13 @@ bool MapCtrl::LoadMap(const std::string fileName)
 std::list<Astar::ResultPos> MapCtrl::RouteSearch(const Vector2Int& startMapPos, const int move)
 {
 	std::vector<std::vector<int>> mapVec2;
+	CreateMapVec(mapVec2);
 
+	return _astar->RouteSearch(startMapPos, move, mapVec2);
+}
+
+void MapCtrl::CreateMapVec(std::vector<std::vector<int>>& mapVec2)
+{
 	mapVec2.resize(_mapData.size());
 	for (int y = 0; y < mapVec2.size(); y++)
 	{
@@ -225,10 +232,99 @@ std::list<Astar::ResultPos> MapCtrl::RouteSearch(const Vector2Int& startMapPos, 
 	for (const auto& charactor : _charactors)
 	{
 		auto mapPos = charactor->GetMapPos();
-		mapVec2[mapPos.y][mapPos.x] = -1;
+		mapVec2[mapPos.y][mapPos.x] = -2;
+	}
+}
+
+Vector2Int MapCtrl::SearchMovePos(Charactor& selfCharactor)
+{
+	std::vector<std::vector<int>> mapVec2;
+	CreateMapVec(mapVec2);
+	auto selfStatus = selfCharactor.GetStatus();
+	auto ResultPosList = _astar->RouteSearch(selfCharactor.GetMapPos(), selfStatus.move*2, mapVec2);
+
+	struct SearchChar
+	{
+		Charactor& characotor;
+		Astar::ResultPos resultPos;
+
+		SearchChar(Charactor& c, Astar::ResultPos r) : characotor(c), resultPos(r) {}
+	};
+
+	// 移動量内にいるターゲット
+	std::list<SearchChar> targetsM;
+	targetsM.clear();
+
+	// 視野内にいるターゲット
+	std::list<SearchChar> targetsF;
+	targetsF.clear();
+
+	// 射程
+	int range = 1;
+
+	// 視野内のマスにキャラアクターをlistに追加
+	for (const auto& resultPos : ResultPosList)
+	{
+		for (const auto& charactor : _charactors)
+		{
+			// 座標が一致 && 自分ではない && 異なるチーム
+			if (resultPos.mapPos == charactor->GetMapPos()
+			 && resultPos.mapPos != selfCharactor.GetMapPos()
+			&& charactor->GetTeam() != selfCharactor.GetTeam())
+			{
+				// 移動量ないか
+				if (resultPos.moveCnt + range < selfStatus.move)
+				{
+					// 視野内
+					targetsF.emplace_back(*charactor, resultPos);
+				}
+				else
+				{
+					// 移動量内
+					targetsM.emplace_back(*charactor, resultPos);
+				}
+			}
+		}
 	}
 
-	return _astar->RouteSearch(startMapPos, move, mapVec2);
+	SearchChar* target = nullptr;
+	auto seachTarget = [&](std::list<SearchChar>& targetList)
+	{
+		SearchChar* t = nullptr;
+		for (auto& targetM : targetList)
+		{
+			if (t == nullptr)
+			{
+				t = &targetM;
+			}
+			else
+			{
+				auto lDamage = t->characotor.GetStatus().GetDamage(selfStatus);
+				auto rDamage = targetM.characotor.GetStatus().GetDamage(selfStatus);
+				if (rDamage > lDamage)
+				{
+					t = &targetM;
+				}
+			}
+		}
+		return t;
+	};
+
+	target = seachTarget(targetsM);
+	if (target != nullptr)
+	{
+		return target->resultPos.mapPos;
+	}
+	else
+	{
+		target = seachTarget(targetsF);
+		if (target != nullptr)
+		{
+			return target->resultPos.mapPos;
+		}
+	}
+
+	return Vector2Int(-1,-1);
 }
 
 void MapCtrl::MapChipData::operator=(const MapChipData& mcd)

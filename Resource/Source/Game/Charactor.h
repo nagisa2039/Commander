@@ -118,6 +118,8 @@ public:
 
 	void RouteSearch();
 	void TurnReset();
+
+	void SearchAndMove();
 };
 
 class BattleScene;
@@ -174,5 +176,6 @@ public:
 	void AddDamage(const int damage);	// ƒ_ƒ[ƒW‚ğ—^‚¦‚é
 
 	virtual std::shared_ptr<Effect> CreateAttackEffect(const Vector2Int& effectPos) = 0;
+
 };
 

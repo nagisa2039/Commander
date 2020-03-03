@@ -168,6 +168,11 @@ void Charactor::TurnReset()
 	_canMove = true;
 }
 
+void Charactor::SearchAndMove()
+{
+	MoveMapPos(_mapCtrl.SearchMovePos(*this));
+}
+
 Charactor::Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl, 
 	std::vector<std::shared_ptr<Effect>>& effects)
 	: _team(team), _mapCtrl(mapCtrl), _controller(ctrl), _effects(effects)
@@ -215,6 +220,7 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 	{
 		return false;
 	}
+
 
 	_moveDirList.clear();
 	for (const auto& resultPos : _resutlPosList)

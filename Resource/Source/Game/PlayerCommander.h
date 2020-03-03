@@ -13,7 +13,5 @@ public:
 
 	void Update(const Input& input)override final;
 	void Draw(const Camera& camera)override final;
-
-	void TurnReset() override final;
 };
 

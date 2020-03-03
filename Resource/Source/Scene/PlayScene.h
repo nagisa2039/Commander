@@ -10,7 +10,8 @@
 class Charactor;
 class MapCtrl;
 class Camera;
-class Commander;
+class PlayerCommander;
+class EnemyCommander;
 class Effect;
 
 class PlayScene :
@@ -23,7 +24,8 @@ private:
 	std::shared_ptr<MapCtrl> _mapCtrl;
 	std::shared_ptr<Camera> _camera;
 	std::vector<std::shared_ptr<Charactor>> _charactors;
-	std::shared_ptr<Commander> _playerCommander;
+	std::shared_ptr<PlayerCommander> _playerCommander;
+	std::shared_ptr<EnemyCommander> _enemyCommander;
 	std::vector<std::shared_ptr<Effect>> _effects;
 
 	void PlayerTurn(const Input& input);

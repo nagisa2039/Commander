@@ -8,6 +8,7 @@
 #include "../Game/MapCtrl.h"
 #include "../Game/Swordsman.h"
 #include "PlayerCommander.h"
+#include "EnemyCommander.h"
 #include "Effect.h"
 #include "FlyText.h"
 
@@ -23,7 +24,9 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 
 	_mapCtrl = make_shared<MapCtrl>(_charactors);
 	_camera = make_shared<Camera>(Rect(Vector2Int(), Application::Instance().GetWindowSize()));
+
 	_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player);
+	_enemyCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy);
 
 	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(0,0),	Team::player, *_mapCtrl, _controller, _effects));
 	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(1,3),	Team::player, *_mapCtrl, _controller, _effects));
@@ -62,6 +65,11 @@ void PlayScene::Update(const Input & input)
 		}
 	}
 
+	for (auto& charactor : _charactors)
+	{
+		charactor->Update(input);
+	}
+
 	(this->*_turnUpdater)(input);
 
 	_camera->Update();
@@ -76,25 +84,22 @@ void PlayScene::Update(const Input & input)
 
 void PlayScene::PlayerTurn(const Input& input)
 {
-	bool end = true;
-	for (auto& charactor : _charactors)
-	{
-		charactor->Update(input);
-		if (Team::player == charactor->GetTeam())
-		{
-			end = end && !charactor->GetCanMove();
-		}
-		
-	}
-	if (end)
-	{
-		_playerCommander->TurnReset();
-	}
 	_playerCommander->Update(input);
+	if (_playerCommander->CheckEnd())
+	{
+		_enemyCommander->TurnReset();
+		_turnUpdater = &PlayScene::EnemyTurn;
+	}
 }
 
 void PlayScene::EnemyTurn(const Input& input)
 {
+	_enemyCommander->Update(input);
+	if (_enemyCommander->CheckEnd())
+	{
+		_playerCommander->TurnReset();
+		_turnUpdater = &PlayScene::PlayerTurn;
+	}
 }
 
 void PlayScene::Draw(void)

@@ -34,6 +34,7 @@ void EnemyCommander::Update(const Input& input)
 			&& charactor->GetCanMove())
 		{
 			_selectChar = &*charactor;
+  			_selectChar->SearchAndMove();
 			break;
 		}
 	}

@@ -27,11 +27,10 @@ Astar::~Astar()
 {
 }
 
-std::list<Astar::ResultPos> Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const std::vector<std::vector<int>>& mapData)
+void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const std::vector<std::vector<int>>& mapData, std::list<Astar::ResultPos>& resutlPosList)
 {
-	auto result = list<Astar::ResultPos>();
-	result.clear();
-	result.emplace_back(ResultPos(false, startMapPos, nullptr, Dir::max, 0));
+	resutlPosList.clear();
+	resutlPosList.emplace_back(ResultPos(false, startMapPos, nullptr, Dir::max, 0));
 
 	ResetSerchPosVec2D(mapData);
 
@@ -63,8 +62,8 @@ std::list<Astar::ResultPos> Astar::RouteSearch(const Vector2Int& startMapPos, co
 				continue;
 			}
 
-			auto parentIt = result.begin();
-			for(; parentIt != result.end(); parentIt++)
+			auto parentIt = resutlPosList.begin();
+			for(; parentIt != resutlPosList.end(); parentIt++)
 			{
 				if (parentIt->mapPos == nowPos)
 				{
@@ -79,28 +78,28 @@ std::list<Astar::ResultPos> Astar::RouteSearch(const Vector2Int& startMapPos, co
 			// ˆÚ“®•s‰Â
 			if (mapData[checkPos.y][checkPos.x] < 0)
 			{
-				result.emplace_back(ResultPos(true, checkPos, &(*parentIt), static_cast<Dir>(j), parentIt->moveCnt));
+				resutlPosList.emplace_back(ResultPos(true, checkPos, &(*parentIt), static_cast<Dir>(j), parentIt->moveCnt));
 				continue;
 			}
 
-
 			auto moveCnt = _serchPosVec2[checkPos.y][checkPos.x].moveCnt;
 
+			// ˆÚ“®‰Â”\‚È‹——£‚©
 			if (moveCnt > move)
 			{
-				result.emplace_back(ResultPos(true, checkPos, &(*parentIt), static_cast<Dir>(j), parentIt->moveCnt));
+				resutlPosList.emplace_back(ResultPos(true, checkPos, &(*parentIt), static_cast<Dir>(j), parentIt->moveCnt));
 			}
 			else
 			{
 				seachIdxList.emplace_back(checkPos);
-				result.emplace_back(ResultPos(false, checkPos, &(*parentIt), static_cast<Dir>(j), moveCnt));
+				resutlPosList.emplace_back(ResultPos(false, checkPos, &(*parentIt), static_cast<Dir>(j), moveCnt));
 			}
 		}
 
 		it = seachIdxList.erase(it);
 	}
 
-	return result;
+	return;
 }
 
 Astar::SearchPos::SearchPos()

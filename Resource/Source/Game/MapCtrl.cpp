@@ -210,12 +210,12 @@ bool MapCtrl::LoadMap(const std::string fileName)
 	return true;
 }
 
-std::list<Astar::ResultPos> MapCtrl::RouteSearch(const Vector2Int& startMapPos, const int move)
+void MapCtrl::RouteSearch(const Vector2Int& startMapPos, const int move, std::list<Astar::ResultPos>& reslutPosList)
 {
 	std::vector<std::vector<int>> mapVec2;
 	CreateMapVec(mapVec2);
 
-	return _astar->RouteSearch(startMapPos, move, mapVec2);
+	return _astar->RouteSearch(startMapPos, move, mapVec2, reslutPosList);
 }
 
 void MapCtrl::CreateMapVec(std::vector<std::vector<int>>& mapVec2)
@@ -241,7 +241,9 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& selfCharactor)
 	std::vector<std::vector<int>> mapVec2;
 	CreateMapVec(mapVec2);
 	auto selfStatus = selfCharactor.GetStatus();
-	auto ResultPosList = _astar->RouteSearch(selfCharactor.GetMapPos(), selfStatus.move*2, mapVec2);
+
+	auto& resultPosList = selfCharactor.GetResutlPosList();
+	_astar->RouteSearch(selfCharactor.GetMapPos(), selfStatus.move*2, mapVec2, resultPosList);
 
 	struct SearchChar
 	{
@@ -263,7 +265,7 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& selfCharactor)
 	int range = 1;
 
 	// 視野内のマスにキャラアクターをlistに追加
-	for (const auto& resultPos : ResultPosList)
+	for (const auto& resultPos : resultPosList)
 	{
 		for (const auto& charactor : _charactors)
 		{
@@ -272,8 +274,8 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& selfCharactor)
 			 && resultPos.mapPos != selfCharactor.GetMapPos()
 			&& charactor->GetTeam() != selfCharactor.GetTeam())
 			{
-				// 移動量ないか
-				if (resultPos.moveCnt + range < selfStatus.move)
+				// 移動量内か
+				if (resultPos.moveCnt > selfStatus.move + range)
 				{
 					// 視野内
 					targetsF.emplace_back(*charactor, resultPos);

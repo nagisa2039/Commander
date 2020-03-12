@@ -120,6 +120,7 @@ public:
 	void TurnReset();
 
 	void SearchAndMove();
+	std::list<Astar::ResultPos>& GetResutlPosList();
 };
 
 class BattleScene;
@@ -176,6 +177,5 @@ public:
 	void AddDamage(const int damage);	// ƒ_ƒ[ƒW‚ğ—^‚¦‚é
 
 	virtual std::shared_ptr<Effect> CreateAttackEffect(const Vector2Int& effectPos) = 0;
-
 };
 

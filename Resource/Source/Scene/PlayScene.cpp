@@ -30,8 +30,8 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 
 	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(0,0),	Team::player, *_mapCtrl, _controller, _effects));
 	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(1,3),	Team::player, *_mapCtrl, _controller, _effects));
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(4, 5),	Team::enemy,  *_mapCtrl, _controller, _effects));
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(4, 7),	Team::enemy,  *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(10, 5),	Team::enemy,  *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(10, 3),	Team::enemy,  *_mapCtrl, _controller, _effects));
 
 	_camera->AddTargetActor(_playerCommander);
 

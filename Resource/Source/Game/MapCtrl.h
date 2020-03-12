@@ -72,7 +72,7 @@ public:
 	bool LoadMap(const std::string fileName);
 
 	// startMapPosからmoveぶんで行けるResultPosを返す
-	std::list<Astar::ResultPos> RouteSearch(const Vector2Int& startMapPos, const int move);
+	void RouteSearch(const Vector2Int& startMapPos, const int move, std::list<Astar::ResultPos>& reslutPosList);
 
 	// 指定キャラから視野範囲にいるキャラクターを返す
 	Vector2Int SearchMovePos(Charactor& charactor);

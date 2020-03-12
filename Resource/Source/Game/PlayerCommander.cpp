@@ -89,7 +89,6 @@ void PlayerCommander::Draw(const Camera& camera)
 
 	int itv = 60;
 	float alpha = 1.0f - 2.0f * abs(0.5f - (_animCnt % itv) / static_cast<float>(itv));
-	DrawFormatString(0,0, 0xffffff, "%f", alpha);
 
 	DrawRectRotaGraph(offset + _mapPos * chipSize + chipSize * 0.5, Vector2Int(0, 0), graphSize,
 		(Lerp(0.8f, 1.0f, alpha)) * chipSize.w / graphSize.w, 0.0f, handle);

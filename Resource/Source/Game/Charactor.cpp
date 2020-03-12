@@ -159,7 +159,7 @@ void Charactor::MoveEnd()
 
 void Charactor::RouteSearch()
 {
-	_resutlPosList = _mapCtrl.RouteSearch(GetMapPos(), _status.move);
+	_mapCtrl.RouteSearch(GetMapPos(), _status.move, _resutlPosList);
 }
 
 void Charactor::TurnReset()
@@ -171,6 +171,11 @@ void Charactor::TurnReset()
 void Charactor::SearchAndMove()
 {
 	MoveMapPos(_mapCtrl.SearchMovePos(*this));
+}
+
+std::list<Astar::ResultPos>& Charactor::GetResutlPosList()
+{
+	return _resutlPosList;
 }
 
 Charactor::Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl, 
@@ -221,6 +226,7 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 		return false;
 	}
 
+	int range = 1;
 
 	_moveDirList.clear();
 	for (const auto& resultPos : _resutlPosList)
@@ -236,7 +242,19 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 				rp = rp->parent;
 			}
 			_isMoveAnim = true;
-			_status.move -= resultPos.moveCnt;
+
+			for(auto last = _moveDirList.end(); _moveDirList.size() > _status.move;)
+			{
+				last--;
+				if (_moveDirList.size() <= _status.move + range && last->attack)
+				{
+					break;
+				}
+				last = _moveDirList.erase(last);
+			}
+
+			_status.move = max(_status.move - resultPos.moveCnt, 0);
+
 			return true;
 		}
 	}

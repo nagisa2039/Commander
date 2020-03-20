@@ -147,6 +147,9 @@
     <ClCompile Include="Resource\Source\Game\PlayerCommander.cpp">
       <Filter>ソース ファイル\Game\Actor\Commander</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Game\TurnChangeAnim.cpp">
+      <Filter>ソース ファイル\Game\Actor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -241,6 +244,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\PlayerCommander.h">
       <Filter>ヘッダー ファイル\Game\Actor\Commander</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\TurnChangeAnim.h">
+      <Filter>ヘッダー ファイル\Game\Actor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

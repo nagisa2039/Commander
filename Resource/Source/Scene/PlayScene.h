@@ -13,6 +13,7 @@ class Camera;
 class PlayerCommander;
 class EnemyCommander;
 class Effect;
+class TurnChangeAnim;
 
 class PlayScene :
 	public Scene
@@ -20,9 +21,14 @@ class PlayScene :
 private:
 	bool debug;
 	int _gameH;	// ƒQ[ƒ€‰æ–Ê‚Ìƒnƒ“ƒhƒ‹
+	int _animCnt;
+	float _exrate;
 	
 	std::shared_ptr<MapCtrl> _mapCtrl;
 	std::shared_ptr<Camera> _camera;
+
+	std::shared_ptr<TurnChangeAnim> _turnChangeAnim;
+
 	std::vector<std::shared_ptr<Charactor>> _charactors;
 	std::shared_ptr<PlayerCommander> _playerCommander;
 	std::shared_ptr<EnemyCommander> _enemyCommander;

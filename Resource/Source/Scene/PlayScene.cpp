@@ -11,6 +11,7 @@
 #include "EnemyCommander.h"
 #include "Effect.h"
 #include "FlyText.h"
+#include "TurnChangeAnim.h"
 
 using namespace std;
 
@@ -19,11 +20,17 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	_effects.clear();
 	_charactors.clear();
 	_charactors.reserve(30);
-	_turnUpdater = &PlayScene::PlayerTurn;
-	debug = false; 
+
+
+	debug = true;
+
+	_animCnt = 0;
+	_exrate = 0.0f;
 
 	_mapCtrl = make_shared<MapCtrl>(_charactors);
 	_camera = make_shared<Camera>(Rect(Vector2Int(), Application::Instance().GetWindowSize()));
+
+	_turnChangeAnim = make_shared<TurnChangeAnim>();
 
 	_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player);
 	_enemyCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy);
@@ -43,6 +50,11 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	_playerCommander->TurnReset();
 
 	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin", 40, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin100", 100, 1, true, true);
+
+	// プレイヤーターンを開始
+	_turnUpdater = &PlayScene::PlayerTurn;
+	_turnChangeAnim->TurnStart(Team::player);
 }
 
 PlayScene::~PlayScene()
@@ -61,7 +73,11 @@ void PlayScene::Update(const Input & input)
 	{
 		if (input.GetButtonDown(0, "ok"))
 		{
-			
+			_exrate += 0.1f;
+		}
+		if (input.GetButtonDown(0, "space"))
+		{
+			_exrate -= 0.1f;
 		}
 	}
 
@@ -69,6 +85,8 @@ void PlayScene::Update(const Input & input)
 	{
 		charactor->Update(input);
 	}
+
+	_turnChangeAnim->Update(input);
 
 	(this->*_turnUpdater)(input);
 
@@ -115,6 +133,7 @@ void PlayScene::Draw(void)
 	}
 	_playerCommander->Draw(*_camera);
 
+	_turnChangeAnim->Draw(*_camera);
 
 	if (debug)
 	{

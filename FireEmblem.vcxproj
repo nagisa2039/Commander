@@ -35,6 +35,7 @@
     <ClCompile Include="Resource\Source\Game\SlashingEffect.cpp" />
     <ClCompile Include="Resource\Source\Game\Swordsman.cpp" />
     <ClCompile Include="Resource\Source\Game\Team.cpp" />
+    <ClCompile Include="Resource\Source\Game\TurnChangeAnim.cpp" />
     <ClCompile Include="Resource\Source\Scene\BattleScene.cpp" />
     <ClCompile Include="Resource\Source\Scene\MapEditScene.cpp" />
     <ClCompile Include="Resource\Source\Scene\PlayScene.cpp" />
@@ -68,6 +69,7 @@
     <ClInclude Include="Resource\Source\Game\SlashingEffect.h" />
     <ClInclude Include="Resource\Source\Game\Swordsman.h" />
     <ClInclude Include="Resource\Source\Game\Team.h" />
+    <ClInclude Include="Resource\Source\Game\TurnChangeAnim.h" />
     <ClInclude Include="Resource\Source\Scene\BattleScene.h" />
     <ClInclude Include="Resource\Source\Scene\MapEditScene.h" />
     <ClInclude Include="Resource\Source\Scene\PlayScene.h" />

@@ -248,5 +248,8 @@
     <ClInclude Include="Resource\Source\Game\TurnChangeAnim.h">
       <Filter>ヘッダー ファイル\Game\Actor</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Source\Utility\TimeLine.h">
+      <Filter>ヘッダー ファイル\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

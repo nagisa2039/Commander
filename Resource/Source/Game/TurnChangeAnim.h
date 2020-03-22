@@ -3,6 +3,7 @@
 #include "Team.h"
 #include <array>
 #include <vector>
+#include "TimeLine.h"
 
 class TurnChangeAnim :
 	public Actor
@@ -17,23 +18,14 @@ private:
 		TeamInf(const char* n, uint32_t c) :name(n), color(c) {};
 	};
 
-	struct Key
-	{
-		int frame;
-
-		float exrate;
-		float alpha;
-
-		Key() : frame(0), exrate(0), alpha(0){};
-		Key(const float f, const float e, const float a) : frame(f), exrate(e), alpha(a) {};
-	};
-
 	Team _currentTeam;
 	std::array<TeamInf, static_cast<size_t>(Team::max)> teamInfs;
 	bool _animEnd;
 
-	std::vector<TurnChangeAnim::Key> _timeLine;
-	Key _currentVal;
+	uint32_t _frame;
+
+	TimeLine<float> _exrateTL;
+	TimeLine<float> _alphaTL;
 
 public:
 	TurnChangeAnim();

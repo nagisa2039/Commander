@@ -10,6 +10,7 @@ Commander::Commander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtr
 	_selectChar = nullptr;
 	_pos = Vector2();
 	_animCnt = 0;
+	_rigid = 0;
 }
 
 Commander::~Commander()

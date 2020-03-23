@@ -8,3 +8,4 @@ enum class Team
 };
 
 unsigned int GetTeamColor(const Team team);
+unsigned int GetTeamColorBattle(const Team team);

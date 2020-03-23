@@ -9,6 +9,7 @@
 #include "Application.h"
 #include "FileSystem.h"
 
+using namespace std;
 
 PlayerCommander::PlayerCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam):
 	Commander(charactors, mapCtrl, ctrlTeam)
@@ -21,6 +22,10 @@ PlayerCommander::~PlayerCommander()
 
 void PlayerCommander::CharactorControl(const Input& input)
 {
+	// d’¼
+	_rigid = max(_rigid - 1, 0);
+	if (_rigid > 0)  return;
+
 	// ‘I‘ð’†‚ÌƒLƒƒƒ‰‚ªˆÚ“®’†‚È‚ç‘I‘ð‚ð–³Œø‚É‚·‚é
 	if (_selectChar != nullptr && _selectChar->GetIsMoveAnim())
 	{

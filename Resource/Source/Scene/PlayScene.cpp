@@ -24,9 +24,6 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 
 	debug = true;
 
-	_animCnt = 0;
-	_exrate = 0.0f;
-
 	_mapCtrl = make_shared<MapCtrl>(_charactors);
 	_camera = make_shared<Camera>(Rect(Vector2Int(), Application::Instance().GetWindowSize()));
 
@@ -37,13 +34,13 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 
 	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(0,0),	Team::player, *_mapCtrl, _controller, _effects));
 	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(1,3),	Team::player, *_mapCtrl, _controller, _effects));
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(10, 5),	Team::enemy,  *_mapCtrl, _controller, _effects));
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(10, 3),	Team::enemy,  *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(5, 5),	Team::enemy,  *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(5, 3),	Team::enemy,  *_mapCtrl, _controller, _effects));
 
 	_camera->AddTargetActor(_playerCommander);
 
 	auto mapSize = _mapCtrl->GetMapCnt() * _mapCtrl->GetChipSize();
-	//_camera->SetLimitRect(Rect(mapSize.ToVector2Int() * 0.5, mapSize));
+	_camera->SetLimitRect(Rect(mapSize.ToVector2Int() * 0.5, mapSize));
 
 	_mapCtrl->LoadMap("map0");
 
@@ -53,8 +50,7 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin100", 100, 1, true, true);
 
 	// プレイヤーターンを開始
-	_turnUpdater = &PlayScene::PlayerTurn;
-	_turnChangeAnim->TurnStart(Team::player);
+	StartPlayerTurn();
 }
 
 PlayScene::~PlayScene()
@@ -71,22 +67,12 @@ void PlayScene::Update(const Input & input)
 
 	if (debug)
 	{
-		if (input.GetButtonDown(0, "ok"))
-		{
-			_exrate += 0.1f;
-		}
-		if (input.GetButtonDown(0, "space"))
-		{
-			_exrate -= 0.1f;
-		}
 	}
 
 	for (auto& charactor : _charactors)
 	{
 		charactor->Update(input);
 	}
-
-	_turnChangeAnim->Update(input);
 
 	(this->*_turnUpdater)(input);
 
@@ -102,21 +88,39 @@ void PlayScene::Update(const Input & input)
 
 void PlayScene::PlayerTurn(const Input& input)
 {
+	_turnChangeAnim->Update(input);
+	if (!_turnChangeAnim->GetAnimEnd()) return;
+
 	_playerCommander->Update(input);
 	if (_playerCommander->CheckEnd())
 	{
-		_enemyCommander->TurnReset();
-		_turnUpdater = &PlayScene::EnemyTurn;
+		StartEnemyTurn();
 	}
+}
+
+void PlayScene::StartPlayerTurn()
+{
+	_playerCommander->TurnReset();
+	_turnUpdater = &PlayScene::PlayerTurn;
+	_turnChangeAnim->TurnStart(Team::player);
+}
+
+void PlayScene::StartEnemyTurn()
+{
+	_enemyCommander->TurnReset();
+	_turnUpdater = &PlayScene::EnemyTurn;
+	_turnChangeAnim->TurnStart(Team::enemy);
 }
 
 void PlayScene::EnemyTurn(const Input& input)
 {
+	_turnChangeAnim->Update(input);
+	if (!_turnChangeAnim->GetAnimEnd()) return;
+
 	_enemyCommander->Update(input);
 	if (_enemyCommander->CheckEnd())
 	{
-		_playerCommander->TurnReset();
-		_turnUpdater = &PlayScene::PlayerTurn;
+		StartPlayerTurn();
 	}
 }
 

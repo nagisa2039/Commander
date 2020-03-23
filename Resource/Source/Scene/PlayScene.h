@@ -21,8 +21,6 @@ class PlayScene :
 private:
 	bool debug;
 	int _gameH;	// ƒQ[ƒ€‰æ–Ê‚Ìƒnƒ“ƒhƒ‹
-	int _animCnt;
-	float _exrate;
 	
 	std::shared_ptr<MapCtrl> _mapCtrl;
 	std::shared_ptr<Camera> _camera;
@@ -33,6 +31,9 @@ private:
 	std::shared_ptr<PlayerCommander> _playerCommander;
 	std::shared_ptr<EnemyCommander> _enemyCommander;
 	std::vector<std::shared_ptr<Effect>> _effects;
+
+	void StartPlayerTurn();
+	void StartEnemyTurn();
 
 	void PlayerTurn(const Input& input);
 	void EnemyTurn(const Input& input);

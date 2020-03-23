@@ -12,10 +12,9 @@ private:
 	struct TeamInf
 	{
 		const char* name;
-		uint32_t color;
 
-		TeamInf():name(), color(0) {};
-		TeamInf(const char* n, uint32_t c) :name(n), color(c) {};
+		TeamInf():name() {};
+		TeamInf(const char* n) :name(n) {};
 	};
 
 	Team _currentTeam;

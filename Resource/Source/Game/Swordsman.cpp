@@ -127,7 +127,7 @@ void SwordBC::UIDraw()
 	auto wsize = Application::Instance().GetWindowSize();
 	auto status = _selfChar.GetStatus();
 	auto targetStatus = _targetChar->GetSelfCharacotr().GetStatus();
-	auto teamColor = GetTeamColor(_selfChar.GetTeam());
+	auto teamColor = GetTeamColorBattle(_selfChar.GetTeam());
 	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin");
 
 	// UI‚Ì¶ã‚ÌÀ•W

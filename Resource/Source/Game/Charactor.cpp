@@ -15,16 +15,16 @@ using namespace std;
 
 void Charactor::Move()
 {
-	if (!_isMoveAnim || _moveDirList.size() == 0)
-	{
-		return;
-	}
-
 	auto moveAnimEnd = [&]()
 	{
 		_isMoveAnim = false;
 		RouteSearch();
 	};
+
+	if ((!_isMoveAnim || _moveDirList.size() == 0))
+	{
+		return;
+	}
 
 	auto it = _moveDirList.begin();
 	_dir = it->dir;
@@ -36,8 +36,12 @@ void Charactor::Move()
 		{
 			// êÌì¨
 			_controller.PushScene(make_shared<BattleScene>(GetBattleC(), charactor->GetBattleC(), _controller));
+			moveAnimEnd();
 		}
-		moveAnimEnd();
+		else
+		{
+			moveAnimEnd();
+		}
 		return;
 	}
 
@@ -155,6 +159,7 @@ void Charactor::MoveEnd()
 {
 	_canMove = false;
 	_isMoveAnim = false;
+	RouteSearch();
 }
 
 void Charactor::RouteSearch()

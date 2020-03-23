@@ -16,6 +16,8 @@ protected:
 	const Team _ctrlTeam;
 	int _animCnt;
 
+	int _rigid;
+
 public:
 	Commander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam);
 	~Commander();

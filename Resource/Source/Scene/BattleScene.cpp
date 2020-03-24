@@ -8,11 +8,25 @@
 #include "Camera.h"
 #include <DxLib.h>
 #include "FlyText.h"
-
-constexpr auto game_screen_size_x = 1280;
-constexpr auto game_screen_size_y = 720;
+#include "BattleCharactor.h"
 
 using namespace std;
+
+bool BattleScene::SceneStartAnim(const Input& input)
+{
+	if (_exRateTL->GetEnd())
+	{
+		_leftBC.StartAttackAnim();
+		_updater = &BattleScene::LeftTurn;
+	}
+	return true;
+}
+
+bool BattleScene::SceneEndAnim(const Input& input)
+{
+	_brightTL->Update();
+	return !_brightTL->GetEnd();
+}
 
 bool BattleScene::LeftTurn(const Input& input)
 {
@@ -32,7 +46,7 @@ bool BattleScene::LeftHPAnim(const Input& input)
 	{
 		if (_pursuit)
 		{
-			return false;
+			_updater = &BattleScene::SceneEndAnim;
 		}
 		else
 		{
@@ -61,7 +75,7 @@ bool BattleScene::RightHPAnim(const Input& input)
 	{
 		if (_pursuit)
 		{
-			return false;
+			_updater = &BattleScene::SceneEndAnim;
 		}
 		_rightBC.StartAttackAnim();
 		_updater = &BattleScene::RightTurn;
@@ -110,10 +124,18 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 	_leftBC.Init(Vector2(screenCenter.x - 200, _floatY),  Dir::left,  &rightBC);
 	_rightBC.Init(Vector2(screenCenter.x + 200, _floatY), Dir::right, &leftBC);
 
-	_leftBC.StartAttackAnim();
-	_updater = &BattleScene::LeftTurn;
-
 	_pursuit = false;
+
+	_exRateTL = make_unique<TimeLine<float>>();
+	_exRateTL->ClearKey();
+	_exRateTL->AddKey(0,0.0f);
+	_exRateTL->AddKey(30, 1.0f);
+
+	_brightTL = make_unique<TimeLine<float>>();
+	_brightTL->AddKey(0, 1.0f);
+	_brightTL->AddKey(30, 0.0f);
+
+	_updater = &BattleScene::SceneStartAnim;
 }
 
 BattleScene::~BattleScene()
@@ -122,6 +144,8 @@ BattleScene::~BattleScene()
 
 void BattleScene::Update(const Input& input)
 {
+	_exRateTL->Update();
+
 	_camera->Update();
 
 	_leftBC.AnimUpdate();
@@ -171,7 +195,14 @@ void BattleScene::Draw(void)
 
 	SetDrawScreen(DX_SCREEN_BACK);
 
-	DrawGraph(0,0,_screenH, true);
+	auto wsize = Application::Instance().GetWindowSize();
+
+	DrawRotaGraph(wsize.w/2, wsize.h/2, _exRateTL->GetValue(), _exRateTL->GetValue() * 4.0f * DX_PI, _screenH, true);
+
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, (1.0f - _brightTL->GetValue()) * 255);
+	DrawBox(0,0, wsize.w, wsize.h, 0x000000, true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+
 	ScreenFlip();
 }
 

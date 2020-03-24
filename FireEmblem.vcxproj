@@ -22,6 +22,7 @@
     <ClCompile Include="Resource\Source\Game\Actor.cpp" />
     <ClCompile Include="Resource\Source\Game\Animator.cpp" />
     <ClCompile Include="Resource\Source\Game\Astar.cpp" />
+    <ClCompile Include="Resource\Source\Game\BattleCharactor.cpp" />
     <ClCompile Include="Resource\Source\Game\Camera.cpp" />
     <ClCompile Include="Resource\Source\Game\Charactor.cpp" />
     <ClCompile Include="Resource\Source\Game\Commander.cpp" />
@@ -55,6 +56,7 @@
     <ClInclude Include="Resource\Source\Game\Actor.h" />
     <ClInclude Include="Resource\Source\Game\Animator.h" />
     <ClInclude Include="Resource\Source\Game\Astar.h" />
+    <ClInclude Include="Resource\Source\Game\BattleCharactor.h" />
     <ClInclude Include="Resource\Source\Game\Camera.h" />
     <ClInclude Include="Resource\Source\Game\Charactor.h" />
     <ClInclude Include="Resource\Source\Game\Commander.h" />

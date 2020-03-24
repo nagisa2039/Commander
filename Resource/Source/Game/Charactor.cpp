@@ -209,6 +209,34 @@ Charactor::~Charactor()
 {
 }
 
+void Charactor::Update(const Input& input)
+{
+	Move();
+
+	_animator->ChangeAnim(_dirTable[_dir].animName);
+	_animator->Update();
+}
+
+void Charactor::Draw(const Camera& camera)
+{
+	auto offset = camera.GetCameraOffset();
+	auto chipSize = _mapCtrl.GetChipSize().ToVector2Int();
+
+	DrawMovableMass(camera);
+
+	if (!_canMove)
+	{
+		SetDrawBright(128, 128, 128);
+	}
+	auto imgSize = _animator->GetAnimRect().size.ToVector2Int();
+	_animator->Draw(offset + _pos.ToVector2Int(), _mapCtrl.GetChipSize());
+
+	SetDrawBright(255, 255, 255);
+
+	auto circleOffset = Vector2Int(0, -chipSize.y / 2);
+	DrawCircle(circleOffset + offset + _pos.ToVector2Int() + chipSize * 0.5, chipSize.x / 4, GetTeamColor(), true);
+}
+
 void Charactor::AnimRestart()
 {
 	_animator->AnimRestart();
@@ -264,151 +292,6 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 		}
 	}
 	return false;
-}
-
-BattleCharactor::BattleCharactor(Charactor& charactor)
-	: _selfChar(charactor), _size(128,128)
-{
-	auto wsize = Application::Instance().GetWindowSize();
-	SetStartPos(Vector2());
-	_animator = make_shared<Animator>();
-	_uiSize = Size(wsize.w / 2, 200);
-
-	_targetChar = nullptr;
-}
-
-BattleCharactor::~BattleCharactor()
-{
-}
-
-void BattleCharactor::Init(const Vector2& startPos, const Dir dir, BattleCharactor* target)
-{
-	SetStartPos(startPos);
-	SetDir(dir);
-	SetTargetCharactor(target);
-
-	_attackAnimCnt = -1;
-	_attackAnimCntMax = 15;
-
-	_createEffect = false;
-
-	_animHealth = _selfChar.GetStatus().health;
-	_animHealthCnt = 0;
-}
-
-void BattleCharactor::AnimUpdate()
-{
-	_animator->Update();
-}
-
-void BattleCharactor::AttackUpdate(BattleScene& battleScene)
-{
-	if(_attackAnimCnt >= 0)
-	{
-		Vector2 dir = _dir == Dir::left ? Vector2(1, 0) : Vector2(-1, 0);
-		float per = _attackAnimCnt / static_cast<float>(_attackAnimCntMax);
-		per = 1.0f - abs(0.5f - per)*2;
-		_pos = Lerp(_startPos, _startPos + dir * 50, per);
-		if (_attackAnimCnt++ >= _attackAnimCntMax)
-		{
-			_attackAnimCnt = -1;
-		}
-		if (!_createEffect && _attackAnimCnt >= _attackAnimCntMax / 2)
-		{
-			if (_targetChar != nullptr)
-			{
-				_createEffect = true;
-
-				auto targetCenterPos = _targetChar->GetCenterPos();
-				battleScene.GetEffectVec().emplace_back(CreateAttackEffect(targetCenterPos));
-
-				int damage = _selfChar.GetStatus().GetDamage(_targetChar->GetSelfCharacotr().GetStatus());
-				char damageText[10];
-				sprintf_s(damageText, 10, "%d", damage);
-				battleScene.GetEffectVec().emplace_back(make_shared<FlyText>(damageText, targetCenterPos, 60 * 1));
-				_targetChar->AddDamage(damage);
-			}
-		}
-	}
-}
-
-void BattleCharactor::Draw()
-{
-	_animator->Draw(GetDrawPos(_pos.ToVector2Int(), _size, Anker::centerdown), _size);
-	UIDraw();
-}
-
-void BattleCharactor::UIAnimUpdate()
-{
-	uint8_t statusHp = _selfChar.GetStatus().health;
-	if (statusHp == _animHealth)
-	{
-		return;
-	}
-
-	if (_animHealthCnt++ % 3 == 0)
-	{
-		_animHealth += _animHealth > statusHp ? -1 : 1;
-	}
-}
-
-void BattleCharactor::UIDraw()
-{
-}
-
-void BattleCharactor::StartAttackAnim()
-{
-	_attackAnimCnt = 0;
-	_createEffect = false;
-	_animHealth = _selfChar.GetStatus().health;
-}
-
-bool BattleCharactor::GetAttackAnimEnd()
-{
-	return _attackAnimCnt < 0;
-}
-
-void BattleCharactor::StartHPAnim()
-{
-	_animHealthCnt = 0;
-}
-
-bool BattleCharactor::GetHPAnimEnd()
-{
-	return _animHealth == _selfChar.GetStatus().health;
-}
-
-Size BattleCharactor::GetSize() const
-{
-	return _size;
-}
-
-Vector2Int BattleCharactor::GetCenterPos() const
-{
-	return Vector2Int(_pos.ToVector2Int() - Vector2Int(0, _size.h/2));
-}
-
-Charactor& BattleCharactor::GetSelfCharacotr()
-{
-	return _selfChar;
-}
-
-void BattleCharactor::SetStartPos(const Vector2& startPos)
-{
-	_startPos = startPos;
-	_pos = startPos;
-}
-
-void BattleCharactor::SetTargetCharactor(BattleCharactor* target)
-{
-	_targetChar = target;
-}
-
-void BattleCharactor::AddDamage(const int damage)
-{
-	auto status = _selfChar.GetStatus();
-	status.health -= damage;
-	_selfChar.SetStatus(status);
 }
 
 int Charactor::Status::GetDamage(const Status& target)const

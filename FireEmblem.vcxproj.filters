@@ -150,6 +150,9 @@
     <ClCompile Include="Resource\Source\Game\TurnChangeAnim.cpp">
       <Filter>ソース ファイル\Game\Actor</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Game\BattleCharactor.cpp">
+      <Filter>ソース ファイル\Game\Actor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -250,6 +253,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Utility\TimeLine.h">
       <Filter>ヘッダー ファイル\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\BattleCharactor.h">
+      <Filter>ヘッダー ファイル\Game\Actor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -91,11 +91,12 @@ void PlayScene::PlayerTurn(const Input& input)
 	_turnChangeAnim->Update(input);
 	if (!_turnChangeAnim->GetAnimEnd()) return;
 
-	_playerCommander->Update(input);
 	if (_playerCommander->CheckEnd())
 	{
 		StartEnemyTurn();
+		return;
 	}
+	_playerCommander->Update(input);
 }
 
 void PlayScene::StartPlayerTurn()
@@ -117,11 +118,12 @@ void PlayScene::EnemyTurn(const Input& input)
 	_turnChangeAnim->Update(input);
 	if (!_turnChangeAnim->GetAnimEnd()) return;
 
-	_enemyCommander->Update(input);
 	if (_enemyCommander->CheckEnd())
 	{
 		StartPlayerTurn();
+		return;
 	}
+	_enemyCommander->Update(input);
 }
 
 void PlayScene::Draw(void)

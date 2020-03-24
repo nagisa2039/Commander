@@ -6,7 +6,7 @@ template<typename T>
 class TimeLine
 {
 private:
-
+	uint32_t _frame;
 	using key = std::pair<uint32_t, T>;
 	std::vector<key> _keys;
 	bool _loop;
@@ -25,9 +25,19 @@ public:
 	{
 	}
 
-	inline void AddKey(const key& k)
+	inline void Update()
 	{
-		_keys.emplace_back(k);
+		_frame++;
+	}
+
+	inline void Reset()
+	{
+		_frame = 0;
+	}
+
+	inline void AddKey(const uint32_t frame, const T value)
+	{
+		_keys.emplace_back(std::make_pair(frame, value));
 
 		auto fuc = [](const key& l, const key& r)
 		{
@@ -42,7 +52,7 @@ public:
 		_keys.clear();
 	}
 
-	inline T GetValue(const uint32_t frame)
+	inline T GetValue()
 	{
 		if (_keys.size() <= 0)
 		{
@@ -50,16 +60,17 @@ public:
 		}
 
 		auto lastFrame = _keys.rbegin()->first;
-		uint32_t calFrame = _loop ? frame % lastFrame : frame;
+		uint32_t calFrame = _loop && _frame > lastFrame ? _frame % lastFrame : _frame;
 
 		if (!_loop)
 		{
-			_end = frame >= lastFrame;
+			_end = calFrame >= lastFrame;
 		}
 
-		auto it = find_if(_keys.rbegin(), _keys.rend(), [frame](const key key)
+
+		auto it = find_if(_keys.rbegin(), _keys.rend(), [calFrame](const key key)
 		{
-			return frame >= key.first;
+			return calFrame >= key.first;
 		});
 
 		// 指定フレームのアニメーションが無いのでとばす
@@ -76,7 +87,7 @@ public:
 			return currnet->second;
 		}
 
-		auto parsent = (frame - currnet->first) / (float)(next->first - currnet->first);
+		auto parsent = (calFrame - currnet->first) / (float)(next->first - currnet->first);
 		return currnet->second + (next->second - currnet->second) * parsent;
 	}
 

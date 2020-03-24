@@ -21,10 +21,9 @@ private:
 	std::array<TeamInf, static_cast<size_t>(Team::max)> teamInfs;
 	bool _animEnd;
 
-	uint32_t _frame;
-
-	TimeLine<float> _exrateTL;
-	TimeLine<float> _alphaTL;
+	std::unique_ptr<TimeLine<float>> _exrateTL;
+	std::unique_ptr<TimeLine<float>> _alphaTL;
+	std::unique_ptr<TimeLine<float>> _angleTL;
 
 public:
 	TurnChangeAnim();

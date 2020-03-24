@@ -4,6 +4,7 @@
 #include "../Utility/Geometry.h"
 #include <vector>
 #include <memory>
+#include "TimeLine.h"
 
 class Camera;
 class Effect;
@@ -25,6 +26,12 @@ private:
 
 	float _floatY;
 	bool _pursuit;	// ’ÇŒ‚”»’è‚ğs‚Á‚½‚©
+
+	std::unique_ptr<TimeLine<float>> _exRateTL;
+	std::unique_ptr<TimeLine<float>> _brightTL;	// ‰æ–Ê‚“x
+
+	bool SceneStartAnim(const Input& input);
+	bool SceneEndAnim(const Input& input);
 
 	bool LeftTurn(const Input& input);
 	bool LeftHPAnim(const Input& input);

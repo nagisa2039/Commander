@@ -116,7 +116,7 @@ void Application::Run()
 
 		ClsDrawScreen();
 
-		
+
 		_sceneController->SceneUpdate(*_input);
 
 		ScreenFlip();

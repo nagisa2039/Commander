@@ -10,6 +10,7 @@
 #include "Application.h"
 #include "FlyText.h"
 #include <algorithm>
+#include "FileSystem.h"
 
 using namespace std;
 
@@ -235,6 +236,11 @@ void Charactor::Draw(const Camera& camera)
 
 	auto circleOffset = Vector2Int(0, -chipSize.y / 2);
 	DrawCircle(circleOffset + offset + _pos.ToVector2Int() + chipSize * 0.5, chipSize.x / 4, GetTeamColor(), true);
+
+	// ƒAƒCƒRƒ“‚Ì•`‰æ
+	int handle = Application::Instance().GetFileSystem()->GetImageHandle(_iconPath.c_str());
+	DrawGraph(camera.GetCameraOffset() + _pos.ToVector2Int(), handle, false);
+	//DrawBox(camera.GetCameraOffset() + _pos.ToVector2Int(), camera.GetCameraOffset() + _pos.ToVector2Int() + 32, 0x000000, true);
 }
 
 void Charactor::AnimRestart()

@@ -1,25 +1,24 @@
 #pragma once
 #include "Charactor.h"
-
-class Swordsman :
+class Warrior :
 	public Charactor
 {
 private:
 
 public:
-	Swordsman(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl, 
+	Warrior(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl,
 		std::vector<std::shared_ptr<Effect>>& effects);
-	~Swordsman();
+	~Warrior();
 };
 
 #include "BattleCharactor.h"
 
-class SwordBC : 
+class WarriorBC :
 	public BattleCharactor
 {
 public:
-	SwordBC(Charactor& charactor);
-	~SwordBC();
+	WarriorBC(Charactor& charactor);
+	~WarriorBC();
 
 	std::shared_ptr<Effect> CreateAttackEffect(const Vector2Int& effectPos)override final;
 };

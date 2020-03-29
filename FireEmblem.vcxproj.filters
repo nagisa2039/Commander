@@ -55,6 +55,12 @@
     <Filter Include="ヘッダー ファイル\Game\Actor\Commander">
       <UniqueIdentifier>{ea11d55e-b96c-4abf-8062-7e3cefc25ff7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Game\Actor\Charactor">
+      <UniqueIdentifier>{cf52a1eb-5bb6-4eab-b73c-5bffa5b62a64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Game\Actor\Charactor">
+      <UniqueIdentifier>{17c0c6fc-7d7e-45f4-91b3-358b98acb8a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Resource\Source\System\FileSystem.cpp">
@@ -117,14 +123,8 @@
     <ClCompile Include="Resource\Source\Game\MapCursor.cpp">
       <Filter>ソース ファイル\Game\Actor</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Game\Swordsman.cpp">
-      <Filter>ソース ファイル\Game\Actor</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Source\Game\Effect.cpp">
       <Filter>ソース ファイル\Game\Actor\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Game\Charactor.cpp">
-      <Filter>ソース ファイル\Game\Actor</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\SlashingEffect.cpp">
       <Filter>ソース ファイル\Game\Actor\Effect</Filter>
@@ -152,6 +152,18 @@
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\BattleCharactor.cpp">
       <Filter>ソース ファイル\Game\Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\Soldier.cpp">
+      <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\Charactor.cpp">
+      <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\Warrior.cpp">
+      <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\Swordsman.cpp">
+      <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -215,16 +227,10 @@
     <ClInclude Include="Resource\Source\Game\Actor.h">
       <Filter>ヘッダー ファイル\Game\Actor</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Source\Game\Charactor.h">
-      <Filter>ヘッダー ファイル\Game\Actor</Filter>
-    </ClInclude>
     <ClInclude Include="Resource\Source\Game\EditCursor.h">
       <Filter>ヘッダー ファイル\Game\Actor</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\MapCursor.h">
-      <Filter>ヘッダー ファイル\Game\Actor</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Game\Swordsman.h">
       <Filter>ヘッダー ファイル\Game\Actor</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\Effect.h">
@@ -256,6 +262,18 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\BattleCharactor.h">
       <Filter>ヘッダー ファイル\Game\Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Soldier.h">
+      <Filter>ヘッダー ファイル\Game\Actor\Charactor</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Warrior.h">
+      <Filter>ヘッダー ファイル\Game\Actor\Charactor</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Swordsman.h">
+      <Filter>ヘッダー ファイル\Game\Actor\Charactor</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Charactor.h">
+      <Filter>ヘッダー ファイル\Game\Actor\Charactor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

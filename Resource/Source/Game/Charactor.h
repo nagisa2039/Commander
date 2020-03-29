@@ -80,6 +80,8 @@ protected:
 	Status _status; 
 	Status _startStatus;
 
+	std::string _iconPath;	// アイコンの画像パス
+
 	void Move();
 
 	unsigned int GetTeamColor()const;

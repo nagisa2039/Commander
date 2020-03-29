@@ -6,7 +6,11 @@
 #include "../System/FileSystem.h"
 #include "../Game/Camera.h"
 #include "../Game/MapCtrl.h"
-#include "../Game/Swordsman.h"
+
+#include "Swordsman.h"
+#include "Soldier.h"
+#include "Warrior.h"
+
 #include "PlayerCommander.h"
 #include "EnemyCommander.h"
 #include "Effect.h"
@@ -32,10 +36,10 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player);
 	_enemyCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy);
 
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(0,0),	Team::player, *_mapCtrl, _controller, _effects));
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(1,3),	Team::player, *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Soldier>(Vector2Int(0,0),	Team::player, *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Warrior>(Vector2Int(1,3),	Team::player, *_mapCtrl, _controller, _effects));
 	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(5, 5),	Team::enemy,  *_mapCtrl, _controller, _effects));
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(5, 3),	Team::enemy,  *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Warrior>(Vector2Int(5, 3),	Team::enemy,  *_mapCtrl, _controller, _effects));
 
 	_camera->AddTargetActor(_playerCommander);
 

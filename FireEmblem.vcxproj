@@ -26,6 +26,7 @@
     <ClCompile Include="Resource\Source\Game\Camera.cpp" />
     <ClCompile Include="Resource\Source\Game\Charactor.cpp" />
     <ClCompile Include="Resource\Source\Game\Commander.cpp" />
+    <ClCompile Include="Resource\Source\Game\DataBase.cpp" />
     <ClCompile Include="Resource\Source\Game\EditCursor.cpp" />
     <ClCompile Include="Resource\Source\Game\Effect.cpp" />
     <ClCompile Include="Resource\Source\Game\EnemyCommander.cpp" />
@@ -62,6 +63,7 @@
     <ClInclude Include="Resource\Source\Game\Camera.h" />
     <ClInclude Include="Resource\Source\Game\Charactor.h" />
     <ClInclude Include="Resource\Source\Game\Commander.h" />
+    <ClInclude Include="Resource\Source\Game\DataBase.h" />
     <ClInclude Include="Resource\Source\Game\EditCursor.h" />
     <ClInclude Include="Resource\Source\Game\Effect.h" />
     <ClInclude Include="Resource\Source\Game\EnemyCommander.h" />
@@ -76,6 +78,7 @@
     <ClInclude Include="Resource\Source\Game\Team.h" />
     <ClInclude Include="Resource\Source\Game\TurnChangeAnim.h" />
     <ClInclude Include="Resource\Source\Game\Warrior.h" />
+    <ClInclude Include="Resource\Source\Game\Attribute.h" />
     <ClInclude Include="Resource\Source\Scene\BattleScene.h" />
     <ClInclude Include="Resource\Source\Scene\MapEditScene.h" />
     <ClInclude Include="Resource\Source\Scene\PlayScene.h" />

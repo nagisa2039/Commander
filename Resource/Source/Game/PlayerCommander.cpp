@@ -78,9 +78,14 @@ void PlayerCommander::CharactorControl(const Input& input)
 
 void PlayerCommander::Update(const Input& input)
 {
+	if (_end) return;
+
 	CursorMove(input);
 
 	CharactorControl(input);
+
+	ChaeckCharactor();
+
 	_animCnt++;
 }
 

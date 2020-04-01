@@ -11,28 +11,34 @@ Commander::Commander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtr
 	_pos = Vector2();
 	_animCnt = 0;
 	_rigid = 0;
+	_end = false;
 }
 
 Commander::~Commander()
 {
 }
 
-bool Commander::CheckEnd() const
+bool Commander::ChaeckCharactor()
 {
-	bool end = true;
+	_end = true;
 	for (auto& charactor : _charactors)
 	{
 		if (_ctrlTeam == charactor->GetTeam())
 		{
-			end = end && !charactor->GetCanMove();
+			_end = _end && !charactor->GetCanMove();
 		}
 	}
+	return _end;
+}
 
-	return end;
+bool Commander::CheckEnd() const
+{
+	return _end;
 }
 
 void Commander::TurnReset()
 {
+	_end = false;
 	for (auto& charactor : _charactors)
 	{
 		if (charactor->GetTeam() == _ctrlTeam)

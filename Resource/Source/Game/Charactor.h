@@ -6,6 +6,8 @@
 #include "Dir.h"
 #include "Team.h"
 #include <vector>
+#include "Attribute.h"
+#include "TimeLine.h"
 
 class Animator;
 class MapCtrl;
@@ -37,15 +39,21 @@ public:
 		uint8_t luck;
 		uint8_t move;
 
-		Status(): level(1), health(1), power(1), defense(1), speed(1), skill(1), luck(1), move(1) {};
+		Attribute attribute;
+
+		Status(): level(1), health(1), power(1), defense(1), speed(1), skill(1), luck(1), move(1), attribute(Attribute::normal){};
 		Status(const uint8_t lv, const uint8_t he, const uint8_t pw, const uint8_t df, 
-			const uint8_t sp, const uint8_t sk, const uint8_t lu, const uint8_t mv)
-			: level(lv), health(he), power(pw), defense(df), speed(sp), skill(sk), luck(lu), move(mv) {};
+			const uint8_t sp, const uint8_t sk, const uint8_t lu, const uint8_t mv, const Attribute at)
+			: level(lv), health(he), power(pw), defense(df), speed(sp), skill(sk), luck(lu), move(mv), attribute(at){};
 
 		int GetDamage(const Status& target)const;	// ダメージ
 		int GetHit(const Status& target)const;	// 命中率
 		int GetCritical(const Status& target)const;	// 必殺率
 	};
+
+private:
+	// 死亡時のアニメーションに使用するalpha値のタイムライン
+	std::unique_ptr<TimeLine<float>> _dyingAnimAlphaTL;
 
 protected:
 	struct DirInf
@@ -75,12 +83,29 @@ protected:
 	int _moveSpeed;
 	bool _isSelect;
 	Dir _dir;
-	bool _isDying;//	死亡アニメーション中
+
+	//	死亡アニメーション中
+	bool _isDying;
 
 	Status _status; 
 	Status _startStatus;
 
 	std::string _iconPath;	// アイコンの画像パス
+
+	// 場面後のの更新を行う
+	void(Charactor::* _updater)();
+	// 場面後のの描画を行う
+	void(Charactor::* _drawer)();
+
+	// 通常時の更新
+	void NormalUpdate();
+	// 死亡時の更新
+	void DyingUpdate();
+
+	// 通常時の描画
+	void NormalDraw();
+	// 死亡時の描画
+	void DyingDraw();
 
 	void Move();
 

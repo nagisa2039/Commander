@@ -7,6 +7,7 @@
 #include "DxLibUtility.h"
 #include "FlyText.h"
 #include "FileSystem.h"
+#include "DataBase.h"
 
 using namespace std;
 
@@ -66,7 +67,12 @@ void BattleCharactor::AttackUpdate(BattleScene& battleScene)
 				auto targetCenterPos = _targetChar->GetCenterPos();
 				battleScene.GetEffectVec().emplace_back(CreateAttackEffect(targetCenterPos));
 
-				int damage = _selfChar.GetStatus().GetDamage(_targetChar->GetSelfCharacotr().GetStatus());
+				auto selfStatus = _selfChar.GetStatus();
+				auto targetStatus = _targetChar->GetSelfCharacotr().GetStatus();
+
+				int damage = selfStatus.GetDamage(targetStatus)
+					* Application::Instance().GetDataBase().GetAttributeRate(selfStatus.attribute, targetStatus.attribute);
+
 				char damageText[10];
 				sprintf_s(damageText, 10, "%d", damage);
 				battleScene.GetEffectVec().emplace_back(make_shared<FlyText>(damageText, targetCenterPos, 60 * 1));
@@ -251,5 +257,9 @@ void BattleCharactor::AddDamage(const int damage)
 {
 	auto status = _selfChar.GetStatus();
 	status.health -= damage;
+	if (status.health <= 0)
+	{
+		_selfChar.SetIsDying(true);
+	}
 	_selfChar.SetStatus(status);
 }

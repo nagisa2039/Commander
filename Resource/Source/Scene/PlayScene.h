@@ -32,12 +32,26 @@ private:
 	std::shared_ptr<EnemyCommander> _enemyCommander;
 	std::vector<std::shared_ptr<Effect>> _effects;
 
+	// 場面ごとの更新を行う関数ポインタ
+	void(PlayScene::*_uniqueUpdater)(const Input& input);
+
+	// 場面ごとの更新を行う関数ポインタ
+	void(PlayScene::* _uniqueDrawer)(const Camera& camera);
+
 	void StartPlayerTurn();
 	void StartEnemyTurn();
 
-	void PlayerTurn(const Input& input);
-	void EnemyTurn(const Input& input);
-	void(PlayScene::*_turnUpdater)(const Input& input);
+	void PlayerTurnUpdate(const Input& input);
+	void EnemyTurnUpdate(const Input& input);
+
+	void GameClearUpdate(const Input& input);
+	void GameOverUpdate(const Input& input);
+
+	void PlayerTurnDraw(const Camera& camera);
+	void EnemyTurnDraw(const Camera& camera);
+	void GameOverDraw(const Camera& camera);
+	void GameClearDraw(const Camera& camera);
+
 
 public:
 	PlayScene(SceneController & ctrl);

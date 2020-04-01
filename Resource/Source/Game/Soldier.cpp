@@ -50,7 +50,7 @@ Soldier::Soldier(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, Sc
 
 	_dir = Dir::down;
 
-	_status = Status(1, 100, 10, 5, 5, 5, 5, 5);
+	_status = Status(1, 100, 10, 5, 5, 5, 5, 5, Attribute::blue);
 	_startStatus = _status;
 
 	_iconPath = "Resource/Image/Icon/spearIcon.png";

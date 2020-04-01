@@ -165,6 +165,9 @@
     <ClCompile Include="Resource\Source\Game\Swordsman.cpp">
       <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Game\DataBase.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -274,6 +277,12 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\Charactor.h">
       <Filter>ヘッダー ファイル\Game\Actor\Charactor</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Attribute.h">
+      <Filter>ヘッダー ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\DataBase.h">
+      <Filter>ヘッダー ファイル\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

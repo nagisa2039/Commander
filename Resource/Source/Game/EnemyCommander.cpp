@@ -44,16 +44,12 @@ void EnemyCommander::Update(const Input& input)
 		{
 			_selectChar = &*charactor;
   			_selectChar->SearchAndMove();
-			break;
+			return;
 		}
 	}
 
 	// ˆÚ“®‰Â”\‚È·¬×‚ª‚¢‚È‚¢‚Ì‚ÅI—¹
-	if (_selectChar == nullptr)
-	{
-		return;
-	}
-
+	_end = true;
 
 	return;
 }

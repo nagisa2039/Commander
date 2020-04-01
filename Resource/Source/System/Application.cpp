@@ -9,6 +9,7 @@
 #include "../Scene/PlayScene.h"
 #include "../Scene/MapEditScene.h"
 #include "../Scene/PlayScene.h"
+#include "DataBase.h"
 
 using namespace std;
 
@@ -29,12 +30,17 @@ Application::~Application()
 
 Application::Configure & Application::GetConfigure(void)
 {
-	return _configure;
+	return *_configure;
 }
 
 const Size & Application::GetWindowSize(void)
 {
-	return _configure.GetWindowSize();
+	return _configure->GetWindowSize();
+}
+
+const DataBase& Application::GetDataBase() const
+{
+	return *_dataBase;
 }
 
 std::shared_ptr<FileSystem> const Application::GetFileSystem() const
@@ -44,6 +50,9 @@ std::shared_ptr<FileSystem> const Application::GetFileSystem() const
 
 bool Application::Initialize()
 {
+	_configure = make_shared<Configure>();
+	_dataBase = make_shared<DataBase>();
+
 	// Dxlib‚Ì‰Šú‰»
 	ChangeWindowMode(TRUE);
 	auto wSize = GetWindowSize();

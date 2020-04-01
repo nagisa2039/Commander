@@ -7,6 +7,7 @@ class Input;
 struct Vector2Int;
 class SceneController;
 class FileSystem;
+class DataBase;
 
 // アプリケーション全体を
 // 制御するシングルトンクラス
@@ -33,6 +34,8 @@ public:
 
 	// 画面サイズを参照で返す
 	const Size& GetWindowSize(void);
+
+	const DataBase& GetDataBase()const;
 
 	std::shared_ptr<FileSystem> const GetFileSystem()const;
 
@@ -65,6 +68,7 @@ private:
 
 	std::vector<Vector2Int> _poss;
 
-	Configure _configure;
+	std::shared_ptr<Configure> _configure;
+	std::shared_ptr<DataBase> _dataBase;
 };
 

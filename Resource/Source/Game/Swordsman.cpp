@@ -18,7 +18,15 @@ Swordsman::Swordsman(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl
 	_battleC = make_shared<SwordBC>(*this);
 
 	const Size divSize = Size(32,32);
-	_animator->SetImage("Resource/Image/Charactor/charactor.png");
+
+	if (_team == Team::player)
+	{
+		_animator->SetImage("Resource/Image/Charactor/charactorP.png");
+	}
+	else
+	{
+		_animator->SetImage("Resource/Image/Charactor/charactorE.png");
+	}
 
 	int cnt = 0;
 	auto nextRectCenterOffset = [&](std::vector<Rect>& animRectVec, int cnt)
@@ -50,7 +58,7 @@ Swordsman::Swordsman(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl
 
 	_dir = Dir::down;
 
-	_status = Status(1, 100, 10, 5, 5, 5, 5, 5);
+	_status = Status(1, 100, 10, 5, 5, 5, 5, 5, Attribute::red);
 	_startStatus = _status;
 
 	_iconPath = "Resource/Image/Icon/swordIcon.png";

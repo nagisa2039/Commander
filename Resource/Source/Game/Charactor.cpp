@@ -14,6 +14,27 @@
 
 using namespace std;
 
+void Charactor::NormalUpdate()
+{
+	Move();
+
+	_animator->ChangeAnim(_dirTable[_dir].animName);
+	_animator->Update();
+}
+
+void Charactor::DyingUpdate()
+{
+	_dyingAnimAlphaTL->Update();
+}
+
+void Charactor::NormalDraw()
+{
+}
+
+void Charactor::DyingDraw()
+{
+}
+
 void Charactor::Move()
 {
 	auto moveAnimEnd = [&]()
@@ -204,6 +225,13 @@ Charactor::Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl
 	_animator = make_shared<Animator>();
 
 	_status = Status();
+
+	_dyingAnimAlphaTL = make_unique<TimeLine<float>>();
+	_dyingAnimAlphaTL->AddKey(0, 1.0f);
+	_dyingAnimAlphaTL->AddKey(60, 0.0f);
+
+	_updater = &Charactor::NormalUpdate;
+	_drawer = &Charactor::NormalDraw;
 }
 
 Charactor::~Charactor()
@@ -212,10 +240,7 @@ Charactor::~Charactor()
 
 void Charactor::Update(const Input& input)
 {
-	Move();
-
-	_animator->ChangeAnim(_dirTable[_dir].animName);
-	_animator->Update();
+	(this->*_updater)();
 }
 
 void Charactor::Draw(const Camera& camera)

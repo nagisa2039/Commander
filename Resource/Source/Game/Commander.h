@@ -18,6 +18,11 @@ protected:
 
 	int _rigid;
 
+	bool _end;
+
+	bool ChaeckCharactor();
+
+
 public:
 	Commander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam);
 	~Commander();

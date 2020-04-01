@@ -36,10 +36,10 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player);
 	_enemyCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy);
 
-	_charactors.emplace_back(make_shared<Soldier>(Vector2Int(0,0),	Team::player, *_mapCtrl, _controller, _effects));
-	_charactors.emplace_back(make_shared<Warrior>(Vector2Int(1,3),	Team::player, *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(0,0),	Team::player, *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(1,3),	Team::player, *_mapCtrl, _controller, _effects));
 	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(5, 5),	Team::enemy,  *_mapCtrl, _controller, _effects));
-	_charactors.emplace_back(make_shared<Warrior>(Vector2Int(5, 3),	Team::enemy,  *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(5, 3),	Team::enemy,  *_mapCtrl, _controller, _effects));
 
 	_camera->AddTargetActor(_playerCommander);
 
@@ -78,7 +78,7 @@ void PlayScene::Update(const Input & input)
 		charactor->Update(input);
 	}
 
-	(this->*_turnUpdater)(input);
+	(this->*_uniqueUpdater)(input);
 
 	_camera->Update();
 	for (auto& effect : _effects)
@@ -90,7 +90,7 @@ void PlayScene::Update(const Input & input)
 	_effects.erase(newEnd, _effects.end());
 }
 
-void PlayScene::PlayerTurn(const Input& input)
+void PlayScene::PlayerTurnUpdate(const Input& input)
 {
 	_turnChangeAnim->Update(input);
 	if (!_turnChangeAnim->GetAnimEnd()) return;
@@ -105,19 +105,21 @@ void PlayScene::PlayerTurn(const Input& input)
 
 void PlayScene::StartPlayerTurn()
 {
-	_playerCommander->TurnReset();
-	_turnUpdater = &PlayScene::PlayerTurn;
+	_uniqueUpdater = &PlayScene::PlayerTurnUpdate;
+	_uniqueDrawer = &PlayScene::PlayerTurnDraw;
 	_turnChangeAnim->TurnStart(Team::player);
+	_enemyCommander->TurnReset();
 }
 
 void PlayScene::StartEnemyTurn()
 {
-	_enemyCommander->TurnReset();
-	_turnUpdater = &PlayScene::EnemyTurn;
+	_uniqueUpdater = &PlayScene::EnemyTurnUpdate;
+	_uniqueDrawer = &PlayScene::EnemyTurnDraw;
 	_turnChangeAnim->TurnStart(Team::enemy);
+	_playerCommander->TurnReset();
 }
 
-void PlayScene::EnemyTurn(const Input& input)
+void PlayScene::EnemyTurnUpdate(const Input& input)
 {
 	_turnChangeAnim->Update(input);
 	if (!_turnChangeAnim->GetAnimEnd()) return;
@@ -128,6 +130,32 @@ void PlayScene::EnemyTurn(const Input& input)
 		return;
 	}
 	_enemyCommander->Update(input);
+}
+
+void PlayScene::GameClearUpdate(const Input& input)
+{
+}
+
+void PlayScene::GameOverUpdate(const Input& input)
+{
+}
+
+void PlayScene::PlayerTurnDraw(const Camera& camera)
+{
+	// プレイヤーCursorの描画
+	_playerCommander->Draw(*_camera);
+}
+
+void PlayScene::EnemyTurnDraw(const Camera& camera)
+{
+}
+
+void PlayScene::GameOverDraw(const Camera& camera)
+{
+}
+
+void PlayScene::GameClearDraw(const Camera& camera)
+{
 }
 
 void PlayScene::Draw(void)
@@ -141,8 +169,11 @@ void PlayScene::Draw(void)
 	{
 		effect->Draw(*_camera);
 	}
-	_playerCommander->Draw(*_camera);
 
+	// 場面ごとの描画
+	(this->*_uniqueDrawer)(*_camera);
+
+	// ターン交代のエフェクト描画
 	_turnChangeAnim->Draw(*_camera);
 
 	if (debug)

@@ -326,6 +326,12 @@ Size Size::operator-(const Size& size)
 	return Size(-size.w, -size.h);
 }
 
+void Size::operator*=(const float scale)
+{
+	this->w *= scale;
+	this->h *= scale;
+}
+
 Vector3 Vector3::operator-(void)const
 {
 	return Vector3(-x,-y,-z);

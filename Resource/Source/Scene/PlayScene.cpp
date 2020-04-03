@@ -48,10 +48,13 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 
 	_mapCtrl->LoadMap("map0");
 
+	_dyingCharItr = _charactors.end();
+
 	_playerCommander->TurnReset();
 
 	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin", 40, 1, true, true);
 	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin100", 100, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin200", 200, 1, true, true);
 
 	// プレイヤーターンを開始
 	StartPlayerTurn();
@@ -73,11 +76,6 @@ void PlayScene::Update(const Input & input)
 	{
 	}
 
-	for (auto& charactor : _charactors)
-	{
-		charactor->Update(input);
-	}
-
 	(this->*_uniqueUpdater)(input);
 
 	_camera->Update();
@@ -85,13 +83,15 @@ void PlayScene::Update(const Input & input)
 	{
 		effect->Update(input);
 	}
-	auto newEnd = remove_if(_effects.begin(), _effects.end(),
+	auto newEffectEnd = remove_if(_effects.begin(), _effects.end(),
 		[](const std::shared_ptr<Effect>& effect) { return effect->GetDelete(); });
-	_effects.erase(newEnd, _effects.end());
+	_effects.erase(newEffectEnd, _effects.end());
 }
 
 void PlayScene::PlayerTurnUpdate(const Input& input)
 {
+	CharactorUpdate(input);
+
 	_turnChangeAnim->Update(input);
 	if (!_turnChangeAnim->GetAnimEnd()) return;
 
@@ -103,12 +103,85 @@ void PlayScene::PlayerTurnUpdate(const Input& input)
 	_playerCommander->Update(input);
 }
 
+void PlayScene::CharactorUpdate(const Input& input)
+{
+	for (auto itr = _charactors.begin(); itr != _charactors.end(); itr++)
+	{
+		(*itr)->Update(input);
+		if ((*itr)->GetIsDying())
+		{
+			_dyingCharItr = itr;
+			_uniqueUpdaterOld = _uniqueUpdater;
+			_uniqueUpdater = &PlayScene::CharactorDyingUpdate;
+		}
+	}
+}
+
+void PlayScene::MakePSTBuffer(const int targetHandle)
+{
+	if (targetHandle == -1) return;
+
+	Size buffSize;
+	GetGraphSize(targetHandle, &buffSize.w, &buffSize.h);
+
+	// 縮小バッファをtargetBfの半分のサイズで作成
+	Size shrinkSize = Size(buffSize.w / 2, buffSize.h);
+	_shrinkBf = MakeScreen(shrinkSize.w, shrinkSize.h, true);
+
+	// _shrinkBfへの描画
+	SetDrawScreen(_shrinkBf);
+	ClsDrawScreen();
+
+	int drawY = 0;
+	int shrinkCnt = 4;
+
+	shrinkSize.h /= 2;
+	for (int i = 0; i < shrinkCnt; i++)
+	{
+		DrawExtendGraph(0, drawY, shrinkSize.w, drawY + shrinkSize.h, targetHandle, true);
+		drawY += shrinkSize.h;
+		shrinkSize *= 0.5f;
+	}
+
+	// 縮小バッファを拡大して加算
+	SetDrawScreen(targetHandle);
+
+	GraphFilter(_shrinkBf, DX_GRAPH_FILTER_GAUSS, 8, 100);
+
+	SetDrawBlendMode(DX_BLENDMODE_ADD, 255);
+
+	shrinkSize = buffSize * 0.5f;
+	drawY = 0;
+	for (int i = 0; i < shrinkCnt; i++)
+	{
+		DrawRectExtendGraph(0, 0, buffSize.w - 1, buffSize.h - 1, 
+			0, drawY, shrinkSize.w, shrinkSize.h, _shrinkBf, true);
+		drawY += shrinkSize.h;
+		shrinkSize *= 0.5f;
+	}
+
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+
+	SetDrawScreen(DX_SCREEN_BACK);
+
+	//GraphFilter(targetHandle, DX_GRAPH_FILTER_GAUSS, 8, 100);
+}
+
+void PlayScene::DrawPSTBuffer()
+{
+	auto wsize = Application::Instance().GetWindowSize();
+	DrawRotaGraph(wsize.w/2, wsize.h/2, 1.0f, 0.0f, _targetBf, true);
+	DrawGraph(0, 0, _shrinkBf, true);
+}
+
 void PlayScene::StartPlayerTurn()
 {
 	_uniqueUpdater = &PlayScene::PlayerTurnUpdate;
 	_uniqueDrawer = &PlayScene::PlayerTurnDraw;
 	_turnChangeAnim->TurnStart(Team::player);
 	_enemyCommander->TurnReset();
+
+	_uniqueUpdaterOld = _uniqueUpdater;
 }
 
 void PlayScene::StartEnemyTurn()
@@ -117,10 +190,14 @@ void PlayScene::StartEnemyTurn()
 	_uniqueDrawer = &PlayScene::EnemyTurnDraw;
 	_turnChangeAnim->TurnStart(Team::enemy);
 	_playerCommander->TurnReset();
+
+	_uniqueUpdaterOld = _uniqueUpdater;
 }
 
 void PlayScene::EnemyTurnUpdate(const Input& input)
 {
+	CharactorUpdate(input);
+
 	_turnChangeAnim->Update(input);
 	if (!_turnChangeAnim->GetAnimEnd()) return;
 
@@ -130,6 +207,54 @@ void PlayScene::EnemyTurnUpdate(const Input& input)
 		return;
 	}
 	_enemyCommander->Update(input);
+}
+
+void PlayScene::CharactorDyingUpdate(const Input& input)
+{
+	// dyingが終わっているか確認
+	if (!(*_dyingCharItr)->GetDelete())
+	{
+		// 終わっていないので更新する
+		(*_dyingCharItr)->Update(input);
+		return;
+	}
+
+	// 削除処理
+	_charactors.erase(_dyingCharItr);
+	_dyingCharItr = _charactors.end();
+
+	array<int, static_cast<size_t>(Team::max)> teamCntArray;
+	teamCntArray.fill(0);
+	for (auto& charactor : _charactors)
+	{
+		teamCntArray[static_cast<size_t>(charactor->GetTeam())]++;
+	}
+
+	// ゲームクリアとゲームオーバーの判定
+	for (int i = 0; i < teamCntArray.size(); i++)
+	{
+		if (teamCntArray[i] > 0)
+		{
+			continue;
+		}
+
+		if (static_cast<Team>(i) == Team::player)
+		{
+			// ゲームオーバー
+			_uniqueUpdater = &PlayScene::GameOverUpdate;
+			_uniqueDrawer = &PlayScene::GameOverDraw;
+			return;
+		}
+		else
+		{
+			// ゲームクリア
+			_uniqueUpdater = &PlayScene::GameClearUpdate;
+			_uniqueDrawer = &PlayScene::GameClearDraw;
+			return;
+		}
+	}
+
+	_uniqueUpdater = _uniqueUpdaterOld;
 }
 
 void PlayScene::GameClearUpdate(const Input& input)
@@ -152,10 +277,28 @@ void PlayScene::EnemyTurnDraw(const Camera& camera)
 
 void PlayScene::GameOverDraw(const Camera& camera)
 {
+	auto str = "GAME OVER";
+	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin200");
+	auto wsize = Application::Instance().GetWindowSize();
+	auto drawPos = GetDrawPos(wsize.ToVector2Int() * 0.5f, GetStringSizseToHandle(str, fontHandle), Anker::center);
+	DrawFormatStringToHandle(drawPos.x, drawPos.y, 0x4000ff, fontHandle, str);
 }
 
 void PlayScene::GameClearDraw(const Camera& camera)
 {
+	auto str = "GAME CLER";
+	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin200");
+	auto wsize = Application::Instance().GetWindowSize();
+	auto drawPos = GetDrawPos(wsize.ToVector2Int() * 0.5f, GetStringSizseToHandle(str, fontHandle), Anker::center);
+	DrawFormatStringToHandle(drawPos.x, drawPos.y, 0xffff00, fontHandle, str);
+}
+
+Size PlayScene::GetStringSizseToHandle(const std::string& str, const int fontHandle)
+{
+	Size strSize;
+	int lineCnt;
+	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, fontHandle, str.c_str());
+	return strSize;
 }
 
 void PlayScene::Draw(void)
@@ -179,4 +322,6 @@ void PlayScene::Draw(void)
 	if (debug)
 	{
 	}
+
+	//DrawPSTBuffer();
 }

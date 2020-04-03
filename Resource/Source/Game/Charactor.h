@@ -95,7 +95,7 @@ protected:
 	// 場面後のの更新を行う
 	void(Charactor::* _updater)();
 	// 場面後のの描画を行う
-	void(Charactor::* _drawer)();
+	void(Charactor::* _drawer)(const Camera& camera);
 
 	// 通常時の更新
 	void NormalUpdate();
@@ -103,9 +103,9 @@ protected:
 	void DyingUpdate();
 
 	// 通常時の描画
-	void NormalDraw();
+	void NormalDraw(const Camera& camera);
 	// 死亡時の描画
-	void DyingDraw();
+	void DyingDraw(const Camera& camera);
 
 	void Move();
 
@@ -137,7 +137,7 @@ public:
 	bool GetIsMoveAnim()const;
 
 	void SetIsSelect(const bool select);
-	void SetIsDying(const bool dying);
+	void SetIsDying();
 	void SetDir(const Dir dir);
 	void SetStatus(const Status& status);
 
@@ -148,4 +148,6 @@ public:
 
 	void SearchAndMove();
 	std::list<Astar::ResultPos>& GetResutlPosList();
+
+	void AddDamage(const int damage);
 };

@@ -76,7 +76,7 @@ void BattleCharactor::AttackUpdate(BattleScene& battleScene)
 				char damageText[10];
 				sprintf_s(damageText, 10, "%d", damage);
 				battleScene.GetEffectVec().emplace_back(make_shared<FlyText>(damageText, targetCenterPos, 60 * 1));
-				_targetChar->AddDamage(damage);
+				_targetChar->GetSelfCharacotr().AddDamage(damage);
 			}
 		}
 	}
@@ -251,15 +251,4 @@ void BattleCharactor::SetDir(const Dir dir)
 void BattleCharactor::SetTargetCharactor(BattleCharactor* target)
 {
 	_targetChar = target;
-}
-
-void BattleCharactor::AddDamage(const int damage)
-{
-	auto status = _selfChar.GetStatus();
-	status.health -= damage;
-	if (status.health <= 0)
-	{
-		_selfChar.SetIsDying(true);
-	}
-	_selfChar.SetStatus(status);
 }

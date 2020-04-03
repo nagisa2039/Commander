@@ -51,7 +51,5 @@ public:
 
 	// 開始位置から終端位置までのマスをリストに格納して返す。見つからなかった場合はリストを空にして返す
 	void RouteSearch(const Vector2Int& startMapPos, const int move, const std::vector<std::vector<int>>& mapData, std::list<Astar::ResultPos>& resutlPosList);
-
-
 };
 

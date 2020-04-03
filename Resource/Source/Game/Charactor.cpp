@@ -25,14 +25,43 @@ void Charactor::NormalUpdate()
 void Charactor::DyingUpdate()
 {
 	_dyingAnimAlphaTL->Update();
+	if (_dyingAnimAlphaTL->GetEnd())
+	{
+		_delete = true;
+	}
 }
 
-void Charactor::NormalDraw()
+void Charactor::NormalDraw(const Camera& camera)
 {
+	auto offset = camera.GetCameraOffset();
+	auto chipSize = _mapCtrl.GetChipSize().ToVector2Int();
+
+	DrawMovableMass(camera);
+
+	if (!_canMove)
+	{
+		SetDrawBright(128, 128, 128);
+	}
+	_animator->Draw(offset + _pos.ToVector2Int(), _mapCtrl.GetChipSize());
+
+	SetDrawBright(255, 255, 255);
+
+	auto circleOffset = Vector2Int(0, -chipSize.y / 2);
+	DrawCircle(circleOffset + offset + _pos.ToVector2Int() + chipSize * 0.5, chipSize.x / 4, GetTeamColor(), true);
+
+	// アイコンの描画
+	int handle = Application::Instance().GetFileSystem()->GetImageHandle(_iconPath.c_str());
+	DrawGraph(camera.GetCameraOffset() + _pos.ToVector2Int(), handle, false);
+	//DrawBox(camera.GetCameraOffset() + _pos.ToVector2Int(), camera.GetCameraOffset() + _pos.ToVector2Int() + 32, 0x000000, true);
 }
 
-void Charactor::DyingDraw()
+void Charactor::DyingDraw(const Camera& camera)
 {
+	auto offset = camera.GetCameraOffset();
+
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 * _dyingAnimAlphaTL->GetValue());
+	_animator->Draw(offset + _pos.ToVector2Int(), _mapCtrl.GetChipSize());
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }
 
 void Charactor::Move()
@@ -108,8 +137,12 @@ void Charactor::DrawMovableMass(const Camera& camera) const
 		unsigned int color = movePos.attack ? 0xff0000 : 0x0000ff;
 		box.Draw(color);
 		box.Draw(color, false);
+
+		Vector2Int leftup = offset + movePos.mapPos * chipSize.ToVector2Int();
+		DrawFormatString(leftup.x, leftup.y, 0x000000, "%d", movePos.moveCnt);
 	}
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+
 }
 
 bool Charactor::GetIsSelect() const
@@ -162,9 +195,12 @@ void Charactor::SetIsSelect(const bool select)
 	_isSelect = select;
 }
 
-void Charactor::SetIsDying(const bool dying)
+void Charactor::SetIsDying()
 {
-	_isDying = dying;
+	_isDying = true;
+
+	_updater = &Charactor::DyingUpdate;
+	_drawer	 = &Charactor::DyingDraw;
 }
 
 void Charactor::SetDir(const Dir dir)
@@ -205,6 +241,16 @@ std::list<Astar::ResultPos>& Charactor::GetResutlPosList()
 	return _resutlPosList;
 }
 
+void Charactor::AddDamage(const int damage)
+{
+	_status.health = max(_status.health - damage, 0);
+	if (_status.health <= 0)
+	{
+		SetIsDying();
+	}
+	SetStatus(_status);
+}
+
 Charactor::Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl, 
 	std::vector<std::shared_ptr<Effect>>& effects)
 	: _team(team), _mapCtrl(mapCtrl), _controller(ctrl), _effects(effects)
@@ -232,6 +278,8 @@ Charactor::Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl
 
 	_updater = &Charactor::NormalUpdate;
 	_drawer = &Charactor::NormalDraw;
+
+	//_mapCtrl.SearchMovePos(*this);
 }
 
 Charactor::~Charactor()
@@ -245,27 +293,7 @@ void Charactor::Update(const Input& input)
 
 void Charactor::Draw(const Camera& camera)
 {
-	auto offset = camera.GetCameraOffset();
-	auto chipSize = _mapCtrl.GetChipSize().ToVector2Int();
-
-	DrawMovableMass(camera);
-
-	if (!_canMove)
-	{
-		SetDrawBright(128, 128, 128);
-	}
-	auto imgSize = _animator->GetAnimRect().size.ToVector2Int();
-	_animator->Draw(offset + _pos.ToVector2Int(), _mapCtrl.GetChipSize());
-
-	SetDrawBright(255, 255, 255);
-
-	auto circleOffset = Vector2Int(0, -chipSize.y / 2);
-	DrawCircle(circleOffset + offset + _pos.ToVector2Int() + chipSize * 0.5, chipSize.x / 4, GetTeamColor(), true);
-
-	// アイコンの描画
-	int handle = Application::Instance().GetFileSystem()->GetImageHandle(_iconPath.c_str());
-	DrawGraph(camera.GetCameraOffset() + _pos.ToVector2Int(), handle, false);
-	//DrawBox(camera.GetCameraOffset() + _pos.ToVector2Int(), camera.GetCameraOffset() + _pos.ToVector2Int() + 32, 0x000000, true);
+	(this->*_drawer)(camera);
 }
 
 void Charactor::AnimRestart()
@@ -292,30 +320,51 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 
 	int range = 1;
 
+
 	_moveDirList.clear();
 	for (const auto& resultPos : _resutlPosList)
 	{
 		if (mapPos == resultPos.mapPos)
 		{
-			_moveDirList.emplace_front(MoveInf(resultPos.dir, resultPos.attack));
-
+			// _resultPosListからmoveDirListを作るために
+			// 終わりから始まりへと辿ったリストを作る
+			std::list<Astar::ResultPos> oneLineResutlList;
+			oneLineResutlList.clear();
+			oneLineResutlList.emplace_front(resultPos);
 			Astar::ResultPos* rp = resultPos.parent;
+
+			// attackマスが何マス続くかの数(攻撃範囲内かの確認のため)
+			int attackMassCnt = 0;
 			for(;rp->parent != nullptr;)
 			{
-				_moveDirList.emplace_front(MoveInf(rp->dir, rp->attack));
+				oneLineResutlList.emplace_front(*rp);
+				if (rp->attack)
+				{
+					attackMassCnt++;
+				}
 				rp = rp->parent;
 			}
-			_isMoveAnim = true;
 
-			for(auto last = _moveDirList.end(); _moveDirList.size() > _status.move;)
+
+			// 攻撃範囲外のマスを削除
+			for (int i = range; i < attackMassCnt; i++)
 			{
-				last--;
-				if (_moveDirList.size() <= _status.move + range && last->attack)
+				oneLineResutlList.pop_back();
+			}
+
+			for (auto resutl : oneLineResutlList)
+			{
+				if (resutl.moveCnt <= _status.move || resutl.attack)
+				{
+					_moveDirList.emplace_back(MoveInf(resutl.dir, resutl.attack));
+				}
+				else
 				{
 					break;
 				}
-				last = _moveDirList.erase(last);
 			}
+
+			_isMoveAnim = true;
 
 			_status.move = max(_status.move - resultPos.moveCnt, 0);
 

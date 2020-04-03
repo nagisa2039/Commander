@@ -149,7 +149,8 @@ struct Size
 	Size() :w(0), h(0) {}
 	Size(const int w, const int h) :w(w), h(h) {}
 	Vector2Int ToVector2Int()const;
-	Size operator-(const Size& size);
+	Size operator-(const Size& size); 
+	void operator*=(const float scale);
 };
 
 Size operator+(const Size& lval, const Size& rval);

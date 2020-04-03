@@ -44,6 +44,13 @@ bool BattleScene::LeftHPAnim(const Input& input)
 	_leftBC.UIAnimUpdate();
 	if (_leftBC.GetHPAnimEnd())
 	{
+		// €‚ñ‚Å‚¢‚½‚çI‚í‚é
+		if (_leftBC.GetSelfCharacotr().GetIsDying())
+		{
+			return false;
+		}
+
+		// ’ÇŒ‚”»’è
 		if (_pursuit)
 		{
 			_updater = &BattleScene::SceneEndAnim;
@@ -73,6 +80,13 @@ bool BattleScene::RightHPAnim(const Input& input)
 	_rightBC.UIAnimUpdate();
 	if (_rightBC.GetHPAnimEnd())
 	{
+		// €‚ñ‚Å‚¢‚½‚çI‚í‚é
+		if (_rightBC.GetSelfCharacotr().GetIsDying())
+		{
+			return false;
+		}
+
+		// ’ÇŒ‚”»’è
 		if (_pursuit)
 		{
 			_updater = &BattleScene::SceneEndAnim;

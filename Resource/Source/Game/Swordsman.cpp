@@ -58,7 +58,7 @@ Swordsman::Swordsman(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl
 
 	_dir = Dir::down;
 
-	_status = Status(1, 100, 10, 5, 5, 5, 5, 5, Attribute::red);
+	_status = Status(1, 5, 10, 5, 5, 5, 5, 5, Attribute::red);
 	_startStatus = _status;
 
 	_iconPath = "Resource/Image/Icon/swordIcon.png";

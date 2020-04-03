@@ -6,6 +6,7 @@
 #include "../Utility/Geometry.h"
 #include "../Game/Team.h"
 #include <list>
+#include <string>
 
 class Charactor;
 class MapCtrl;
@@ -28,21 +29,34 @@ private:
 	std::shared_ptr<TurnChangeAnim> _turnChangeAnim;
 
 	std::vector<std::shared_ptr<Charactor>> _charactors;
+	std::vector<std::shared_ptr<Charactor>>::iterator _dyingCharItr;
 	std::shared_ptr<PlayerCommander> _playerCommander;
 	std::shared_ptr<EnemyCommander> _enemyCommander;
 	std::vector<std::shared_ptr<Effect>> _effects;
 
 	// 場面ごとの更新を行う関数ポインタ
 	void(PlayScene::*_uniqueUpdater)(const Input& input);
+	void(PlayScene::* _uniqueUpdaterOld)(const Input& input);
 
 	// 場面ごとの更新を行う関数ポインタ
 	void(PlayScene::* _uniqueDrawer)(const Camera& camera);
+
+	// ポストエフェクト実験
+	int _targetBf;
+	int _shrinkBf;
+
+
+	void MakePSTBuffer(const int targetHandle);
+	void DrawPSTBuffer();
 
 	void StartPlayerTurn();
 	void StartEnemyTurn();
 
 	void PlayerTurnUpdate(const Input& input);
+	void CharactorUpdate(const Input& input);
 	void EnemyTurnUpdate(const Input& input);
+
+	void CharactorDyingUpdate(const Input& input);
 
 	void GameClearUpdate(const Input& input);
 	void GameOverUpdate(const Input& input);
@@ -52,6 +66,7 @@ private:
 	void GameOverDraw(const Camera& camera);
 	void GameClearDraw(const Camera& camera);
 
+	Size GetStringSizseToHandle(const std::string& str, const int fontHandle);
 
 public:
 	PlayScene(SceneController & ctrl);

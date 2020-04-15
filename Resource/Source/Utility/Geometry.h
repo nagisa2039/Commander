@@ -16,6 +16,10 @@ struct Vector2Int
 	void operator-=(const Vector2Int& pos);
 
 	Vector2 ToVector2() const;
+	Size ToSize() const;
+
+	static Vector2Int Zero();
+	static Vector2Int One();
 };
 
 Vector2Int operator+(const Vector2Int &lval, const Vector2Int& rval);
@@ -30,6 +34,7 @@ bool operator!=(const Vector2Int &lval, const Vector2Int& rval);
 
 Vector2Int operator+(const Vector2Int& lval, const Size& rval);
 Vector2Int operator*(const Vector2Int& lval, const Size& rval);
+Vector2Int operator*(const Vector2Int& lval, const Vector2& rval);
 
 struct Vector2
 {

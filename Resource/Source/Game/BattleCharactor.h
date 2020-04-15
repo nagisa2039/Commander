@@ -34,7 +34,7 @@ protected:
 	std::string _name;
 
 public:
-	BattleCharactor(Charactor& charactor);
+	BattleCharactor(Charactor& charactor, const int imageHandle);
 	~BattleCharactor();
 
 	virtual void Init(const Vector2& startPos, const Dir dir, BattleCharactor* target);

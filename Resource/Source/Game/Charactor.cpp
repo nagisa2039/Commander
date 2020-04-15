@@ -42,17 +42,26 @@ void Charactor::NormalDraw(const Camera& camera)
 	{
 		SetDrawBright(128, 128, 128);
 	}
-	_animator->Draw(offset + _pos.ToVector2Int(), _mapCtrl.GetChipSize());
+	Vector2Int drawPos = offset + _pos.ToVector2Int();
+	_animator->Draw(drawPos, _mapCtrl.GetChipSize());
 
 	SetDrawBright(255, 255, 255);
 
 	auto circleOffset = Vector2Int(0, -chipSize.y / 2);
-	DrawCircle(circleOffset + offset + _pos.ToVector2Int() + chipSize * 0.5, chipSize.x / 4, GetTeamColor(), true);
+	DrawCircle(circleOffset + drawPos + chipSize * 0.5, chipSize.x / 4, GetTeamColor(), true);
 
 	// ƒAƒCƒRƒ“‚Ì•`‰æ
 	int handle = Application::Instance().GetFileSystem()->GetImageHandle(_iconPath.c_str());
 	DrawGraph(camera.GetCameraOffset() + _pos.ToVector2Int(), handle, false);
-	//DrawBox(camera.GetCameraOffset() + _pos.ToVector2Int(), camera.GetCameraOffset() + _pos.ToVector2Int() + 32, 0x000000, true);
+
+	// HPBer‚Ì•`‰æ
+	Size hpberSize = (chipSize * Vector2(0.8f, 0.1f)).ToSize();
+	Vector2Int hpLeftup		= drawPos + chipSize * Vector2(0.1f, 0.8f);
+	Vector2Int hpRightdown	= hpLeftup + hpberSize;
+	DrawBox(hpLeftup + Vector2Int::One() * -2, hpRightdown + Vector2Int::One() * +2, 0xffffff);
+	DrawBox(hpLeftup + Vector2Int::One() * -1, hpRightdown + Vector2Int::One() * +1, 0xaaaaaa);
+	float berLength = max(min(static_cast<float>(_status.health) / static_cast<float>(_startStatus.health), 1.0f), 0.0f);
+	DrawBox(hpLeftup, hpLeftup + hpberSize.ToVector2Int() * Vector2(berLength, 1.0f), GetTeamColor());
 }
 
 void Charactor::DyingDraw(const Camera& camera)
@@ -251,7 +260,7 @@ void Charactor::AddDamage(const int damage)
 	SetStatus(_status);
 }
 
-Charactor::Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl, 
+Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl,
 	std::vector<std::shared_ptr<Effect>>& effects)
 	: _team(team), _mapCtrl(mapCtrl), _controller(ctrl), _effects(effects)
 {

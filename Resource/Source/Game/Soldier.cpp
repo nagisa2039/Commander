@@ -11,14 +11,13 @@
 
 using namespace std;
 
-Soldier::Soldier(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl,
+Soldier::Soldier(const uint8_t level, const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl,
 	std::vector<std::shared_ptr<Effect>>& effects)
-	:Charactor(mapPos, team, mapCtrl, ctrl, effects)
+	:Charactor(level, mapPos, team, mapCtrl, ctrl, effects)
 {
-	_battleC = make_shared<SoldierBC>(*this);
-
 	const Size divSize = Size(32, 32);
 	_animator->SetImage("Resource/Image/Charactor/charactor.png");
+	_battleC = make_shared<SoldierBC>(*this, _animator->GetImageH());
 
 	int cnt = 0;
 	auto nextRectCenterOffset = [&](std::vector<Rect>& animRectVec, int cnt)
@@ -50,7 +49,13 @@ Soldier::Soldier(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, Sc
 
 	_dir = Dir::down;
 
-	_status = Status(1, 100, 10, 5, 5, 5, 5, 5, Attribute::blue);
+	_status = Status(level, 20, 10, 5, 5, 5, 5, 5, Attribute::red);
+	_status.health	+= level * 0.6f;
+	_status.power	+= level * 0.5f;
+	_status.defense += level * 0.6f;
+	_status.speed	+= level * 0.4f;
+	_status.skill	+= level * 0.5f;
+	_status.luck	+= level * 0.6f;
 	_startStatus = _status;
 
 	_iconPath = "Resource/Image/Icon/spearIcon.png";
@@ -60,11 +65,11 @@ Soldier::~Soldier()
 {
 }
 
-SoldierBC::SoldierBC(Charactor& charactor) : BattleCharactor(charactor)
+SoldierBC::SoldierBC(Charactor& charactor, const int imageHandle) : BattleCharactor(charactor, imageHandle)
 {
 	_name = "Soldier";
 	const Size divSize = Size(32, 32);
-	_animator->SetImage("Resource/Image/Charactor/charactor.png");
+	_animator->SetImageHandle(imageHandle);
 
 	int cnt = 0;
 	auto nextRectCenterOffset = [&](std::vector<Rect>& animRectVec, int cnt)

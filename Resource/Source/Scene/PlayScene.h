@@ -68,6 +68,11 @@ private:
 
 	Size GetStringSizseToHandle(const std::string& str, const int fontHandle);
 
+	int pshandle;
+	VERTEX2DSHADER Vert[6];
+	FLOAT4 _colorC;
+	FLOAT4 _waveC;
+
 public:
 	PlayScene(SceneController & ctrl);
 	~PlayScene();

@@ -20,6 +20,11 @@ void Animator::SetImage(const char * path)
 	GetGraphSize(_imageH, &_imageSize.w, &_imageSize.h);
 }
 
+void Animator::SetImageHandle(const int handle)
+{
+	_imageH = handle;
+}
+
 void Animator::Update()
 {
 	if (_animEnd)

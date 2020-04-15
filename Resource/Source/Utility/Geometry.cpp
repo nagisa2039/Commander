@@ -134,6 +134,11 @@ Vector2Int operator*(const Vector2Int& lval, const Size& rval)
 	return Vector2Int(lval.x * rval.w, lval.y * rval.h);
 }
 
+Vector2Int operator*(const Vector2Int& lval, const Vector2& rval)
+{
+	return (lval.ToVector2() * rval).ToVector2Int();
+}
+
 float Dot(const Vector2 & lval, const Vector2 & rval)
 {
 	return lval.x * rval.x + lval.y * rval.y;
@@ -314,6 +319,21 @@ void Vector2Int::operator-=(const Vector2Int & pos)
 Vector2 Vector2Int::ToVector2() const
 {
 	return Vector2(static_cast<float>(this->x), static_cast<float>(this->y));
+}
+
+Size Vector2Int::ToSize() const
+{
+	return Size(this->x, this->y);
+}
+
+Vector2Int Vector2Int::Zero()
+{
+	return Vector2Int(0,0);
+}
+
+Vector2Int Vector2Int::One()
+{
+	return Vector2Int(1,1);
 }
 
 Vector2Int Size::ToVector2Int() const

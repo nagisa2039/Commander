@@ -36,10 +36,10 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player);
 	_enemyCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy);
 
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(0,0),	Team::player, *_mapCtrl, _controller, _effects));
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(1,3),	Team::player, *_mapCtrl, _controller, _effects));
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(5, 5),	Team::enemy,  *_mapCtrl, _controller, _effects));
-	_charactors.emplace_back(make_shared<Swordsman>(Vector2Int(5, 3),	Team::enemy,  *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Swordsman>(5, Vector2Int(0,0),	Team::player, *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Swordsman>(5, Vector2Int(1,3),	Team::player, *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Swordsman>(5, Vector2Int(5, 5),	Team::enemy,  *_mapCtrl, _controller, _effects));
+	_charactors.emplace_back(make_shared<Swordsman>(5, Vector2Int(5, 3),	Team::enemy,  *_mapCtrl, _controller, _effects));
 
 	_camera->AddTargetActor(_playerCommander);
 
@@ -58,6 +58,36 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 
 	// プレイヤーターンを開始
 	StartPlayerTurn();
+
+
+	// ピクセルシェーダーバイナリコードの読み込み
+	pshandle = LoadPixelShader("Resource/Source/Shader/HPBer.cso");
+
+
+	// 頂点データの準備
+	Vert[0].pos = VGet(0.0f, 0.0f, 0.0f);
+	Vert[1].pos = VGet(512.0f, 0.0f, 0.0f);
+	Vert[2].pos = VGet(0.0f, 512.0f, 0.0f);
+	Vert[3].pos = VGet(512.0f, 512.0f, 0.0f);
+	Vert[0].dif = GetColorU8(255, 255, 255, 255);
+	Vert[0].spc = GetColorU8(0, 0, 0, 0);
+	Vert[0].u = 0.0f; Vert[0].v = 0.0f;
+	Vert[1].u = 1.0f; Vert[1].v = 0.0f;
+	Vert[2].u = 0.0f; Vert[2].v = 1.0f;
+	Vert[3].u = 1.0f; Vert[3].v = 1.0f;
+	Vert[0].su = 0.0f; Vert[0].sv = 0.0f;
+	Vert[1].su = 1.0f; Vert[1].sv = 0.0f;
+	Vert[2].su = 0.0f; Vert[2].sv = 1.0f;
+	Vert[3].su = 1.0f; Vert[3].sv = 1.0f;
+	Vert[0].rhw = 1.0f;
+	Vert[1].rhw = 1.0f;
+	Vert[2].rhw = 1.0f;
+	Vert[3].rhw = 1.0f;
+	Vert[4] = Vert[2];
+	Vert[5] = Vert[1];
+
+	_colorC = { 0.0f,0.0f,1.0f,1.0f };
+	_waveC = { 0.5f, 0.0f, 0.0f, 0.0f };
 }
 
 PlayScene::~PlayScene()
@@ -318,6 +348,16 @@ void PlayScene::Draw(void)
 
 	// ターン交代のエフェクト描画
 	_turnChangeAnim->Draw(*_camera);
+
+	// 使用するピクセルシェーダーをセット
+	SetUsePixelShader(pshandle);
+
+	// 定数の設定
+	SetPSConstF(0, _colorC);
+	SetPSConstF(1, _waveC);
+
+	// 描画
+	//DrawPrimitive2DToShader(Vert, 6, DX_PRIMTYPE_TRIANGLELIST);
 
 	if (debug)
 	{

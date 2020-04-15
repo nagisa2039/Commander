@@ -113,7 +113,7 @@ protected:
 	void DrawMovableMass(const Camera& camera)const;
 
 public:
-	Charactor(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl, 
+	Charactor(const uint8_t level, const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl, 
 		std::vector<std::shared_ptr<Effect>>& effects);
 	~Charactor();
 

@@ -11,7 +11,7 @@
 
 using namespace std;
 
-BattleCharactor::BattleCharactor(Charactor& charactor)
+BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle)
 	: _selfChar(charactor), _size(128, 128)
 {
 	auto wsize = Application::Instance().GetWindowSize();

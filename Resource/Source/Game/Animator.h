@@ -31,6 +31,7 @@ public:
 	~Animator();
 
 	void SetImage(const char* path);
+	void SetImageHandle(const int handle);
 
 	void Update();
 	void Draw(const Vector2Int& pos);

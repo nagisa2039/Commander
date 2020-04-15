@@ -6,7 +6,7 @@ class Soldier :
 private:
 
 public:
-	Soldier(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl,
+	Soldier(const uint8_t level, const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl,
 		std::vector<std::shared_ptr<Effect>>& effects);
 	~Soldier();
 };
@@ -17,7 +17,7 @@ class SoldierBC :
 	public BattleCharactor
 {
 public:
-	SoldierBC(Charactor& charactor);
+	SoldierBC(Charactor& charactor, const int imageHandle);
 	~SoldierBC();
 
 	std::shared_ptr<Effect> CreateAttackEffect(const Vector2Int& effectPos)override final;

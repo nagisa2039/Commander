@@ -11,12 +11,10 @@
 
 using namespace std;
 
-Swordsman::Swordsman(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl,
+Swordsman::Swordsman(const uint8_t level, const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl,
 	std::vector<std::shared_ptr<Effect>>& effects)
-	:Charactor(mapPos, team, mapCtrl, ctrl, effects)
+	:Charactor(level, mapPos, team, mapCtrl, ctrl, effects)
 {
-	_battleC = make_shared<SwordBC>(*this);
-
 	const Size divSize = Size(32,32);
 
 	if (_team == Team::player)
@@ -27,6 +25,7 @@ Swordsman::Swordsman(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl
 	{
 		_animator->SetImage("Resource/Image/Charactor/charactorE.png");
 	}
+	_battleC = make_shared<SwordBC>(*this, _animator->GetImageH());
 
 	int cnt = 0;
 	auto nextRectCenterOffset = [&](std::vector<Rect>& animRectVec, int cnt)
@@ -58,7 +57,15 @@ Swordsman::Swordsman(const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl
 
 	_dir = Dir::down;
 
-	_status = Status(1, 5, 10, 5, 5, 5, 5, 5, Attribute::red);
+
+	_status = Status(level, 20, 10, 5, 5, 5, 5, 5, Attribute::red);
+	_status.health	+= level * 0.6f;
+	_status.power	+= level * 0.4f;
+	_status.defense += level * 0.4f;
+	_status.speed	+= level * 0.6f;
+	_status.skill	+= level * 0.6f;
+	_status.luck	+= level * 0.6f;
+
 	_startStatus = _status;
 
 	_iconPath = "Resource/Image/Icon/swordIcon.png";
@@ -68,11 +75,11 @@ Swordsman::~Swordsman()
 {
 }
 
-SwordBC::SwordBC(Charactor& charactor): BattleCharactor(charactor)
+SwordBC::SwordBC(Charactor& charactor, const int imageHandle): BattleCharactor(charactor, imageHandle)
 {
 	_name = "Swordsman";
+	_animator->SetImageHandle(imageHandle);
 	const Size divSize = Size(32, 32);
-	_animator->SetImage("Resource/Image/Charactor/charactor.png"); 
 	
 	int cnt = 0;
 	auto nextRectCenterOffset = [&](std::vector<Rect>& animRectVec, int cnt)

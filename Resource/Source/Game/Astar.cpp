@@ -4,13 +4,16 @@ using namespace std;
 
 void Astar::ResetSerchPosVec2D(const std::vector<std::vector<int>>& mapData)
 {
-	_serchPosVec2.resize(mapData.size());
-	for (auto& serchPosVec : _serchPosVec2)
+	_searchPosVec2Move.resize(mapData.size());
+	_searchPosVec2Attack.resize(mapData.size());
+	for (int i = 0; i < mapData.size(); i++)
 	{
-		serchPosVec.resize(mapData[0].size());
-		for (auto& serchPos : serchPosVec)
+		_searchPosVec2Move[i].resize(mapData[0].size());
+		_searchPosVec2Attack[i].resize(mapData[0].size());
+		for (int j = 0; j < mapData[0].size(); j++)
 		{
-			serchPos.state = Astar::SearchState::non;
+			_searchPosVec2Move[i][j].state = Astar::SearchState::non;
+			_searchPosVec2Attack[i][j].state = Astar::SearchState::non;
 		}
 	}
 }
@@ -33,13 +36,14 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const std
 	resutlPosList.emplace_back(ResultPos(false, startMapPos, nullptr, Dir::max, 0));
 
 	ResetSerchPosVec2D(mapData);
+	_searchPosVec2Move[startMapPos.y][startMapPos.x].moveCnt = 0;
+	_searchPosVec2Move[startMapPos.y][startMapPos.x].state = Astar::SearchState::search;
 
 	auto seachIdxList = list<Vector2Int>();
 	seachIdxList.clear();
 
 	seachIdxList.emplace_front(startMapPos);
 
-	_serchPosVec2[startMapPos.y][startMapPos.x].moveCnt = 0;
 	for (auto it = seachIdxList.begin(); it != seachIdxList.end();)
 	{
 		Vector2Int nowPos = *it;
@@ -49,15 +53,14 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const std
 		{
 			// 範囲外チェック
 			auto checkPos = nowPos + _dirTable[i];
-			if (checkPos.x < 0 || checkPos.x >= static_cast<int>(_serchPosVec2[0].size())
-				|| checkPos.y < 0 || checkPos.y >= static_cast<int>(_serchPosVec2.size()))
+			if (checkPos.x < 0 || checkPos.x >= static_cast<int>(_searchPosVec2Move[0].size())
+				|| checkPos.y < 0 || checkPos.y >= static_cast<int>(_searchPosVec2Move.size()))
 			{
 				continue;
 			}
 
-			// 移動済みか初期マスには移動しない
-			if (_serchPosVec2[checkPos.y][checkPos.x].state != Astar::SearchState::non
-				|| checkPos == startMapPos)
+			// 移動済みには移動しない
+			if (_searchPosVec2Move[checkPos.y][checkPos.x].state != Astar::SearchState::non)
 			{
 				continue;
 			}
@@ -77,12 +80,12 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const std
 				continue;
 			}
 
-			auto moveCnt = _serchPosVec2[nowPos.y][nowPos.x].moveCnt + mapData[checkPos.y][checkPos.x];
+			auto moveCnt = _searchPosVec2Move[nowPos.y][nowPos.x].moveCnt + mapData[checkPos.y][checkPos.x];
 
 			// 移動可能な距離か
 			if (moveCnt <= move)
 			{
-				_serchPosVec2[checkPos.y][checkPos.x] = SearchPos(checkPos, nowPos, Astar::SearchState::serch, moveCnt);
+				_searchPosVec2Move[checkPos.y][checkPos.x] = SearchPos(checkPos, nowPos, Astar::SearchState::search, moveCnt);
 				seachIdxList.emplace_back(checkPos);
 				resutlPosList.emplace_back(ResultPos(false, checkPos, &(*parentIt), static_cast<Dir>(i), moveCnt));
 			}
@@ -90,16 +93,25 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const std
 
 		it = seachIdxList.erase(it);
 	}
-
-	Range range(2, 2);
+	
+	// 攻撃範囲のサーチ
+	Range range(1, 2);
 	std::list<Astar::ResultPos> attackResultPosList;
 	attackResultPosList.clear();
 
-	// 攻撃範囲のサーチ
-	for (auto& resutlPos : resutlPosList)
+ 	for (auto& resutlPos : resutlPosList)
 	{
+		// 初期化
 		seachIdxList.clear();
 		seachIdxList.emplace_front(resutlPos.mapPos);
+		for (auto& searchPosVec : _searchPosVec2Attack)
+		{
+			for (auto& searchPos : searchPosVec)
+			{
+				searchPos.state = Astar::SearchState::non;
+			}
+		}
+		_searchPosVec2Attack[resutlPos.mapPos.y][resutlPos.mapPos.x].state = Astar::SearchState::search;
 
 		for (auto it = seachIdxList.begin(); it != seachIdxList.end();)
 		{
@@ -108,26 +120,27 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const std
 			{
 				// 範囲外チェック
 				auto checkPos = *it + _dirTable[i];
-				if (checkPos.x < 0 || checkPos.x >= static_cast<int>(_serchPosVec2[0].size())
-					|| checkPos.y < 0 || checkPos.y >= static_cast<int>(_serchPosVec2.size()))
+				if (checkPos.x < 0 || checkPos.x >= static_cast<int>(_searchPosVec2Move[0].size())
+					|| checkPos.y < 0 || checkPos.y >= static_cast<int>(_searchPosVec2Move.size()))
 				{
 					continue;
 				}
 
 				// 移動済みか初期マスには移動しない
-				if (_serchPosVec2[checkPos.y][checkPos.x].state != Astar::SearchState::non
-					|| checkPos == startMapPos)
+				if (_searchPosVec2Attack[checkPos.y][checkPos.x].state != Astar::SearchState::non)
 				{
 					continue;
 				}
 
+				_searchPosVec2Attack[checkPos.y][checkPos.x].state = Astar::SearchState::search;
+
 				// 攻撃範囲内かの確認
 				auto len = (checkPos - (resutlPos.mapPos));
 				int ran = abs(len.x) + abs(len.y);
-				if (ran >= range.min)
+				if (ran >= range.min && _searchPosVec2Move[checkPos.y][checkPos.x].state == Astar::SearchState::non)
 				{
-					_serchPosVec2[checkPos.y][checkPos.x].state = Astar::SearchState::serch;
 					attackResultPosList.emplace_back(ResultPos(true, checkPos, &resutlPos, static_cast<Dir>(i), resutlPos.moveCnt));
+					_searchPosVec2Move[checkPos.y][checkPos.x].state = Astar::SearchState::search;
 				}
 
 				// 最大範囲未満ならそこからさらにSearchする

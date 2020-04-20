@@ -23,9 +23,10 @@ public:
 	{
 		Dir dir;
 		bool attack;
+		Vector2Int mapPos;
 
-		MoveInf() : dir(Dir::left), attack(false) {};
-		MoveInf(const Dir d, const bool at) : dir(d), attack(at) {};
+		MoveInf() : dir(Dir::left), attack(false), mapPos(Vector2Int()) {};
+		MoveInf(const Dir d, const bool at, const Vector2Int mp) : dir(d), attack(at), mapPos(mp) {};
 	};
 
 	struct Status

@@ -26,8 +26,8 @@ private:
 	enum class SearchState
 	{
 		non,	// –¢’Tõ
-		serch,	// ’Tõ’†
-		move	// ’TõÏ‚İ
+		search,	// ’Tõ
+		attack	// UŒ‚
 	};
 
 	struct SearchPos
@@ -40,7 +40,8 @@ private:
 		SearchPos(const Vector2Int& mapPos, const Vector2Int& parent, const SearchState state, const int moveCnt);
 	};
 
-	std::vector<std::vector<SearchPos>> _serchPosVec2;
+	std::vector<std::vector<SearchPos>> _searchPosVec2Move;
+	std::vector<std::vector<SearchPos>> _searchPosVec2Attack;
 	std::array<Vector2Int, Dir::max> _dirTable;
 
 	void ResetSerchPosVec2D(const std::vector<std::vector<int>>& mapData);

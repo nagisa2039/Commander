@@ -91,7 +91,7 @@ void Charactor::Move()
 	if (it->attack)
 	{
 		// ‚»‚Ìƒ}ƒX‚É“G‚ª‚¢‚½‚çí“¬
-		auto charactor = _mapCtrl.GetMapPosChar(GetMapPos() + _dirTable[it->dir].moveVec);
+		auto charactor = _mapCtrl.GetMapPosChar(it->mapPos);
 		if (charactor != nullptr && _team != charactor->GetTeam())
 		{
 			// í“¬
@@ -365,7 +365,7 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 			{
 				if (resutl.moveCnt <= _status.move || resutl.attack)
 				{
-					_moveDirList.emplace_back(MoveInf(resutl.dir, resutl.attack));
+					_moveDirList.emplace_back(MoveInf(resutl.dir, resutl.attack, resutl.mapPos));
 				}
 				else
 				{

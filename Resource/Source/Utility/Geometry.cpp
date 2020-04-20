@@ -591,3 +591,15 @@ Vector3 Clamp(const Vector3 & in, const float min, const float max)
 {
 	return Vector3(Clamp(in.x, min, max), Clamp(in.y, min, max), Clamp(in.z, min, max));
 }
+
+Range::Range()
+{
+	this->min = 0;
+	this->max = 0;
+}
+
+Range::Range(const int min, const int max)
+{
+	this->min = min;
+	this->max = max;
+}

@@ -228,3 +228,12 @@ struct Segment
 float Clamp(const float in, const float min = 0.0f, const float max = 1.0f);
 
 Vector3 Clamp(const Vector3& in, const float min = 0.0f, const float max = 1.0f);
+
+struct Range
+{
+	int min;
+	int max;
+
+	Range();
+	Range(const int min, const int max);
+};

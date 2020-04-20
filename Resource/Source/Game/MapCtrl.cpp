@@ -245,84 +245,19 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& selfCharactor)
 	auto& resultPosList = selfCharactor.GetResutlPosList();
 	_astar->RouteSearch(selfCharactor.GetMapPos(), selfStatus.move*2, mapVec2, resultPosList);
 
-	struct SearchChar
-	{
-		Charactor& characotor;
-		Astar::ResultPos resultPos;
-
-		SearchChar(Charactor& c, Astar::ResultPos r) : characotor(c), resultPos(r) {}
-	};
-
-	// 移動量内にいるターゲット
-	std::list<SearchChar> targetsM;
-	targetsM.clear();
-
-	// 視野内にいるターゲット
-	std::list<SearchChar> targetsF;
-	targetsF.clear();
-
-	// 射程
-	int range = 1;
-
-	// 視野内のマスにキャラアクターをlistに追加
 	for (const auto& resultPos : resultPosList)
-	{
-		for (const auto& charactor : _charactors)
+	{ 
+		// 攻撃マスになるまでcontinue
+		if (!resultPos.attack)
 		{
-			// 座標が一致 && 自分ではない && 異なるチーム
-			if (resultPos.mapPos == charactor->GetMapPos()
-			 && resultPos.mapPos != selfCharactor.GetMapPos()
-			&& charactor->GetTeam() != selfCharactor.GetTeam())
-			{
-				// 移動量内か
-				if (resultPos.moveCnt > selfStatus.move + range)
-				{
-					// 視野内
-					targetsF.emplace_back(*charactor, resultPos);
-				}
-				else
-				{
-					// 移動量内
-					targetsM.emplace_back(*charactor, resultPos);
-				}
-			}
+			continue;
 		}
-	}
 
-	SearchChar* target = nullptr;
-	auto seachTarget = [&](std::list<SearchChar>& targetList)
-	{
-		SearchChar* t = nullptr;
-		for (auto& targetM : targetList)
+		// 攻撃マスに敵キャラがいるか
+		auto charactor = GetMapPosChar(resultPos.mapPos);
+		if (charactor != nullptr && selfCharactor.GetTeam() != charactor->GetTeam())
 		{
-			if (t == nullptr)
-			{
-				t = &targetM;
-			}
-			else
-			{
-				auto lDamage = t->characotor.GetStatus().GetDamage(selfStatus);
-				auto rDamage = targetM.characotor.GetStatus().GetDamage(selfStatus);
-				if (rDamage > lDamage)
-				{
-					t = &targetM;
-				}
-			}
-		}
-		return t;
-	};
-
-	target = seachTarget(targetsM);
-	if (target != nullptr)
-	{
-		return target->resultPos.mapPos;
-	}
-	else
-	{
-		target = seachTarget(targetsF);
-		if (target != nullptr)
-		{
-			return target->resultPos.mapPos;
+			return resultPos.mapPos;
 		}
 	}
 

@@ -164,6 +164,11 @@ bool Charactor::GetCanMove() const
 	return _canMove;
 }
 
+bool Charactor::GetMoveActive() const
+{
+	return _moveActive;
+}
+
 Charactor::Status Charactor::GetStartStatus() const
 {
 	return _startStatus;
@@ -275,6 +280,7 @@ Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team t
 	_moveSpeed = 4;
 	_isSelect = false;
 	_canMove = true;
+	_moveActive = true;
 	_isDying = false;
 
 	_animator = make_shared<Animator>();

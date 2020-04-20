@@ -80,6 +80,7 @@ protected:
 	std::array<DirInf, Dir::max> _dirTable;
 
 	bool _canMove;
+	bool _moveActive;	// true@‚ ‚é’ö“x‹ß‚Ã‚¢‚Ä‚¢‚½‚ç“®‚­		false UŒ‚”ÍˆÍ“à‚É“ü‚Á‚½‚ç“®‚­
 
 	int _moveSpeed;
 	bool _isSelect;
@@ -129,6 +130,7 @@ public:
 
 	bool GetIsSelect()const;
 	bool GetCanMove()const;
+	bool GetMoveActive()const;
 	Status GetStartStatus()const;
 	Status GetStatus()const;
 	bool GetIsDying()const;

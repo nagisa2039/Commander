@@ -27,8 +27,8 @@ private:
 	float _floatY;
 	bool _pursuit;	// ’ÇŒ‚”»’è‚ğs‚Á‚½‚©
 
-	std::unique_ptr<TimeLine<float>> _exRateTL;
-	std::unique_ptr<TimeLine<float>> _brightTL;	// ‰æ–Ê‚“x
+	std::unique_ptr<Track<float>> _exRateTL;
+	std::unique_ptr<Track<float>> _brightTL;	// ‰æ–Ê‚“x
 
 	bool SceneStartAnim(const Input& input);
 	bool SceneEndAnim(const Input& input);

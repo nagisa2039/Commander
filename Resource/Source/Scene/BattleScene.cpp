@@ -140,12 +140,12 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 
 	_pursuit = false;
 
-	_exRateTL = make_unique<TimeLine<float>>();
+	_exRateTL = make_unique<Track<float>>();
 	_exRateTL->ClearKey();
 	_exRateTL->AddKey(0,0.0f);
 	_exRateTL->AddKey(30, 1.0f);
 
-	_brightTL = make_unique<TimeLine<float>>();
+	_brightTL = make_unique<Track<float>>();
 	_brightTL->AddKey(0, 1.0f);
 	_brightTL->AddKey(30, 0.0f);
 

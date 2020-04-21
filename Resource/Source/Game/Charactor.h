@@ -54,7 +54,7 @@ public:
 
 private:
 	// 死亡時のアニメーションに使用するalpha値のタイムライン
-	std::unique_ptr<TimeLine<float>> _dyingAnimAlphaTL;
+	std::unique_ptr<Track<float>> _dyingAnimAlphaTL;
 
 protected:
 	struct DirInf
@@ -92,6 +92,9 @@ protected:
 	Status _status; 
 	Status _startStatus;
 
+	// 攻撃範囲
+	Range _attackRange;
+
 	std::string _iconPath;	// アイコンの画像パス
 
 	// 場面後のの更新を行う
@@ -121,6 +124,9 @@ public:
 
 	virtual void Update(const Input& input)override;
 	virtual void Draw(const Camera& camera)override;
+
+	virtual void InitAnim();
+
 	void AnimRestart();
 
 	Vector2Int GetMapPos()const;
@@ -138,6 +144,7 @@ public:
 	Vector2Int GetCenterPos()const;
 	BattleCharactor& GetBattleC()const;
 	bool GetIsMoveAnim()const;
+	Range GetAttackRange()const;
 
 	void SetIsSelect(const bool select);
 	void SetIsDying();

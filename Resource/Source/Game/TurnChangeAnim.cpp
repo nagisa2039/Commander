@@ -16,19 +16,19 @@ TurnChangeAnim::TurnChangeAnim()
 	_currentTeam = Team::player;
 	_animEnd = false;
 
-	_exrateTL = make_unique<TimeLine<float>>();
+	_exrateTL = make_unique<Track<float>>();
 	_exrateTL->AddKey(0,	2);
 	_exrateTL->AddKey(15,	1);
 	_exrateTL->AddKey(105, 1);
 	_exrateTL->AddKey(120, 2);
 
-	_alphaTL = make_unique<TimeLine<float>>();
+	_alphaTL = make_unique<Track<float>>();
 	_alphaTL->AddKey(0, 0);
 	_alphaTL->AddKey(15, 255);
 	_alphaTL->AddKey(105, 255);
 	_alphaTL->AddKey(120, 0);
 
-	_angleTL = make_unique<TimeLine<float>>(true);
+	_angleTL = make_unique<Track<float>>(true);
 	_angleTL->AddKey(0, 0);
 	_angleTL->AddKey(59, 59/60.0f * DX_PI*2);
 

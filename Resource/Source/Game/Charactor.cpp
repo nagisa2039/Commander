@@ -204,6 +204,11 @@ bool Charactor::GetIsMoveAnim() const
 	return _isMoveAnim;
 }
 
+Range Charactor::GetAttackRange() const
+{
+	return _attackRange;
+}
+
 void Charactor::SetIsSelect(const bool select)
 {
 	_isSelect = select;
@@ -236,7 +241,7 @@ void Charactor::MoveEnd()
 
 void Charactor::RouteSearch()
 {
-	_mapCtrl.RouteSearch(GetMapPos(), _status.move, _resutlPosList);
+	_mapCtrl.RouteSearch(*this);
 }
 
 void Charactor::TurnReset()
@@ -287,12 +292,14 @@ Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team t
 
 	_status = Status();
 
-	_dyingAnimAlphaTL = make_unique<TimeLine<float>>();
+	_dyingAnimAlphaTL = make_unique<Track<float>>();
 	_dyingAnimAlphaTL->AddKey(0, 1.0f);
 	_dyingAnimAlphaTL->AddKey(60, 0.0f);
 
 	_updater = &Charactor::NormalUpdate;
 	_drawer = &Charactor::NormalDraw;
+
+	_attackRange = Range(2,2);
 
 	//_mapCtrl.SearchMovePos(*this);
 }
@@ -309,6 +316,41 @@ void Charactor::Update(const Input& input)
 void Charactor::Draw(const Camera& camera)
 {
 	(this->*_drawer)(camera);
+}
+
+void Charactor::InitAnim()
+{
+	const Size divSize = Size(32, 32);
+
+	int cnt = 0;
+	auto nextRectCenterOffset = [&](std::vector<Rect>& animRectVec, int cnt)
+	{
+		for (auto& rect : animRectVec)
+		{
+			rect.center.y += divSize.h;
+		}
+	};
+
+	std::vector<Rect> animRectVec;
+	animRectVec.emplace_back(Rect(Vector2Int(16, 16), divSize));
+	animRectVec.emplace_back(Rect(Vector2Int(16 + divSize.w * 2, 16), divSize));
+
+	_animator->AddAnim("DownWalk", animRectVec, 30, true);
+	nextRectCenterOffset(animRectVec, ++cnt);
+	_animator->AddAnim("LeftWalk", animRectVec, 30, true);
+	nextRectCenterOffset(animRectVec, ++cnt);
+	_animator->AddAnim("RightWalk", animRectVec, 30, true);
+	nextRectCenterOffset(animRectVec, ++cnt);
+	_animator->AddAnim("UpWalk", animRectVec, 30, true);
+
+	_animator->ChangeAnim("LeftWalk");
+
+	_dirTable[Dir::left].animName = "LeftWalk";
+	_dirTable[Dir::right].animName = "RightWalk";
+	_dirTable[Dir::up].animName = "UpWalk";
+	_dirTable[Dir::down].animName = "DownWalk";
+
+	_dir = Dir::down;
 }
 
 void Charactor::AnimRestart()

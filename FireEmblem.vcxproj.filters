@@ -168,6 +168,9 @@
     <ClCompile Include="Resource\Source\Game\DataBase.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Utility\TimeLine.cpp">
+      <Filter>ソース ファイル\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">

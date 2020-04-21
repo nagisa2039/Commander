@@ -71,8 +71,8 @@ public:
 	bool SaveMap(const std::string fileName);
 	bool LoadMap(const std::string fileName);
 
-	// startMapPosからmoveぶんで行けるResultPosを返す
-	void RouteSearch(const Vector2Int& startMapPos, const int move, std::list<Astar::ResultPos>& reslutPosList);
+	// 移動可能なマスを探す
+	void RouteSearch(Charactor& charactor);
 
 	// 指定キャラから視野範囲にいるキャラクターを返す
 	Vector2Int SearchMovePos(Charactor& charactor);

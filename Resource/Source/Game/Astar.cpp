@@ -30,7 +30,7 @@ Astar::~Astar()
 {
 }
 
-void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const std::vector<std::vector<int>>& mapData, std::list<Astar::ResultPos>& resutlPosList)
+void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Range& attackRange, const std::vector<std::vector<int>>& mapData, std::list<Astar::ResultPos>& resutlPosList)
 {
 	resutlPosList.clear();
 	resutlPosList.emplace_back(ResultPos(false, startMapPos, nullptr, Dir::max, 0));
@@ -95,7 +95,6 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const std
 	}
 	
 	// 攻撃範囲のサーチ
-	Range range(1, 2);
 	std::list<Astar::ResultPos> attackResultPosList;
 	attackResultPosList.clear();
 
@@ -137,14 +136,14 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const std
 				// 攻撃範囲内かの確認
 				auto len = (checkPos - (resutlPos.mapPos));
 				int ran = abs(len.x) + abs(len.y);
-				if (ran >= range.min && _searchPosVec2Move[checkPos.y][checkPos.x].state == Astar::SearchState::non)
+				if (ran >= attackRange.min && _searchPosVec2Move[checkPos.y][checkPos.x].state == Astar::SearchState::non)
 				{
 					attackResultPosList.emplace_back(ResultPos(true, checkPos, &resutlPos, static_cast<Dir>(i), resutlPos.moveCnt));
 					_searchPosVec2Move[checkPos.y][checkPos.x].state = Astar::SearchState::search;
 				}
 
 				// 最大範囲未満ならそこからさらにSearchする
-				if (ran < range.max)
+				if (ran < attackRange.max)
 				{
 					seachIdxList.emplace_back(checkPos);
 				}

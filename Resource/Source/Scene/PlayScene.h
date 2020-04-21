@@ -11,8 +11,7 @@
 class Charactor;
 class MapCtrl;
 class Camera;
-class PlayerCommander;
-class EnemyCommander;
+class Commander;
 class Effect;
 class TurnChangeAnim;
 
@@ -30,8 +29,8 @@ private:
 
 	std::vector<std::shared_ptr<Charactor>> _charactors;
 	std::vector<std::shared_ptr<Charactor>>::iterator _dyingCharItr;
-	std::shared_ptr<PlayerCommander> _playerCommander;
-	std::shared_ptr<EnemyCommander> _enemyCommander;
+	std::shared_ptr<Commander> _playerCommander;
+	std::shared_ptr<Commander> _enemyCommander;
 	std::vector<std::shared_ptr<Effect>> _effects;
 
 	// 場面ごとの更新を行う関数ポインタ

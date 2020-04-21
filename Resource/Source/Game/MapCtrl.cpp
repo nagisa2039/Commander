@@ -210,12 +210,12 @@ bool MapCtrl::LoadMap(const std::string fileName)
 	return true;
 }
 
-void MapCtrl::RouteSearch(const Vector2Int& startMapPos, const int move, std::list<Astar::ResultPos>& reslutPosList)
+void MapCtrl::RouteSearch(Charactor& charactor)
 {
 	std::vector<std::vector<int>> mapVec2;
 	CreateMapVec(mapVec2);
 
-	return _astar->RouteSearch(startMapPos, move, mapVec2, reslutPosList);
+	return _astar->RouteSearch(charactor.GetMapPos(), charactor.GetStatus().move, charactor.GetAttackRange(), mapVec2, charactor.GetResutlPosList());
 }
 
 void MapCtrl::CreateMapVec(std::vector<std::vector<int>>& mapVec2)
@@ -236,14 +236,14 @@ void MapCtrl::CreateMapVec(std::vector<std::vector<int>>& mapVec2)
 	}
 }
 
-Vector2Int MapCtrl::SearchMovePos(Charactor& selfCharactor)
+Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
 {
 	std::vector<std::vector<int>> mapVec2;
 	CreateMapVec(mapVec2);
-	auto selfStatus = selfCharactor.GetStatus();
+	auto status = charactor.GetStatus();
 
-	auto& resultPosList = selfCharactor.GetResutlPosList();
-	_astar->RouteSearch(selfCharactor.GetMapPos(), selfStatus.move*2, mapVec2, resultPosList);
+	auto& resultPosList = charactor.GetResutlPosList();
+	_astar->RouteSearch(charactor.GetMapPos(), status.move*2, charactor.GetAttackRange(), mapVec2, resultPosList);
 
 	for (const auto& resultPos : resultPosList)
 	{ 
@@ -254,8 +254,8 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& selfCharactor)
 		}
 
 		// UŒ‚ƒ}ƒX‚É“GƒLƒƒƒ‰‚ª‚¢‚é‚©
-		auto charactor = GetMapPosChar(resultPos.mapPos);
-		if (charactor != nullptr && selfCharactor.GetTeam() != charactor->GetTeam())
+		auto mapCharactor = GetMapPosChar(resultPos.mapPos);
+		if (mapCharactor != nullptr && charactor.GetTeam() != mapCharactor->GetTeam())
 		{
 			return resultPos.mapPos;
 		}

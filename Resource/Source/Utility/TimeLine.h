@@ -1,9 +1,13 @@
 #pragma once
 #include <vector>
+#include <memory>
 #include <algorithm>
+#include <map>
+#include <string>
+#include "Geometry.h"
 
 template<typename T>
-class TimeLine
+class Track
 {
 private:
 	uint32_t _frame;
@@ -14,14 +18,14 @@ private:
 
 public:
 
-	inline TimeLine(const bool loop = false)
+	inline Track(const bool loop = false)
 	{
 		_keys.clear();
 		_loop = loop;
 		_end = false;
 	}
 
-	inline ~TimeLine()
+	inline ~Track()
 	{
 	}
 
@@ -33,6 +37,7 @@ public:
 	inline void Reset()
 	{
 		_frame = 0;
+		_end = false;
 	}
 
 	inline void AddKey(const uint32_t frame, const T value)
@@ -62,7 +67,7 @@ public:
 		auto lastFrame = _keys.rbegin()->first;
 		uint32_t calFrame = _loop && _frame > lastFrame ? _frame % lastFrame : _frame;
 
-		if (!_loop)
+		//if (!_loop)
 		{
 			_end = calFrame >= lastFrame;
 		}
@@ -95,5 +100,38 @@ public:
 	{
 		return _end;
 	}
+
+	inline bool GetLoop()const
+	{
+		return _loop;
+	}
 };
 
+class TimeLine
+{
+private:
+	std::map < std::string, std::unique_ptr<Track<float>>>	_floatTrackMap;
+	std::map < std::string, std::unique_ptr<Track<Vector2> >> _vector2TrackMap;
+	std::map < std::string, std::unique_ptr<Track<Vector3> >> _vector3TrackMap;
+
+	bool _loop;
+	bool _end;
+
+public:
+	TimeLine();
+	~TimeLine();
+
+	void AddFloatTrack(const std::string& key, const uint32_t frame, const float value);
+	void AddVector2Track(const std::string& key, const uint32_t frame, const Vector2 value);
+	void AddVector3Track(const std::string& key, const uint32_t frame, const Vector3 value);
+
+	void Update();
+	void Clear();
+
+	void Reset();
+	bool GetEnd()const;
+	
+	float GetFloatVelue(const std::string& key)const;
+	Vector2 GetVector2Velue(const std::string& key)const;
+	Vector3 GetVector3Velue(const std::string& key)const;
+};

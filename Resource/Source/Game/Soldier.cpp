@@ -16,38 +16,17 @@ Soldier::Soldier(const uint8_t level, const Vector2Int& mapPos, const Team team,
 	:Charactor(level, mapPos, team, mapCtrl, ctrl, effects)
 {
 	const Size divSize = Size(32, 32);
-	_animator->SetImage("Resource/Image/Charactor/charactor.png");
+	if (_team == Team::player)
+	{
+		_animator->SetImage("Resource/Image/Charactor/soldier_player.png");
+	}
+	else
+	{
+		_animator->SetImage("Resource/Image/Charactor/soldier_enemy.png");
+	}
 	_battleC = make_shared<SoldierBC>(*this, _animator->GetImageH());
 
-	int cnt = 0;
-	auto nextRectCenterOffset = [&](std::vector<Rect>& animRectVec, int cnt)
-	{
-		for (auto& rect : animRectVec)
-		{
-			rect.center.y += divSize.h;
-		}
-	};
-
-	std::vector<Rect> animRectVec;
-	animRectVec.emplace_back(Rect(Vector2Int(16, 16), divSize));
-	animRectVec.emplace_back(Rect(Vector2Int(16 + divSize.w * 2, 16), divSize));
-
-	_animator->AddAnim("DownWalk", animRectVec, 30, true);
-	nextRectCenterOffset(animRectVec, ++cnt);
-	_animator->AddAnim("LeftWalk", animRectVec, 30, true);
-	nextRectCenterOffset(animRectVec, ++cnt);
-	_animator->AddAnim("RightWalk", animRectVec, 30, true);
-	nextRectCenterOffset(animRectVec, ++cnt);
-	_animator->AddAnim("UpWalk", animRectVec, 30, true);
-
-	_animator->ChangeAnim("LeftWalk");
-
-	_dirTable[Dir::left].animName = "LeftWalk";
-	_dirTable[Dir::right].animName = "RightWalk";
-	_dirTable[Dir::up].animName = "UpWalk";
-	_dirTable[Dir::down].animName = "DownWalk";
-
-	_dir = Dir::down;
+	InitAnim();
 
 	_status = Status(level, 20, 10, 5, 5, 5, 5, 5, Attribute::red);
 	_status.health	+= level * 0.6f;
@@ -59,6 +38,7 @@ Soldier::Soldier(const uint8_t level, const Vector2Int& mapPos, const Team team,
 	_startStatus = _status;
 
 	_iconPath = "Resource/Image/Icon/spearIcon.png";
+	_attackRange = Range(1, 1);
 }
 
 Soldier::~Soldier()

@@ -1,8 +1,10 @@
 #include "Astar.h"
+#include <map>
+#include <algorithm>
 
 using namespace std;
 
-void Astar::ResetSerchPosVec2D(const std::vector<std::vector<int>>& mapData)
+void Astar::ResetSerchPosVec2D(const std::vector<std::vector<MapData>>& mapData)
 {
 	_searchPosVec2Move.resize(mapData.size());
 	_searchPosVec2Attack.resize(mapData.size());
@@ -30,13 +32,13 @@ Astar::~Astar()
 {
 }
 
-void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Range& attackRange, const std::vector<std::vector<int>>& mapData, std::list<Astar::ResultPos>& resutlPosList)
+void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Range& attackRange, const std::vector<std::vector<MapData>>& mapData, std::list<Astar::ResultPos>& resutlPosList, const Team team)
 {
 	resutlPosList.clear();
 	resutlPosList.emplace_back(ResultPos(false, startMapPos, nullptr, Dir::max, 0));
 
 	ResetSerchPosVec2D(mapData);
-	_searchPosVec2Move[startMapPos.y][startMapPos.x].moveCnt = 0;
+	_searchPosVec2Move[startMapPos.y][startMapPos.x].moveCost = 0;
 	_searchPosVec2Move[startMapPos.y][startMapPos.x].state = Astar::SearchState::search;
 
 	auto seachIdxList = list<Vector2Int>();
@@ -75,12 +77,12 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 			}
 
 			// 移動不可
-			if (mapData[checkPos.y][checkPos.x] < 0)
+			if (mapData[checkPos.y][checkPos.x].moveCost < 0 || (mapData[checkPos.y][checkPos.x].team != team && mapData[checkPos.y][checkPos.x].team != Team::max))
 			{
 				continue;
 			}
 
-			auto moveCnt = _searchPosVec2Move[nowPos.y][nowPos.x].moveCnt + mapData[checkPos.y][checkPos.x];
+			auto moveCnt = _searchPosVec2Move[nowPos.y][nowPos.x].moveCost + mapData[checkPos.y][checkPos.x].moveCost;
 
 			// 移動可能な距離か
 			if (moveCnt <= move)
@@ -95,11 +97,17 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 	}
 	
 	// 攻撃範囲のサーチ
-	std::list<Astar::ResultPos> attackResultPosList;
-	attackResultPosList.clear();
+	std::map<int, std::map<int, std::list<Astar::ResultPos>>> _attackResultPosMap2;
+	_attackResultPosMap2.clear();
 
  	for (auto& resutlPos : resutlPosList)
 	{
+		// 味方のマスへはいけない && 開始位置でない のでcontinue
+		if (mapData[resutlPos.mapPos.y][resutlPos.mapPos.x].team == team && resutlPos.mapPos != startMapPos)
+		{
+			continue;
+		}
+
 		// 初期化
 		seachIdxList.clear();
 		seachIdxList.emplace_front(resutlPos.mapPos);
@@ -138,8 +146,9 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 				int ran = abs(len.x) + abs(len.y);
 				if (ran >= attackRange.min && _searchPosVec2Move[checkPos.y][checkPos.x].state == Astar::SearchState::non)
 				{
-					attackResultPosList.emplace_back(ResultPos(true, checkPos, &resutlPos, static_cast<Dir>(i), resutlPos.moveCnt));
-					_searchPosVec2Move[checkPos.y][checkPos.x].state = Astar::SearchState::search;
+					ResultPos addResutlPos = ResultPos(true, checkPos, &resutlPos, static_cast<Dir>(i), resutlPos.moveCnt);
+					//_searchPosVec2Move[checkPos.y][checkPos.x].state = Astar::SearchState::search;
+					_attackResultPosMap2[checkPos.y][checkPos.x].emplace_back(addResutlPos);
 				}
 
 				// 最大範囲未満ならそこからさらにSearchする
@@ -155,9 +164,27 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 	}
 
 	// 攻撃範囲分を_resutlPosListに結合
-	for (const auto& attack : attackResultPosList)
+	std::list<Astar::ResultPos> attackResultPosList;
+	attackResultPosList.clear();
+	for (const auto& attackResultPosMap : _attackResultPosMap2)
 	{
-		resutlPosList.emplace_back(attack);
+		for (const auto& attackResutlPosList : attackResultPosMap.second)
+		{
+			if (attackResutlPosList.second.size() > 0)
+			{
+				attackResultPosList.emplace_back(*attackResutlPosList.second.begin());
+			}
+		}
+	}
+
+ 	attackResultPosList.sort([=](const Astar::ResultPos& lv, const Astar::ResultPos& rv)
+	{
+			return lv.moveCnt < rv.moveCnt;
+	});
+
+	for (const auto& attackResutlPos : attackResultPosList)
+	{
+		resutlPosList.emplace_back(attackResutlPos);
 	}
 
 	return;
@@ -168,7 +195,7 @@ Astar::SearchPos::SearchPos()
 	this->mapPos = Vector2Int();
 	this->parentPos = Vector2Int();
 	this->state = Astar::SearchState::non;
-	this->moveCnt = 0;
+	this->moveCost = 0;
 }
 
 Astar::SearchPos::SearchPos(const Vector2Int & mapPos, const Vector2Int & parent, const SearchState state, const int moveCnt)
@@ -176,5 +203,5 @@ Astar::SearchPos::SearchPos(const Vector2Int & mapPos, const Vector2Int & parent
 	this->mapPos = mapPos;
 	this->parentPos = parent;
 	this->state = state;
-	this->moveCnt = moveCnt;
+	this->moveCost = moveCnt;
 }

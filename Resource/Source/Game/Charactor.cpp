@@ -47,9 +47,6 @@ void Charactor::NormalDraw(const Camera& camera)
 
 	SetDrawBright(255, 255, 255);
 
-	auto circleOffset = Vector2Int(0, -chipSize.y / 2);
-	DrawCircle(circleOffset + drawPos + chipSize * 0.5, chipSize.x / 4, GetTeamColor(), true);
-
 	// ƒAƒCƒRƒ“‚Ì•`‰æ
 	int handle = Application::Instance().GetFileSystem()->GetImageHandle(_iconPath.c_str());
 	DrawGraph(camera.GetCameraOffset() + _pos.ToVector2Int(), handle, false);

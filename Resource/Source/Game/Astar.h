@@ -4,6 +4,7 @@
 #include <array>
 #include "../Utility/Geometry.h"
 #include "../Utility/Dir.h"
+#include "Team.h"
 
 class Astar
 {
@@ -21,6 +22,15 @@ public:
 			:attack(atc), mapPos(mapP), parent(parent), dir(d), moveCnt(mc) {};
 	};
 
+	struct MapData
+	{
+		int moveCost;
+		Team team;
+
+		MapData():moveCost(1), team(Team::max){};
+		MapData(const int mc, const Team t) :moveCost(mc), team(t) {};
+	};
+
 private:
 
 	enum class SearchState
@@ -35,7 +45,7 @@ private:
 		Vector2Int mapPos;	//マップ上の座標
 		Vector2Int parentPos;	// 親のマップ上の座標
 		SearchState state;	// Search状況
-		int moveCnt;	// 消費する移動量
+		int moveCost;	// 消費する移動量
 		SearchPos();
 		SearchPos(const Vector2Int& mapPos, const Vector2Int& parent, const SearchState state, const int moveCnt);
 	};
@@ -44,13 +54,13 @@ private:
 	std::vector<std::vector<SearchPos>> _searchPosVec2Attack;
 	std::array<Vector2Int, Dir::max> _dirTable;
 
-	void ResetSerchPosVec2D(const std::vector<std::vector<int>>& mapData);
+	void ResetSerchPosVec2D(const std::vector<std::vector<MapData>>& mapData);
 
 public:
 	Astar();
 	~Astar();
 
 	// 開始位置から終端位置までのマスをリストに格納して返す。見つからなかった場合はリストを空にして返す
-	void RouteSearch(const Vector2Int& startMapPos, const int move, const Range& attackRange, const std::vector<std::vector<int>>& mapData, std::list<Astar::ResultPos>& resutlPosList);
+	void RouteSearch(const Vector2Int& startMapPos, const int move, const Range& attackRange, const std::vector<std::vector<MapData>>& mapData, std::list<Astar::ResultPos>& resutlPosList, const Team team);
 };
 

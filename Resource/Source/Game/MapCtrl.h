@@ -77,6 +77,6 @@ public:
 	// 指定キャラから視野範囲にいるキャラクターを返す
 	Vector2Int SearchMovePos(Charactor& charactor);
 
-	void CreateMapVec(std::vector<std::vector<int>>& mapVec2);
+	void CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, const Team team);
 };
 

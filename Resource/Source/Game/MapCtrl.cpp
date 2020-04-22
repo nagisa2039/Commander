@@ -212,38 +212,20 @@ bool MapCtrl::LoadMap(const std::string fileName)
 
 void MapCtrl::RouteSearch(Charactor& charactor)
 {
-	std::vector<std::vector<int>> mapVec2;
-	CreateMapVec(mapVec2);
+	std::vector<std::vector<Astar::MapData>> mapVec2;
+	CreateMapVec(mapVec2, charactor.GetTeam());
 
-	return _astar->RouteSearch(charactor.GetMapPos(), charactor.GetStatus().move, charactor.GetAttackRange(), mapVec2, charactor.GetResutlPosList());
-}
-
-void MapCtrl::CreateMapVec(std::vector<std::vector<int>>& mapVec2)
-{
-	mapVec2.resize(_mapData.size());
-	for (int y = 0; y < mapVec2.size(); y++)
-	{
-		mapVec2[y].resize(_mapData[y].size());
-		for (int x = 0; x < mapVec2[y].size(); x++)
-		{
-			mapVec2[y][x] = _mapChipData[_mapData[y][x]].moveCost;
-		}
-	}
-	for (const auto& charactor : _charactors)
-	{
-		auto mapPos = charactor->GetMapPos();
-		mapVec2[mapPos.y][mapPos.x] = -2;
-	}
+	return _astar->RouteSearch(charactor.GetMapPos(), charactor.GetStatus().move, charactor.GetAttackRange(), mapVec2, charactor.GetResutlPosList(), charactor.GetTeam());
 }
 
 Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
 {
-	std::vector<std::vector<int>> mapVec2;
-	CreateMapVec(mapVec2);
+	std::vector<std::vector<Astar::MapData>> mapVec2;
+	CreateMapVec(mapVec2, charactor.GetTeam());
 	auto status = charactor.GetStatus();
 
 	auto& resultPosList = charactor.GetResutlPosList();
-	_astar->RouteSearch(charactor.GetMapPos(), status.move*2, charactor.GetAttackRange(), mapVec2, resultPosList);
+	_astar->RouteSearch(charactor.GetMapPos(), status.move*2, charactor.GetAttackRange(), mapVec2, resultPosList, charactor.GetTeam());
 
 	for (const auto& resultPos : resultPosList)
 	{ 
@@ -262,6 +244,24 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
 	}
 
 	return Vector2Int(-1,-1);
+}
+
+void MapCtrl::CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, const Team team)
+{
+	mapVec2.resize(_mapData.size());
+	for (int y = 0; y < mapVec2.size(); y++)
+	{
+		mapVec2[y].resize(_mapData[y].size());
+		for (int x = 0; x < mapVec2[y].size(); x++)
+		{
+			mapVec2[y][x] = Astar::MapData(_mapChipData[_mapData[y][x]].moveCost, Team::max);
+		}
+	}
+	for (const auto& charactor : _charactors)
+	{
+		auto mapPos = charactor->GetMapPos();
+		mapVec2[mapPos.y][mapPos.x].team = charactor->GetTeam();
+	}
 }
 
 void MapCtrl::MapChipData::operator=(const MapChipData& mcd)

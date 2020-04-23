@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Resource\Source\Game\Actor.cpp" />
     <ClCompile Include="Resource\Source\Game\Animator.cpp" />
+    <ClCompile Include="Resource\Source\Game\Archer.cpp" />
     <ClCompile Include="Resource\Source\Game\Astar.cpp" />
     <ClCompile Include="Resource\Source\Game\BattleCharactor.cpp" />
     <ClCompile Include="Resource\Source\Game\Camera.cpp" />
@@ -31,6 +32,7 @@
     <ClCompile Include="Resource\Source\Game\Effect.cpp" />
     <ClCompile Include="Resource\Source\Game\EnemyCommander.cpp" />
     <ClCompile Include="Resource\Source\Game\FlyText.cpp" />
+    <ClCompile Include="Resource\Source\Game\Mage.cpp" />
     <ClCompile Include="Resource\Source\Game\MapCtrl.cpp" />
     <ClCompile Include="Resource\Source\Game\MapCursor.cpp" />
     <ClCompile Include="Resource\Source\Game\PlayerCommander.cpp" />
@@ -59,6 +61,7 @@
   <ItemGroup>
     <ClInclude Include="Resource\Source\Game\Actor.h" />
     <ClInclude Include="Resource\Source\Game\Animator.h" />
+    <ClInclude Include="Resource\Source\Game\Archer.h" />
     <ClInclude Include="Resource\Source\Game\Astar.h" />
     <ClInclude Include="Resource\Source\Game\BattleCharactor.h" />
     <ClInclude Include="Resource\Source\Game\Camera.h" />
@@ -69,6 +72,7 @@
     <ClInclude Include="Resource\Source\Game\Effect.h" />
     <ClInclude Include="Resource\Source\Game\EnemyCommander.h" />
     <ClInclude Include="Resource\Source\Game\FlyText.h" />
+    <ClInclude Include="Resource\Source\Game\Mage.h" />
     <ClInclude Include="Resource\Source\Game\MapChip.h" />
     <ClInclude Include="Resource\Source\Game\MapCtrl.h" />
     <ClInclude Include="Resource\Source\Game\MapCursor.h" />

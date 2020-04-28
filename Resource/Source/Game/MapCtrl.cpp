@@ -66,18 +66,18 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 		}
 	}
 
-	_mapChipData[None].moveCost = 1;
-	_mapChipData[Floor_Meadow]		= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip0.png"), +1);
-	_mapChipData[Forest]			= MapChipData( DrawData(Vector2Int(32, 32), Size(32, 32), "mapchip0.png"), +2);
-	_mapChipData[River_Pond]		= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip1.png"), -1);
-	_mapChipData[River_Vertical]	= MapChipData( DrawData(Vector2Int(0, 32),	Size(32, 32), "mapchip1.png"), -1);
-	_mapChipData[River_Horizontal]	= MapChipData( DrawData(Vector2Int(0, 64),	Size(32, 32), "mapchip1.png"), -1);
-	_mapChipData[River_Cross]		= MapChipData( DrawData(Vector2Int(0, 96),	Size(32, 32), "mapchip1.png"), -1);
-	_mapChipData[River_All]			= MapChipData( DrawData(Vector2Int(0, 128), Size(32, 32), "mapchip1.png"), -1);
-	_mapChipData[River_Corner0]		= MapChipData( DrawData(Vector2Int(0, 160), Size(32, 32), "mapchip1.png"), -1);
-	_mapChipData[River_Corner1]		= MapChipData( DrawData(Vector2Int(0, 192), Size(32, 32), "mapchip1.png"), -1);
-	_mapChipData[River_Corner2]		= MapChipData( DrawData(Vector2Int(0, 224), Size(32, 32), "mapchip1.png"), -1);
-	_mapChipData[River_Corner3]		= MapChipData( DrawData(Vector2Int(0, 256), Size(32, 32), "mapchip1.png"), -1);
+	_mapChipData[None]				= MapChipData(DrawData(Vector2Int(0, 0), Size(32, 32), "mapchip0.png"), "ëêå¥", +1);
+	_mapChipData[Floor_Meadow]		= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip0.png"), "ëêå¥", +1);
+	_mapChipData[Forest]			= MapChipData( DrawData(Vector2Int(32, 32), Size(32, 32), "mapchip0.png"), "êX", +2, 0, 30);
+	_mapChipData[River_Pond]		= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip1.png"), "êÏ",  -1, 0, 0);
+	_mapChipData[River_Vertical]	= MapChipData( DrawData(Vector2Int(0, 32),	Size(32, 32), "mapchip1.png"), "êÏ", -1);
+	_mapChipData[River_Horizontal]	= MapChipData( DrawData(Vector2Int(0, 64),	Size(32, 32), "mapchip1.png"), "êÏ", -1);
+	_mapChipData[River_Cross]		= MapChipData( DrawData(Vector2Int(0, 96),	Size(32, 32), "mapchip1.png"), "êÏ", -1);
+	_mapChipData[River_All]			= MapChipData( DrawData(Vector2Int(0, 128), Size(32, 32), "mapchip1.png"), "êÏ", -1);
+	_mapChipData[River_Corner0]		= MapChipData( DrawData(Vector2Int(0, 160), Size(32, 32), "mapchip1.png"), "êÏ", -1);
+	_mapChipData[River_Corner1]		= MapChipData( DrawData(Vector2Int(0, 192), Size(32, 32), "mapchip1.png"), "êÏ", -1);
+	_mapChipData[River_Corner2]		= MapChipData( DrawData(Vector2Int(0, 224), Size(32, 32), "mapchip1.png"), "êÏ", -1);
+	_mapChipData[River_Corner3]		= MapChipData( DrawData(Vector2Int(0, 256), Size(32, 32), "mapchip1.png"), "êÏ", -1);
 
 	DrawToMapFloorScreen();
 	DrawToMapChipScreen();
@@ -264,8 +264,25 @@ void MapCtrl::CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, co
 	}
 }
 
-void MapCtrl::MapChipData::operator=(const MapChipData& mcd)
+MapCtrl::MapChipData MapCtrl::GetMapChipData(const Vector2Int& mapPos) const
 {
-	this->drawData = mcd.drawData;
-	this->moveCost = mcd.moveCost;
+	if ( 0 > mapPos.x && MAP_CHIP_CNT_W <= mapPos.x
+	  && 0 > mapPos.y && MAP_CHIP_CNT_H <= mapPos.y)
+	{
+		return MapChipData();
+	}
+
+	Map_Chip mapChip = _mapData[mapPos.y][mapPos.x];
+	if (mapChip < 0 && mapChip >= Map_Chip_Max)
+	{
+		return MapChipData();
+	}
+
+	return _mapChipData[mapChip];
 }
+//
+//void MapCtrl::MapChipData::operator=(const MapChipData& mcd)
+//{
+//	this->drawData = mcd.drawData;
+//	this->moveCost = mcd.moveCost;
+//}

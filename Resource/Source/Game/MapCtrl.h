@@ -31,12 +31,17 @@ public:
 	{
 		DrawData drawData;
 		int moveCost;
+		int defense;
+		int avoidance;
+		const char* name;
 
-		MapChipData() : drawData(DrawData()), moveCost(0){};
-		MapChipData(const DrawData& dd, const int mc) :
-			drawData(dd), moveCost(mc) {};
-
-		void operator=(const MapChipData& mcd);
+		MapChipData() : drawData(DrawData()), name(""), moveCost(1), defense(0), avoidance(0){};
+		MapChipData(const DrawData& dd, const char* na) :
+			drawData(dd), name(na), moveCost(1), defense(0), avoidance(0) {};
+		MapChipData(const DrawData& dd, const char* na, const int mc) :
+			drawData(dd), name(na), moveCost(mc), defense(0), avoidance(0) {};
+		MapChipData(const DrawData& dd, const char* na, const int mc, const int fe, const int av) :
+			drawData(dd), name(na), moveCost(mc), defense(fe), avoidance(av) {};
 	};
 
 private:
@@ -78,5 +83,8 @@ public:
 	Vector2Int SearchMovePos(Charactor& charactor);
 
 	void CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, const Team team);
+
+	// éwíËÇµÇΩç¿ïWÇÃMapChipDataÇéÊìæÇ∑ÇÈ
+	MapChipData GetMapChipData(const Vector2Int& mapPos)const;
 };
 

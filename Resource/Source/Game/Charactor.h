@@ -37,15 +37,19 @@ public:
 		uint8_t defense;
 		uint8_t speed;
 		uint8_t skill;
-		uint8_t luck;
 		uint8_t move;
 
-		Attribute attribute;
+		Attribute attribute;		// ‘®«
 
-		Status(): level(1), health(1), power(1), defense(1), speed(1), skill(1), luck(1), move(1), attribute(Attribute::normal){};
+		uint8_t fefenseCorrection;		// ç”õ—Í•â³
+		uint8_t avoidanceCorrection;	// ‰ñ”ğ—Í•â³
+
+		Status(): level(1), health(1), power(1), defense(1), speed(1), skill(1), move(1), 
+			attribute(Attribute::normal), fefenseCorrection(0), avoidanceCorrection(0.0f){};
 		Status(const uint8_t lv, const uint8_t he, const uint8_t pw, const uint8_t df, 
 			const uint8_t sp, const uint8_t sk, const uint8_t lu, const uint8_t mv, const Attribute at)
-			: level(lv), health(he), power(pw), defense(df), speed(sp), skill(sk), luck(lu), move(mv), attribute(at){};
+			: level(lv), health(he), power(pw), defense(df), speed(sp), skill(sk), move(mv), 
+			attribute(at), fefenseCorrection(0), avoidanceCorrection(0) {};
 
 		int GetDamage(const Status& target)const;	// ƒ_ƒ[ƒW
 		int GetHit(const Status& target)const;	// –½’†—¦

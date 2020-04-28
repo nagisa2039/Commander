@@ -34,7 +34,6 @@ Archer::Archer(const uint8_t level, const Vector2Int& mapPos, const Team team, M
 	_status.defense += level * 0.6f;
 	_status.speed += level * 0.4f;
 	_status.skill += level * 0.5f;
-	_status.luck += level * 0.6f;
 	_startStatus = _status;
 
 	_iconPath = "Resource/Image/Icon/archerIcon.png";

@@ -8,12 +8,14 @@
 #include "Animator.h"
 #include "Application.h"
 #include "FileSystem.h"
+#include "PlayerUI.h"
 
 using namespace std;
 
 PlayerCommander::PlayerCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam):
 	Commander(charactors, mapCtrl, ctrlTeam)
 {
+	_playerUI = make_unique<PlayerUI>(*this, mapCtrl);
 }
 
 PlayerCommander::~PlayerCommander()
@@ -102,4 +104,7 @@ void PlayerCommander::Draw(const Camera& camera)
 
 	DrawRectRotaGraph(offset + _mapPos * chipSize + chipSize * 0.5, Vector2Int(0, 0), graphSize,
 		(Lerp(0.8f, 1.0f, alpha)) * chipSize.w / graphSize.w, 0.0f, handle);
+
+	// UI
+	_playerUI->Draw();
 }

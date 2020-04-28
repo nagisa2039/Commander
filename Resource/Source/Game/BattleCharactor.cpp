@@ -62,13 +62,21 @@ void BattleCharactor::AttackUpdate(BattleScene& battleScene)
 		{
 			if (_targetChar != nullptr)
 			{
+				// UŒ‚
+				auto selfStatus = _selfChar.GetStatus();
+				auto targetStatus = _targetChar->GetSelfCharacotr().GetStatus();
+
+				// –½’†”»’è
+				if (selfStatus.GetHit(targetStatus) <= rand() % 100)
+				{
+					return;
+				}
+
 				_createEffect = true;
 
 				auto targetCenterPos = _targetChar->GetCenterPos();
 				battleScene.GetEffectVec().emplace_back(CreateAttackEffect(targetCenterPos));
 
-				auto selfStatus = _selfChar.GetStatus();
-				auto targetStatus = _targetChar->GetSelfCharacotr().GetStatus();
 
 				int damage = selfStatus.GetDamage(targetStatus)
 					* Application::Instance().GetDataBase().GetAttributeRate(selfStatus.attribute, targetStatus.attribute);
@@ -108,7 +116,7 @@ void BattleCharactor::UIDraw()
 	auto status = _selfChar.GetStatus();
 	auto targetStatus = _targetChar->GetSelfCharacotr().GetStatus();
 	auto teamColor = GetTeamColorBattle(_selfChar.GetTeam());
-	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin");
+	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin40");
 
 	// UI‚Ì¶ã‚ÌÀ•W
 	Vector2Int dirDownPos;
@@ -153,9 +161,9 @@ void BattleCharactor::UIDraw()
 	// UŒ‚—Í
 	drawParam(itemNum++, fontHandle, 0xaaaaaa, "ATK", status.GetDamage(targetStatus));
 	// –½’†
-	drawParam(itemNum++, fontHandle, 0xaaaaaa, "HIT", 100);
+	drawParam(itemNum++, fontHandle, 0xaaaaaa, "HIT", status.GetHit(targetStatus));
 	// •KE
-	drawParam(itemNum++, fontHandle, 0xaaaaaa, "CRT", 100);
+	drawParam(itemNum++, fontHandle, 0xaaaaaa, "CRT", status.GetCritical(targetStatus));
 
 	// HP‚Ì”’l•\¦
 	auto startHealth = _selfChar.GetStartStatus().health;

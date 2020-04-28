@@ -173,7 +173,13 @@ Charactor::Status Charactor::GetStartStatus() const
 
 Charactor::Status Charactor::GetStatus() const
 {
-	return _status;
+	Status status = _status;
+
+	MapCtrl::MapChipData mapchipData = _mapCtrl.GetMapChipData(GetMapPos());
+	status.avoidanceCorrection = mapchipData.avoidance;
+	status.fefenseCorrection = mapchipData.defense;
+
+	return status;
 }
 
 bool Charactor::GetIsDying() const
@@ -430,15 +436,15 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 
 int Charactor::Status::GetDamage(const Status& target)const
 {
-	return max(power - target.defense, 0);
+	return max(power - target.defense - target.fefenseCorrection, 0);
 }
 
 int Charactor::Status::GetHit(const Status& target) const
 {
-	return max(100, 0);
+	return min(100, (max(0, 100 - (skill * 2 - target.speed - target.avoidanceCorrection))));
 }
 
 int Charactor::Status::GetCritical(const Status& target) const
 {
-	return max(100, 0);
+	return min(100, max(0, skill / 5));
 }

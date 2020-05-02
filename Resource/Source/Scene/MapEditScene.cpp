@@ -10,6 +10,7 @@
 
 using namespace std;
 
+
 MapEditScene::MapEditScene(SceneController& controller):Scene(controller)
 {
     _camera = make_shared<Camera>(Rect(Vector2Int(), Application::Instance().GetWindowSize()));
@@ -21,7 +22,8 @@ MapEditScene::MapEditScene(SceneController& controller):Scene(controller)
    auto mapSize = _mapCtrl->GetMapCnt() * _mapCtrl->GetChipSize();
    _camera->SetLimitRect(Rect(mapSize.ToVector2Int()*0.5, mapSize));
 
-   // _mapCtrl->LoadMap("map0");
+
+   _mapCtrl->LoadMap("map0");
 }
 
 MapEditScene::~MapEditScene()
@@ -45,6 +47,10 @@ void MapEditScene::Update(const Input& input)
     if (input.GetButton(0, "F3"))
     {
         _mapCtrl->LoadMap("map0");
+    }
+    if (input.GetButton(0, "F5"))
+    {
+
     }
 }
 

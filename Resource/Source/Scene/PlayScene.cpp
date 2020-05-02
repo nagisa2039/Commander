@@ -38,13 +38,13 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player);
 	_enemyCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy);
 
-	_charactors.emplace_back(make_shared<Mage>(5, Vector2Int(0,0),	Team::player, *_mapCtrl, _controller, _effects));
-	_charactors.emplace_back(make_shared<Archer>(5, Vector2Int(1,3),	Team::player, *_mapCtrl, _controller, _effects));
+	//_charactors.emplace_back(make_shared<Mage>(5, Vector2Int(0,0),	Team::player, *_mapCtrl, _controller, _effects));
+	//_charactors.emplace_back(make_shared<Archer>(5, Vector2Int(1,3),	Team::player, *_mapCtrl, _controller, _effects));
 	//_charactors.emplace_back(make_shared<Soldier>(5, Vector2Int(1, 5), Team::player, *_mapCtrl, _controller, _effects));
 	//_charactors.emplace_back(make_shared<Warrior>(5, Vector2Int(2, 4), Team::player, *_mapCtrl, _controller, _effects));
 
-	_charactors.emplace_back(make_shared<Mage>(5, Vector2Int(5, 5),	Team::enemy,  *_mapCtrl, _controller, _effects));
-	_charactors.emplace_back(make_shared<Archer>(5, Vector2Int(5, 3),	Team::enemy,  *_mapCtrl, _controller, _effects));
+	//_charactors.emplace_back(make_shared<Mage>(5, Vector2Int(5, 5),	Team::enemy,  *_mapCtrl, _controller, _effects));
+	//_charactors.emplace_back(make_shared<Archer>(5, Vector2Int(5, 3),	Team::enemy,  *_mapCtrl, _controller, _effects));
 	//_charactors.emplace_back(make_shared<Soldier>(5, Vector2Int(6, 5), Team::enemy, *_mapCtrl, _controller, _effects));
 	//_charactors.emplace_back(make_shared<Warrior>(5, Vector2Int(7, 2), Team::enemy, *_mapCtrl, _controller, _effects));
 
@@ -54,6 +54,7 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	_camera->SetLimitRect(Rect(mapSize.ToVector2Int() * 0.5, mapSize));
 
 	_mapCtrl->LoadMap("map0");
+	_mapCtrl->CreateCharactor(ctrl, _effects);
 
 	_dyingCharItr = _charactors.end();
 
@@ -67,10 +68,8 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	// プレイヤーターンを開始
 	StartPlayerTurn();
 
-
 	// ピクセルシェーダーバイナリコードの読み込み
 	pshandle = LoadPixelShader("Resource/Source/Shader/HPBer.cso");
-
 
 	// 頂点データの準備
 	Vert[0].pos = VGet(0.0f, 0.0f, 0.0f);

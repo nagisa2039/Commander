@@ -7,6 +7,15 @@
 #include "DxLib.h"
 #include <algorithm>
 
+#include "Swordsman.h"
+#include "Warrior.h"
+#include "Soldier.h"
+#include "Mage.h"
+#include "Archer.h"
+
+#include "SceneController.h"
+#include "Effect.h"
+
 using namespace std;
 
 constexpr auto CHIP_SIZE_W = 32*2;
@@ -79,8 +88,48 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 	_mapChipData[River_Corner2]		= MapChipData( DrawData(Vector2Int(0, 224), Size(32, 32), "mapchip1.png"), "川", -1);
 	_mapChipData[River_Corner3]		= MapChipData( DrawData(Vector2Int(0, 256), Size(32, 32), "mapchip1.png"), "川", -1);
 
+	_iconPaths[static_cast<size_t>(CharactorType::swordman)] = "swordman";
+	_iconPaths[static_cast<size_t>(CharactorType::soldier)] = "soldier";
+	_iconPaths[static_cast<size_t>(CharactorType::warrior)] = "warrior";
+	_iconPaths[static_cast<size_t>(CharactorType::mage)] = "mage";
+	_iconPaths[static_cast<size_t>(CharactorType::archer)] = "archer";
+
+	_charactorChips.clear();
+	_charactorChips.reserve(30);
+
 	DrawToMapFloorScreen();
 	DrawToMapChipScreen();
+
+
+	_charactorCreateFuncs[static_cast<size_t>(CharactorType::swordman)] = 
+		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects)
+	{
+		_charactors.emplace_back(make_shared<Swordsman>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects));
+	};
+
+	_charactorCreateFuncs[static_cast<size_t>(CharactorType::soldier)] =
+		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects)
+	{
+		_charactors.emplace_back(make_shared<Soldier>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects));
+	};
+
+	_charactorCreateFuncs[static_cast<size_t>(CharactorType::warrior)] =
+		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects)
+	{
+		_charactors.emplace_back(make_shared<Warrior>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects));
+	};
+
+	_charactorCreateFuncs[static_cast<size_t>(CharactorType::mage)] =
+		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects)
+	{
+		_charactors.emplace_back(make_shared<Mage>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects));
+	};
+
+	_charactorCreateFuncs[static_cast<size_t>(CharactorType::archer)] =
+		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects)
+	{
+		_charactors.emplace_back(make_shared<Archer>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects));
+	};
 }
 
 MapCtrl::~MapCtrl()
@@ -96,6 +145,11 @@ void MapCtrl::Draw(const Camera& camera, const bool edit)
 
 	if (edit)
 	{
+		for (const auto& charactorChipInf : _charactorChips)
+		{
+			DrawCharactorChip(charactorChipInf, offset);
+		}
+
 		auto mapSize = GetMapCnt();
 		for (int h = 0; h <= mapSize.h; h++)
 		{
@@ -157,6 +211,32 @@ bool MapCtrl::DrawMapChip(const Vector2Int& mapPos, const Map_Chip mapChip, cons
 	return true;
 }
 
+bool MapCtrl::SetCharactorChip(const CharactorChipInf& charactorChipInf)
+{
+	_charactorChips.emplace_back(charactorChipInf);
+	return true;
+}
+
+bool MapCtrl::DrawCharactorChip(const CharactorChipInf& charactorChipInf, const Vector2Int& offset)
+{
+	auto chipSize = GetChipSize();
+	Vector2Int leftup = offset + charactorChipInf.mapPos * chipSize;
+	std::string path("Resource/Image/Charactor/");
+	path = path + _iconPaths[static_cast<size_t>(charactorChipInf.type)] + (charactorChipInf.team == Team::player ? "_player" : "_enemy") + ".png";
+	int handle = Application::Instance().GetFileSystem()->GetImageHandle(path.c_str());
+	DrawRectExtendGraph(leftup.x, leftup.y, leftup.x + chipSize.w, leftup.y + chipSize.h, 0, 0, 32, 32, handle, true);
+
+	return true;
+}
+
+void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects)
+{
+	for (const auto& charactorChipInf : _charactorChips)
+	{
+		_charactorCreateFuncs[static_cast<size_t>(charactorChipInf.type)](charactorChipInf, ctrl, effects);
+	}
+}
+
 bool MapCtrl::SaveMap(const std::string fileName)
 {
 	FILE* fp = nullptr;
@@ -169,13 +249,22 @@ bool MapCtrl::SaveMap(const std::string fileName)
 		return false;
 	}
 
+	// マップサイズの書き込み
 	auto mapSize = GetMapCnt();
 	fwrite(&mapSize, sizeof(mapSize), 1, fp);
 
+	// マップチップの書き込み
 	for (const auto& mapChipVec : _mapData)
 	{
 		fwrite(mapChipVec.data(), sizeof(Map_Chip), mapChipVec.size(), fp);
 	}
+
+	// キャラクターチップ数の書き込み
+	unsigned int charactorChipCnt = _charactorChips.size();
+	fwrite(&charactorChipCnt, sizeof(unsigned int), 1, fp);
+
+	// キャラクターチップの書き込み
+	fwrite(_charactorChips.data(), sizeof(CharactorChipInf), charactorChipCnt, fp);
 
 	fclose(fp);
 
@@ -194,6 +283,7 @@ bool MapCtrl::LoadMap(const std::string fileName)
 		return false;
 	}
 
+	// マップチップの読み込み
 	Size mapSize;
 	fread_s(&mapSize, sizeof(mapSize), sizeof(mapSize), 1, fp);
 	_mapData.resize(mapSize.h);
@@ -202,6 +292,12 @@ bool MapCtrl::LoadMap(const std::string fileName)
 		mapChipVec.resize(mapSize.w);
 		fread_s(mapChipVec.data(), sizeof(Map_Chip) * mapSize.w, sizeof(Map_Chip), mapSize.w, fp);
 	}
+
+	// キャラクターチップの読み込み
+	unsigned int charactorChipCnt = 0;
+	fread_s(&charactorChipCnt, sizeof(charactorChipCnt), sizeof(charactorChipCnt), 1, fp);
+	_charactorChips.resize(charactorChipCnt);
+	fread_s(_charactorChips.data(), sizeof(CharactorChipInf) * charactorChipCnt, sizeof(CharactorChipInf), charactorChipCnt, fp);
 
 	fclose(fp);
 

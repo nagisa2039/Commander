@@ -12,6 +12,7 @@ class MapEditScene :
 	public Scene
 {
 private:
+
 	std::shared_ptr<MapCtrl> _mapCtrl;
 	std::shared_ptr<EditCursor> _editCursor;
 	std::shared_ptr<Camera> _camera;

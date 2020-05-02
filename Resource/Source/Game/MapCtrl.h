@@ -2,14 +2,17 @@
 #include <vector>
 #include <string>
 #include <array>
-#include "../Utility/Geometry.h"
 #include "MapChip.h"
-#include <list>
 #include <memory>
 #include "Astar.h"
+#include "CharactorType.h"
+#include <functional>
 
 class Camera;
 class Charactor;
+
+class SceneController;
+class Effect;
 
 class MapCtrl
 {
@@ -51,6 +54,13 @@ private:
 
 	std::vector<std::shared_ptr<Charactor>>& _charactors;
 
+	std::array<std::string, static_cast<size_t>(CharactorType::max)> _iconPaths;
+	std::vector<CharactorChipInf> _charactorChips;
+
+	// CharactorType‚É‘Î‰ž‚µ‚½CharactorƒNƒ‰ƒX‚ð_charactors‚É’Ç‰Á‚·‚é
+	std::array<std::function<void(const CharactorChipInf&, SceneController&, std::vector<std::shared_ptr<Effect>>&)>, 
+		static_cast<size_t>(CharactorType::max)> _charactorCreateFuncs;
+
 	int _mapFloorH;
 	int _mapChipH;
 	const std::string imageFolderPath;
@@ -72,6 +82,11 @@ public:
 
 	bool SetMapChip(const Vector2Int& mapPos, const Map_Chip mapChip);
 	bool DrawMapChip(const Vector2Int& mapPos, const Map_Chip mapChip, const Vector2Int& offset = Vector2Int(0,0));
+
+	bool SetCharactorChip(const CharactorChipInf& charactorChipInf);
+	bool DrawCharactorChip(const CharactorChipInf& charactorChipInf, const Vector2Int& offset = Vector2Int(0,0));
+
+	void CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects);
 
 	bool SaveMap(const std::string fileName);
 	bool LoadMap(const std::string fileName);

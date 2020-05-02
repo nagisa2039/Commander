@@ -67,6 +67,7 @@
     <ClInclude Include="Resource\Source\Game\BattleCharactor.h" />
     <ClInclude Include="Resource\Source\Game\Camera.h" />
     <ClInclude Include="Resource\Source\Game\Charactor.h" />
+    <ClInclude Include="Resource\Source\Game\CharactorType.h" />
     <ClInclude Include="Resource\Source\Game\Commander.h" />
     <ClInclude Include="Resource\Source\Game\DataBase.h" />
     <ClInclude Include="Resource\Source\Game\EditCursor.h" />

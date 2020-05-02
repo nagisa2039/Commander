@@ -1,19 +1,30 @@
 #pragma once
-#include "Actor.h"
 #include "MapChip.h"
+#include "Team.h"
+#include "MapCursor.h"
+#include "CharactorType.h"
 
 class MapCtrl;
 
 class EditCursor :
-	public Actor
+	public MapCursor
 {
 private:
-	MapCtrl& _mapCtrl;
+
 	Map_Chip _mapChip;
 
-	Vector2Int _mapPos;
+	CharactorChipInf _charactorChipInf;
+
 	int _animCnt;
 
+	void(EditCursor::* _uniqueUpdater)(const Input& input);
+	void(EditCursor::* _uniqueDrawer)(const Camera& camera);
+
+	void MapEidtUpdate(const Input& input);
+	void CharactorEditUpdate(const Input& input);
+
+	void MapEditDraw(const Camera& camera);
+	void CharactorEditDraw(const Camera& camera);
 
 public:
 	EditCursor(MapCtrl& mapCtrl);
@@ -22,4 +33,3 @@ public:
 	void Update(const Input& input)override;
 	void Draw(const Camera& camera)override;
 };
-

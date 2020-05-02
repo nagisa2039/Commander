@@ -3,42 +3,35 @@
 #include "MapCtrl.h"
 #include "../Utility/DxLibUtility.h"
 #include "Camera.h"
+#include "Application.h"
+#include "FileSystem.h"
 #include <DxLib.h>
+#include <algorithm>
 
-EditCursor::EditCursor(MapCtrl& mapCtrl): _mapCtrl(mapCtrl)
+using namespace std;
+
+EditCursor::EditCursor(MapCtrl& mapCtrl): MapCursor(mapCtrl)
 {
 	_mapPos = Vector2Int(0, 0);
 	_pos = Vector2(0, 0);
 	_mapChip = Forest;
+	_charactorChipInf.type = CharactorType::soldier;
+	_charactorChipInf.level = 5;
+	_charactorChipInf.team = Team::player;
+	_charactorChipInf.mapPos = _mapPos;
+
 	_animCnt = 0;
+
+	_uniqueUpdater = &EditCursor::MapEidtUpdate;
+	_uniqueDrawer = &EditCursor::MapEditDraw;
 }
 
 EditCursor::~EditCursor()
 {
 }
 
-void EditCursor::Update(const Input& input)
+void EditCursor::MapEidtUpdate(const Input& input)
 {
-	auto Move = [&](const std::string& key, const Vector2Int& move)
-	{
-		auto mapSize = _mapCtrl.GetMapCnt();
-		if ((_mapPos + move).x >= 0 && (_mapPos + move).x < mapSize.w
-			&& (_mapPos + move).y >= 0 && (_mapPos + move).y < mapSize.h)
-		{
-			if (input.GetButtonDown(0, key))
-			{
-				_mapPos += move;
-			}
-			return true;
-		}
-		return false;
-	};
-
-	Move("up",		Vector2Int(0,-1));
-	Move("down",	Vector2Int(0, 1));
-	Move("left",	Vector2Int(-1, 0));
-	Move("right",	Vector2Int(1, 0));
-
 	auto ChipChange = [&](const char key, const int move)
 	{
 		if (input.GetButtonDown(key))
@@ -56,7 +49,7 @@ void EditCursor::Update(const Input& input)
 		}
 	};
 
-	ChipChange(KEY_INPUT_Z,  1);
+	ChipChange(KEY_INPUT_Z, 1);
 	ChipChange(KEY_INPUT_X, -1);
 
 	if (input.GetButtonDown(0, "space"))
@@ -64,16 +57,79 @@ void EditCursor::Update(const Input& input)
 		_mapCtrl.SetMapChip(_mapPos, _mapChip);
 	}
 
-	_animCnt+=5;
+	if (input.GetButtonDown(0, "change"))
+	{
+		_uniqueUpdater = &EditCursor::CharactorEditUpdate;
+		_uniqueDrawer = &EditCursor::CharactorEditDraw;
+	}
+}
+
+void EditCursor::CharactorEditUpdate(const Input& input)
+{
+	auto CharactorChange = [&](const char key, const int move)
+	{
+		if (input.GetButtonDown(key))
+		{
+			_charactorChipInf.type = static_cast<CharactorType>(static_cast<int>(_charactorChipInf.type) + move);
+			if (_charactorChipInf.type < CharactorType::swordman)
+			{
+				_charactorChipInf.type = CharactorType::archer;
+			}
+			if (_charactorChipInf.type > CharactorType::archer)
+			{
+				_charactorChipInf.type = CharactorType::swordman;
+			}
+			_animCnt = 0;
+		}
+	};
+
+	CharactorChange(KEY_INPUT_Z, 1);
+	CharactorChange(KEY_INPUT_X, -1);
+
+
+	if (input.GetButtonDown(0, "change"))
+	{
+		_uniqueUpdater = &EditCursor::MapEidtUpdate;
+		_uniqueDrawer = &EditCursor::MapEditDraw;
+		return;
+	}
+
+	if (input.GetButtonDown(0, "team"))
+	{
+		_charactorChipInf.team = _charactorChipInf.team == Team::player ? Team::enemy : Team::player;
+	}
+
+	if (input.GetButtonDown(0, "+"))
+	{
+		_charactorChipInf.level = min(max(0, _charactorChipInf.level + 1), 100);
+	}
+	if (input.GetButtonDown(0, "-"))
+	{
+		_charactorChipInf.level = min(max(0, _charactorChipInf.level - 1), 100);
+	}
+
+	_charactorChipInf.mapPos = _mapPos;
+
+	if (input.GetButtonDown(0, "space"))
+	{
+		_mapCtrl.SetCharactorChip(_charactorChipInf);
+	}
+}
+
+void EditCursor::Update(const Input& input)
+{
+	(this->*_uniqueUpdater)(input);
+
+	CursorMove(input);
+
+	_animCnt += 5;
 	_pos = (_mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToVector2();
 }
 
-void EditCursor::Draw(const Camera& camera)
+void EditCursor::MapEditDraw(const Camera& camera)
 {
 	auto offset = camera.GetCameraOffset();
-
 	int alpha = abs(255 - (_animCnt % 512));
-
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 	if (_mapChip != None)
 	{
@@ -81,7 +137,51 @@ void EditCursor::Draw(const Camera& camera)
 	}
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - alpha);
 	auto chipSize = _mapCtrl.GetChipSize().ToVector2Int();
-	DrawBox(offset + _mapPos * chipSize, offset + (_mapPos +1) * chipSize, 0xffffff, true);
+	DrawBox(offset + _mapPos * chipSize, offset + (_mapPos + 1) * chipSize, 0xffffff, true);
 
+	// 説明表示
+	auto wsize = Application::Instance().GetWindowSize();
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+	DrawBox(500, 0, wsize.w, 100, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+
+	int drawY = 0;
+	DrawFormatString(500, drawY, 0xffffff, "MapEdit");
+	drawY += 16;
+	DrawFormatString(516, drawY, 0xffffff, "X : Z チップ変更    space チップ設置");
+}
+
+void EditCursor::CharactorEditDraw(const Camera& camera)
+{
+	auto offset = camera.GetCameraOffset();
+	int alpha = abs(255 - (_animCnt % 512));
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+
+	_mapCtrl.DrawCharactorChip(_charactorChipInf, offset);
+
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - alpha);
+
+	auto chipSize = _mapCtrl.GetChipSize();
+	DrawBox(offset + _mapPos * chipSize, offset + (_mapPos + 1) * chipSize, 0xffffff, true);
+
+	// 説明表示
+	auto wsize = Application::Instance().GetWindowSize();
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+	DrawBox(500, 0, wsize.w, 100, 0x000000, true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+
+	int drawY = 0;
+	DrawFormatString(500, drawY, 0xffffff, "CharactorEdit");
+	drawY += 16;
+	DrawFormatString(516, drawY, 0xffffff, "X : Z チップ変更    space チップ設置");
+	drawY += 16;
+	DrawFormatString(516, drawY, 0xffffff, _charactorChipInf.team == Team::player ? "Team : Player" : "Team : Enemy");
+	drawY += 16;
+	DrawFormatString(516, drawY, 0xffffff, "Level. %d    + : P  - : O", _charactorChipInf.level);
+	drawY += 16;
+}
+
+void EditCursor::Draw(const Camera& camera)
+{
+	(this->*_uniqueDrawer)(camera);
 }

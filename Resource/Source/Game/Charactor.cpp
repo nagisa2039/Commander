@@ -59,6 +59,9 @@ void Charactor::NormalDraw(const Camera& camera)
 	DrawBox(hpLeftup + Vector2Int::One() * -1, hpRightdown + Vector2Int::One() * +1, 0xaaaaaa);
 	float berLength = max(min(static_cast<float>(_status.health) / static_cast<float>(_startStatus.health), 1.0f), 0.0f);
 	DrawBox(hpLeftup, hpLeftup + hpberSize.ToVector2Int() * Vector2(berLength, 1.0f), GetTeamColor());
+
+	// ƒŒƒxƒ‹‚Ì•`‰æ
+	DrawFormatString(drawPos.x, drawPos.y, 0x000000, "Level.%d", _status.level);
 }
 
 void Charactor::DyingDraw(const Camera& camera)

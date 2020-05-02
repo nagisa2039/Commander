@@ -305,5 +305,8 @@
     <ClInclude Include="Resource\Source\Game\PlayerUI.h">
       <Filter>ヘッダー ファイル\Game</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Source\Game\CharactorType.h">
+      <Filter>ヘッダー ファイル\Game</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

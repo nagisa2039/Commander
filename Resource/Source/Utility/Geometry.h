@@ -36,6 +36,8 @@ Vector2Int operator+(const Vector2Int& lval, const Size& rval);
 Vector2Int operator*(const Vector2Int& lval, const Size& rval);
 Vector2Int operator*(const Vector2Int& lval, const Vector2& rval);
 
+Vector2Int Lerp(const Vector2Int& start, const Vector2Int& end, const float parsent);
+
 struct Vector2
 {
 	float x, y;

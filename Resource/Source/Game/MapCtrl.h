@@ -48,8 +48,8 @@ public:
 	};
 
 private:
-	std::vector<std::vector<Map_Chip>> _mapData;			// マップデータ
-	std::array<MapChipData, Map_Chip_Max> _mapChipData;	// マップチップのデータ
+	std::vector<std::vector<Map_Chip>> _mapDataVec2;			// マップデータ
+	std::array<MapChipData, static_cast<size_t>(Map_Chip::max)> _mapChipData;	// マップチップのデータ
 	std::shared_ptr<Astar> _astar;
 
 	std::vector<std::shared_ptr<Charactor>>& _charactors;
@@ -102,4 +102,3 @@ public:
 	// 指定した座標のMapChipDataを取得する
 	MapChipData GetMapChipData(const Vector2Int& mapPos)const;
 };
-

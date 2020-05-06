@@ -14,7 +14,7 @@ EditCursor::EditCursor(MapCtrl& mapCtrl): MapCursor(mapCtrl)
 {
 	_mapPos = Vector2Int(0, 0);
 	_pos = Vector2(0, 0);
-	_mapChip = Forest;
+	_mapChip = Map_Chip::forest;
 	_charactorChipInf.type = CharactorType::soldier;
 	_charactorChipInf.level = 5;
 	_charactorChipInf.team = Team::player;
@@ -36,14 +36,14 @@ void EditCursor::MapEidtUpdate(const Input& input)
 	{
 		if (input.GetButtonDown(key))
 		{
-			_mapChip = static_cast<Map_Chip>(_mapChip + move);
-			if (_mapChip < None)
+			_mapChip = static_cast<Map_Chip>(static_cast<int>(_mapChip) + move);
+			if (_mapChip < Map_Chip::none)
 			{
-				_mapChip = River_Corner3;
+				_mapChip = Map_Chip::river_corner3;
 			}
-			if (_mapChip > River_Corner3)
+			if (_mapChip > Map_Chip::river_corner3)
 			{
-				_mapChip = None;
+				_mapChip = Map_Chip::none;
 			}
 			_animCnt = 0;
 		}
@@ -131,7 +131,7 @@ void EditCursor::MapEditDraw(const Camera& camera)
 	auto offset = camera.GetCameraOffset();
 	int alpha = abs(255 - (_animCnt % 512));
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
-	if (_mapChip != None)
+	if (_mapChip != Map_Chip::none)
 	{
 		_mapCtrl.DrawMapChip(_mapPos, _mapChip, offset);
 	}

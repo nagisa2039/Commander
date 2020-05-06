@@ -39,47 +39,60 @@ void PlayerCommander::CharactorControl(const Input& input)
 		// そのマスにユニットがいないか探す
 		for (auto& charactor : _charactors)
 		{
-			if (_mapPos == charactor->GetMapPos()
-				&& charactor->GetTeam() == _ctrlTeam)
+			if (_mapPos == charactor->GetMapPos())
 			{
-				auto SetSelectChar = [&](std::shared_ptr<Charactor> charactor)
+				// 自軍?
+				if (charactor->GetTeam() == _ctrlTeam)
 				{
-					_selectChar = &*charactor;
-					_selectChar->SetIsSelect(true);
-					_selectChar->RouteSearch();
-				};
+					auto SetSelectChar = [&](std::shared_ptr<Charactor> charactor)
+					{
+						_selectChar = &*charactor;
+						_selectChar->SetIsSelect(true);
+						_selectChar->RouteSearch();
+					};
 
-				// 未選択ならそのキャラを選択中にする
-				if (_selectChar == nullptr)
-				{
-					SetSelectChar(charactor);
+					// 未選択ならそのキャラを選択中にする
+					if (_selectChar == nullptr)
+					{
+						SetSelectChar(charactor);
+						return;
+					}
+
+					// 選択中のキャラではないか
+					if (_selectChar != &*charactor)
+					{
+						_selectChar->SetIsSelect(false);
+						SetSelectChar(charactor);
+					}
+					else
+					{
+						// 選択中のキャラを行動終了にする
+						charactor->MoveEnd();
+					}
 					return;
-				}
-
-				// 選択中のキャラではないか
-				if (_selectChar != &*charactor)
-				{
-					_selectChar->SetIsSelect(false);
-					SetSelectChar(charactor);
 				}
 				else
 				{
-					// 選択中のキャラを行動終了にする
-					charactor->MoveEnd();
 				}
 			}
 		}
 
+		// 選択中のキャラがいるなら移動
 		if (_selectChar != nullptr && _selectChar->GetCanMove())
 		{
 			_selectChar->MoveMapPos(_mapPos);
 			return;
 		}
+
+		// メニューを開く
+		_playerUI->OpenMenu();
 	}
 }
 
 void PlayerCommander::Update(const Input& input)
 {
+	_playerUI->Update(input);
+
 	if (_end) return;
 
 	CursorMove(input);

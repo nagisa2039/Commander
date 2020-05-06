@@ -18,8 +18,8 @@
 
 using namespace std;
 
-constexpr auto CHIP_SIZE_W = 32*2;
-constexpr auto CHIP_SIZE_H = 32*2;
+constexpr auto CHIP_SIZE_W = 32*2.5;
+constexpr auto CHIP_SIZE_H = 32*2.5;
 
 constexpr auto MAP_CHIP_CNT_W = 30;
 constexpr auto MAP_CHIP_CNT_H = 20;
@@ -29,13 +29,13 @@ void MapCtrl::DrawToMapChipScreen()
 	SetDrawScreen(_mapChipH);
 	ClsDrawScreen();
 
-	for (int y = 0; y < _mapData.size(); y++)
+	for (int y = 0; y < _mapDataVec2.size(); y++)
 	{
-		for (int x = 0; x < _mapData[y].size(); x++)
+		for (int x = 0; x < _mapDataVec2[y].size(); x++)
 		{
-			if (_mapData[y][x] > None && _mapData[y][x] < Map_Chip_Max)
+			if (_mapDataVec2[y][x] > Map_Chip::none && _mapDataVec2[y][x] < Map_Chip::max)
 			{
-				DrawMapChip(Vector2Int(x, y), _mapData[y][x]);
+				DrawMapChip(Vector2Int(x, y), _mapDataVec2[y][x]);
 			}
 		}
 	}
@@ -48,11 +48,11 @@ void MapCtrl::DrawToMapFloorScreen()
 	SetDrawScreen(_mapFloorH);
 	ClsDrawScreen();
 
-	for (int y = 0; y < _mapData.size(); y++)
+	for (int y = 0; y < _mapDataVec2.size(); y++)
 	{
-		for (int x = 0; x < _mapData[y].size(); x++)
+		for (int x = 0; x < _mapDataVec2[y].size(); x++)
 		{
-			DrawMapChip(Vector2Int(x, y), Floor_Meadow);
+			DrawMapChip(Vector2Int(x, y), Map_Chip::floor_meadow);
 		}
 	}
 
@@ -65,28 +65,39 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 	_mapChipH = MakeScreen(100 * CHIP_SIZE_W, 100 * CHIP_SIZE_H, true);
 	_mapFloorH = MakeScreen(100 * CHIP_SIZE_W, 100 * CHIP_SIZE_H, true);
 
-	_mapData.resize(MAP_CHIP_CNT_H);
-	for (auto& mapDataX : _mapData)
+	int frameNum = 2;
+
+	_mapDataVec2.resize(MAP_CHIP_CNT_H);
+	for (int y = 0; y < MAP_CHIP_CNT_H; y++)
 	{
-		mapDataX.resize(MAP_CHIP_CNT_W);
-		for (auto& mapData : mapDataX)
+		_mapDataVec2[y].resize(MAP_CHIP_CNT_W);
+		for (int x = 0; x < MAP_CHIP_CNT_W; x++)
 		{
-			mapData = None;
+			if (y < frameNum || y >= MAP_CHIP_CNT_H - frameNum
+			 || x < frameNum || x >= MAP_CHIP_CNT_W - frameNum)
+			{
+				_mapDataVec2[y][x] = Map_Chip::rock;
+			}
+			else
+			{
+				_mapDataVec2[y][x] = Map_Chip::none;
+			}
 		}
 	}
 
-	_mapChipData[None]				= MapChipData(DrawData(Vector2Int(0, 0), Size(32, 32), "mapchip0.png"), "草原", +1);
-	_mapChipData[Floor_Meadow]		= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip0.png"), "草原", +1);
-	_mapChipData[Forest]			= MapChipData( DrawData(Vector2Int(32, 32), Size(32, 32), "mapchip0.png"), "森", +2, 0, 30);
-	_mapChipData[River_Pond]		= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip1.png"), "川",  -1, 0, 0);
-	_mapChipData[River_Vertical]	= MapChipData( DrawData(Vector2Int(0, 32),	Size(32, 32), "mapchip1.png"), "川", -1);
-	_mapChipData[River_Horizontal]	= MapChipData( DrawData(Vector2Int(0, 64),	Size(32, 32), "mapchip1.png"), "川", -1);
-	_mapChipData[River_Cross]		= MapChipData( DrawData(Vector2Int(0, 96),	Size(32, 32), "mapchip1.png"), "川", -1);
-	_mapChipData[River_All]			= MapChipData( DrawData(Vector2Int(0, 128), Size(32, 32), "mapchip1.png"), "川", -1);
-	_mapChipData[River_Corner0]		= MapChipData( DrawData(Vector2Int(0, 160), Size(32, 32), "mapchip1.png"), "川", -1);
-	_mapChipData[River_Corner1]		= MapChipData( DrawData(Vector2Int(0, 192), Size(32, 32), "mapchip1.png"), "川", -1);
-	_mapChipData[River_Corner2]		= MapChipData( DrawData(Vector2Int(0, 224), Size(32, 32), "mapchip1.png"), "川", -1);
-	_mapChipData[River_Corner3]		= MapChipData( DrawData(Vector2Int(0, 256), Size(32, 32), "mapchip1.png"), "川", -1);
+	_mapChipData[static_cast<size_t>(Map_Chip::none)]				= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip0.png"), "草原", +1);
+	_mapChipData[static_cast<size_t>(Map_Chip::floor_meadow)]		= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip0.png"), "草原", +1);
+	_mapChipData[static_cast<size_t>(Map_Chip::forest)]				= MapChipData( DrawData(Vector2Int(32, 32), Size(32, 32), "mapchip0.png"), "森", +2, 0, 30);
+	_mapChipData[static_cast<size_t>(Map_Chip::river_pond)]			= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip1.png"), "川",  -1, 0, 0);
+	_mapChipData[static_cast<size_t>(Map_Chip::river_vertical)]		= MapChipData( DrawData(Vector2Int(0, 32),	Size(32, 32), "mapchip1.png"), "川", -1);
+	_mapChipData[static_cast<size_t>(Map_Chip::river_horizontal)]	= MapChipData( DrawData(Vector2Int(0, 64),	Size(32, 32), "mapchip1.png"), "川", -1);
+	_mapChipData[static_cast<size_t>(Map_Chip::river_cross)]		= MapChipData( DrawData(Vector2Int(0, 96),	Size(32, 32), "mapchip1.png"), "川", -1);
+	_mapChipData[static_cast<size_t>(Map_Chip::river_all)]			= MapChipData( DrawData(Vector2Int(0, 128), Size(32, 32), "mapchip1.png"), "川", -1);
+	_mapChipData[static_cast<size_t>(Map_Chip::river_corner0)]		= MapChipData( DrawData(Vector2Int(0, 160), Size(32, 32), "mapchip1.png"), "川", -1);
+	_mapChipData[static_cast<size_t>(Map_Chip::river_corner1)]		= MapChipData( DrawData(Vector2Int(0, 192), Size(32, 32), "mapchip1.png"), "川", -1);
+	_mapChipData[static_cast<size_t>(Map_Chip::river_corner2)]		= MapChipData( DrawData(Vector2Int(0, 224), Size(32, 32), "mapchip1.png"), "川", -1);
+	_mapChipData[static_cast<size_t>(Map_Chip::river_corner3)]		= MapChipData( DrawData(Vector2Int(0, 256),	Size(32, 32), "mapchip1.png"), "川", -1);
+	_mapChipData[static_cast<size_t>(Map_Chip::rock)]				= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip2.png"), "岩", -1);
 
 	_iconPaths[static_cast<size_t>(CharactorType::swordman)] = "swordman";
 	_iconPaths[static_cast<size_t>(CharactorType::soldier)] = "soldier";
@@ -171,7 +182,7 @@ Size MapCtrl::GetChipSize()const
 
 Size MapCtrl::GetMapCnt() const
 {
-	return Size(_mapData[0].size(), _mapData.size());
+	return Size(_mapDataVec2[0].size(), _mapDataVec2.size());
 }
 
 Charactor* MapCtrl::GetMapPosChar(const Vector2Int mapPos)
@@ -188,10 +199,10 @@ Charactor* MapCtrl::GetMapPosChar(const Vector2Int mapPos)
 
 bool MapCtrl::SetMapChip(const Vector2Int& mapPos, const Map_Chip mapChip)
 {
-	if (mapPos.x >= 0 && mapPos.x < _mapData[0].size()
-		&& mapPos.y >= 0 && mapPos.y < _mapData.size())
+	if (mapPos.x >= 0 && mapPos.x < _mapDataVec2[0].size()
+		&& mapPos.y >= 0 && mapPos.y < _mapDataVec2.size())
 	{
-		_mapData[mapPos.y][mapPos.x] = mapChip;
+		_mapDataVec2[mapPos.y][mapPos.x] = mapChip;
 		DrawToMapChipScreen();
 		return true;
 	}
@@ -200,7 +211,7 @@ bool MapCtrl::SetMapChip(const Vector2Int& mapPos, const Map_Chip mapChip)
 
 bool MapCtrl::DrawMapChip(const Vector2Int& mapPos, const Map_Chip mapChip, const Vector2Int& offset)
 {
-	auto drawData = _mapChipData[mapChip].drawData;
+	auto drawData = _mapChipData[static_cast<size_t>(mapChip)].drawData;
 
 	auto graphH = Application::Instance().GetFileSystem()->GetImageHandle((imageFolderPath + drawData.path).c_str());
 	DrawRectExtendGraph(offset.x + CHIP_SIZE_W * mapPos.x, offset.y + CHIP_SIZE_H * mapPos.y,
@@ -213,6 +224,17 @@ bool MapCtrl::DrawMapChip(const Vector2Int& mapPos, const Map_Chip mapChip, cons
 
 bool MapCtrl::SetCharactorChip(const CharactorChipInf& charactorChipInf)
 {
+	for (auto itr = _charactorChips.begin(); itr != _charactorChips.end();)
+	{
+		if (itr->mapPos == charactorChipInf.mapPos)
+		{
+			itr = _charactorChips.erase(itr);
+		}
+		else
+		{
+			itr++;
+		}
+	}
 	_charactorChips.emplace_back(charactorChipInf);
 	return true;
 }
@@ -254,7 +276,7 @@ bool MapCtrl::SaveMap(const std::string fileName)
 	fwrite(&mapSize, sizeof(mapSize), 1, fp);
 
 	// マップチップの書き込み
-	for (const auto& mapChipVec : _mapData)
+	for (const auto& mapChipVec : _mapDataVec2)
 	{
 		fwrite(mapChipVec.data(), sizeof(Map_Chip), mapChipVec.size(), fp);
 	}
@@ -286,8 +308,8 @@ bool MapCtrl::LoadMap(const std::string fileName)
 	// マップチップの読み込み
 	Size mapSize;
 	fread_s(&mapSize, sizeof(mapSize), sizeof(mapSize), 1, fp);
-	_mapData.resize(mapSize.h);
-	for (auto& mapChipVec : _mapData)
+	_mapDataVec2.resize(mapSize.h);
+	for (auto& mapChipVec : _mapDataVec2)
 	{
 		mapChipVec.resize(mapSize.w);
 		fread_s(mapChipVec.data(), sizeof(Map_Chip) * mapSize.w, sizeof(Map_Chip), mapSize.w, fp);
@@ -344,13 +366,13 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
 
 void MapCtrl::CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, const Team team)
 {
-	mapVec2.resize(_mapData.size());
+	mapVec2.resize(_mapDataVec2.size());
 	for (int y = 0; y < mapVec2.size(); y++)
 	{
-		mapVec2[y].resize(_mapData[y].size());
+		mapVec2[y].resize(_mapDataVec2[y].size());
 		for (int x = 0; x < mapVec2[y].size(); x++)
 		{
-			mapVec2[y][x] = Astar::MapData(_mapChipData[_mapData[y][x]].moveCost, Team::max);
+			mapVec2[y][x] = Astar::MapData(_mapChipData[static_cast<size_t>(_mapDataVec2[y][x])].moveCost, Team::max);
 		}
 	}
 	for (const auto& charactor : _charactors)
@@ -368,17 +390,11 @@ MapCtrl::MapChipData MapCtrl::GetMapChipData(const Vector2Int& mapPos) const
 		return MapChipData();
 	}
 
-	Map_Chip mapChip = _mapData[mapPos.y][mapPos.x];
-	if (mapChip < 0 && mapChip >= Map_Chip_Max)
+	Map_Chip mapChip = _mapDataVec2[mapPos.y][mapPos.x];
+	if (static_cast<int>(mapChip) < 0 && mapChip >= Map_Chip::max)
 	{
 		return MapChipData();
 	}
 
-	return _mapChipData[mapChip];
+	return _mapChipData[static_cast<size_t>(mapChip)];
 }
-//
-//void MapCtrl::MapChipData::operator=(const MapChipData& mcd)
-//{
-//	this->drawData = mcd.drawData;
-//	this->moveCost = mcd.moveCost;
-//}

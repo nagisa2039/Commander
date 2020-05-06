@@ -139,6 +139,11 @@ Vector2Int operator*(const Vector2Int& lval, const Vector2& rval)
 	return (lval.ToVector2() * rval).ToVector2Int();
 }
 
+Vector2Int Lerp(const Vector2Int& start, const Vector2Int& end, const float parsent)
+{
+	return start + (end - start) * parsent;
+}
+
 float Dot(const Vector2 & lval, const Vector2 & rval)
 {
 	return lval.x * rval.x + lval.y * rval.y;

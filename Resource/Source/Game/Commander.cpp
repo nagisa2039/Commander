@@ -31,6 +31,11 @@ bool Commander::ChaeckCharactor()
 	return _end;
 }
 
+void Commander::End()
+{
+	_end = true;
+}
+
 bool Commander::CheckEnd() const
 {
 	return _end;

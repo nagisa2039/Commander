@@ -8,7 +8,7 @@
 #include "Animator.h"
 #include "Application.h"
 #include "FileSystem.h"
-#include "PlayerUI.h"
+#include "UI/PlayerUI.h"
 
 using namespace std;
 
@@ -95,6 +95,8 @@ void PlayerCommander::Update(const Input& input)
 
 	if (_end) return;
 
+	if (_playerUI->GetMenuIsOpen()) return;
+
 	CursorMove(input);
 
 	CharactorControl(input);
@@ -120,4 +122,10 @@ void PlayerCommander::Draw(const Camera& camera)
 
 	// UI
 	_playerUI->Draw();
+}
+
+void PlayerCommander::End()
+{
+	Commander::End();
+	_playerUI->CloseMenu(false);
 }

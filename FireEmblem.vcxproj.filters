@@ -61,6 +61,12 @@
     <Filter Include="ヘッダー ファイル\Game\Actor\Charactor">
       <UniqueIdentifier>{17c0c6fc-7d7e-45f4-91b3-358b98acb8a2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Game\UI">
+      <UniqueIdentifier>{7d0861fa-c0fc-44f8-b5c0-1ceae1d1f9f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Game\UI">
+      <UniqueIdentifier>{3deaf85b-c19e-4d3c-8ee7-bc3d7472f34d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Resource\Source\System\FileSystem.cpp">
@@ -177,8 +183,17 @@
     <ClCompile Include="Resource\Source\Game\Mage.cpp">
       <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Game\PlayerUI.cpp">
-      <Filter>ソース ファイル\Game</Filter>
+    <ClCompile Include="Resource\Source\Game\UI\UI.cpp">
+      <Filter>ソース ファイル\Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\Menu.cpp">
+      <Filter>ソース ファイル\Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\PlayerUI.cpp">
+      <Filter>ソース ファイル\Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\CheckWindow.cpp">
+      <Filter>ソース ファイル\Game\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -302,11 +317,20 @@
     <ClInclude Include="Resource\Source\Game\Mage.h">
       <Filter>ヘッダー ファイル\Game\Actor\Charactor</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Source\Game\PlayerUI.h">
-      <Filter>ヘッダー ファイル\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Resource\Source\Game\CharactorType.h">
       <Filter>ヘッダー ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\UI.h">
+      <Filter>ヘッダー ファイル\Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\Menu.h">
+      <Filter>ヘッダー ファイル\Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\PlayerUI.h">
+      <Filter>ヘッダー ファイル\Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\CheckWindow.h">
+      <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

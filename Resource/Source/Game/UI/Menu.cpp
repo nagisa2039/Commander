@@ -1,21 +1,17 @@
-#include "PlayerUI.h"
-#include "PlayerCommander.h"
-#include "MapCtrl.h"
+#include "Menu.h"
 #include "Input.h"
-#include "Camera.h"
 #include "DxLibUtility.h"
 #include "Application.h"
 #include "FileSystem.h"
 #include <Dxlib.h>
+#include "CheckWindow.h"
 
 using namespace std;
 
-PlayerUI::PlayerUI(PlayerCommander& playerCommander, const MapCtrl& mapCtrl): _playerCommander(playerCommander), _mapCtrl(mapCtrl)
+Menu::Menu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom): _playerCommander(playerCom), UI(uiDeque)
 {
 	auto wsize = Application::Instance().GetWindowSize();
 	Vector2Int offset(-30, 60);
-
-	_isMenuOpen = false;
 
 	// çsä‘
 	int lineSpace = 30;
@@ -36,120 +32,95 @@ PlayerUI::PlayerUI(PlayerCommander& playerCommander, const MapCtrl& mapCtrl): _p
 	_penAnimTrack->AddKey(60, 0.0f);
 
 	_menuOpenAnimTrack = make_unique<Track<float>>();
-	_menuOpenAnimTrack->AddKey(0,0.0f);
+	_menuOpenAnimTrack->AddKey(0, 0.0f);
 	_menuOpenAnimTrack->AddKey(15, 1.0f);
 
 	_menuCloseAnimTrack = make_unique<Track<float>>();
 	_menuCloseAnimTrack->AddKey(0, 0.0f);
 	_menuCloseAnimTrack->AddKey(15, 1.0f);
-
-	_menuUpdater = &PlayerUI::MenuCloseUpdate;
-	_menuDrawer = &PlayerUI::MenuCloseDraw;
+	_menuUpdater = &Menu::MenuCloseUpdate;
+	_menuDrawer = &Menu::MenuCloseDraw;
 
 	_menuContentNames[static_cast<size_t>(MenuContent::situation)] = "êÌãµ";
 	_menuContentNames[static_cast<size_t>(MenuContent::retreat)] = "ëﬁãp";
 	_menuContentNames[static_cast<size_t>(MenuContent::turnEnd)] = "É^Å[ÉìèIóπ";
 
+	_menuContentFunc[static_cast<size_t>(MenuContent::situation)] = [&]()
+	{
+		_uiDeque.emplace_front(make_shared<CheckWindow>("êÌãµämîFWindowÇ™èoÇÈó\íË", _uiDeque, _playerCommander));
+	};
+	_menuContentFunc[static_cast<size_t>(MenuContent::retreat)] = [&]()
+	{
+		_uiDeque.emplace_front(make_shared<CheckWindow>("ëﬁãpÇµÇ‹Ç∑Ç©ÅH", _uiDeque, _playerCommander));
+	};
+	_menuContentFunc[static_cast<size_t>(MenuContent::turnEnd)] = [&]()
+	{
+		_uiDeque.emplace_front(make_shared<CheckWindow>("É^Å[ÉìÇèIóπÇµÇ‹Ç∑Ç©ÅH", _uiDeque, _playerCommander));
+	};
+
 	_selectMenuContent = MenuContent::situation;
 }
 
-PlayerUI::~PlayerUI()
+Menu::~Menu()
 {
 }
 
-void PlayerUI::Update(const Input& input)
+void Menu::Update(const Input& input)
 {
-	_penAnimTrack->Update();
-	_menuOpenAnimTrack->Update();
-	_menuCloseAnimTrack->Update();
 	(this->*_menuUpdater)(input);
 }
 
-void PlayerUI::Draw()
+void Menu::Draw()
 {
-	DrawTerrainInf();
 	(this->*_menuDrawer)();
 }
 
-bool PlayerUI::GetIsOpen() const
+void Menu::Open(bool animation)
 {
-	return _isMenuOpen;
-}
-
-void PlayerUI::OpenMenu()
-{
-	if (_isMenuOpen) return;
-	_menuUpdater = &PlayerUI::MenuOpenAnimUpdate;
-	_menuDrawer = &PlayerUI::MenuOpenAnimDraw;
+	if (animation)
+	{
+		_menuUpdater = &Menu::MenuOpenAnimUpdate;
+		_menuDrawer = &Menu::MenuOpenAnimDraw;
+	}
+	else
+	{
+		_menuUpdater = &Menu::MenuOpenUpdate;
+		_menuDrawer = &Menu::MenuOpenDraw;
+	}
 	_menuOpenAnimTrack->Reset();
 	_selectMenuContent = MenuContent::situation;
-	_isMenuOpen = true;
 }
 
-void PlayerUI::CloseMenu()
+void Menu::Close(bool animation)
 {
-	if (!_isMenuOpen) return;
-	_menuUpdater = &PlayerUI::MenuCloseAnimUpdate;
-	_menuDrawer = &PlayerUI::MenuCloseAnimDraw;
-	_menuCloseAnimTrack->Reset();
-	_isMenuOpen = false;
-}
-
-void PlayerUI::DrawTerrainInf()
-{
-	// ínå`èÓïÒÇÃï`âÊ
-
-	// ìyë‰ÇÃï`âÊ
-	Rect terrainInfRect = Rect(Vector2Int(100, 65), Size(160, 90));
-	terrainInfRect.Draw(0x000000);
-
-	int drawY = terrainInfRect.Top();
-	MapCtrl::MapChipData mapChipData = _mapCtrl.GetMapChipData(_playerCommander.GetMapPos());
-
-	int choplin40 = Application::Instance().GetFileSystem()->GetFontHandle("choplin40");
-	Size strSize;
-	int lineCnt;
-	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, choplin40, mapChipData.name);
-	auto namePos = GetDrawPos(Vector2Int(terrainInfRect.center.x, drawY), strSize, Anker::centerup);
-	DrawFormatStringToHandle(namePos.x, namePos.y, 0xffffff, choplin40, mapChipData.name);
-	drawY += strSize.h;
-
-	int choplin20 = Application::Instance().GetFileSystem()->GetFontHandle("choplin20");
-
-	auto drawNum = [](const int num, const Vector2Int rightup, const int fontHandle, const unsigned int color = 0xffffff)
+	if (animation)
 	{
-		char str[20];
-		sprintf_s(str, 20, "%d", num);
-		Size strSize;
-		int lineCnt;
-		GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, fontHandle, str);
-		auto drawPos = GetDrawPos(rightup, strSize, Anker::rightup);
-		DrawFormatStringToHandle(drawPos.x, drawPos.y, color, fontHandle, str);
-	};
-
-
-	DrawFormatStringFToHandle(terrainInfRect.Left(), drawY, 0xffffff, choplin20, "DFE.");
-	drawNum(mapChipData.defense, Vector2Int(terrainInfRect.Right() - 10, drawY), choplin20);
-	drawY += 20;
-
-	DrawFormatStringFToHandle(terrainInfRect.Left(), drawY, 0xffffff, choplin20, "AVD.");
-	drawNum(mapChipData.avoidance, Vector2Int(terrainInfRect.Right() - 10, drawY), choplin20);
-	drawY += 20;
-
-	// ògÇÃï`âÊ
-	terrainInfRect.Draw(0xaaaaaa, false);
-	DrawLine(terrainInfRect.Left(), terrainInfRect.center.y, terrainInfRect.Right(), terrainInfRect.center.y, 0xaaaaaa);
+		_menuUpdater = &Menu::MenuCloseAnimUpdate;
+		_menuDrawer = &Menu::MenuCloseAnimDraw;
+	}
+	else
+	{
+		_menuUpdater = &Menu::MenuCloseUpdate;
+		_menuDrawer = &Menu::MenuCloseDraw;
+	}
+	_menuCloseAnimTrack->Reset();
 }
 
-void PlayerUI::MenuOpenUpdate(const Input& input)
+bool Menu::GetIsOpen() const
+{
+	return _menuUpdater != &Menu::MenuCloseUpdate;
+}
+
+void Menu::MenuOpenUpdate(const Input& input)
 {
 	if (input.GetButtonDown(0, "back"))
 	{
-		CloseMenu();
+		Close();
 	}
 
-	if (input.GetButtonDown(0, "ok"))
+	if (input.GetButtonDown(0, "space"))
 	{
+		_menuContentFunc[static_cast<size_t>(_selectMenuContent)]();
 	}
 
 	if (input.GetButtonDown(0, "up") && static_cast<int>(_selectMenuContent) > 0)
@@ -157,37 +128,37 @@ void PlayerUI::MenuOpenUpdate(const Input& input)
 		_selectMenuContent = static_cast<MenuContent>(static_cast<int>(_selectMenuContent) - 1);
 	}
 
-	if (input.GetButtonDown(0, "down") && static_cast<int>(_selectMenuContent) < static_cast<int>(MenuContent::max)-1)
+	if (input.GetButtonDown(0, "down") && static_cast<int>(_selectMenuContent) < static_cast<int>(MenuContent::max) - 1)
 	{
 		_selectMenuContent = static_cast<MenuContent>(static_cast<int>(_selectMenuContent) + 1);
 	}
 }
 
-void PlayerUI::MenuCloseUpdate(const Input& input)
+void Menu::MenuCloseUpdate(const Input& input)
 {
 }
 
-void PlayerUI::MenuOpenAnimUpdate(const Input& input)
+void Menu::MenuOpenAnimUpdate(const Input& input)
 {
 	_menuOpenAnimTrack->Update();
 	if (_menuOpenAnimTrack->GetEnd())
 	{
-		_menuUpdater = &PlayerUI::MenuOpenUpdate;
-		_menuDrawer = &PlayerUI::MenuOpenDraw;
+		_menuUpdater = &Menu::MenuOpenUpdate;
+		_menuDrawer = &Menu::MenuOpenDraw;
 	}
 }
 
-void PlayerUI::MenuCloseAnimUpdate(const Input& input)
+void Menu::MenuCloseAnimUpdate(const Input& input)
 {
 	_menuCloseAnimTrack->Update();
 	if (_menuCloseAnimTrack->GetEnd())
 	{
-		_menuUpdater = &PlayerUI::MenuCloseUpdate;
-		_menuDrawer = &PlayerUI::MenuCloseDraw;
+		_menuUpdater = &Menu::MenuCloseUpdate;
+		_menuDrawer = &Menu::MenuCloseDraw;
 	}
 }
 
-void PlayerUI::MenuOpenDraw()
+void Menu::MenuOpenDraw()
 {
 	for (int idx = 0; idx < static_cast<int>(MenuContent::max); idx++)
 	{
@@ -197,11 +168,11 @@ void PlayerUI::MenuOpenDraw()
 	DrawPen();
 }
 
-void PlayerUI::MenuCloseDraw()
+void Menu::MenuCloseDraw()
 {
 }
 
-void PlayerUI::MenuOpenAnimDraw()
+void Menu::MenuOpenAnimDraw()
 {
 	auto menuFrameH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/menuFrame.png");
 	Size menuFrameSize;
@@ -209,7 +180,7 @@ void PlayerUI::MenuOpenAnimDraw()
 
 	auto GetCenterPos = [&](const unsigned int idx)
 	{
-		
+
 		return Lerp(Vector2Int(_menuCenterPoss[idx].x, -menuFrameSize.h / 2), _menuCenterPoss[idx], _menuOpenAnimTrack->GetValue());
 	};
 
@@ -219,7 +190,7 @@ void PlayerUI::MenuOpenAnimDraw()
 	}
 }
 
-void PlayerUI::MenuCloseAnimDraw()
+void Menu::MenuCloseAnimDraw()
 {
 	auto wsize = Application::Instance().GetWindowSize();
 	auto menuFrameH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/menuFrame.png");
@@ -237,7 +208,7 @@ void PlayerUI::MenuCloseAnimDraw()
 	}
 }
 
-void PlayerUI::DrawPen()
+void Menu::DrawPen()
 {
 	auto penH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/quillPen.png");
 	Size penSize;
@@ -248,11 +219,11 @@ void PlayerUI::DrawPen()
 	Size menuFrameSize;
 	GetGraphSize(menuFrameH, menuFrameSize);
 
-	Vector2Int penDrawPos = penMove * _penAnimTrack->GetValue() + _menuCenterPoss[static_cast<size_t>(_selectMenuContent)] - Vector2Int(menuFrameSize.w/2 - 10, -10);
+	Vector2Int penDrawPos = penMove * _penAnimTrack->GetValue() + _menuCenterPoss[static_cast<size_t>(_selectMenuContent)] - Vector2Int(menuFrameSize.w / 2 - 10, -10);
 	DrawGraph(GetDrawPos(penDrawPos, penSize, Anker::rightdown), penH, true);
 }
 
-void PlayerUI::DrawMenuContent(const Vector2Int& drawCenterPos, const unsigned int idx)
+void Menu::DrawMenuContent(const Vector2Int& drawCenterPos, const unsigned int idx)
 {
 	int choplin30 = Application::Instance().GetFileSystem()->GetFontHandle("choplin30");
 	auto menuFrameH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/menuFrame.png");

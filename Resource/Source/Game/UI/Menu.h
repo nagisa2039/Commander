@@ -1,26 +1,22 @@
 #pragma once
-#include "Geometry.h"
-#include<array>
-#include "TimeLine.h"
-#include <memory>
+#include "UI.h"
+#include <array>
 #include <functional>
+#include "Geometry.h"
+#include "TimeLine.h"
 
 class PlayerCommander;
-class MapCtrl;
-class Input;
 
-class PlayerUI
+class Menu :
+	public UI
 {
 private:
-	const MapCtrl& _mapCtrl;
 	PlayerCommander& _playerCommander;
 
 	std::unique_ptr<Track<float>> _penAnimTrack;
 
 	std::unique_ptr<Track<float>> _menuOpenAnimTrack;
 	std::unique_ptr<Track<float>> _menuCloseAnimTrack;
-
-	bool _isMenuOpen;
 
 	enum class MenuState
 	{
@@ -32,7 +28,7 @@ private:
 	};
 
 	std::array<std::function<Vector2Int(const int idx)>, static_cast<size_t>(MenuState::max)> _menuDrawCenterPosFuncs;
-	
+
 	enum class MenuContent
 	{
 		situation,
@@ -43,13 +39,12 @@ private:
 
 	std::array<std::string, static_cast<size_t>(MenuContent::max)> _menuContentNames;
 	std::array<Vector2Int, static_cast<size_t>(MenuContent::max)> _menuCenterPoss;
+	std::array<std::function<void()>, static_cast<size_t>(MenuContent::max)> _menuContentFunc;
 
 	MenuContent _selectMenuContent;
 
-	void (PlayerUI::* _menuUpdater)(const Input& input);
-	void (PlayerUI::* _menuDrawer)();
-
-	void DrawTerrainInf();
+	void (Menu::* _menuUpdater)(const Input& input);
+	void (Menu::* _menuDrawer)();
 
 	void MenuOpenUpdate(const Input& input);
 	void MenuCloseUpdate(const Input& input);
@@ -66,14 +61,15 @@ private:
 	void DrawMenuContent(const Vector2Int& drawCenterPos, const unsigned int idx);
 
 public:
-	PlayerUI(PlayerCommander& playerCommander, const MapCtrl& mapCtrl);
-	~PlayerUI();
+	Menu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom);
+	~Menu();
 
-	void Update(const Input& input);
-	void Draw();
+	void Update(const Input& input)override;
+	void Draw()override;
+
+	void Open(bool animation = true);
+	void Close(bool animation = true);
 
 	bool GetIsOpen()const;
-	void OpenMenu();
-	void CloseMenu();
 };
 

@@ -15,6 +15,7 @@ private:
 	std::vector<key> _keys;
 	bool _loop;
 	bool _end;
+	bool _reverse;
 
 public:
 
@@ -23,6 +24,7 @@ public:
 		_keys.clear();
 		_loop = loop;
 		_end = false;
+		_reverse = false;
 	}
 
 	inline ~Track()
@@ -65,11 +67,20 @@ public:
 		}
 
 		auto lastFrame = _keys.rbegin()->first;
-		uint32_t calFrame = _loop && _frame > lastFrame ? _frame % lastFrame : _frame;
+		int calFrame = _loop ? _frame % lastFrame : _frame;
+		if (calFrame < 0)
+		{
+			calFrame = 0;
+		}
+		if (calFrame > lastFrame)
+		{
+			calFrame = lastFrame;
+		}
+		calFrame = _reverse ? lastFrame - calFrame : calFrame;
 
 		//if (!_loop)
 		{
-			_end = calFrame >= lastFrame;
+			_end = _frame >= lastFrame;
 		}
 
 
@@ -104,6 +115,16 @@ public:
 	inline bool GetLoop()const
 	{
 		return _loop;
+	}
+
+	inline void SetReverse(const bool value)
+	{
+		_reverse = value;
+	}
+
+	inline bool GetReverse()const
+	{
+		return _reverse;
 	}
 };
 

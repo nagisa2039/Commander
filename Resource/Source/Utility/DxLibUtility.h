@@ -11,6 +11,8 @@ void DrawLine(const Vector2Int& start, const Vector2Int& end, const unsigned int
 
 void DrawGraph(const Vector2Int& leftup, const int handle, const bool transFlag = true);
 
+void DrawRotaGraph(const Vector2Int& center, const double ExRate, const double Angle, const int GrHandle, const int TransFlag, const int ReverseXFlag = false, const int ReverseYFlag = false);
+
 void DrawRectRotaGraph(const Vector2Int& center, const Vector2Int& srcLeftup, const Size& size, const double ExtRate, const double Angle, const int GraphHandle, const int TransFlag = true, const int ReverseXFlag = false, const int ReverseYFlag = false);
 
 void DrawCircle(const Vector2Int& center, const int radius, const unsigned int color, const bool fillFlag = true);

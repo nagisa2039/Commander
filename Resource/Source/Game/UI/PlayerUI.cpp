@@ -16,6 +16,10 @@ PlayerUI::PlayerUI(PlayerCommander& playerCommander, const MapCtrl& mapCtrl): _p
 
 	_menu = make_shared<Menu>(_menuDeque, playerCommander);
 	_menuDeque.emplace_front(_menu);
+
+	_terrainInfTrack = make_unique<Track<float>>();
+	_terrainInfTrack->AddKey(0, 0.0f);
+	_terrainInfTrack->AddKey(15, 1.0f);
 }
 
 PlayerUI::~PlayerUI()
@@ -24,12 +28,27 @@ PlayerUI::~PlayerUI()
 
 void PlayerUI::Update(const Input& input)
 {
+	_terrainInfTrack->Update();
 	if (GetMenuIsOpen())
 	{
+		if (!_terrainInfTrack->GetReverse())
+		{
+			_terrainInfTrack->SetReverse(true);
+			_terrainInfTrack->Reset();
+		}
+
 		(*_menuDeque.begin())->Update(input);
 		if ((*_menuDeque.begin())->GetDelete())
 		{
 			_menuDeque.pop_front();
+		}
+	}
+	else
+	{
+		if (_terrainInfTrack->GetReverse())
+		{
+			_terrainInfTrack->SetReverse(false);
+			_terrainInfTrack->Reset();
 		}
 	}
 }
@@ -65,7 +84,7 @@ void PlayerUI::DrawTerrainInf()
 	// ’nŒ`î•ñ‚Ì•`‰æ
 
 	// “y‘ä‚Ì•`‰æ
-	Rect terrainInfRect = Rect(Vector2Int(100, 65), Size(160, 90));
+	Rect terrainInfRect = Rect(Lerp(Vector2Int(-80, 65), Vector2Int(100, 65), _terrainInfTrack->GetValue()), Size(160, 90));
 	terrainInfRect.Draw(0x000000);
 
 	int drawY = terrainInfRect.Top();

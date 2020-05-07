@@ -21,6 +21,11 @@ void DrawGraph(const Vector2Int& leftup, const int handle, const bool transFlag)
 	DxLib::DrawGraph(leftup.x, leftup.y, handle, transFlag);
 }
 
+void DrawRotaGraph(const Vector2Int& center, const double ExRate, const double Angle, const int GrHandle, const int TransFlag, const int ReverseXFlag, const int ReverseYFlag)
+{
+	DxLib::DrawRotaGraph(center.x, center.y, ExRate, Angle, GrHandle, TransFlag, ReverseXFlag, ReverseYFlag);
+}
+
 void DrawRectRotaGraph(const Vector2Int& center, const Vector2Int& srcLeftup, const Size& size, const double ExtRate, const double Angle, const int GraphHandle, const int TransFlag, const int ReverseXFlag, const int ReverseYFlag)
 {
 	DxLib::DrawRectRotaGraph(center.x, center.y, srcLeftup.x, srcLeftup.y, size.w, size.h, ExtRate, Angle, GraphHandle, TransFlag, ReverseXFlag, ReverseYFlag);

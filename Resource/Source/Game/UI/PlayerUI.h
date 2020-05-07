@@ -4,6 +4,7 @@
 #include <memory>
 #include <functional>
 #include <deque>
+#include "TimeLine.h"
 
 class PlayerCommander;
 class MapCtrl;
@@ -20,6 +21,7 @@ private:
 	std::deque<std::shared_ptr<UI>> _menuDeque;
 	std::shared_ptr<Menu> _menu;
 
+	std::unique_ptr<Track<float>> _terrainInfTrack;
 	void DrawTerrainInf();
 
 public:

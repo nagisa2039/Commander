@@ -85,7 +85,7 @@ void PlayerUI::DrawTerrainInf()
 
 	// “y‘ä‚Ì•`‰æ
 	Rect terrainInfRect = Rect(Lerp(Vector2Int(-80, 65), Vector2Int(100, 65), _terrainInfTrack->GetValue()), Size(160, 90));
-	terrainInfRect.Draw(0x000000);
+	DrawGraph(terrainInfRect.Left(), terrainInfRect.Top(), Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/terrainInf.png"), true);
 
 	int drawY = terrainInfRect.Top();
 	MapCtrl::MapChipData mapChipData = _mapCtrl.GetMapChipData(_playerCommander.GetMapPos());
@@ -111,16 +111,12 @@ void PlayerUI::DrawTerrainInf()
 		DrawFormatStringToHandle(drawPos.x, drawPos.y, color, fontHandle, str);
 	};
 
-
-	DrawFormatStringFToHandle(terrainInfRect.Left(), drawY, 0xffffff, choplin20, "DFE.");
-	drawNum(mapChipData.defense, Vector2Int(terrainInfRect.Right() - 10, drawY), choplin20);
+	int offsetX = 15;
+	DrawFormatStringToHandle(terrainInfRect.Left() + offsetX, drawY, 0xffffff, choplin20, "DFE.");
+	drawNum(mapChipData.defense, Vector2Int(terrainInfRect.Right() - offsetX, drawY), choplin20);
 	drawY += 20;
 
-	DrawFormatStringFToHandle(terrainInfRect.Left(), drawY, 0xffffff, choplin20, "AVD.");
-	drawNum(mapChipData.avoidance, Vector2Int(terrainInfRect.Right() - 10, drawY), choplin20);
+	DrawFormatStringToHandle(terrainInfRect.Left() + offsetX, drawY, 0xffffff, choplin20, "AVD.");
+	drawNum(mapChipData.avoidance, Vector2Int(terrainInfRect.Right() - offsetX, drawY), choplin20);
 	drawY += 20;
-
-	// ˜g‚Ì•`‰æ
-	terrainInfRect.Draw(0xaaaaaa, false);
-	DrawLine(terrainInfRect.Left(), terrainInfRect.center.y, terrainInfRect.Right(), terrainInfRect.center.y, 0xaaaaaa);
 }

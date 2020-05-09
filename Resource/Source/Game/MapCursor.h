@@ -24,12 +24,14 @@ protected:
 	bool PutCheck(const Input& input, const std::string& key);
 
 public:
-	MapCursor(MapCtrl& mapCtrl);
+	MapCursor(MapCtrl& mapCtrl, Camera& camera);
 	~MapCursor();
 
 	virtual void Update(const Input& input)override = 0;
-	virtual void Draw(const Camera& camera)override = 0;
+	virtual void Draw()override = 0;
 
 	Vector2Int GetMapPos()const;
+
+	Vector2 GetCenterPos()const override;
 };
 

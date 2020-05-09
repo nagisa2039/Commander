@@ -12,8 +12,8 @@
 using namespace std;
 
 Soldier::Soldier(const uint8_t level, const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl,
-	std::vector<std::shared_ptr<Effect>>& effects)
-	:Charactor(level, mapPos, team, mapCtrl, ctrl, effects)
+	std::vector<std::shared_ptr<Effect>>& effects, Camera& _camera)
+	:Charactor(level, mapPos, team, mapCtrl, ctrl, effects, _camera)
 {
 	const Size divSize = Size(32, 32);
 	if (_team == Team::player)
@@ -24,7 +24,7 @@ Soldier::Soldier(const uint8_t level, const Vector2Int& mapPos, const Team team,
 	{
 		_animator->SetImage("Resource/Image/Charactor/soldier_enemy.png");
 	}
-	_battleC = make_shared<SoldierBC>(*this, _animator->GetImageH());
+	_battleC = make_shared<SoldierBC>(*this, _animator->GetImageH(), _camera);
 
 	InitAnim();
 
@@ -44,7 +44,8 @@ Soldier::~Soldier()
 {
 }
 
-SoldierBC::SoldierBC(Charactor& charactor, const int imageHandle) : BattleCharactor(charactor, imageHandle)
+SoldierBC::SoldierBC(Charactor& charactor, const int imageHandle, Camera& camera) 
+	: BattleCharactor(charactor, imageHandle,camera)
 {
 	_name = "Soldier";
 	const Size divSize = Size(32, 32);
@@ -79,5 +80,5 @@ SoldierBC::~SoldierBC()
 
 std::shared_ptr<Effect> SoldierBC::CreateAttackEffect(const Vector2Int& effectPos)
 {
-	return make_shared<SlashingEffect>(effectPos);
+	return make_shared<SlashingEffect>(effectPos, _camera);
 }

@@ -25,7 +25,7 @@ void Camera::Update()
 		Vector2 pos2D = { 0.0f, 0.0f };
 		for (auto& target : _targets)
 		{
-			pos2D += target->GetActorPos();
+			pos2D += target->GetCenterPos();
 		}
 		Vector3 targetPos = Vector3(pos2D.x, pos2D.y, 0) / _targets.size();
 		_pos = Lerp(_pos, targetPos, 0.05f);

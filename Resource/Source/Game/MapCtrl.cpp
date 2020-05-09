@@ -113,33 +113,33 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::swordman)] = 
-		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects)
+		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		_charactors.emplace_back(make_shared<Swordsman>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects));
+		_charactors.emplace_back(make_shared<Swordsman>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects, camera));
 	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::soldier)] =
-		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects)
+		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		_charactors.emplace_back(make_shared<Soldier>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects));
+		_charactors.emplace_back(make_shared<Soldier>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects, camera));
 	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::warrior)] =
-		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects)
+		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		_charactors.emplace_back(make_shared<Warrior>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects));
+		_charactors.emplace_back(make_shared<Warrior>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects, camera));
 	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::mage)] =
-		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects)
+		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		_charactors.emplace_back(make_shared<Mage>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects));
+		_charactors.emplace_back(make_shared<Mage>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects, camera));
 	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::archer)] =
-		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects)
+		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		_charactors.emplace_back(make_shared<Archer>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects));
+		_charactors.emplace_back(make_shared<Archer>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects, camera));
 	};
 }
 
@@ -251,11 +251,11 @@ bool MapCtrl::DrawCharactorChip(const CharactorChipInf& charactorChipInf, const 
 	return true;
 }
 
-void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects)
+void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 {
 	for (const auto& charactorChipInf : _charactorChips)
 	{
-		_charactorCreateFuncs[static_cast<size_t>(charactorChipInf.type)](charactorChipInf, ctrl, effects);
+		_charactorCreateFuncs[static_cast<size_t>(charactorChipInf.type)](charactorChipInf, ctrl, effects, camera);
 	}
 }
 

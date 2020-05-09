@@ -12,8 +12,8 @@
 using namespace std;
 
 Archer::Archer(const uint8_t level, const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl,
-	std::vector<std::shared_ptr<Effect>>& effects)
-	:Charactor(level, mapPos, team, mapCtrl, ctrl, effects)
+	std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
+	:Charactor(level, mapPos, team, mapCtrl, ctrl, effects, camera)
 {
 	const Size divSize = Size(32, 32);
 	if (_team == Team::player)
@@ -24,7 +24,7 @@ Archer::Archer(const uint8_t level, const Vector2Int& mapPos, const Team team, M
 	{
 		_animator->SetImage("Resource/Image/Charactor/archer_enemy.png");
 	}
-	_battleC = make_shared<ArcherBC>(*this, _animator->GetImageH());
+	_battleC = make_shared<ArcherBC>(*this, _animator->GetImageH(), _camera);
 
 	InitAnim();
 
@@ -44,7 +44,7 @@ Archer::~Archer()
 {
 }
 
-ArcherBC::ArcherBC(Charactor& charactor, const int imageHandle) : BattleCharactor(charactor, imageHandle)
+ArcherBC::ArcherBC(Charactor& charactor, const int imageHandle, Camera& camera) : BattleCharactor(charactor, imageHandle, camera)
 {
 	_name = "Archer";
 	const Size divSize = Size(32, 32);
@@ -79,6 +79,6 @@ ArcherBC::~ArcherBC()
 
 std::shared_ptr<Effect> ArcherBC::CreateAttackEffect(const Vector2Int& effectPos)
 {
-	return make_shared<SlashingEffect>(effectPos);
+	return make_shared<SlashingEffect>(effectPos, _camera);
 }
 

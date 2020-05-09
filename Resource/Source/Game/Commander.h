@@ -24,11 +24,11 @@ protected:
 
 
 public:
-	Commander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam);
+	Commander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera);
 	~Commander();
 
 	virtual void Update(const Input& input)override = 0;
-	virtual void Draw(const Camera& camera)override = 0;
+	virtual void Draw()override = 0;
 
 	virtual void End();
 	bool CheckEnd()const;

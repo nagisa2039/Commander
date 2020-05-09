@@ -14,7 +14,7 @@
 
 using namespace std;
 
-void Charactor::NormalUpdate()
+void Charactor::NormalUpdate(const Input& input)
 {
 	Move();
 
@@ -22,7 +22,7 @@ void Charactor::NormalUpdate()
 	_animator->Update();
 }
 
-void Charactor::DyingUpdate()
+void Charactor::DyingUpdate(const Input& input)
 {
 	_dyingAnimAlphaTL->Update();
 	if (_dyingAnimAlphaTL->GetEnd())
@@ -31,12 +31,12 @@ void Charactor::DyingUpdate()
 	}
 }
 
-void Charactor::NormalDraw(const Camera& camera)
+void Charactor::NormalDraw()
 {
-	auto offset = camera.GetCameraOffset();
+	auto offset = _camera.GetCameraOffset();
 	auto chipSize = _mapCtrl.GetChipSize().ToVector2Int();
 
-	DrawMovableMass(camera);
+	DrawMovableMass();
 
 	if (!_canMove)
 	{
@@ -49,7 +49,7 @@ void Charactor::NormalDraw(const Camera& camera)
 
 	// ƒAƒCƒRƒ“‚Ì•`‰æ
 	int handle = Application::Instance().GetFileSystem()->GetImageHandle(_iconPath.c_str());
-	DrawGraph(camera.GetCameraOffset() + _pos.ToVector2Int(), handle, false);
+	DrawGraph(_camera.GetCameraOffset() + _pos.ToVector2Int(), handle, false);
 
 	// HPBer‚Ì•`‰æ
 	Size hpberSize = (chipSize * Vector2(0.8f, 0.1f)).ToSize();
@@ -64,9 +64,9 @@ void Charactor::NormalDraw(const Camera& camera)
 	DrawFormatString(drawPos.x, drawPos.y, 0x000000, "Level.%d", _status.level);
 }
 
-void Charactor::DyingDraw(const Camera& camera)
+void Charactor::DyingDraw()
 {
-	auto offset = camera.GetCameraOffset();
+	auto offset = _camera.GetCameraOffset();
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 * _dyingAnimAlphaTL->GetValue());
 	_animator->Draw(offset + _pos.ToVector2Int(), _mapCtrl.GetChipSize());
@@ -129,14 +129,14 @@ unsigned int Charactor::GetTeamColor() const
 	}
 }
 
-void Charactor::DrawMovableMass(const Camera& camera) const
+void Charactor::DrawMovableMass() const
 {
 	if (!_isSelect || !_canMove)
 	{
 		return;
 	}
 
-	auto offset = camera.GetCameraOffset();
+	auto offset = _camera.GetCameraOffset();
 	auto chipSize = _mapCtrl.GetChipSize();
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
@@ -195,9 +195,9 @@ Dir Charactor::GetDir() const
 	return _dir;
 }
 
-Vector2Int Charactor::GetCenterPos() const
+Vector2 Charactor::GetCenterPos() const
 {
-	return Vector2Int(_pos.ToVector2Int() - (_mapCtrl.GetChipSize() - (_animator->GetAnimRect().size*0.5)).ToVector2Int());
+	return Vector2(_pos + (_mapCtrl.GetChipSize() * 0.5f).ToVector2());
 }
 
 BattleCharactor& Charactor::GetBattleC() const
@@ -277,8 +277,8 @@ void Charactor::AddDamage(const int damage)
 }
 
 Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl,
-	std::vector<std::shared_ptr<Effect>>& effects)
-	: _team(team), _mapCtrl(mapCtrl), _controller(ctrl), _effects(effects)
+	std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
+	: _team(team), _mapCtrl(mapCtrl), _controller(ctrl), _effects(effects), Actor(camera)
 {
 	_pos = (mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToVector2();
 	_isMoveAnim = false;
@@ -316,12 +316,12 @@ Charactor::~Charactor()
 
 void Charactor::Update(const Input& input)
 {
-	(this->*_updater)();
+	(this->*_updater)(input);
 }
 
-void Charactor::Draw(const Camera& camera)
+void Charactor::Draw()
 {
-	(this->*_drawer)(camera);
+	(this->*_drawer)();
 }
 
 void Charactor::InitAnim()

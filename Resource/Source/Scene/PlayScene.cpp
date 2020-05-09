@@ -35,8 +35,8 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 
 	_turnChangeAnim = make_shared<TurnChangeAnim>();
 
-	_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player);
-	_enemyCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy);
+	_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
+	_enemyCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy, *_camera);
 
 	_camera->AddTargetActor(_playerCommander);
 
@@ -44,7 +44,7 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	_camera->SetLimitRect(Rect(mapSize.ToVector2Int() * 0.5, mapSize));
 
 	_mapCtrl->LoadMap("map0");
-	_mapCtrl->CreateCharactor(ctrl, _effects);
+	_mapCtrl->CreateCharactor(ctrl, _effects, *_camera);
 
 	_dyingCharItr = _charactors.end();
 
@@ -296,7 +296,7 @@ void PlayScene::GameOverUpdate(const Input& input)
 void PlayScene::PlayerTurnDraw(const Camera& camera)
 {
 	// プレイヤーCursorの描画
-	_playerCommander->Draw(*_camera);
+	_playerCommander->Draw();
 }
 
 void PlayScene::EnemyTurnDraw(const Camera& camera)
@@ -334,18 +334,18 @@ void PlayScene::Draw(void)
 	_mapCtrl->Draw(*_camera);
 	for (auto& charactor : _charactors)
 	{
-		charactor->Draw(*_camera);
+		charactor->Draw();
 	}
 	for (auto& effect : _effects)
 	{
-		effect->Draw(*_camera);
+		effect->Draw();
 	}
 
 	// 場面ごとの描画
 	(this->*_uniqueDrawer)(*_camera);
 
 	// ターン交代のエフェクト描画
-	_turnChangeAnim->Draw(*_camera);
+	_turnChangeAnim->Draw();
 
 	// 使用するピクセルシェーダーをセット
 	SetUsePixelShader(pshandle);

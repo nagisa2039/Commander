@@ -11,12 +11,13 @@ class Effect :
 protected:
 	std::shared_ptr<Animator> _animator;
 	Size _size;
+	bool _cameraActive;
 
 public:
-	Effect(const Vector2Int& pos);
+	Effect(const Vector2Int& pos, Camera& camera, bool cameraActive = false);
 	~Effect();
 
 	virtual void Update(const Input& input) override;
-	virtual void Draw(const Camera& camera) override;
+	virtual void Draw() override;
 };
 

@@ -15,7 +15,7 @@ MapEditScene::MapEditScene(SceneController& controller):Scene(controller)
 {
     _camera = make_shared<Camera>(Rect(Vector2Int(), Application::Instance().GetWindowSize()));
     _mapCtrl = make_shared<MapCtrl>(_charactors);
-    _editCursor = make_shared<EditCursor>(*_mapCtrl);
+    _editCursor = make_shared<EditCursor>(*_mapCtrl, *_camera);
 
    _camera->AddTargetActor(_editCursor);
 
@@ -58,7 +58,7 @@ void MapEditScene::Draw(void)
 {
     _mapCtrl->Draw(*_camera, true);
 
-    _editCursor->Draw(*_camera);
+    _editCursor->Draw();
 
     DrawString(10, 10, "MAP EDIT SCENE", 0x00ffff);
     DrawString(10, 26, "F1 : PlayScene", 0x00ffff);

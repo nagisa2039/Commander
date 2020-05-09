@@ -4,7 +4,7 @@ class SlashingEffect :
 	public Effect
 {
 public:
-	SlashingEffect(const Vector2Int& pos);
+	SlashingEffect(const Vector2Int& pos, Camera& camera);
 	~SlashingEffect();
 };
 

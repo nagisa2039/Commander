@@ -12,8 +12,8 @@
 using namespace std;
 
 Swordsman::Swordsman(const uint8_t level, const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl,
-	std::vector<std::shared_ptr<Effect>>& effects)
-	:Charactor(level, mapPos, team, mapCtrl, ctrl, effects)
+	std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
+	:Charactor(level, mapPos, team, mapCtrl, ctrl, effects, camera)
 {
 	if (_team == Team::player)
 	{
@@ -23,7 +23,7 @@ Swordsman::Swordsman(const uint8_t level, const Vector2Int& mapPos, const Team t
 	{
 		_animator->SetImage("Resource/Image/Charactor/swordman_enemy.png");
 	}
-	_battleC = make_shared<SwordBC>(*this, _animator->GetImageH());
+	_battleC = make_shared<SwordBC>(*this, _animator->GetImageH(), _camera);
 
 	InitAnim();
 
@@ -44,7 +44,7 @@ Swordsman::~Swordsman()
 {
 }
 
-SwordBC::SwordBC(Charactor& charactor, const int imageHandle): BattleCharactor(charactor, imageHandle)
+SwordBC::SwordBC(Charactor& charactor, const int imageHandle, Camera& camera): BattleCharactor(charactor, imageHandle, camera)
 {
 	_name = "Swordsman";
 	_animator->SetImageHandle(imageHandle);
@@ -79,5 +79,5 @@ SwordBC::~SwordBC()
 
 std::shared_ptr<Effect> SwordBC::CreateAttackEffect(const Vector2Int& effectPos)
 {
-	return make_shared<SlashingEffect>(effectPos);
+	return make_shared<SlashingEffect>(effectPos, _camera);
 }

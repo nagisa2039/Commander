@@ -70,7 +70,7 @@ bool MapCursor::PutCheck(const Input& input, const std::string& key)
 	return false;
 }
 
-MapCursor::MapCursor(MapCtrl& mapCtrl):_mapCtrl(mapCtrl), _moveItvMax(30), _putItvMax(30)
+MapCursor::MapCursor(MapCtrl& mapCtrl, Camera& camera):_mapCtrl(mapCtrl), _moveItvMax(30), _putItvMax(30), Actor(camera)
 {
 	_pos = Vector2();
 	_mapPos = Vector2Int();
@@ -89,4 +89,9 @@ MapCursor::~MapCursor()
 Vector2Int MapCursor::GetMapPos() const
 {
 	return _mapPos;
+}
+
+Vector2 MapCursor::GetCenterPos() const
+{
+	return Vector2(_pos + (_mapCtrl.GetChipSize() * 0.5f).ToVector2());
 }

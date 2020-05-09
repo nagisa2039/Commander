@@ -50,7 +50,7 @@ void TurnChangeAnim::Update(const Input& input)
 	_angleTL->Update();
 }
 
-void TurnChangeAnim::Draw(const Camera& camera)
+void TurnChangeAnim::Draw()
 {
 	auto alpha = _alphaTL->GetValue();
 	auto exrate = _exrateTL->GetValue();

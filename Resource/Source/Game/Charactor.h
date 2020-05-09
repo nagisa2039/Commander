@@ -102,32 +102,32 @@ protected:
 	std::string _iconPath;	// アイコンの画像パス
 
 	// 場面後のの更新を行う
-	void(Charactor::* _updater)();
+	void(Charactor::* _updater)(const Input& input);
 	// 場面後のの描画を行う
-	void(Charactor::* _drawer)(const Camera& camera);
+	void(Charactor::* _drawer)();
 
 	// 通常時の更新
-	void NormalUpdate();
+	void NormalUpdate(const Input& input);
 	// 死亡時の更新
-	void DyingUpdate();
+	void DyingUpdate(const Input& input);
 
 	// 通常時の描画
-	void NormalDraw(const Camera& camera);
+	void NormalDraw();
 	// 死亡時の描画
-	void DyingDraw(const Camera& camera);
+	void DyingDraw();
 
 	void Move();
 
 	unsigned int GetTeamColor()const;
-	void DrawMovableMass(const Camera& camera)const;
+	void DrawMovableMass()const;
 
 public:
 	Charactor(const uint8_t level, const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl, 
-		std::vector<std::shared_ptr<Effect>>& effects);
+		std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
 	~Charactor();
 
 	virtual void Update(const Input& input)override;
-	virtual void Draw(const Camera& camera)override;
+	virtual void Draw()override;
 
 	virtual void InitAnim();
 
@@ -145,7 +145,7 @@ public:
 	Status GetStatus()const;
 	bool GetIsDying()const;
 	Dir GetDir()const;
-	Vector2Int GetCenterPos()const;
+	Vector2 GetCenterPos()const override;
 	BattleCharactor& GetBattleC()const;
 	bool GetIsMoveAnim()const;
 	Range GetAttackRange()const;

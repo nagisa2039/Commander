@@ -58,7 +58,7 @@ private:
 	std::vector<CharactorChipInf> _charactorChips;
 
 	// CharactorType‚É‘Î‰ž‚µ‚½CharactorƒNƒ‰ƒX‚ð_charactors‚É’Ç‰Á‚·‚é
-	std::array<std::function<void(const CharactorChipInf&, SceneController&, std::vector<std::shared_ptr<Effect>>&)>, 
+	std::array<std::function<void(const CharactorChipInf&, SceneController&, std::vector<std::shared_ptr<Effect>>&, Camera& camera)>,
 		static_cast<size_t>(CharactorType::max)> _charactorCreateFuncs;
 
 	int _mapFloorH;
@@ -86,7 +86,7 @@ public:
 	bool SetCharactorChip(const CharactorChipInf& charactorChipInf);
 	bool DrawCharactorChip(const CharactorChipInf& charactorChipInf, const Vector2Int& offset = Vector2Int(0,0));
 
-	void CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects);
+	void CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
 
 	bool SaveMap(const std::string fileName);
 	bool LoadMap(const std::string fileName);

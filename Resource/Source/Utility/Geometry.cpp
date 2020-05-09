@@ -346,6 +346,11 @@ Vector2Int Size::ToVector2Int() const
 	return Vector2Int(this->w,this->h);
 }
 
+Vector2 Size::ToVector2() const
+{
+	return Vector2(this->w, this->h);
+}
+
 Size Size::operator-(const Size& size)
 {
 	return Size(-size.w, -size.h);

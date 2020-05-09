@@ -18,18 +18,18 @@ private:
 	int _animCnt;
 
 	void(EditCursor::* _uniqueUpdater)(const Input& input);
-	void(EditCursor::* _uniqueDrawer)(const Camera& camera);
+	void(EditCursor::* _uniqueDrawer)();
 
 	void MapEidtUpdate(const Input& input);
 	void CharactorEditUpdate(const Input& input);
 
-	void MapEditDraw(const Camera& camera);
-	void CharactorEditDraw(const Camera& camera);
+	void MapEditDraw();
+	void CharactorEditDraw();
 
 public:
-	EditCursor(MapCtrl& mapCtrl);
+	EditCursor(MapCtrl& mapCtrl, Camera& camera);
 	~EditCursor();
 
 	void Update(const Input& input)override;
-	void Draw(const Camera& camera)override;
+	void Draw()override;
 };

@@ -12,8 +12,8 @@
 
 using namespace std;
 
-PlayerCommander::PlayerCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam):
-	Commander(charactors, mapCtrl, ctrlTeam)
+PlayerCommander::PlayerCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera):
+	Commander(charactors, mapCtrl, ctrlTeam, camera)
 {
 	_playerUI = make_unique<PlayerUI>(*this, mapCtrl);
 }
@@ -106,10 +106,10 @@ void PlayerCommander::Update(const Input& input)
 	_animCnt++;
 }
 
-void PlayerCommander::Draw(const Camera& camera)
+void PlayerCommander::Draw()
 {
 	auto chipSize = _mapCtrl.GetChipSize();
-	auto offset = camera.GetCameraOffset();
+	auto offset = _camera.GetCameraOffset();
 	auto handle = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/MapChip/cursor.png");
 	Size graphSize;
 	GetGraphSize(handle, graphSize);

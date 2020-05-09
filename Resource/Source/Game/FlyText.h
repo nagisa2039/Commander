@@ -17,11 +17,11 @@ private:
 	unsigned int _color;
 
 public:
-	FlyText(const std::string& str, const Vector2Int& pos, const int lifeCnt);
+	FlyText(const std::string& str, const Vector2Int& pos, const int lifeCnt, Camera& camera);
 	~FlyText();
 
 	void Update(const Input& input)override final;
-	void Draw(const Camera& camera)override final;
+	void Draw()override final;
 
 	void SetAnker(const Anker anker);
 	void SetMove(const Vector2& move);

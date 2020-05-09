@@ -4,8 +4,8 @@
 
 using namespace std;
 
-Commander::Commander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam)
-	:_charactors(charactors), _ctrlTeam(ctrlTeam), MapCursor(mapCtrl)
+Commander::Commander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera)
+	:_charactors(charactors), _ctrlTeam(ctrlTeam), MapCursor(mapCtrl, camera)
 {
 	_selectChar = nullptr;
 	_pos = Vector2();

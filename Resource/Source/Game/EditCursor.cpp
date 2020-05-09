@@ -10,7 +10,7 @@
 
 using namespace std;
 
-EditCursor::EditCursor(MapCtrl& mapCtrl): MapCursor(mapCtrl)
+EditCursor::EditCursor(MapCtrl& mapCtrl, Camera& camera): MapCursor(mapCtrl, camera)
 {
 	_mapPos = Vector2Int(0, 0);
 	_pos = Vector2(0, 0);
@@ -126,9 +126,9 @@ void EditCursor::Update(const Input& input)
 	_pos = (_mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToVector2();
 }
 
-void EditCursor::MapEditDraw(const Camera& camera)
+void EditCursor::MapEditDraw()
 {
-	auto offset = camera.GetCameraOffset();
+	auto offset = _camera.GetCameraOffset();
 	int alpha = abs(255 - (_animCnt % 512));
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 	if (_mapChip != Map_Chip::none)
@@ -151,9 +151,9 @@ void EditCursor::MapEditDraw(const Camera& camera)
 	DrawFormatString(516, drawY, 0xffffff, "X : Z チップ変更    space チップ設置");
 }
 
-void EditCursor::CharactorEditDraw(const Camera& camera)
+void EditCursor::CharactorEditDraw()
 {
-	auto offset = camera.GetCameraOffset();
+	auto offset = _camera.GetCameraOffset();
 	int alpha = abs(255 - (_animCnt % 512));
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 
@@ -181,7 +181,7 @@ void EditCursor::CharactorEditDraw(const Camera& camera)
 	drawY += 16;
 }
 
-void EditCursor::Draw(const Camera& camera)
+void EditCursor::Draw()
 {
-	(this->*_uniqueDrawer)(camera);
+	(this->*_uniqueDrawer)();
 }

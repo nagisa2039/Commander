@@ -11,8 +11,8 @@
 
 using namespace std;
 
-BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle)
-	: _selfChar(charactor), _size(128, 128)
+BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Camera& camera)
+	: _selfChar(charactor), _size(128, 128), _camera(camera)
 {
 	auto wsize = Application::Instance().GetWindowSize();
 	SetStartPos(Vector2());
@@ -83,7 +83,7 @@ void BattleCharactor::AttackUpdate(BattleScene& battleScene)
 
 				char damageText[10];
 				sprintf_s(damageText, 10, "%d", damage);
-				battleScene.GetEffectVec().emplace_back(make_shared<FlyText>(damageText, targetCenterPos, 60 * 1));
+				battleScene.GetEffectVec().emplace_back(make_shared<FlyText>(damageText, targetCenterPos, 60 * 1, _camera));
 				_targetChar->GetSelfCharacotr().AddDamage(damage);
 			}
 		}

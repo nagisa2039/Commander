@@ -9,15 +9,17 @@ class Actor
 protected:
 	Vector2 _pos;
 	bool _delete;
+	Camera& _camera;
 
 public:
-	Actor();
+	Actor(Camera& camera);
 	~Actor();
 
 	virtual void Update(const Input& input) = 0;
-	virtual void Draw(const Camera& camera) = 0;
+	virtual void Draw() = 0;
 
 	Vector2 GetActorPos()const;
+	virtual Vector2 GetCenterPos()const;
 	bool GetDelete()const;
 };
 

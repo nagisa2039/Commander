@@ -13,11 +13,11 @@ private:
 	void CharactorControl(const Input& input);
 
 public:
-	PlayerCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam);
+	PlayerCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera);
 	~PlayerCommander();
 
 	void Update(const Input& input)override final;
-	void Draw(const Camera& camera)override final;
+	void Draw()override final;
 
 	void End()override;
 };

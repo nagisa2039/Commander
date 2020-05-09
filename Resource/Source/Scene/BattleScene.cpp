@@ -204,7 +204,7 @@ void BattleScene::Draw(void)
 
 	for (auto& effect : _effects)
 	{
-		effect->Draw(*_camera);
+		effect->Draw();
 	}
 
 	SetDrawScreen(DX_SCREEN_BACK);

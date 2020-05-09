@@ -8,10 +8,10 @@ class EnemyCommander :
 private:
 
 public:
-	EnemyCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam);
+	EnemyCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera);
 	~EnemyCommander();
 
 	void Update(const Input& input)override final;
-	void Draw(const Camera& camera)override final;
+	void Draw()override final;
 };
 

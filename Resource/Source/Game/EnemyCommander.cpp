@@ -7,8 +7,8 @@
 
 using namespace std;
 
-EnemyCommander::EnemyCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam):
-	Commander(charactors, mapCtrl, ctrlTeam)
+EnemyCommander::EnemyCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera):
+	Commander(charactors, mapCtrl, ctrlTeam, camera)
 {
 }
 
@@ -54,6 +54,6 @@ void EnemyCommander::Update(const Input& input)
 	return;
 }
 
-void EnemyCommander::Draw(const Camera& camera)
+void EnemyCommander::Draw()
 {
 }

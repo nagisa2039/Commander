@@ -1,7 +1,7 @@
 #include "SlashingEffect.h"
 #include "Animator.h"
 
-SlashingEffect::SlashingEffect(const Vector2Int& pos): Effect(pos)
+SlashingEffect::SlashingEffect(const Vector2Int& pos, Camera& camera): Effect(pos, camera)
 {
 	_size = Size(120,120);
 	_animator->SetImage("Resource/Image/Effect/slashingEffect.png");

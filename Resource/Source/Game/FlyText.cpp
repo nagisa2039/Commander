@@ -7,11 +7,11 @@
 
 using namespace std;
 
-FlyText::FlyText(const string& str, const Vector2Int& pos, const int lifeCnt)
-	:Effect(pos), _str(str), _lifeCntMax(lifeCnt), _lifeCnt(lifeCnt), 
+FlyText::FlyText(const string& str, const Vector2Int& pos, const int lifeCnt, Camera& camera)
+	:Effect(pos, camera), _str(str), _lifeCntMax(lifeCnt), _lifeCnt(lifeCnt),
 	_anker(Anker::center), _startPos(pos.ToVector2()), _move(0, -50)
 {
-	_fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin");
+	_fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin40");
 
 	_color = 0xffffff;
 }
@@ -31,16 +31,15 @@ void FlyText::Update(const Input& input)
 	}
 }
 
-void FlyText::Draw(const Camera& camera)
+void FlyText::Draw()
 {
-	auto offset = camera.GetCameraOffset();
-
+	auto offset = _cameraActive ? _camera.GetCameraOffset() : Vector2Int(0, 0);
 	auto len = strlen(_str.c_str());
 	Size size;
 	int lineCnt = 0;
 	GetDrawStringSizeToHandle(&size.w, &size.h, &lineCnt, _str.c_str(), len, _fontHandle);
 
-	auto drawPos = GetDrawPos(_pos.ToVector2Int(), size, _anker);
+	auto drawPos = offset + GetDrawPos(_pos.ToVector2Int(), size, _anker);
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, _lifeCnt-- / static_cast<float>(_lifeCntMax) * 255);
 	DrawFormatStringToHandle(drawPos.x, drawPos.y, _color, _fontHandle, _str.c_str());

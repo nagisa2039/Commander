@@ -12,8 +12,8 @@
 using namespace std;
 
 Mage::Mage(const uint8_t level, const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl,
-	std::vector<std::shared_ptr<Effect>>& effects)
-	:Charactor(level, mapPos, team, mapCtrl, ctrl, effects)
+	std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
+	:Charactor(level, mapPos, team, mapCtrl, ctrl, effects, camera)
 {
 	const Size divSize = Size(32, 32);
 	if (_team == Team::player)
@@ -24,7 +24,7 @@ Mage::Mage(const uint8_t level, const Vector2Int& mapPos, const Team team, MapCt
 	{
 		_animator->SetImage("Resource/Image/Charactor/mage_enemy.png");
 	}
-	_battleC = make_shared<MageBC>(*this, _animator->GetImageH());
+	_battleC = make_shared<MageBC>(*this, _animator->GetImageH(), _camera);
 
 	InitAnim();
 
@@ -44,7 +44,7 @@ Mage::~Mage()
 {
 }
 
-MageBC::MageBC(Charactor& charactor, const int imageHandle) : BattleCharactor(charactor, imageHandle)
+MageBC::MageBC(Charactor& charactor, const int imageHandle, Camera& camera) : BattleCharactor(charactor, imageHandle, camera)
 {
 	_name = "Mage";
 	const Size divSize = Size(32, 32);
@@ -79,6 +79,6 @@ MageBC::~MageBC()
 
 std::shared_ptr<Effect> MageBC::CreateAttackEffect(const Vector2Int& effectPos)
 {
-	return make_shared<SlashingEffect>(effectPos);
+	return make_shared<SlashingEffect>(effectPos, _camera);
 }
 

@@ -7,6 +7,7 @@
 class Animator;
 class Effect;
 class Charactor;
+class Camera;
 
 class BattleScene;
 
@@ -15,6 +16,7 @@ class BattleCharactor
 protected:
 	Charactor& _selfChar;
 	BattleCharactor* _targetChar;
+	Camera& _camera;
 
 	Dir _dir;
 	Vector2 _startPos;
@@ -34,7 +36,7 @@ protected:
 	std::string _name;
 
 public:
-	BattleCharactor(Charactor& charactor, const int imageHandle);
+	BattleCharactor(Charactor& charactor, const int imageHandle, Camera& camera);
 	~BattleCharactor();
 
 	virtual void Init(const Vector2& startPos, const Dir dir, BattleCharactor* target);

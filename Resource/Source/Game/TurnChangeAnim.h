@@ -5,8 +5,7 @@
 #include <vector>
 #include "TimeLine.h"
 
-class TurnChangeAnim :
-	public Actor
+class TurnChangeAnim
 {
 private:
 	struct TeamInf
@@ -29,8 +28,8 @@ public:
 	TurnChangeAnim();
 	~TurnChangeAnim();
 
-	void Update(const Input& input)override final;
-	void Draw(const Camera& camera)override final;
+	void Update(const Input& input);
+	void Draw();
 
 	void TurnStart(const Team team);
 	bool GetAnimEnd()const;

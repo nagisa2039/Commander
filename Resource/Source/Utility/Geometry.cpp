@@ -602,6 +602,11 @@ Vector3 Clamp(const Vector3 & in, const float min, const float max)
 	return Vector3(Clamp(in.x, min, max), Clamp(in.y, min, max), Clamp(in.z, min, max));
 }
 
+bool operator==(const Range& lv, const Range& rv)
+{
+	return lv.min == rv.min && lv.max == rv.max;
+}
+
 Range::Range()
 {
 	this->min = 0;
@@ -612,4 +617,37 @@ Range::Range(const int min, const int max)
 {
 	this->min = min;
 	this->max = max;
+}
+
+bool Range::Hit(const int value) const
+{
+	return this->min <= value && this->max >= value;
+}
+
+Range Range::GetCriticalRange(const Range& target) const
+{
+	Range critical = *this;
+	if (target == *this)
+	{
+		return Range(0,0);
+	}
+
+	bool start = false;
+	for (int i = this->min; i <= this->max; i++)
+	{
+		if (!target.Hit(i))
+		{
+			start = true;
+			critical.min = i;
+		}
+		else
+		{
+			if (start)
+			{
+				critical.max = i - 1;
+				return critical;
+			}
+		}
+	}
+	return start ? critical : Range(0,0);
 }

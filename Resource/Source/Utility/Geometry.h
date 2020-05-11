@@ -239,4 +239,8 @@ struct Range
 
 	Range();
 	Range(const int min, const int max);
+
+	bool Hit(const int value)const;
+	Range GetCriticalRange(const Range& target)const;
 };
+bool operator==(const Range& lv, const Range& rv);

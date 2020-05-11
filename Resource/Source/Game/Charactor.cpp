@@ -402,59 +402,80 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 		return false;
 	}
 
-	int range = 1;
-
-
 	_moveDirList.clear();
+
+	std::list<Astar::ResultPos> targetPosList;
 	for (const auto& resultPos : _resutlPosList)
 	{
 		if (mapPos == resultPos.mapPos)
 		{
-			// _resultPosListからmoveDirListを作るために
-			// 終わりから始まりへと辿ったリストを作る
-			std::list<Astar::ResultPos> oneLineResutlList;
-			oneLineResutlList.clear();
-			oneLineResutlList.emplace_front(resultPos);
-			Astar::ResultPos* rp = resultPos.parent;
+			targetPosList.emplace_back(resultPos);
+		}
+	}
 
-			// attackマスが何マス続くかの数(攻撃範囲内かの確認のため)
-			int attackMassCnt = 0;
-			for(;rp->parent != nullptr;)
+	Astar::ResultPos startResultPos = *targetPosList.begin();
+	auto targetCharactor = _mapCtrl.GetMapPosChar(mapPos);
+	if (targetCharactor != nullptr)
+	{
+		auto targetRange = targetCharactor->GetAttackRange();
+		Range criticalRange = _attackRange.GetCriticalRange(targetRange);
+		if (criticalRange != Range(0, 0))
+		{
+			for (const auto& targetPos : targetPosList)
 			{
-				oneLineResutlList.emplace_front(*rp);
-				if (rp->attack)
+				Vector2Int startPos = targetPos.parent == nullptr ? GetMapPos() : targetPos.parent->mapPos;
+				unsigned int distance = (abs(targetPos.mapPos.x) - abs(startPos.x)) + (abs(targetPos.mapPos.y) - abs(startPos.y));
+				if (criticalRange.Hit(distance))
 				{
-					attackMassCnt++;
-				}
-				rp = rp->parent;
-			}
-
-
-			// 攻撃範囲外のマスを削除
-			for (int i = range; i < attackMassCnt; i++)
-			{
-				oneLineResutlList.pop_back();
-			}
-
-			for (auto resutl : oneLineResutlList)
-			{
-				if (resutl.moveCnt <= _status.move || resutl.attack)
-				{
-					_moveDirList.emplace_back(MoveInf(resutl.dir, resutl.attack, resutl.mapPos));
-				}
-				else
-				{
+					startResultPos = targetPos;
 					break;
 				}
 			}
-
-			_isMoveAnim = true;
-
-			_status.move = max(_status.move - resultPos.moveCnt, 0);
-
-			return true;
 		}
 	}
+
+	// _resultPosListからmoveDirListを作るために
+	// 終わりから始まりへと辿ったリストを作る
+	std::list<Astar::ResultPos> oneLineResutlList;
+	oneLineResutlList.clear();
+	oneLineResutlList.emplace_front(startResultPos);
+	Astar::ResultPos* rp = startResultPos.parent;
+
+	// attackマスが何マス続くかの数(攻撃範囲内かの確認のため)
+	int attackMassCnt = 0;
+	for (; rp->parent != nullptr;)
+	{
+		oneLineResutlList.emplace_front(*rp);
+		if (rp->attack)
+		{
+			attackMassCnt++;
+		}
+		rp = rp->parent;
+	}
+
+
+	// 攻撃範囲外のマスを削除
+	for (int i = _attackRange.max; i < attackMassCnt; i++)
+	{
+		oneLineResutlList.pop_back();
+	}
+
+	for (auto resutl : oneLineResutlList)
+	{
+		if (resutl.moveCnt <= _status.move || resutl.attack)
+		{
+			_moveDirList.emplace_back(MoveInf(resutl.dir, resutl.attack, resutl.mapPos));
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	_isMoveAnim = true;
+
+	_status.move = max(_status.move - startResultPos.moveCnt, 0);
+
 	return false;
 }
 

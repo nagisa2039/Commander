@@ -114,6 +114,7 @@
     <ProjectGuid>{AFAE9C0D-668C-4B69-A510-DED2C8429F9B}</ProjectGuid>
     <RootNamespace>FireEmblem</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Commander</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

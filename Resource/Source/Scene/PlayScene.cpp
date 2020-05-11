@@ -38,7 +38,7 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
 	_enemyCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy, *_camera);
 
-	_camera->AddTargetActor(_playerCommander);
+	_camera->AddTargetActor(&*_playerCommander);
 
 	auto mapSize = _mapCtrl->GetMapCnt() * _mapCtrl->GetChipSize();
 	_camera->SetLimitRect(Rect(mapSize.ToVector2Int() * 0.5, mapSize));
@@ -210,6 +210,9 @@ void PlayScene::StartPlayerTurn()
 	_enemyCommander->TurnReset();
 
 	_uniqueUpdaterOld = _uniqueUpdater;
+
+	_camera->ClearTargetActor();
+	_camera->AddTargetActor(&*_playerCommander);
 }
 
 void PlayScene::StartEnemyTurn()
@@ -220,6 +223,8 @@ void PlayScene::StartEnemyTurn()
 	_playerCommander->TurnReset();
 
 	_uniqueUpdaterOld = _uniqueUpdater;
+
+	_camera->ClearTargetActor();
 }
 
 void PlayScene::EnemyTurnUpdate(const Input& input)
@@ -295,16 +300,45 @@ void PlayScene::GameOverUpdate(const Input& input)
 
 void PlayScene::PlayerTurnDraw(const Camera& camera)
 {
+	for (auto& charactor : _charactors)
+	{
+		charactor->DrawMovableMass();
+	}
+	for (auto& charactor : _charactors)
+	{
+		charactor->Draw();
+	}
+	for (auto& effect : _effects)
+	{
+		effect->Draw();
+	}
 	// ƒvƒŒƒCƒ„[Cursor‚Ì•`‰æ
 	_playerCommander->Draw();
 }
 
 void PlayScene::EnemyTurnDraw(const Camera& camera)
 {
+	for (auto& charactor : _charactors)
+	{
+		charactor->Draw();
+	}
+	for (auto& effect : _effects)
+	{
+		effect->Draw();
+	}
 }
 
 void PlayScene::GameOverDraw(const Camera& camera)
 {
+	for (auto& charactor : _charactors)
+	{
+		charactor->Draw();
+	}
+	for (auto& effect : _effects)
+	{
+		effect->Draw();
+	}
+
 	auto str = "GAME OVER";
 	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin200");
 	auto wsize = Application::Instance().GetWindowSize();
@@ -314,6 +348,15 @@ void PlayScene::GameOverDraw(const Camera& camera)
 
 void PlayScene::GameClearDraw(const Camera& camera)
 {
+	for (auto& charactor : _charactors)
+	{
+		charactor->Draw();
+	}
+	for (auto& effect : _effects)
+	{
+		effect->Draw();
+	}
+
 	auto str = "GAME CLER";
 	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin200");
 	auto wsize = Application::Instance().GetWindowSize();
@@ -332,14 +375,6 @@ Size PlayScene::GetStringSizseToHandle(const std::string& str, const int fontHan
 void PlayScene::Draw(void)
 {
 	_mapCtrl->Draw(*_camera);
-	for (auto& charactor : _charactors)
-	{
-		charactor->Draw();
-	}
-	for (auto& effect : _effects)
-	{
-		effect->Draw();
-	}
 
 	// ê–Ê‚²‚Æ‚Ì•`‰æ
 	(this->*_uniqueDrawer)(*_camera);

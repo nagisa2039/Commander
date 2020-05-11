@@ -1,7 +1,7 @@
 #pragma once
 #include "../Utility/Geometry.h"
-#include <vector>
 #include <memory>
+#include <deque>
 
 class Actor;
 
@@ -9,7 +9,7 @@ class Camera
 {
 private:
 	Rect _rect;
-	std::vector<std::shared_ptr<Actor>> _targets;
+	std::deque<Actor*> _targets;
 
 	Vector3 _pos;
 	Rect _limitRect;
@@ -20,8 +20,11 @@ public:
 
 	void Update();
 
-	void AddTargetActor(std::shared_ptr<Actor> target);
-	void RemoveTargetActor(std::shared_ptr<Actor> target);
+	void AddTargetActor(Actor* target);
+	void RemoveTargetActor(Actor* target);
+
+	void PopTargetActor();
+	void ClearTargetActor();
 
 	Vector2Int GetCameraOffset()const;
 	void SetPos(const Vector3& pos);

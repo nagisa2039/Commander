@@ -119,7 +119,6 @@ protected:
 	void Move();
 
 	unsigned int GetTeamColor()const;
-	void DrawMovableMass()const;
 
 public:
 	Charactor(const uint8_t level, const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl, 
@@ -128,6 +127,7 @@ public:
 
 	virtual void Update(const Input& input)override;
 	virtual void Draw()override;
+	void DrawMovableMass()const;
 
 	virtual void InitAnim();
 

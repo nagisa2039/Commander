@@ -19,16 +19,29 @@ Camera::~Camera()
 
 void Camera::Update()
 {
+	for (auto itr = _targets.begin(); itr != _targets.end();)
+	{
+		if (*itr == nullptr)
+		{
+			itr = _targets.erase(itr);
+		}
+		else
+		{
+			itr++;
+		}
+	}
+
 	if (_targets.size() > 0)
 	{
 		// ƒJƒƒ‰‚ÌêŠ‚ðŒˆ‚ß‚é
 		Vector2 pos2D = { 0.0f, 0.0f };
-		for (auto& target : _targets)
+		/*for (auto& target : _targets)
 		{
 			pos2D += target->GetCenterPos();
 		}
-		Vector3 targetPos = Vector3(pos2D.x, pos2D.y, 0) / _targets.size();
-		_pos = Lerp(_pos, targetPos, 0.05f);
+		Vector3 targetPos = Vector3(pos2D.x, pos2D.y, 0) / _targets.size();*/
+		pos2D = (*_targets.begin())->GetCenterPos();
+		_pos = Lerp(_pos, Vector3(pos2D.x, pos2D.y, 0), 0.05f);
 	}
 
 	_rect.center = Vector2Int(_pos.x, _pos.y);
@@ -60,15 +73,33 @@ void Camera::Update()
 	}
 }
 
-void Camera::AddTargetActor(std::shared_ptr<Actor> target)
+void Camera::AddTargetActor(Actor* target)
 {
-	_targets.emplace_back(target);
+	_targets.emplace_front(target);
 }
 
-void Camera::RemoveTargetActor(std::shared_ptr<Actor> target)
+void Camera::RemoveTargetActor(Actor* target)
 {
 	auto it = find(_targets.begin(), _targets.end(), target);
+	if (it == _targets.end())
+	{
+		return;
+	}
 	_targets.erase(it);
+}
+
+void Camera::PopTargetActor()
+{
+	if (_targets.size() <= 0)
+	{
+		return;
+	}
+	_targets.pop_front();
+}
+
+void Camera::ClearTargetActor()
+{
+	_targets.clear();
 }
 
 Vector2Int Camera::GetCameraOffset() const

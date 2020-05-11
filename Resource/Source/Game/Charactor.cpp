@@ -36,8 +36,6 @@ void Charactor::NormalDraw()
 	auto offset = _camera.GetCameraOffset();
 	auto chipSize = _mapCtrl.GetChipSize().ToVector2Int();
 
-	DrawMovableMass();
-
 	if (!_canMove)
 	{
 		SetDrawBright(128, 128, 128);
@@ -79,6 +77,7 @@ void Charactor::Move()
 	{
 		_isMoveAnim = false;
 		RouteSearch();
+		_camera.PopTargetActor();
 	};
 
 	if ((!_isMoveAnim || _moveDirList.size() == 0))
@@ -473,6 +472,7 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 	}
 
 	_isMoveAnim = true;
+	_camera.AddTargetActor(this);
 
 	_status.move = max(_status.move - startResultPos.moveCnt, 0);
 

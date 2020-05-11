@@ -140,8 +140,29 @@ void Charactor::DrawMovableMass() const
 	auto chipSize = _mapCtrl.GetChipSize();
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+
+	int currentX = 0;
+	list<int> drawYList;
 	for (const auto& movePos : _resutlPosList)
 	{
+		if (currentX != movePos.mapPos.x)
+		{
+			currentX = movePos.mapPos.x;
+			drawYList.clear();
+		}
+		bool skip = false;
+		for (const auto drawY : drawYList)
+		{
+			if (drawY == movePos.mapPos.y)
+			{
+				skip = true;
+				break;
+			}
+		}
+
+		if (skip) { continue; }
+		drawYList.emplace_back(movePos.mapPos.y);
+
 		Rect box(offset + (movePos.mapPos * chipSize.ToVector2Int() + chipSize*0.5) +-1, chipSize);
 		unsigned int color = movePos.attack ? 0xff0000 : 0x0000ff;
 		box.Draw(color);

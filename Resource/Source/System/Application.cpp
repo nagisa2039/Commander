@@ -60,6 +60,7 @@ bool Application::Initialize()
 	if (DxLib_Init() != 0) { return false; }
 	srand(static_cast<unsigned int>(time(NULL)));
 	SetDrawScreen(DX_SCREEN_BACK);
+	SetWindowText("Commander");
 
 	_fileSystem = make_shared<FileSystem>();
 	_sceneController = make_unique<SceneController>();

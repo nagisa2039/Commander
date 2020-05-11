@@ -97,8 +97,8 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 	}
 	
 	// UŒ‚”ÍˆÍ‚ÌƒT[ƒ`
-	std::map<int, std::map<int, std::list<Astar::ResultPos>>> _attackResultPosMap2;
-	_attackResultPosMap2.clear();
+	std::list<Astar::ResultPos> attackResultPosList;
+	attackResultPosList.clear();
 
  	for (auto& resutlPos : resutlPosList)
 	{
@@ -146,9 +146,7 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 				int ran = abs(len.x) + abs(len.y);
 				if (ran >= attackRange.min && _searchPosVec2Move[checkPos.y][checkPos.x].state == Astar::SearchState::non)
 				{
-					ResultPos addResutlPos = ResultPos(true, checkPos, &resutlPos, static_cast<Dir>(i), resutlPos.moveCnt);
-					//_searchPosVec2Move[checkPos.y][checkPos.x].state = Astar::SearchState::search;
-					_attackResultPosMap2[checkPos.y][checkPos.x].emplace_back(addResutlPos);
+					attackResultPosList.emplace_back(ResultPos(true, checkPos, &resutlPos, static_cast<Dir>(i), resutlPos.moveCnt));
 				}
 
 				// Å‘å”ÍˆÍ–¢–‚È‚ç‚»‚±‚©‚ç‚³‚ç‚ÉSearch‚·‚é
@@ -164,28 +162,15 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 	}
 
 	// UŒ‚”ÍˆÍ•ª‚ğ_resutlPosList‚ÉŒ‹‡
-	std::list<Astar::ResultPos> attackResultPosList;
-	attackResultPosList.clear();
-	for (const auto& attackResultPosMap : _attackResultPosMap2)
+	for (const auto& attack : attackResultPosList)
 	{
-		for (const auto& attackResutlPosList : attackResultPosMap.second)
-		{
-			if (attackResutlPosList.second.size() > 0)
-			{
-				attackResultPosList.emplace_back(*attackResutlPosList.second.begin());
-			}
-		}
+		resutlPosList.emplace_back(attack);
 	}
 
- 	attackResultPosList.sort([=](const Astar::ResultPos& lv, const Astar::ResultPos& rv)
+	resutlPosList.sort([](const Astar::ResultPos& lv, const Astar::ResultPos& rv)
 	{
-			return lv.moveCnt < rv.moveCnt;
+			return lv.mapPos.x < rv.mapPos.x;
 	});
-
-	for (const auto& attackResutlPos : attackResultPosList)
-	{
-		resutlPosList.emplace_back(attackResutlPos);
-	}
 
 	return;
 }

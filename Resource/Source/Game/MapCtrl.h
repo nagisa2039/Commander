@@ -37,14 +37,15 @@ public:
 		int defense;
 		int avoidance;
 		const char* name;
+		unsigned int simpleColor;
 
-		MapChipData() : drawData(DrawData()), name(""), moveCost(1), defense(0), avoidance(0){};
-		MapChipData(const DrawData& dd, const char* na) :
-			drawData(dd), name(na), moveCost(1), defense(0), avoidance(0) {};
-		MapChipData(const DrawData& dd, const char* na, const int mc) :
-			drawData(dd), name(na), moveCost(mc), defense(0), avoidance(0) {};
-		MapChipData(const DrawData& dd, const char* na, const int mc, const int fe, const int av) :
-			drawData(dd), name(na), moveCost(mc), defense(fe), avoidance(av) {};
+		MapChipData() : drawData(DrawData()), name(""), moveCost(1), defense(0), avoidance(0), simpleColor(0x000000){};
+		MapChipData(const DrawData& dd, const char* na, unsigned int sc) :
+			drawData(dd), name(na), simpleColor(sc), moveCost(1), defense(0), avoidance(0) {};
+		MapChipData(const DrawData& dd, const char* na, unsigned int sc, const int mc) :
+			drawData(dd), name(na), simpleColor(sc), moveCost(mc), defense(0), avoidance(0) {};
+		MapChipData(const DrawData& dd, const char* na, unsigned int sc, const int mc, const int fe, const int av) :
+			drawData(dd), name(na), simpleColor(sc), moveCost(mc), defense(fe), avoidance(av) {};
 	};
 
 private:
@@ -63,6 +64,8 @@ private:
 
 	int _mapFloorH;
 	int _mapChipH;
+	int _warSituationH;
+
 	const std::string imageFolderPath;
 
 	void DrawToMapFloorScreen();
@@ -101,4 +104,16 @@ public:
 
 	// w’è‚µ‚½À•W‚ÌMapChipData‚ğæ“¾‚·‚é
 	MapChipData GetMapChipData(const Vector2Int& mapPos)const;
+
+	// í‹µŠm”F—p‚Ì‰æ‘œ‚ğ¶¬‚·‚é(XV‚·‚é)
+	void CreateWarSituation()const;
+
+	// w’è‚µ‚½ŒÂŠ‚ğ’†S‚ÉWarSituation‚ğ•`‰æ‚·‚é
+	void DrawWarSituatin(const Vector2Int center)const;
+
+	// ©ŒR‚Æ“GŒR‚Ì”‚ğ•Ô‚·(x : ©ŒR, y : “GŒR)
+	Vector2Int GetCharactorCnt()const;
+
+	// –¢s“®‚Ì©ŒR”‚ğ•Ô‚·
+	unsigned int GetCanMoveCnt()const;
 };

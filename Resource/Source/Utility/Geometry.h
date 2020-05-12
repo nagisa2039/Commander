@@ -171,6 +171,8 @@ Size operator*(const Size& lval, const Size& rval);
 Size operator+(const Size& lval, const float& rval);
 Size operator*(const Size& lval, const float& rval);
 
+bool operator==(const Size & lval, const Size& rval);
+
 enum class Anker
 {
 	leftup,

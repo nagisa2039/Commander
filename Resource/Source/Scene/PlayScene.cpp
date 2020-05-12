@@ -47,6 +47,8 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 
 	_playerCommander->TurnReset();
 
+	_mapCtrl->CreateWarSituation();
+
 	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin20", 20, 1, true, true);
 	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin30", 30, 1, true, true);
 	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin40", 40, 1, true, true);
@@ -118,6 +120,7 @@ void PlayScene::Update(const Input & input)
 	auto newEffectEnd = remove_if(_effects.begin(), _effects.end(),
 		[](const std::shared_ptr<Effect>& effect) { return effect->GetDelete(); });
 	_effects.erase(newEffectEnd, _effects.end());
+
 }
 
 void PlayScene::PlayerTurnUpdate(const Input& input)

@@ -14,7 +14,7 @@ PlayerUI::PlayerUI(PlayerCommander& playerCommander, const MapCtrl& mapCtrl): _p
 {
 	_menuDeque.clear();
 
-	_menu = make_shared<Menu>(_menuDeque, playerCommander);
+	_menu = make_shared<Menu>(_menuDeque, playerCommander, _mapCtrl);
 	_menuDeque.emplace_front(_menu);
 
 	_terrainInfTrack = make_unique<Track<float>>();

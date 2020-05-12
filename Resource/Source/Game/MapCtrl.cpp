@@ -18,11 +18,13 @@
 
 using namespace std;
 
-constexpr auto CHIP_SIZE_W = 32*2.5;
-constexpr auto CHIP_SIZE_H = 32*2.5;
+constexpr unsigned int CHIP_SIZE_W = 32*2.5;
+constexpr unsigned int CHIP_SIZE_H = 32*2.5;
 
-constexpr auto MAP_CHIP_CNT_W = 30;
-constexpr auto MAP_CHIP_CNT_H = 20;
+constexpr unsigned int MAP_CHIP_CNT_W = 20;
+constexpr unsigned int MAP_CHIP_CNT_H = 30;
+
+constexpr unsigned int WAR_SITUATION_CHIP_SIZE = 20;
 
 void MapCtrl::DrawToMapChipScreen()
 {
@@ -64,6 +66,7 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 	_astar = make_shared<Astar>();
 	_mapChipH = MakeScreen(100 * CHIP_SIZE_W, 100 * CHIP_SIZE_H, true);
 	_mapFloorH = MakeScreen(100 * CHIP_SIZE_W, 100 * CHIP_SIZE_H, true);
+	_warSituationH = MakeScreen(WAR_SITUATION_CHIP_SIZE * MAP_CHIP_CNT_W, WAR_SITUATION_CHIP_SIZE * MAP_CHIP_CNT_H, true);
 
 	int frameNum = 2;
 
@@ -85,19 +88,19 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 		}
 	}
 
-	_mapChipData[static_cast<size_t>(Map_Chip::none)]				= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip0.png"), "草原", +1);
-	_mapChipData[static_cast<size_t>(Map_Chip::floor_meadow)]		= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip0.png"), "草原", +1);
-	_mapChipData[static_cast<size_t>(Map_Chip::forest)]				= MapChipData( DrawData(Vector2Int(32, 32), Size(32, 32), "mapchip0.png"), "森", +2, 0, 30);
-	_mapChipData[static_cast<size_t>(Map_Chip::river_pond)]			= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip1.png"), "川",  -1, 0, 0);
-	_mapChipData[static_cast<size_t>(Map_Chip::river_vertical)]		= MapChipData( DrawData(Vector2Int(0, 32),	Size(32, 32), "mapchip1.png"), "川", -1);
-	_mapChipData[static_cast<size_t>(Map_Chip::river_horizontal)]	= MapChipData( DrawData(Vector2Int(0, 64),	Size(32, 32), "mapchip1.png"), "川", -1);
-	_mapChipData[static_cast<size_t>(Map_Chip::river_cross)]		= MapChipData( DrawData(Vector2Int(0, 96),	Size(32, 32), "mapchip1.png"), "川", -1);
-	_mapChipData[static_cast<size_t>(Map_Chip::river_all)]			= MapChipData( DrawData(Vector2Int(0, 128), Size(32, 32), "mapchip1.png"), "川", -1);
-	_mapChipData[static_cast<size_t>(Map_Chip::river_corner0)]		= MapChipData( DrawData(Vector2Int(0, 160), Size(32, 32), "mapchip1.png"), "川", -1);
-	_mapChipData[static_cast<size_t>(Map_Chip::river_corner1)]		= MapChipData( DrawData(Vector2Int(0, 192), Size(32, 32), "mapchip1.png"), "川", -1);
-	_mapChipData[static_cast<size_t>(Map_Chip::river_corner2)]		= MapChipData( DrawData(Vector2Int(0, 224), Size(32, 32), "mapchip1.png"), "川", -1);
-	_mapChipData[static_cast<size_t>(Map_Chip::river_corner3)]		= MapChipData( DrawData(Vector2Int(0, 256),	Size(32, 32), "mapchip1.png"), "川", -1);
-	_mapChipData[static_cast<size_t>(Map_Chip::rock)]				= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip2.png"), "岩", -1);
+	_mapChipData[static_cast<size_t>(Map_Chip::none)]				= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip0.png"), "草原",	0x000000, +1);
+	_mapChipData[static_cast<size_t>(Map_Chip::floor_meadow)]		= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip0.png"), "草原",	0x000000, +1);
+	_mapChipData[static_cast<size_t>(Map_Chip::forest)]				= MapChipData( DrawData(Vector2Int(32, 32), Size(32, 32), "mapchip0.png"), "森",	0x00ff00, +2, 0, 30);
+	_mapChipData[static_cast<size_t>(Map_Chip::river_pond)]			= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip1.png"), "川",	0x6699ff, -1, 0, 0);
+	_mapChipData[static_cast<size_t>(Map_Chip::river_vertical)]		= MapChipData( DrawData(Vector2Int(0, 32),	Size(32, 32), "mapchip1.png"), "川",	0x6699ff, -1);
+	_mapChipData[static_cast<size_t>(Map_Chip::river_horizontal)]	= MapChipData( DrawData(Vector2Int(0, 64),	Size(32, 32), "mapchip1.png"), "川",	0x6699ff, -1);
+	_mapChipData[static_cast<size_t>(Map_Chip::river_cross)]		= MapChipData( DrawData(Vector2Int(0, 96),	Size(32, 32), "mapchip1.png"), "川",	0x6699ff, -1);
+	_mapChipData[static_cast<size_t>(Map_Chip::river_all)]			= MapChipData( DrawData(Vector2Int(0, 128), Size(32, 32), "mapchip1.png"), "川",	0x6699ff, -1);
+	_mapChipData[static_cast<size_t>(Map_Chip::river_corner0)]		= MapChipData( DrawData(Vector2Int(0, 160), Size(32, 32), "mapchip1.png"), "川",	0x6699ff, -1);
+	_mapChipData[static_cast<size_t>(Map_Chip::river_corner1)]		= MapChipData( DrawData(Vector2Int(0, 192), Size(32, 32), "mapchip1.png"), "川",	0x6699ff, -1);
+	_mapChipData[static_cast<size_t>(Map_Chip::river_corner2)]		= MapChipData( DrawData(Vector2Int(0, 224), Size(32, 32), "mapchip1.png"), "川",	0x6699ff, -1);
+	_mapChipData[static_cast<size_t>(Map_Chip::river_corner3)]		= MapChipData( DrawData(Vector2Int(0, 256),	Size(32, 32), "mapchip1.png"), "川",	0x6699ff, -1);
+	_mapChipData[static_cast<size_t>(Map_Chip::rock)]				= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip2.png"), "岩",	0x663300, -1);
 
 	_iconPaths[static_cast<size_t>(CharactorType::swordman)] = "none";
 	_iconPaths[static_cast<size_t>(CharactorType::swordman)] = "swordman";
@@ -187,7 +190,7 @@ Size MapCtrl::GetChipSize()const
 
 Size MapCtrl::GetMapCnt() const
 {
-	return Size(_mapDataVec2[0].size(), _mapDataVec2.size());
+	return Size(MAP_CHIP_CNT_W, MAP_CHIP_CNT_H);
 }
 
 Charactor* MapCtrl::GetMapPosChar(const Vector2Int mapPos)
@@ -279,10 +282,10 @@ bool MapCtrl::SaveMap(const std::string fileName)
 	string folderName("Resource/Map/");
 	fopen_s(&fp, (folderName + fileName).c_str(), "wb");
 
-	if (fp == NULL)
-	{
-		return false;
-	}
+	//if (fp == NULL)
+	//{
+	//	return false;
+	//}
 
 	// マップサイズの書き込み
 	auto mapSize = GetMapCnt();
@@ -321,6 +324,12 @@ bool MapCtrl::LoadMap(const std::string fileName)
 	// マップチップの読み込み
 	Size mapSize;
 	fread_s(&mapSize, sizeof(mapSize), sizeof(mapSize), 1, fp);
+
+	if (mapSize != GetMapCnt())
+	{
+		return false;
+	}
+
 	_mapDataVec2.resize(mapSize.h);
 	for (auto& mapChipVec : _mapDataVec2)
 	{
@@ -410,4 +419,72 @@ MapCtrl::MapChipData MapCtrl::GetMapChipData(const Vector2Int& mapPos) const
 	}
 
 	return _mapChipData[static_cast<size_t>(mapChip)];
+}
+
+void MapCtrl::CreateWarSituation()const
+{
+	SetDrawScreen(_warSituationH);
+	ClsDrawScreen();
+
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 230);
+	// マップチップの描画
+	for (int y = 0; y < MAP_CHIP_CNT_H; y++)
+	{
+		for (int x = 0; x < MAP_CHIP_CNT_W; x++)
+		{
+			DrawBox(x * WAR_SITUATION_CHIP_SIZE, y * WAR_SITUATION_CHIP_SIZE,
+				(x+1) * WAR_SITUATION_CHIP_SIZE, (y+1) * WAR_SITUATION_CHIP_SIZE, 
+				GetMapChipData(Vector2Int(x,y)).simpleColor, true);
+		}
+	}
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+
+	// キャラクターの描画
+	for (const auto& charactor : _charactors)
+	{
+		DrawCircle(charactor->GetMapPos() * WAR_SITUATION_CHIP_SIZE + Vector2Int(WAR_SITUATION_CHIP_SIZE/2, WAR_SITUATION_CHIP_SIZE / 2),
+			WAR_SITUATION_CHIP_SIZE*0.3, GetTeamColor(charactor->GetTeam()));
+	}
+
+	// グリット
+	for (int x = 0; x < MAP_CHIP_CNT_W; x++)
+	{
+		DxLib::DrawLine(x * WAR_SITUATION_CHIP_SIZE, 0, x * WAR_SITUATION_CHIP_SIZE, MAP_CHIP_CNT_H * WAR_SITUATION_CHIP_SIZE, 0xffffff);
+	}
+	for (int y = 0; y < MAP_CHIP_CNT_H; y++)
+	{
+		DxLib::DrawLine(0, y * WAR_SITUATION_CHIP_SIZE, MAP_CHIP_CNT_W * WAR_SITUATION_CHIP_SIZE, y * WAR_SITUATION_CHIP_SIZE, 0xffffff);
+	}
+	DrawLine(MAP_CHIP_CNT_W * WAR_SITUATION_CHIP_SIZE-1, 0, MAP_CHIP_CNT_W * WAR_SITUATION_CHIP_SIZE-1, MAP_CHIP_CNT_H* WAR_SITUATION_CHIP_SIZE, 0xffffff);
+	DrawLine(0, MAP_CHIP_CNT_H * WAR_SITUATION_CHIP_SIZE-1, MAP_CHIP_CNT_W * WAR_SITUATION_CHIP_SIZE, MAP_CHIP_CNT_H * WAR_SITUATION_CHIP_SIZE-1, 0xffffff);
+
+	SetDrawScreen(DX_SCREEN_BACK);
+}
+
+void MapCtrl::DrawWarSituatin(const Vector2Int center)const
+{
+	DrawRotaGraph(center, 1.0f, 0.0f, _warSituationH, true);
+}
+
+Vector2Int MapCtrl::GetCharactorCnt()const
+{
+	Vector2Int charactorCnt(0,0);
+	for (const auto& charactor : _charactors)
+	{
+		charactorCnt += charactor->GetTeam() == Team::player ?Vector2Int(1,0) : Vector2Int(0,1);
+	}
+	return charactorCnt;
+}
+
+unsigned int MapCtrl::GetCanMoveCnt() const
+{
+	int cnt = 0;
+	for (const auto& charactor : _charactors)
+	{
+		if (charactor->GetTeam() == Team::player && charactor->GetCanMove())
+		{
+			cnt++;
+		}
+	}
+	return cnt;
 }

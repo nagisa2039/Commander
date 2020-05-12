@@ -412,6 +412,11 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 		}
 	}
 
+	if (targetPosList.size() <= 0)
+	{
+		return false;
+	}
+
 	Astar::ResultPos startResultPos = *targetPosList.begin();
 	auto targetCharactor = _mapCtrl.GetMapPosChar(mapPos);
 	if (targetCharactor != nullptr)

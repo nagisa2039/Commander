@@ -6,12 +6,14 @@
 #include "TimeLine.h"
 
 class PlayerCommander;
+class MapCtrl;
 
 class Menu :
 	public UI
 {
 private:
 	PlayerCommander& _playerCommander;
+	const MapCtrl& _mapCtrl;
 
 	std::unique_ptr<Track<float>> _penAnimTrack;
 
@@ -60,7 +62,7 @@ private:
 	void DrawContent(const Vector2Int& drawCenterPos, const unsigned int idx);
 
 public:
-	Menu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom);
+	Menu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl);
 	~Menu();
 
 	void Update(const Input& input)override;

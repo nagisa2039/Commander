@@ -34,6 +34,7 @@ public:
 	inline void Update()
 	{
 		_frame++;
+		_end = _frame >= _keys.rbegin()->first;
 	}
 
 	inline void Reset()
@@ -77,12 +78,6 @@ public:
 			calFrame = lastFrame;
 		}
 		calFrame = _reverse ? lastFrame - calFrame : calFrame;
-
-		//if (!_loop)
-		{
-			_end = _frame >= lastFrame;
-		}
-
 
 		auto it = find_if(_keys.rbegin(), _keys.rend(), [calFrame](const key key)
 		{

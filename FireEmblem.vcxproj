@@ -45,6 +45,7 @@
     <ClCompile Include="Resource\Source\Game\UI\Menu.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\PlayerUI.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\UI.cpp" />
+    <ClCompile Include="Resource\Source\Game\UI\WarSituation.cpp" />
     <ClCompile Include="Resource\Source\Game\Warrior.cpp" />
     <ClCompile Include="Resource\Source\Scene\BattleScene.cpp" />
     <ClCompile Include="Resource\Source\Scene\MapEditScene.cpp" />
@@ -91,6 +92,7 @@
     <ClInclude Include="Resource\Source\Game\UI\Menu.h" />
     <ClInclude Include="Resource\Source\Game\UI\PlayerUI.h" />
     <ClInclude Include="Resource\Source\Game\UI\UI.h" />
+    <ClInclude Include="Resource\Source\Game\UI\WarSituation.h" />
     <ClInclude Include="Resource\Source\Game\Warrior.h" />
     <ClInclude Include="Resource\Source\Game\Attribute.h" />
     <ClInclude Include="Resource\Source\Scene\BattleScene.h" />

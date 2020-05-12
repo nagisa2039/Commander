@@ -612,6 +612,11 @@ Size operator*(const Size& lval, const float& rval)
 	return Size(lval.w * rval, lval.h * rval);
 }
 
+bool operator==(const Size& lval, const Size& rval)
+{
+	return lval.w == rval.w && lval.h == rval.h;
+}
+
 float Clamp(const float in, const float min, const float max)
 {
 	return min(max(in, min), max);

@@ -6,10 +6,12 @@
 #include <Dxlib.h>
 #include "CheckWindow.h"
 #include "PlayerCommander.h"
+#include "WarSituation.h"
 
 using namespace std;
 
-Menu::Menu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom): _playerCommander(playerCom), UI(uiDeque)
+Menu::Menu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl)
+	: _playerCommander(playerCom), _mapCtrl(mapCtrl), UI(uiDeque)
 {
 	auto wsize = Application::Instance().GetWindowSize();
 	Vector2Int offset(-30, 60);
@@ -48,7 +50,7 @@ Menu::Menu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom)
 
 	_contentFunc[static_cast<size_t>(Content::situation)] = [&]()
 	{
-		_uiDeque.emplace_front(make_shared<CheckWindow>("í‹µŠm”FWindow‚ªo‚é—\’è", _uiDeque, [&](){_playerCommander.End();}));
+		_uiDeque.emplace_front(make_shared<WarSituation>(_uiDeque, _mapCtrl));
 	};
 	_contentFunc[static_cast<size_t>(Content::retreat)] = [&]()
 	{

@@ -71,13 +71,13 @@ void EditCursor::CharactorEditUpdate(const Input& input)
 		if (input.GetButtonDown(key))
 		{
 			_charactorChipInf.type = static_cast<CharactorType>(static_cast<int>(_charactorChipInf.type) + move);
-			if (_charactorChipInf.type < CharactorType::swordman)
+			if (_charactorChipInf.type < CharactorType::none)
 			{
-				_charactorChipInf.type = CharactorType::archer;
+				_charactorChipInf.type = static_cast<CharactorType>(static_cast<int>(CharactorType::max) - 1);
 			}
-			if (_charactorChipInf.type > CharactorType::archer)
+			if (_charactorChipInf.type > static_cast<CharactorType>(static_cast<int>(CharactorType::max) - 1))
 			{
-				_charactorChipInf.type = CharactorType::swordman;
+				_charactorChipInf.type = CharactorType::none;
 			}
 			_animCnt = 0;
 		}
@@ -149,6 +149,8 @@ void EditCursor::MapEditDraw()
 	DrawFormatString(500, drawY, 0xffffff, "MapEdit");
 	drawY += 16;
 	DrawFormatString(516, drawY, 0xffffff, "X : Z チップ変更    space チップ設置");
+	drawY += 16;
+	DrawFormatString(516, drawY, 0xffffff, "C : キャラクター配置へ変更");
 }
 
 void EditCursor::CharactorEditDraw()
@@ -179,6 +181,7 @@ void EditCursor::CharactorEditDraw()
 	drawY += 16;
 	DrawFormatString(516, drawY, 0xffffff, "Level. %d    + : P  - : O", _charactorChipInf.level);
 	drawY += 16;
+	DrawFormatString(516, drawY, 0xffffff, "C : マップチップ配置へ変更");
 }
 
 void EditCursor::Draw()

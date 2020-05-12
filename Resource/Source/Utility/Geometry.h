@@ -31,6 +31,10 @@ Vector2Int operator*(const Vector2Int &lval, const float& rval);
 Vector2Int operator+(const Vector2Int& lval, const int& rval);
 bool operator==(const Vector2Int &lval, const Vector2Int& rval);
 bool operator!=(const Vector2Int &lval, const Vector2Int& rval);
+bool operator<(const Vector2Int& lval, const Vector2Int& rval);
+bool operator>(const Vector2Int& lval, const Vector2Int& rval);
+bool operator<=(const Vector2Int& lval, const Vector2Int& rval);
+bool operator>=(const Vector2Int& lval, const Vector2Int& rval);
 
 Vector2Int operator+(const Vector2Int& lval, const Size& rval);
 Vector2Int operator*(const Vector2Int& lval, const Size& rval);

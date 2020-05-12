@@ -423,7 +423,8 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 			for (const auto& targetPos : targetPosList)
 			{
 				Vector2Int startPos = targetPos.parent == nullptr ? GetMapPos() : targetPos.parent->mapPos;
-				unsigned int distance = (abs(targetPos.mapPos.x) - abs(startPos.x)) + (abs(targetPos.mapPos.y) - abs(startPos.y));
+				Vector2Int disVec = targetPos.mapPos - startPos;
+				unsigned int distance = abs(disVec.x) + abs(disVec.y);
 				if (criticalRange.Hit(distance))
 				{
 					startResultPos = targetPos;

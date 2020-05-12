@@ -22,7 +22,6 @@ MapEditScene::MapEditScene(SceneController& controller):Scene(controller)
    auto mapSize = _mapCtrl->GetMapCnt() * _mapCtrl->GetChipSize();
    _camera->SetLimitRect(Rect(mapSize.ToVector2Int()*0.5, mapSize));
 
-
    _mapCtrl->LoadMap("map0");
 }
 
@@ -36,19 +35,19 @@ void MapEditScene::Update(const Input& input)
 
     _camera->Update();
 
-    if (input.GetButton(0, "F1"))
+    if (input.GetButtonDown(0, "F1"))
     {
         _controller.ChangeScene(make_unique<PlayScene>(_controller));
     }
-    if (input.GetButton(0, "F2"))
+    if (input.GetButtonDown(0, "F2"))
     {
         _mapCtrl->SaveMap("map0");
     }
-    if (input.GetButton(0, "F3"))
+    if (input.GetButtonDown(0, "F3"))
     {
         _mapCtrl->LoadMap("map0");
     }
-    if (input.GetButton(0, "F5"))
+    if (input.GetButtonDown(0, "F5"))
     {
 
     }

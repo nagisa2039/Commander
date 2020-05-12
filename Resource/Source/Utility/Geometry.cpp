@@ -124,6 +124,26 @@ bool operator!=(const Vector2Int & lval, const Vector2Int & rval)
 	return lval.x != rval.x || lval.y != rval.y;
 }
 
+bool operator<(const Vector2Int& lval, const Vector2Int& rval)
+{
+	return lval.x < rval.x && lval.y < rval.y;
+}
+
+bool operator>(const Vector2Int& lval, const Vector2Int& rval)
+{
+	return lval.x > rval.x&& lval.y > rval.y;
+}
+
+bool operator<=(const Vector2Int& lval, const Vector2Int& rval)
+{
+	return lval.x <= rval.x&& lval.y <= rval.y;
+}
+
+bool operator>=(const Vector2Int& lval, const Vector2Int& rval)
+{
+	return lval.x >= rval.x && lval.y >= rval.y;
+}
+
 Vector2Int operator+(const Vector2Int& lval, const Size& rval)
 {
 	return Vector2Int(lval.x + rval.w, lval.y + rval.h);

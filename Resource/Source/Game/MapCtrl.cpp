@@ -99,6 +99,7 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 	_mapChipData[static_cast<size_t>(Map_Chip::river_corner3)]		= MapChipData( DrawData(Vector2Int(0, 256),	Size(32, 32), "mapchip1.png"), "êÏ", -1);
 	_mapChipData[static_cast<size_t>(Map_Chip::rock)]				= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip2.png"), "ä‚", -1);
 
+	_iconPaths[static_cast<size_t>(CharactorType::swordman)] = "none";
 	_iconPaths[static_cast<size_t>(CharactorType::swordman)] = "swordman";
 	_iconPaths[static_cast<size_t>(CharactorType::soldier)] = "soldier";
 	_iconPaths[static_cast<size_t>(CharactorType::warrior)] = "warrior";
@@ -111,6 +112,10 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 	DrawToMapFloorScreen();
 	DrawToMapChipScreen();
 
+	_charactorCreateFuncs[static_cast<size_t>(CharactorType::none)] =
+		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
+	{
+	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::swordman)] = 
 		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
@@ -235,6 +240,10 @@ bool MapCtrl::SetCharactorChip(const CharactorChipInf& charactorChipInf)
 			itr++;
 		}
 	}
+	if (charactorChipInf.type == CharactorType::none || charactorChipInf.type == CharactorType::max)
+	{
+		return true;
+	}
 	_charactorChips.emplace_back(charactorChipInf);
 	return true;
 }
@@ -246,6 +255,10 @@ bool MapCtrl::DrawCharactorChip(const CharactorChipInf& charactorChipInf, const 
 	std::string path("Resource/Image/Charactor/");
 	path = path + _iconPaths[static_cast<size_t>(charactorChipInf.type)] + (charactorChipInf.team == Team::player ? "_player" : "_enemy") + ".png";
 	int handle = Application::Instance().GetFileSystem()->GetImageHandle(path.c_str());
+	if (charactorChipInf.type == CharactorType::none)
+	{
+		return false;
+	}
 	DrawRectExtendGraph(leftup.x, leftup.y, leftup.x + chipSize.w, leftup.y + chipSize.h, 0, 0, 32, 32, handle, true);
 
 	return true;

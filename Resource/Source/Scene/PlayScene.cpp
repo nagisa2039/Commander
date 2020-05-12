@@ -6,12 +6,9 @@
 #include "../System/FileSystem.h"
 #include "../Game/Camera.h"
 #include "../Game/MapCtrl.h"
+#include "MapEditScene.h"
 
-#include "Swordsman.h"
-#include "Soldier.h"
-#include "Warrior.h"
-#include "Archer.h"
-#include "Mage.h"
+#include "Charactor.h"
 
 #include "PlayerCommander.h"
 #include "EnemyCommander.h"
@@ -103,6 +100,13 @@ void PlayScene::Update(const Input & input)
 	if (debug)
 	{
 	}
+
+	if (input.GetButtonDown(0, "F1"))
+	{
+		_controller.ChangeScene(make_shared<MapEditScene>(_controller));
+		return;
+	}
+
 
 	(this->*_uniqueUpdater)(input);
 

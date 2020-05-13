@@ -463,6 +463,16 @@ void MapCtrl::CreateWarSituation()const
 
 void MapCtrl::DrawWarSituatin(const Vector2Int center)const
 {
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+
+	Vector2Int space(50, 50);
+	Size graphSize;
+	GetGraphSize(_warSituationH, graphSize);
+
+	DrawBox(center - (graphSize * 0.5f).ToVector2Int() - space, center + (graphSize * 0.5f).ToVector2Int() + space, 0x000000);
+
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+
 	DrawRotaGraph(center, 1.0f, 0.0f, _warSituationH, true);
 }
 

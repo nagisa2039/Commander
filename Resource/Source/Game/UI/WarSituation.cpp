@@ -92,7 +92,7 @@ void WarSituation::Draw()
 		int choplin20 = Application::Instance().GetFileSystem()->GetFontHandle("choplin20");
 		GetDrawFormatStringSize(&strSize.w, &strSize.h, &lineCnt, header);
 		auto str2DrawPos = GetDrawPos(headerCenterPos, strSize, Anker::center);
-		DrawFormatString(str2DrawPos.x, str2DrawPos.y, 0x000000, header);
+		DrawFormatString(str2DrawPos.x, str2DrawPos.y, 0xffffff, header);
 	};
 
 	auto DrawCharactorNum = [&](const Vector2Int& center, const char* str, const int num)
@@ -104,7 +104,7 @@ void WarSituation::Draw()
 		int choplin20 = Application::Instance().GetFileSystem()->GetFontHandle("choplin20");
 		GetDrawFormatStringSize(&strSize.w, &strSize.h, &lineCnt, str, num);
 		auto str2DrawPos = GetDrawPos(center, strSize, Anker::center);
-		DrawFormatString(str2DrawPos.x, str2DrawPos.y, 0x000000, str, num);
+		DrawFormatString(str2DrawPos.x, str2DrawPos.y, 0xffffff, str, num);
 	};
 	
 	DrawWinOrLoseWindow((wsize * Vector2(0.25, 0.25)).ToVector2Int(), "Ÿ—˜ğŒ", "“G‚Ì‘S–Å");

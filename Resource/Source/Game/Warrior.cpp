@@ -15,6 +15,7 @@ Warrior::Warrior(const uint8_t level, const Vector2Int& mapPos, const Team team,
 	std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	:Charactor(level, mapPos, team, mapCtrl, ctrl, effects, camera)
 {
+	_name = "Warrior";
 	const Size divSize = Size(32, 32);
 	if (_team == Team::player)
 	{
@@ -28,7 +29,7 @@ Warrior::Warrior(const uint8_t level, const Vector2Int& mapPos, const Team team,
 
 	InitAnim();
 
-	_status = Status(level, 20, 10, 5, 5, 5, 5, 5, Attribute::red);
+	_status = Status(level, 20, 10, 5, 5, 5, 5, 5, 5, Attribute::red);
 	_status.health	+= level * 0.6f;
 	_status.power	+= level * 0.6f;
 	_status.defense += level * 0.5f;
@@ -46,7 +47,6 @@ Warrior::~Warrior()
 
 WarriorBC::WarriorBC(Charactor& charactor, const int imageHandle, Camera& camera) : BattleCharactor(charactor, imageHandle, camera)
 {
-	_name = "Warrior";
 	const Size divSize = Size(32, 32);
 	_animator->SetImageHandle(imageHandle);
 

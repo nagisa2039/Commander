@@ -43,6 +43,7 @@ Menu::Menu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom,
 	_closeAnimTrack->AddKey(15, 1.0f);
 	_updater = &Menu::CloseUpdate;
 	_drawer = &Menu::CloseDraw;
+	_isOpen = false;
 
 	_contentNames[static_cast<size_t>(Content::situation)] = "êÌãµ";
 	_contentNames[static_cast<size_t>(Content::retreat)] = "ëﬁãp";
@@ -80,6 +81,9 @@ void Menu::Draw()
 
 void Menu::Open(bool animation)
 {
+	if (_isOpen) return;
+
+	_isOpen = true;
 	if (animation)
 	{
 		_updater = &Menu::OpenAnimUpdate;
@@ -96,6 +100,8 @@ void Menu::Open(bool animation)
 
 void Menu::Close(bool animation)
 {
+	if (!_isOpen || _updater != &Menu::OpenUpdate) return;
+
 	if (animation)
 	{
 		_updater = &Menu::CloseAnimUpdate;
@@ -105,13 +111,9 @@ void Menu::Close(bool animation)
 	{
 		_updater = &Menu::CloseUpdate;
 		_drawer = &Menu::CloseDraw;
+		_isOpen = false;
 	}
 	_closeAnimTrack->Reset();
-}
-
-bool Menu::GetIsOpen() const
-{
-	return _updater != &Menu::CloseUpdate;
 }
 
 void Menu::OpenUpdate(const Input& input)
@@ -159,6 +161,7 @@ void Menu::CloseAnimUpdate(const Input& input)
 	{
 		_updater = &Menu::CloseUpdate;
 		_drawer = &Menu::CloseDraw;
+		_isOpen = false;
 	}
 }
 

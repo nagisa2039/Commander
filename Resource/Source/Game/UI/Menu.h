@@ -70,7 +70,5 @@ public:
 
 	void Open(bool animation = true);
 	void Close(bool animation = true);
-
-	bool GetIsOpen()const;
 };
 

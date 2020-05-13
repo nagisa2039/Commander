@@ -33,8 +33,6 @@ protected:
 	uint8_t _animHealth;
 	int _animHealthCnt;
 
-	std::string _name;
-
 public:
 	BattleCharactor(Charactor& charactor, const int imageHandle, Camera& camera);
 	~BattleCharactor();

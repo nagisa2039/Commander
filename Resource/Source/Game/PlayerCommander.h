@@ -1,8 +1,10 @@
 #pragma once
 #include "Commander.h"
 #include <memory>
+#include <deque>
 
 class PlayerUI;
+class UI;
 
 class PlayerCommander :
 	public Commander

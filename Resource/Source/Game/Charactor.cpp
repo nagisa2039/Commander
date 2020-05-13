@@ -200,7 +200,7 @@ Charactor::Status Charactor::GetStatus() const
 
 	MapCtrl::MapChipData mapchipData = _mapCtrl.GetMapChipData(GetMapPos());
 	status.avoidanceCorrection = mapchipData.avoidance;
-	status.fefenseCorrection = mapchipData.defense;
+	status.defenseCorrection = mapchipData.defense;
 
 	return status;
 }
@@ -233,6 +233,11 @@ bool Charactor::GetIsMoveAnim() const
 Range Charactor::GetAttackRange() const
 {
 	return _attackRange;
+}
+
+const std::string& Charactor::GetName() const
+{
+	return _name;
 }
 
 void Charactor::SetIsSelect(const bool select)
@@ -294,6 +299,11 @@ void Charactor::AddDamage(const int damage)
 		SetIsDying();
 	}
 	SetStatus(_status);
+}
+
+void Charactor::DrawCharactorIcon(const Rect& drawRect)const
+{
+	DrawRectExtendGraph(drawRect.Left(), drawRect.Top(), drawRect.Right(), drawRect.Botton(), 32, 0, 32, 32, _animator->GetImageH(), true);
 }
 
 Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl,
@@ -487,7 +497,12 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 
 int Charactor::Status::GetDamage(const Status& target)const
 {
-	return max(power - target.defense - target.fefenseCorrection, 0);
+	return max(power - target.defense - target.defenseCorrection, 0);
+}
+
+int Charactor::Status::GetHitRate() const
+{
+	return 100 + skill * 2;
 }
 
 int Charactor::Status::GetHit(const Status& target) const
@@ -495,7 +510,27 @@ int Charactor::Status::GetHit(const Status& target) const
 	return min(100, (max(0, 100 - (skill * 2 - target.speed - target.avoidanceCorrection))));
 }
 
-int Charactor::Status::GetCritical(const Status& target) const
+int Charactor::Status::GetCritical() const
 {
 	return min(100, max(0, skill / 5));
+}
+
+int Charactor::Status::GetDifense() const
+{
+	return this->defense + this->defenseCorrection;
+}
+
+int Charactor::Status::GetMagicDifense() const
+{
+	return this->magic_defense + this->defenseCorrection;
+}
+
+int Charactor::Status::GetAvoidance() const
+{
+	return GetAttackSpeed() * 2 + this->avoidanceCorrection;
+}
+
+int Charactor::Status::GetAttackSpeed()const
+{
+	return this->speed;
 }

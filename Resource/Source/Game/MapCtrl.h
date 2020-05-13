@@ -81,7 +81,7 @@ public:
 	Size GetMapCnt()const;
 
 	// そのマスにいるキャラクターを返す
-	Charactor* GetMapPosChar(const Vector2Int mapPos);
+	Charactor* GetMapPosChar(const Vector2Int mapPos)const;
 
 	bool SetMapChip(const Vector2Int& mapPos, const Map_Chip mapChip);
 	bool DrawMapChip(const Vector2Int& mapPos, const Map_Chip mapChip, const Vector2Int& offset = Vector2Int(0,0));

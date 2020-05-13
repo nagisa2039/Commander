@@ -7,12 +7,16 @@
 #include "Application.h"
 #include "FileSystem.h"
 #include "Menu.h"
+#include "Input.h"
+#include "StatusWindow.h"
 
 using namespace std;
 
 PlayerUI::PlayerUI(PlayerCommander& playerCommander, const MapCtrl& mapCtrl): _playerCommander(playerCommander), _mapCtrl(mapCtrl)
 {
 	_menuDeque.clear();
+
+	_statusDeque.clear();
 
 	_menu = make_shared<Menu>(_menuDeque, playerCommander, _mapCtrl);
 	_menuDeque.emplace_front(_menu);
@@ -29,18 +33,12 @@ PlayerUI::~PlayerUI()
 void PlayerUI::Update(const Input& input)
 {
 	_terrainInfTrack->Update();
-	if (GetMenuIsOpen())
+	if (GetUIIsOpen())
 	{
 		if (!_terrainInfTrack->GetReverse())
 		{
 			_terrainInfTrack->SetReverse(true);
 			_terrainInfTrack->Reset();
-		}
-
-		(*_menuDeque.begin())->Update(input);
-		if ((*_menuDeque.begin())->GetDelete())
-		{
-			_menuDeque.pop_front();
 		}
 	}
 	else
@@ -51,6 +49,30 @@ void PlayerUI::Update(const Input& input)
 			_terrainInfTrack->Reset();
 		}
 	}
+
+	if (_menu->GetIsOpen())
+	{
+		(*_menuDeque.begin())->Update(input);
+		if ((*_menuDeque.begin())->GetDelete())
+		{
+			_menuDeque.pop_front();
+		}
+	}
+
+	if (_statusDeque.size() > 0)
+	{
+		(*_statusDeque.begin())->Update(input);
+	}
+
+	// ステータス確認
+	if (input.GetButtonDown(0, "status"))
+	{
+		auto charactor = _mapCtrl.GetMapPosChar(_playerCommander.GetMapPos());
+		if (charactor == nullptr) return;
+
+		_statusDeque.emplace_front(make_shared<StatusWindow>(_statusDeque, *charactor));
+		return;
+	}
 }
 
 void PlayerUI::Draw()
@@ -60,22 +82,26 @@ void PlayerUI::Draw()
 	{
 		(*ritr)->Draw();
 	}
+	for (auto ritr = _statusDeque.rbegin(); ritr != _statusDeque.rend(); ritr++)
+	{
+		(*ritr)->Draw();
+	}
 }
 
-bool PlayerUI::GetMenuIsOpen() const
+bool PlayerUI::GetUIIsOpen() const
 {
-	return _menu->GetIsOpen();
+	return _menu->GetIsOpen() || _statusDeque.size() > 0;
 }
 
 void PlayerUI::OpenMenu(bool animation)
 {
-	if (GetMenuIsOpen()) return;
+	if (_menu->GetIsOpen())return;
 	_menu->Open(animation);
 }
 
 void PlayerUI::CloseMenu(bool animation)
 {
-	if (!GetMenuIsOpen()) return;
+	if (!GetUIIsOpen()) return;
 	_menu->Close(animation);
 }
 

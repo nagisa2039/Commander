@@ -21,6 +21,8 @@ private:
 	std::deque<std::shared_ptr<UI>> _menuDeque;
 	std::shared_ptr<Menu> _menu;
 
+	std::deque<std::shared_ptr<UI>> _statusDeque;
+
 	std::unique_ptr<Track<float>> _terrainInfTrack;
 	void DrawTerrainInf();
 
@@ -31,7 +33,7 @@ public:
 	void Update(const Input& input);
 	void Draw();
 
-	bool GetMenuIsOpen()const;
+	bool GetUIIsOpen()const;
 	void OpenMenu(bool animation = true);
 	void CloseMenu(bool animation = true);
 };

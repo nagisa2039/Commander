@@ -93,6 +93,7 @@ void Application::KeySetUp()
 	_input->AddCommand(0, "change", 0, KEY_INPUT_C);
 	_input->AddCommand(0, "team", 0, KEY_INPUT_T);
 	_input->AddCommand(0, "back", 0, KEY_INPUT_BACK);
+	_input->AddCommand(0, "status", 0, KEY_INPUT_X);
 	_input->AddCommand(0, "+", 0, KEY_INPUT_P);
 	_input->AddCommand(0, "-", 0, KEY_INPUT_O);
 	_input->AddCommand(0, "F1", 0, KEY_INPUT_F1);

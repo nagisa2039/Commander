@@ -3,6 +3,7 @@
 UI::UI(std::deque<std::shared_ptr<UI>>& uiDeque):_uiDeque(uiDeque)
 {
 	_delete = false;
+	_isOpen = false;
 }
 
 UI::~UI()
@@ -12,4 +13,9 @@ UI::~UI()
 bool UI::GetDelete() const
 {
 	return _delete;
+}
+
+bool UI::GetIsOpen() const
+{
+	return _isOpen;
 }

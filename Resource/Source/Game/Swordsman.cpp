@@ -15,6 +15,7 @@ Swordsman::Swordsman(const uint8_t level, const Vector2Int& mapPos, const Team t
 	std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	:Charactor(level, mapPos, team, mapCtrl, ctrl, effects, camera)
 {
+	_name = "Swordsman";
 	if (_team == Team::player)
 	{
 		_animator->SetImage("Resource/Image/Charactor/swordman_player.png");
@@ -27,7 +28,7 @@ Swordsman::Swordsman(const uint8_t level, const Vector2Int& mapPos, const Team t
 
 	InitAnim();
 
-	_status = Status(level, 20, 10, 5, 5, 5, 5, 5, Attribute::red);
+	_status = Status(level, 20, 10, 5, 5, 5, 5, 5, 5, Attribute::red);
 	_status.health	+= level * 0.6f;
 	_status.power	+= level * 0.4f;
 	_status.defense += level * 0.4f;
@@ -46,7 +47,6 @@ Swordsman::~Swordsman()
 
 SwordBC::SwordBC(Charactor& charactor, const int imageHandle, Camera& camera): BattleCharactor(charactor, imageHandle, camera)
 {
-	_name = "Swordsman";
 	_animator->SetImageHandle(imageHandle);
 	const Size divSize = Size(32, 32);
 	

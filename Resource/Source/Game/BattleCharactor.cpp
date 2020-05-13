@@ -163,7 +163,7 @@ void BattleCharactor::UIDraw()
 	// ñΩíÜ
 	drawParam(itemNum++, fontHandle, 0xaaaaaa, "HIT", status.GetHit(targetStatus));
 	// ïKéE
-	drawParam(itemNum++, fontHandle, 0xaaaaaa, "CRT", status.GetCritical(targetStatus));
+	drawParam(itemNum++, fontHandle, 0xaaaaaa, "CRT", status.GetCritical());
 
 	// HPÇÃêîílï\é¶
 	auto startHealth = _selfChar.GetStartStatus().health;
@@ -194,9 +194,9 @@ void BattleCharactor::UIDraw()
 	nameBox.Draw(0x000000, false);
 	Size strSize;
 	int lineCnt;
-	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, fontHandle, _name.c_str());
+	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, fontHandle, _selfChar.GetName().c_str());
 	nameDrawPos = GetDrawPos(nameBox.center, strSize, Anker::center) + Vector2Int(5, 5);
-	DrawFormatStringToHandle(nameDrawPos.x, nameDrawPos.y, 0xaaaaaa, fontHandle, _name.c_str());
+	DrawFormatStringToHandle(nameDrawPos.x, nameDrawPos.y, 0xaaaaaa, fontHandle, _selfChar.GetName().c_str());
 }
 
 void BattleCharactor::StartAttackAnim()

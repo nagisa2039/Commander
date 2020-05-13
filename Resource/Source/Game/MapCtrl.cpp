@@ -193,7 +193,7 @@ Size MapCtrl::GetMapCnt() const
 	return Size(MAP_CHIP_CNT_W, MAP_CHIP_CNT_H);
 }
 
-Charactor* MapCtrl::GetMapPosChar(const Vector2Int mapPos)
+Charactor* MapCtrl::GetMapPosChar(const Vector2Int mapPos)const
 {
 	for (auto& charactor : _charactors)
 	{

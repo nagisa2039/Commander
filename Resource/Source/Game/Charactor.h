@@ -35,25 +35,31 @@ public:
 		uint8_t health;
 		uint8_t power;
 		uint8_t defense;
+		uint8_t magic_defense;
 		uint8_t speed;
 		uint8_t skill;
 		uint8_t move;
 
 		Attribute attribute;		// 属性
 
-		uint8_t fefenseCorrection;		// 守備力補正
+		uint8_t defenseCorrection;		// 守備力補正
 		uint8_t avoidanceCorrection;	// 回避力補正
 
-		Status(): level(1), health(1), power(1), defense(1), speed(1), skill(1), move(1), 
-			attribute(Attribute::normal), fefenseCorrection(0), avoidanceCorrection(0.0f){};
-		Status(const uint8_t lv, const uint8_t he, const uint8_t pw, const uint8_t df, 
+		Status(): level(1), health(1), power(1), defense(1), magic_defense(1), speed(1), skill(1), move(1),
+			attribute(Attribute::normal), defenseCorrection(0), avoidanceCorrection(0.0f){};
+		Status(const uint8_t lv, const uint8_t he, const uint8_t pw, const uint8_t df, const uint8_t md,
 			const uint8_t sp, const uint8_t sk, const uint8_t lu, const uint8_t mv, const Attribute at)
-			: level(lv), health(he), power(pw), defense(df), speed(sp), skill(sk), move(mv), 
-			attribute(at), fefenseCorrection(0), avoidanceCorrection(0) {};
+			: level(lv), health(he), power(pw), defense(df), magic_defense(md), speed(sp), skill(sk), move(mv),
+			attribute(at), defenseCorrection(0), avoidanceCorrection(0) {};
 
 		int GetDamage(const Status& target)const;	// ダメージ
-		int GetHit(const Status& target)const;	// 命中率
-		int GetCritical(const Status& target)const;	// 必殺率
+		int GetHitRate()const;	// 命中率
+		int GetHit(const Status& target)const;	// 相手を考慮した命中率
+		int GetCritical()const;	// 必殺率
+		int GetAttackSpeed()const;	// 攻速
+		int GetDifense()const;		// 防御力(補正込みの守備力)
+		int GetMagicDifense()const;	// 耐魔(補正値込みの魔法守備力)
+		int GetAvoidance()const;	// 回避(補正値込みの回避力)
 	};
 
 private:
@@ -78,6 +84,8 @@ protected:
 	std::shared_ptr<Animator> _animator;
 	std::vector<std::shared_ptr<Effect>>& _effects;
 	std::shared_ptr<BattleCharactor> _battleC;
+
+	std::string _name;
 
 	bool _isMoveAnim;	// 移動アニメーション中
 	std::list<MoveInf> _moveDirList;
@@ -149,6 +157,7 @@ public:
 	BattleCharactor& GetBattleC()const;
 	bool GetIsMoveAnim()const;
 	Range GetAttackRange()const;
+	const std::string& GetName()const;
 
 	void SetIsSelect(const bool select);
 	void SetIsDying();
@@ -164,4 +173,7 @@ public:
 	std::list<Astar::ResultPos>& GetResutlPosList();
 
 	void AddDamage(const int damage);
+
+	// キャラクターを指定したRectの範囲に描画する
+	void DrawCharactorIcon(const Rect& drawRect)const;
 };

@@ -31,6 +31,10 @@ bool Commander::ChaeckCharactor()
 	return _end;
 }
 
+void Commander::DrawMovableMass()
+{
+}
+
 void Commander::End()
 {
 	_end = true;

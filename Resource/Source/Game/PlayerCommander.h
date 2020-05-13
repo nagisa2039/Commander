@@ -14,12 +14,16 @@ private:
 
 	void CharactorControl(const Input& input);
 
+	bool _routSearch;
+
 public:
 	PlayerCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera);
 	~PlayerCommander();
 
 	void Update(const Input& input)override final;
 	void Draw()override final;
+
+	void DrawMovableMass()override;
 
 	void End()override;
 };

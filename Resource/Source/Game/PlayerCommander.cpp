@@ -18,6 +18,7 @@ PlayerCommander::PlayerCommander(std::vector<std::shared_ptr<Charactor>>& charac
 	Commander(charactors, mapCtrl, ctrlTeam, camera)
 {
 	_playerUI = make_unique<PlayerUI>(*this, mapCtrl);
+	_routSearch = false;
 }
 
 PlayerCommander::~PlayerCommander()
@@ -26,12 +27,24 @@ PlayerCommander::~PlayerCommander()
 
 void PlayerCommander::CharactorControl(const Input& input)
 {
-	// 硬直
-	_rigid = max(_rigid - 1, 0);
-	if (_rigid > 0)  return;
-
 	// 選択中のキャラが移動中なら選択を無効にする
 	if (_selectChar != nullptr && _selectChar->GetIsMoveAnim())return;
+
+	// キャラクターが移動終了したらルートサーチする
+	if (_routSearch)
+	{
+		for (auto& charactor : _charactors)
+		{
+			charactor->RouteSearch();
+		}
+		_routSearch = false;
+	}
+
+	// 選択しているキャラが行動不可なら選択を強制解除する
+	if (_selectChar != nullptr && !_selectChar->GetCanMove())
+	{
+		_selectChar = nullptr;
+	}
 
 	if (input.GetButtonDown(0, "space"))
 	{
@@ -45,7 +58,6 @@ void PlayerCommander::CharactorControl(const Input& input)
 				{
 					_selectChar = &*charactor;
 					_selectChar->SetIsSelect(true);
-					_selectChar->RouteSearch();
 				};
 
 				// 未選択ならそのキャラを選択中にする
@@ -65,19 +77,29 @@ void PlayerCommander::CharactorControl(const Input& input)
 				{
 					// 選択中のキャラを行動終了にする
 					charactor->MoveEnd();
+					_selectChar = nullptr;
 				}
 				return;
 			}
 
-			// 選択中のキャラがいるなら移動
+			// 戦闘を行う	選択中のキャラがいるなら移動
 			if (_selectChar != nullptr && _selectChar->GetCanMove())
 			{
 				_selectChar->MoveMapPos(_mapPos);
+				_routSearch = true;
 				return;
 			}
 		}
 		else
 		{
+			// 選択中のキャラがいるなら移動
+			if (_selectChar != nullptr && _selectChar->GetCanMove())
+			{
+				_selectChar->MoveMapPos(_mapPos);
+				_routSearch = true;
+				return;
+			}
+
 			// メニューを開く
 			_playerUI->OpenMenu();
 			return;
@@ -120,6 +142,21 @@ void PlayerCommander::Draw()
 	// UI
 	_playerUI->Draw();
 
+}
+
+void PlayerCommander::DrawMovableMass()
+{
+	if (_selectChar == nullptr)
+	{
+		auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
+		if (charactor == nullptr) return;
+
+		charactor->DrawMovableMass(92);
+	}
+	else
+	{
+		_selectChar->DrawMovableMass(128);
+	}
 }
 
 void PlayerCommander::End()

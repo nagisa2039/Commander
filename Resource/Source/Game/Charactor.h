@@ -135,7 +135,7 @@ public:
 
 	virtual void Update(const Input& input)override;
 	virtual void Draw()override;
-	void DrawMovableMass()const;
+	void DrawMovableMass(const uint8_t alpha)const;
 
 	virtual void InitAnim();
 

@@ -49,6 +49,11 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 
 	_mapCtrl->CreateWarSituation();
 
+	for (auto& charactor : _charactors)
+	{
+		charactor->RouteSearch();
+	}
+
 	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin20", 20, 1, true, true);
 	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin30", 30, 1, true, true);
 	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin40", 40, 1, true, true);
@@ -312,10 +317,7 @@ void PlayScene::GameOverUpdate(const Input& input)
 
 void PlayScene::PlayerTurnDraw(const Camera& camera)
 {
-	for (auto& charactor : _charactors)
-	{
-		charactor->DrawMovableMass();
-	}
+	_playerCommander->DrawMovableMass();
 	for (auto& charactor : _charactors)
 	{
 		charactor->Draw();
@@ -409,4 +411,8 @@ void PlayScene::Draw(void)
 	}
 
 	//DrawPSTBuffer();
+}
+
+void PlayScene::DrawMovableMass()
+{
 }

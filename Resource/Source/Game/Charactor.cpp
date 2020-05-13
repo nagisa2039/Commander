@@ -128,17 +128,12 @@ unsigned int Charactor::GetTeamColor() const
 	}
 }
 
-void Charactor::DrawMovableMass() const
+void Charactor::DrawMovableMass(const uint8_t alpha) const
 {
-	if (!_isSelect || !_canMove)
-	{
-		return;
-	}
-
 	auto offset = _camera.GetCameraOffset();
 	auto chipSize = _mapCtrl.GetChipSize();
 
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 
 	int currentX = 0;
 	list<int> drawYList;

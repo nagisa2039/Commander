@@ -30,6 +30,8 @@ public:
 	virtual void Update(const Input& input)override = 0;
 	virtual void Draw()override = 0;
 
+	virtual void DrawMovableMass();
+
 	virtual void End();
 	bool CheckEnd()const;
 

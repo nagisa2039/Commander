@@ -121,6 +121,11 @@ public:
 	{
 		return _reverse;
 	}
+
+	inline uint32_t GetFrame()const
+	{
+		return _frame;
+	}
 };
 
 class TimeLine

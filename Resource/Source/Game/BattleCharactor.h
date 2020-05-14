@@ -3,6 +3,7 @@
 #include "Dir.h"
 #include <memory>
 #include <string>
+#include "TimeLine.h"
 
 class Animator;
 class Effect;
@@ -23,12 +24,10 @@ protected:
 	Vector2 _pos;
 	Size _size;
 	std::shared_ptr<Animator> _animator;
-	bool _createEffect;
 
 	Size _uiSize;
 
-	int _attackAnimCnt;
-	int _attackAnimCntMax;
+	std::unique_ptr<Track<int>> _attackAnimX;
 
 	uint8_t _animHealth;
 	int _animHealthCnt;
@@ -55,7 +54,9 @@ public:
 
 	Size GetSize()const;
 	Vector2Int GetCenterPos()const;
-	Charactor& GetSelfCharacotr();
+	Vector2Int GetPos()const;	// 足元の座標
+	Vector2Int GetStartPos()const;	// 開始位置の足元座標
+	Charactor& GetCharacotr();
 
 	void SetStartPos(const Vector2& startPos);	// 描画する座標(中央下)
 	void SetDir(const Dir dir);	//  攻撃か守備の設定

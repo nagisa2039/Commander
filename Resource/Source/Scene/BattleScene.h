@@ -24,6 +24,7 @@ private:
 
 	std::vector<std::shared_ptr<Effect>> _effects;
 
+	Vector2Int _startPos;
 	float _floatY;
 	bool _pursuit;	// ’ÇŒ‚”»’è‚ğs‚Á‚½‚©
 
@@ -45,7 +46,7 @@ private:
 	bool PursuitAttack();
 
 public:
-	BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, SceneController& ctrl);
+	BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, SceneController& ctrl, const Vector2Int& cameraOffset);
 	~BattleScene();
 
 	void Update(const Input& input) override final;

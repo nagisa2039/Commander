@@ -94,7 +94,8 @@ void Charactor::Move()
 		if (charactor != nullptr && _team != charactor->GetTeam())
 		{
 			// í“¬
-			_controller.PushScene(make_shared<BattleScene>(GetBattleC(), charactor->GetBattleC(), _controller));
+			_controller.PushScene(make_shared<BattleScene>
+				(GetBattleC(), charactor->GetBattleC(), _controller, _camera.GetCameraOffset()));
 			moveAnimEnd();
 		}
 		else

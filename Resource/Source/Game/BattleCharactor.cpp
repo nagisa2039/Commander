@@ -20,6 +20,11 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 	_uiSize = Size(wsize.w / 2, 200);
 
 	_targetChar = nullptr;
+
+	_attackAnimX = make_unique<Track<int>>();
+	_attackAnimX->AddKey(0, 0);
+	_attackAnimX->AddKey(15, 50);
+	_attackAnimX->AddKey(30, 0);
 }
 
 BattleCharactor::~BattleCharactor()
@@ -32,11 +37,6 @@ void BattleCharactor::Init(const Vector2& startPos, const Dir dir, BattleCharact
 	SetDir(dir);
 	SetTargetCharactor(target);
 
-	_attackAnimCnt = -1;
-	_attackAnimCntMax = 15;
-
-	_createEffect = false;
-
 	_animHealth = _selfChar.GetStatus().health;
 	_animHealthCnt = 0;
 }
@@ -48,44 +48,35 @@ void BattleCharactor::AnimUpdate()
 
 void BattleCharactor::AttackUpdate(BattleScene& battleScene)
 {
-	if (_attackAnimCnt >= 0)
+	_attackAnimX->Update();
+	auto dir = _dir == Dir::left ? 1 : -1;
+	_pos = _startPos + Vector2(_attackAnimX->GetValue() * dir, 0);
+
+	if (_attackAnimX->GetFrame() == 15)
 	{
-		Vector2 dir = _dir == Dir::left ? Vector2(1, 0) : Vector2(-1, 0);
-		float per = _attackAnimCnt / static_cast<float>(_attackAnimCntMax);
-		per = 1.0f - abs(0.5f - per) * 2;
-		_pos = Lerp(_startPos, _startPos + dir * 50, per);
-		if (_attackAnimCnt++ >= _attackAnimCntMax)
+		if (_targetChar != nullptr)
 		{
-			_attackAnimCnt = -1;
-		}
-		if (!_createEffect && _attackAnimCnt >= _attackAnimCntMax / 2)
-		{
-			if (_targetChar != nullptr)
+			// UŒ‚
+			auto selfStatus = _selfChar.GetStatus();
+			auto targetStatus = _targetChar->GetCharacotr().GetStatus();
+
+			// –½’†”»’è
+			if (selfStatus.GetHit(targetStatus) <= rand() % 100)
 			{
-				// UŒ‚
-				auto selfStatus = _selfChar.GetStatus();
-				auto targetStatus = _targetChar->GetSelfCharacotr().GetStatus();
-
-				// –½’†”»’è
-				if (selfStatus.GetHit(targetStatus) <= rand() % 100)
-				{
-					return;
-				}
-
-				_createEffect = true;
-
-				auto targetCenterPos = _targetChar->GetCenterPos();
-				battleScene.GetEffectVec().emplace_back(CreateAttackEffect(targetCenterPos));
-
-
-				int damage = selfStatus.GetDamage(targetStatus)
-					* Application::Instance().GetDataBase().GetAttributeRate(selfStatus.attribute, targetStatus.attribute);
-
-				char damageText[10];
-				sprintf_s(damageText, 10, "%d", damage);
-				battleScene.GetEffectVec().emplace_back(make_shared<FlyText>(damageText, targetCenterPos, 60 * 1, _camera));
-				_targetChar->GetSelfCharacotr().AddDamage(damage);
+				return;
 			}
+
+			auto targetCenterPos = _targetChar->GetCenterPos();
+			battleScene.GetEffectVec().emplace_back(CreateAttackEffect(targetCenterPos));
+
+
+			int damage = selfStatus.GetDamage(targetStatus)
+				* Application::Instance().GetDataBase().GetAttributeRate(selfStatus.attribute, targetStatus.attribute);
+
+			char damageText[10];
+			sprintf_s(damageText, 10, "%d", damage);
+			battleScene.GetEffectVec().emplace_back(make_shared<FlyText>(damageText, targetCenterPos, 60 * 1, _camera));
+			_targetChar->GetCharacotr().AddDamage(damage);
 		}
 	}
 }
@@ -114,7 +105,7 @@ void BattleCharactor::UIDraw()
 {
 	auto wsize = Application::Instance().GetWindowSize();
 	auto status = _selfChar.GetStatus();
-	auto targetStatus = _targetChar->GetSelfCharacotr().GetStatus();
+	auto targetStatus = _targetChar->GetCharacotr().GetStatus();
 	auto teamColor = GetTeamColorBattle(_selfChar.GetTeam());
 	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin40");
 
@@ -201,14 +192,13 @@ void BattleCharactor::UIDraw()
 
 void BattleCharactor::StartAttackAnim()
 {
-	_attackAnimCnt = 0;
-	_createEffect = false;
 	_animHealth = _selfChar.GetStatus().health;
+	_attackAnimX->Reset();
 }
 
 bool BattleCharactor::GetAttackAnimEnd()
 {
-	return _attackAnimCnt < 0;
+	return _attackAnimX->GetEnd();
 }
 
 void BattleCharactor::StartHPAnim()
@@ -231,7 +221,17 @@ Vector2Int BattleCharactor::GetCenterPos() const
 	return Vector2Int(_pos.ToVector2Int() - Vector2Int(0, _size.h / 2));
 }
 
-Charactor& BattleCharactor::GetSelfCharacotr()
+Vector2Int BattleCharactor::GetPos() const
+{
+	return _pos.ToVector2Int();
+}
+
+Vector2Int BattleCharactor::GetStartPos() const
+{
+	return _startPos.ToVector2Int();
+}
+
+Charactor& BattleCharactor::GetCharacotr()
 {
 	return _selfChar;
 }

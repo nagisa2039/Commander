@@ -367,6 +367,20 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
 	auto& resultPosList = charactor.GetResutlPosList();
 	_astar->RouteSearch(charactor.GetMapPos(), status.move*2, charactor.GetAttackRange(), mapVec2, resultPosList, charactor.GetTeam());
 
+	struct TargetCharactor
+	{
+		Charactor* charactor;
+		int distance;
+
+		TargetCharactor():charactor(nullptr), distance(1){};
+		TargetCharactor(Charactor* ch, const int di) :charactor(ch), distance(di) {};
+	};
+
+	// ”ÍˆÍ“à‚Ì“G‚ğŠi”[‚·‚éƒŠƒXƒg
+	list<TargetCharactor> targetCharactorList;
+	// ”hˆÈŠO‚Ì“G‚ğŠi”[‚·‚éƒŠƒXƒg
+	list<Charactor*> outRangeCharactorList;
+
 	for (const auto& resultPos : resultPosList)
 	{ 
 		// UŒ‚ƒ}ƒX‚É‚È‚é‚Ü‚Åcontinue
@@ -375,14 +389,46 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
 			continue;
 		}
 
-		// UŒ‚ƒ}ƒX‚É“GƒLƒƒƒ‰‚ª‚¢‚é‚©
 		auto mapCharactor = GetMapPosChar(resultPos.mapPos);
-		if (mapCharactor != nullptr && charactor.GetTeam() != mapCharactor->GetTeam())
+		// ‚»‚Ìƒ}ƒX‚É“G‚ª‚¢‚é‚©? ‹‚È‚¢‚È‚çcontinue
+		if (mapCharactor == nullptr || charactor.GetTeam() == mapCharactor->GetTeam())
 		{
-			return resultPos.mapPos;
+			continue;
+		}
+
+		// UŒ‚”ÍˆÍŠO
+		if (resultPos.moveCnt > status.move)
+		{
+			outRangeCharactorList.emplace_back(mapCharactor);
+			continue;
+		}
+
+		auto mapPosSub = mapCharactor->GetMapPos() - (resultPos.parent == nullptr ? charactor.GetMapPos() : resultPos.parent->mapPos);
+		int distance = abs(mapPosSub.x) + abs(mapPosSub.y);
+		targetCharactorList.emplace_back(TargetCharactor(mapCharactor, distance));
+	}
+	
+	// ‘I•Ê
+	for (const auto& targetCharactor : targetCharactorList)
+	{
+		// “G‚ÌUŒ‚”ÍˆÍŠO‚©‚ç‚ÌUŒ‚‚©H
+		if (!targetCharactor.charactor->GetAttackRange().Hit(targetCharactor.distance))
+		{
+			return targetCharactor.charactor->GetMapPos();
 		}
 	}
 
+	// “G‚ÌUŒ‚”ÍˆÍŠO‚©‚çUŒ‚‚Å‚«‚È‚¢‚Ì‚ÅÅ‰‚ÉŒ©‚Â‚¯‚½“G‚ÌêŠ‚ÉŒü‚©‚¤
+	if (targetCharactorList.size() > 0)
+	{
+		return targetCharactorList.begin()->charactor->GetMapPos();
+	}
+
+	if (outRangeCharactorList.size() > 0)
+	{
+		auto charactor = *outRangeCharactorList.begin();
+		return charactor->GetMapPos();
+	}
 	return Vector2Int(-1,-1);
 }
 

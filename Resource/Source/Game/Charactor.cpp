@@ -503,7 +503,7 @@ int Charactor::Status::GetHitRate() const
 
 int Charactor::Status::GetHit(const Status& target) const
 {
-	return min(100, (max(0, 100 - (skill * 2 - target.speed - target.avoidanceCorrection))));
+	return min(100, max(0, GetHitRate() - target.GetAvoidance()));
 }
 
 int Charactor::Status::GetCritical() const

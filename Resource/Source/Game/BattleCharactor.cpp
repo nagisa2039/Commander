@@ -8,6 +8,7 @@
 #include "FlyText.h"
 #include "FileSystem.h"
 #include "DataBase.h"
+#include "MissEffect.h"
 
 using namespace std;
 
@@ -60,22 +61,23 @@ void BattleCharactor::AttackUpdate(BattleScene& battleScene)
 			auto selfStatus = _selfChar.GetStatus();
 			auto targetStatus = _targetChar->GetCharacotr().GetStatus();
 
+			auto targetCenterPos = _targetChar->GetCenterPos();
 			// –½’†”»’è
 			if (selfStatus.GetHit(targetStatus) <= rand() % 100)
 			{
+				battleScene.GetEffectVec().emplace_back(CreateMissEffect(targetCenterPos));
 				return;
 			}
 
-			auto targetCenterPos = _targetChar->GetCenterPos();
 			battleScene.GetEffectVec().emplace_back(CreateAttackEffect(targetCenterPos));
 
-
-			int damage = selfStatus.GetDamage(targetStatus)
+			bool critical = selfStatus.GetCritical() > rand() % 100;
+			int damage = selfStatus.GetDamage(targetStatus) * (critical ? 3 : 1)
 				* Application::Instance().GetDataBase().GetAttributeRate(selfStatus.attribute, targetStatus.attribute);
 
 			char damageText[10];
 			sprintf_s(damageText, 10, "%d", damage);
-			battleScene.GetEffectVec().emplace_back(make_shared<FlyText>(damageText, targetCenterPos, 60 * 1, _camera));
+			battleScene.GetEffectVec().emplace_back(make_shared<FlyText>(damageText, targetCenterPos, 60 * 1, _camera, critical));
 			_targetChar->GetCharacotr().AddDamage(damage);
 		}
 	}
@@ -259,4 +261,9 @@ void BattleCharactor::SetDir(const Dir dir)
 void BattleCharactor::SetTargetCharactor(BattleCharactor* target)
 {
 	_targetChar = target;
+}
+
+std::shared_ptr<Effect> BattleCharactor::CreateMissEffect(const Vector2Int& effectPos)
+{
+	return make_shared<MissEffect>(effectPos, _camera);
 }

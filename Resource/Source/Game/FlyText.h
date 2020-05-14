@@ -15,9 +15,10 @@ private:
 	std::string _str;
 	int _fontHandle;
 	unsigned int _color;
+	bool _critical;
 
 public:
-	FlyText(const std::string& str, const Vector2Int& pos, const int lifeCnt, Camera& camera);
+	FlyText(const std::string& str, const Vector2Int& pos, const int lifeCnt, Camera& camera, bool critical = false);
 	~FlyText();
 
 	void Update(const Input& input)override final;

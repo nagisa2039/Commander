@@ -35,6 +35,7 @@
     <ClCompile Include="Resource\Source\Game\Mage.cpp" />
     <ClCompile Include="Resource\Source\Game\MapCtrl.cpp" />
     <ClCompile Include="Resource\Source\Game\MapCursor.cpp" />
+    <ClCompile Include="Resource\Source\Game\MissEffect.cpp" />
     <ClCompile Include="Resource\Source\Game\PlayerCommander.cpp" />
     <ClCompile Include="Resource\Source\Game\SlashingEffect.cpp" />
     <ClCompile Include="Resource\Source\Game\Soldier.cpp" />
@@ -83,6 +84,7 @@
     <ClInclude Include="Resource\Source\Game\MapChip.h" />
     <ClInclude Include="Resource\Source\Game\MapCtrl.h" />
     <ClInclude Include="Resource\Source\Game\MapCursor.h" />
+    <ClInclude Include="Resource\Source\Game\MissEffect.h" />
     <ClInclude Include="Resource\Source\Game\PlayerCommander.h" />
     <ClInclude Include="Resource\Source\Game\SlashingEffect.h" />
     <ClInclude Include="Resource\Source\Game\Soldier.h" />

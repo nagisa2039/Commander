@@ -7,13 +7,20 @@
 
 using namespace std;
 
-FlyText::FlyText(const string& str, const Vector2Int& pos, const int lifeCnt, Camera& camera)
+FlyText::FlyText(const string& str, const Vector2Int& pos, const int lifeCnt, Camera& camera, bool critical)
 	:Effect(pos, camera), _str(str), _lifeCntMax(lifeCnt), _lifeCnt(lifeCnt),
-	_anker(Anker::center), _startPos(pos.ToVector2()), _move(0, -50)
+	_anker(Anker::center), _startPos(pos.ToVector2()), _move(0, -50), _critical(critical)
 {
-	_fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin40");
-
-	_color = 0xffffff;
+	if (critical)
+	{
+		_fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin60");
+		_color = 0xdddd00;
+	}
+	else
+	{
+		_fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin40");
+		_color = 0xffffff;
+	}
 }
 
 FlyText::~FlyText()

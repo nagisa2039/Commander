@@ -113,7 +113,7 @@ void StatusWindow::Draw()
 			int line;
 			GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &line, choplin40, content.c_str());
 			auto drawPos = GetDrawPos(center, strSize, Anker::center);
-			DrawFormatStringToHandle(drawPos.x + 10, drawPos.y, 0x000000, choplin40, content.c_str());
+			DrawFormatStringToHandle(drawPos.x, drawPos.y, 0x000000, choplin40, content.c_str());
 		};
 
 		auto DrawContentNum = [&](const Vector2Int& center, const int num)
@@ -121,13 +121,13 @@ void StatusWindow::Draw()
 			string str;
 			str.resize(256);
 			sprintf_s(str.data(), 255, "%d", num);
-			DrawContent(contentRect.center, str);
+			DrawContent(center, str);
 		};
 
 		auto DrawContent1 = [&](const Vector2Int& center, const string& name, const int num)
 		{
 			DrawContent(center, name);
-			DrawContentNum(center + Size(0, contentSize.h), num);
+			DrawContentNum(contentRect.center + Vector2Int(0, contentSize.h), num);
 			contentRect.center.x += contentSize.w;
 		};
 
@@ -156,7 +156,7 @@ void StatusWindow::Draw()
 		contentRect.center.y += contentSize.h;
 		DrawContent(contentRect.center, "‰ñ”ð");
 		contentRect.center.x += contentRect.Width();
-		DrawContentNum(contentRect.center, currentStatus.GetMagicDifense());
+		DrawContentNum(contentRect.center, currentStatus.GetAvoidance());
 		contentRect.center.x += contentRect.Width()*1.5;
 		DrawContent(contentRect.center, "ŽË’ö");
 		contentRect.center.x += contentRect.Width()*2;

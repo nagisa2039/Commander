@@ -62,6 +62,9 @@ public:
 	void SetDir(const Dir dir);	//  攻撃か守備の設定
 	void SetTargetCharactor(BattleCharactor* target);	// 戦う相手のポインター
 
+	// 攻撃エフェクトの作成
 	virtual std::shared_ptr<Effect> CreateAttackEffect(const Vector2Int& effectPos) = 0;
+	// 攻撃外れエフェクトの作成
+	std::shared_ptr<Effect> CreateMissEffect(const Vector2Int& effectPos);
 };
 

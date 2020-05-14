@@ -78,6 +78,7 @@ void PlayerCommander::CharactorControl(const Input& input)
 					// 選択中のキャラを行動終了にする
 					charactor->MoveEnd();
 					_selectChar = nullptr;
+					_routSearch = true;
 				}
 				return;
 			}

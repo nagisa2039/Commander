@@ -73,13 +73,6 @@ void Charactor::DyingDraw()
 
 void Charactor::Move()
 {
-	auto moveAnimEnd = [&]()
-	{
-		_isMoveAnim = false;
-		RouteSearch();
-		_camera.PopTargetActor();
-	};
-
 	if ((!_isMoveAnim || _moveDirList.size() == 0))
 	{
 		return;
@@ -96,11 +89,11 @@ void Charactor::Move()
 			// êÌì¨
 			_controller.PushScene(make_shared<BattleScene>
 				(GetBattleC(), charactor->GetBattleC(), _controller, _camera.GetCameraOffset()));
-			moveAnimEnd();
+			MoveEnd();
 		}
 		else
 		{
-			moveAnimEnd();
+			MoveEnd(_status.move > 0);
 		}
 		return;
 	}
@@ -111,7 +104,7 @@ void Charactor::Move()
 		_moveDirList.pop_front();
 		if (_moveDirList.size() <= 0)
 		{
-			moveAnimEnd();
+			MoveEnd(_status.move > 0);
 		}
 	}
 }
@@ -259,11 +252,16 @@ void Charactor::SetStatus(const Status& status)
 	_status = status;
 }
 
-void Charactor::MoveEnd()
+void Charactor::MoveEnd(const bool canMove)
 {
-	_canMove = false;
+	if (!canMove)
+	{
+		_status.move = _startStatus.move;
+	}
+	_canMove = canMove;
 	_isMoveAnim = false;
-	RouteSearch();
+	_camera.PopTargetActor();
+	//RouteSearch();
 }
 
 void Charactor::RouteSearch()
@@ -273,7 +271,6 @@ void Charactor::RouteSearch()
 
 void Charactor::TurnReset()
 {
-	_status.move = _startStatus.move;
 	_canMove = true;
 }
 

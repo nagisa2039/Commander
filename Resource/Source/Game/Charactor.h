@@ -164,7 +164,7 @@ public:
 	void SetDir(const Dir dir);
 	void SetStatus(const Status& status);
 
-	void MoveEnd();
+	void MoveEnd(const bool canMove = false);
 
 	void RouteSearch();
 	void TurnReset();

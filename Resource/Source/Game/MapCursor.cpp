@@ -91,6 +91,11 @@ Vector2Int MapCursor::GetMapPos() const
 	return _mapPos;
 }
 
+void MapCursor::SetMapPos(const Vector2Int& mapPos)
+{
+	_mapPos = mapPos;
+}
+
 Vector2 MapCursor::GetCenterPos() const
 {
 	return Vector2(_pos + (_mapCtrl.GetChipSize() * 0.5f).ToVector2());

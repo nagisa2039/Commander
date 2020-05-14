@@ -89,7 +89,6 @@ void Charactor::Move()
 			// í“¬
 			_controller.PushScene(make_shared<BattleScene>
 				(GetBattleC(), charactor->GetBattleC(), _controller, _camera.GetCameraOffset()));
-			MoveEnd();
 		}
 		else
 		{

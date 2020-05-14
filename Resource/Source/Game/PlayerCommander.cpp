@@ -44,6 +44,15 @@ void PlayerCommander::CharactorControl(const Input& input)
 	if (_selectChar != nullptr && !_selectChar->GetCanMove())
 	{
 		_selectChar = nullptr;
+		bool setMapPos = false;
+		for (const auto& charactor : _charactors)
+		{
+			if (charactor->GetTeam() == _ctrlTeam && charactor->GetCanMove() && !setMapPos)
+			{
+				_mapPos = charactor->GetMapPos();
+				setMapPos = true;
+			}
+		}
 	}
 
 	if (input.GetButtonDown(0, "space"))
@@ -51,8 +60,8 @@ void PlayerCommander::CharactorControl(const Input& input)
 		auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
 		if (charactor != nullptr)
 		{
-			// 自軍?
-			if (charactor->GetTeam() == _ctrlTeam)
+			// 行動可能な自軍?
+			if (charactor->GetTeam() == _ctrlTeam && charactor->GetCanMove())
 			{
 				auto SetSelectChar = [&](Charactor* charactor)
 				{
@@ -77,7 +86,6 @@ void PlayerCommander::CharactorControl(const Input& input)
 				{
 					// 選択中のキャラを行動終了にする
 					charactor->MoveEnd();
-					_selectChar = nullptr;
 					_routSearch = true;
 				}
 				return;

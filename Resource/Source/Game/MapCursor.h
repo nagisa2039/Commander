@@ -31,6 +31,7 @@ public:
 	virtual void Draw()override = 0;
 
 	Vector2Int GetMapPos()const;
+	void SetMapPos(const Vector2Int& mapPos);
 
 	Vector2 GetCenterPos()const override;
 };

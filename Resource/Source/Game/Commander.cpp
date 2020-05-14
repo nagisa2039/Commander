@@ -48,11 +48,17 @@ bool Commander::CheckEnd() const
 void Commander::TurnReset()
 {
 	_end = false;
+	bool setMapPos = false;
 	for (auto& charactor : _charactors)
 	{
 		if (charactor->GetTeam() == _ctrlTeam)
 		{
 			charactor->TurnReset();
+			if (!setMapPos)
+			{
+				setMapPos = true;
+				_mapPos = charactor->GetMapPos();
+			}
 		}
 	}
 

@@ -9,6 +9,7 @@
 #include "Menu.h"
 #include "Input.h"
 #include "StatusWindow.h"
+#include "StatusInfomation.h"
 
 using namespace std;
 
@@ -20,6 +21,9 @@ PlayerUI::PlayerUI(PlayerCommander& playerCommander, const MapCtrl& mapCtrl): _p
 
 	_menu = make_shared<Menu>(_menuDeque, playerCommander, _mapCtrl);
 	_menuDeque.emplace_front(_menu);
+
+	_statusInfDeque.clear();
+	_statusInfDeque.emplace_back(make_shared<StatusInfomation>(_statusInfDeque, _mapCtrl, _playerCommander, *this));
 
 	_terrainInfTrack = make_unique<Track<float>>();
 	_terrainInfTrack->AddKey(0, 0.0f);
@@ -50,18 +54,23 @@ void PlayerUI::Update(const Input& input)
 		}
 	}
 
+	auto UpdateDeque = [](auto deque, const Input& input)
+	{
+		if (deque.size() > 0)
+		{
+			(*deque.begin())->Update(input);
+		}
+	};
+	UpdateDeque(_menuDeque, input);
+	UpdateDeque(_statusDeque, input);
+	UpdateDeque(_statusInfDeque, input);
+
 	if (_menu->GetIsOpen())
 	{
-		(*_menuDeque.begin())->Update(input);
 		if ((*_menuDeque.begin())->GetDelete())
 		{
 			_menuDeque.pop_front();
 		}
-	}
-
-	if (_statusDeque.size() > 0)
-	{
-		(*_statusDeque.begin())->Update(input);
 	}
 
 	// ステータス確認
@@ -78,14 +87,17 @@ void PlayerUI::Update(const Input& input)
 void PlayerUI::Draw()
 {
 	DrawTerrainInf();
-	for (auto ritr = _menuDeque.rbegin(); ritr != _menuDeque.rend(); ritr++)
+	auto DequeDraw = [](auto deque)
 	{
-		(*ritr)->Draw();
-	}
-	for (auto ritr = _statusDeque.rbegin(); ritr != _statusDeque.rend(); ritr++)
-	{
-		(*ritr)->Draw();
-	}
+		for (auto ritr = deque.rbegin(); ritr != deque.rend(); ritr++)
+		{
+			(*ritr)->Draw();
+		}
+	};
+
+	DequeDraw(_statusInfDeque);
+	DequeDraw(_statusDeque);
+	DequeDraw(_menuDeque);
 }
 
 bool PlayerUI::GetUIIsOpen() const

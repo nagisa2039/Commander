@@ -24,4 +24,3 @@ public:
 	// ŠJ‚¢‚Ä‚¢‚é‚©(•\Ž¦’†)
 	bool GetIsOpen()const;
 };
-

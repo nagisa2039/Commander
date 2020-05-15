@@ -18,3 +18,5 @@ void DrawRectRotaGraph(const Vector2Int& center, const Vector2Int& srcLeftup, co
 void DrawCircle(const Vector2Int& center, const int radius, const unsigned int color, const bool fillFlag = true);
 
 Vector2Int GetDrawPos(const Vector2Int& drawPos, const Size& size, const Anker anker);
+
+void DrawStringToHandle(const Vector2Int& drawPos, const Anker anker, const unsigned color, const int fontHandle, const char* string);

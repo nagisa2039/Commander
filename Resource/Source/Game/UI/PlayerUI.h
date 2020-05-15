@@ -11,6 +11,7 @@ class MapCtrl;
 class Input;
 class UI;
 class Menu;
+class StatusInfomation;
 
 class PlayerUI
 {
@@ -22,6 +23,7 @@ private:
 	std::shared_ptr<Menu> _menu;
 
 	std::deque<std::shared_ptr<UI>> _statusDeque;
+	std::deque<std::shared_ptr<UI>> _statusInfDeque;
 
 	std::unique_ptr<Track<float>> _terrainInfTrack;
 	void DrawTerrainInf();

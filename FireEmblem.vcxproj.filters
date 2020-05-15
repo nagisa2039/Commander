@@ -204,6 +204,9 @@
     <ClCompile Include="Resource\Source\Game\MissEffect.cpp">
       <Filter>ソース ファイル\Game\Actor\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\StatusInfomation.cpp">
+      <Filter>ソース ファイル\Game\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -349,6 +352,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\MissEffect.h">
       <Filter>ヘッダー ファイル\Game\Actor\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\StatusInfomation.h">
+      <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

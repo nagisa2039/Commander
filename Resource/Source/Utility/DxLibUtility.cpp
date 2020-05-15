@@ -62,3 +62,12 @@ Vector2Int GetDrawPos(const Vector2Int& drawPos, const Size& size, const Anker a
 		return Vector2Int();
 	}
 }
+
+void DrawStringToHandle(const Vector2Int& drawPos, const Anker anker, const unsigned color, const int fontHandle, const char* string)
+{
+	Size strSize;
+	int lineCnt;
+	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, fontHandle, string);
+	auto calPos = GetDrawPos(drawPos, strSize, anker);
+	DrawFormatStringToHandle(calPos.x, calPos.y, color, fontHandle, string);
+}

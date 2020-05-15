@@ -10,6 +10,7 @@
 #include "Input.h"
 #include "StatusWindow.h"
 #include "StatusInfomation.h"
+#include "BattlePrediction.h"
 
 using namespace std;
 
@@ -18,6 +19,7 @@ PlayerUI::PlayerUI(PlayerCommander& playerCommander, const MapCtrl& mapCtrl): _p
 	_menuDeque.clear();
 
 	_statusDeque.clear();
+	_battlePreDeque.clear();
 
 	_menu = make_shared<Menu>(_menuDeque, playerCommander, _mapCtrl);
 	_menuDeque.emplace_front(_menu);
@@ -64,6 +66,7 @@ void PlayerUI::Update(const Input& input)
 	UpdateDeque(_menuDeque, input);
 	UpdateDeque(_statusDeque, input);
 	UpdateDeque(_statusInfDeque, input);
+	UpdateDeque(_battlePreDeque, input);
 
 	if (_menu->GetIsOpen())
 	{
@@ -82,6 +85,15 @@ void PlayerUI::Update(const Input& input)
 		_statusDeque.emplace_front(make_shared<StatusWindow>(_statusDeque, *charactor));
 		return;
 	}
+
+	if (_battlePreDeque.size() <= 0)
+	{
+		auto charactor = _mapCtrl.GetMapPosChar(_playerCommander.GetMapPos());
+		if (charactor == nullptr) return;
+
+		//_battlePreDeque.emplace_front(make_shared<BattlePrediction>(_statusDeque, *charactor));
+		return;
+	}
 }
 
 void PlayerUI::Draw()
@@ -98,6 +110,7 @@ void PlayerUI::Draw()
 	DequeDraw(_statusInfDeque);
 	DequeDraw(_statusDeque);
 	DequeDraw(_menuDeque);
+	DequeDraw(_battlePreDeque);
 }
 
 bool PlayerUI::GetUIIsOpen() const

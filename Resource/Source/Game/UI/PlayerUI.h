@@ -24,6 +24,7 @@ private:
 
 	std::deque<std::shared_ptr<UI>> _statusDeque;
 	std::deque<std::shared_ptr<UI>> _statusInfDeque;
+	std::deque<std::shared_ptr<UI>> _battlePreDeque;
 
 	std::unique_ptr<Track<float>> _terrainInfTrack;
 	void DrawTerrainInf();

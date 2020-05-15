@@ -228,6 +228,18 @@ const std::string& Charactor::GetName() const
 	return _name;
 }
 
+const Astar::ResultPos* Charactor::GetResutlPos(const Vector2Int& mapPos)
+{
+	for (const auto& resutlPos : _resutlPosList)
+	{
+		if (resutlPos.mapPos == mapPos)
+		{
+			return &resutlPos;
+		}
+	}
+	return nullptr;
+}
+
 void Charactor::SetIsSelect(const bool select)
 {
 	_isSelect = select;
@@ -502,7 +514,12 @@ int Charactor::Status::GetHit(const Status& target) const
 	return min(100, max(0, GetHitRate() - target.GetAvoidance()));
 }
 
-int Charactor::Status::GetCritical() const
+int Charactor::Status::GetCriticalRate() const
+{
+	return min(100, max(0, skill / 5));
+}
+
+int Charactor::Status::GetCritical(const Status& target) const
 {
 	return min(100, max(0, skill / 5));
 }
@@ -520,6 +537,11 @@ int Charactor::Status::GetMagicDifense() const
 int Charactor::Status::GetAvoidance() const
 {
 	return GetAttackSpeed() * 2 + this->avoidanceCorrection;
+}
+
+bool Charactor::Status::CheckPursuit(const Status& target) const
+{
+	return GetAttackSpeed() - target.GetAttackSpeed() >= 4;
 }
 
 int Charactor::Status::GetAttackSpeed()const

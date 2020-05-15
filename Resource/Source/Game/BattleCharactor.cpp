@@ -71,7 +71,7 @@ void BattleCharactor::AttackUpdate(BattleScene& battleScene)
 
 			battleScene.GetEffectVec().emplace_back(CreateAttackEffect(targetCenterPos));
 
-			bool critical = selfStatus.GetCritical() > rand() % 100;
+			bool critical = selfStatus.GetCritical(targetStatus) > rand() % 100;
 			int damage = selfStatus.GetDamage(targetStatus) * (critical ? 3 : 1)
 				* Application::Instance().GetDataBase().GetAttributeRate(selfStatus.attribute, targetStatus.attribute);
 
@@ -156,7 +156,7 @@ void BattleCharactor::UIDraw()
 	// –½’†
 	drawParam(itemNum++, fontHandle, 0xaaaaaa, "HIT", status.GetHit(targetStatus));
 	// •KE
-	drawParam(itemNum++, fontHandle, 0xaaaaaa, "CRT", status.GetCritical());
+	drawParam(itemNum++, fontHandle, 0xaaaaaa, "CRT", status.GetCritical(targetStatus));
 
 	// HP‚Ì”’l•\¦
 	auto startHealth = _selfChar.GetStartStatus().health;

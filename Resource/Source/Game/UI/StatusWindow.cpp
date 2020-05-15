@@ -136,7 +136,7 @@ void StatusWindow::Draw()
 		// –½’†
 		DrawContent1(contentRect.center, "–½’†", currentStatus.GetHitRate());
 		// •KŽE
-		DrawContent1(contentRect.center, "•KŽE", currentStatus.GetCritical());
+		DrawContent1(contentRect.center, "•KŽE", currentStatus.GetCriticalRate());
 
 		contentSize = Size(rightWindow.w / 6, rightWindow.h / 4);
 		contentRect = Rect(Vector2Int(statusRect1.Left(), statusRect1.center.y) + contentSize * 0.5f, contentSize);

@@ -55,11 +55,13 @@ public:
 		int GetDamage(const Status& target)const;	// ダメージ
 		int GetHitRate()const;	// 命中率
 		int GetHit(const Status& target)const;	// 相手を考慮した命中率
-		int GetCritical()const;	// 必殺率
+		int GetCriticalRate()const;	// 必殺率
+		int GetCritical(const Status& target)const;	// 相手を考慮した必殺率
 		int GetAttackSpeed()const;	// 攻速
 		int GetDifense()const;		// 防御力(補正込みの守備力)
 		int GetMagicDifense()const;	// 耐魔(補正値込みの魔法守備力)
 		int GetAvoidance()const;	// 回避(補正値込みの回避力)
+		bool CheckPursuit(const Status& target)const;	// 追撃が取れるか確認
 	};
 
 private:
@@ -158,6 +160,7 @@ public:
 	bool GetIsMoveAnim()const;
 	Range GetAttackRange()const;
 	const std::string& GetName()const;
+	const Astar::ResultPos* GetResutlPos(const Vector2Int& mapPos);
 
 	void SetIsSelect(const bool select);
 	void SetIsDying();

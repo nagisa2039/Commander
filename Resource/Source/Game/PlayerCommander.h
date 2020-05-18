@@ -2,6 +2,7 @@
 #include "Commander.h"
 #include <memory>
 #include <deque>
+#include <list>
 
 class PlayerUI;
 class UI;

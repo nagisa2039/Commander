@@ -232,6 +232,10 @@ void PlayScene::StartPlayerTurn()
 
 	_camera->ClearTargetActor();
 	_camera->AddTargetActor(&*_playerCommander);
+	for (auto& charactor : _charactors)
+	{
+		charactor->RouteSearch();
+	}
 }
 
 void PlayScene::StartEnemyTurn()
@@ -244,6 +248,10 @@ void PlayScene::StartEnemyTurn()
 	_uniqueUpdaterOld = _uniqueUpdater;
 
 	_camera->ClearTargetActor();
+	for (auto& charactor : _charactors)
+	{
+		charactor->RouteSearch();
+	}
 }
 
 void PlayScene::EnemyTurnUpdate(const Input& input)

@@ -311,17 +311,60 @@ void Charactor::DrawCharactorIcon(const Rect& drawRect)const
 	DrawRectExtendGraph(drawRect.Left(), drawRect.Top(), drawRect.Right(), drawRect.Botton(), 32, 0, 32, 32, _animator->GetImageH(), true);
 }
 
+void Charactor::DrawRoute(const Vector2Int& targetPos)
+{
+	if (targetPos == GetMapPos()) return;
+
+	auto itr = _resutlPosList.begin();
+	bool locate = false;
+	for (; itr != _resutlPosList.end(); itr++)
+	{
+		if (itr->mapPos == targetPos)
+		{
+			locate = true;
+			break;
+		}
+	}
+
+	if (!locate)return;
+
+	list<Astar::ResultPos*> routeList;
+	bool begin = true;
+	for (auto resutlPos = &*itr; resutlPos != nullptr; resutlPos = resutlPos->parent)
+	{
+		if (resutlPos->attack)continue;
+		routeList.emplace_back(resutlPos);
+	}
+
+	for (const auto& route : routeList)
+	{
+		auto offset = _camera.GetCameraOffset();
+		auto chipSize = _mapCtrl.GetChipSize();
+		size_t dir_idx = static_cast<size_t>(route->dir);
+
+		if (0 > dir_idx || dir_idx >= _dirTable.size())return;
+
+		Vector2Int endPos = offset + (route->parent == nullptr ? GetMapPos() : route->parent->mapPos) * chipSize + chipSize * 0.5f;
+		Vector2Int startPos = offset + route->mapPos * chipSize + chipSize * 0.5f;
+		DrawLine(startPos, endPos, 0xffff00, 10);
+		if (begin)
+		{
+			auto arrowH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/arrow.png");
+			Size arrowSize;
+			GetGraphSize(arrowH, arrowSize);
+			DrawRotaGraph(startPos, chipSize.w / static_cast<float>(arrowSize.w), _dirTable[dir_idx].angle, arrowH, true);
+			begin = false;
+		}
+	}
+
+}
+
 Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl,
 	std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	: _team(team), _mapCtrl(mapCtrl), _controller(ctrl), _effects(effects), Actor(camera)
 {
 	_pos = (mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToVector2();
 	_isMoveAnim = false;
-
-	_dirTable[Dir::left].moveVec	= Vector2Int(-1,0);
-	_dirTable[Dir::right].moveVec	= Vector2Int(1, 0);
-	_dirTable[Dir::up].moveVec		= Vector2Int(0, -1);
-	_dirTable[Dir::down].moveVec	= Vector2Int(0, 1);
 
 	_moveSpeed = 4;
 	_isSelect = false;
@@ -341,8 +384,6 @@ Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team t
 	_drawer = &Charactor::NormalDraw;
 
 	_attackRange = Range(2,2);
-
-	//_mapCtrl.SearchMovePos(*this);
 }
 
 Charactor::~Charactor()
@@ -386,10 +427,10 @@ void Charactor::InitAnim()
 
 	_animator->ChangeAnim("LeftWalk");
 
-	_dirTable[Dir::left].animName = "LeftWalk";
-	_dirTable[Dir::right].animName = "RightWalk";
-	_dirTable[Dir::up].animName = "UpWalk";
-	_dirTable[Dir::down].animName = "DownWalk";
+	_dirTable[Dir::left]	= DirInf(Vector2Int(-1, 0), "LeftWalk", 270.0f * DX_PI / 180.0f);
+	_dirTable[Dir::right]	= DirInf(Vector2Int(1, 0), "RightWalk", 90.0f * DX_PI / 180.0f);
+	_dirTable[Dir::up]		= DirInf(Vector2Int(0, -1), "UpWalk",	0.0f * DX_PI / 180.0f);
+	_dirTable[Dir::down]	= DirInf(Vector2Int(0, 1), "DownWalk",	180.0f *  DX_PI / 180.0f);
 
 	_dir = Dir::down;
 }

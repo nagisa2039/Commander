@@ -73,10 +73,11 @@ protected:
 	{
 		Vector2Int moveVec;
 		std::string animName;
+		float angle;
 
-		DirInf() : moveVec(Vector2Int()), animName("") {};
-		DirInf(const Vector2Int& vec2Int, const std::string& animN)
-			: moveVec(vec2Int), animName(animN) {};
+		DirInf() : moveVec(Vector2Int()), animName(""), angle(){};
+		DirInf(const Vector2Int& vec2Int, const std::string& animN, const float angle)
+			: moveVec(vec2Int), animName(animN), angle(angle) {};
 	};
 
 	Team _team;
@@ -180,5 +181,6 @@ public:
 	// キャラクターを指定したRectの範囲に描画する
 	void DrawCharactorIcon(const Rect& drawRect)const;
 
-	// 指定した座標のResultPosのポインタを返す
+	// 指定した座標までの経路を描画する
+	void DrawRoute(const Vector2Int& targetPos);
 };

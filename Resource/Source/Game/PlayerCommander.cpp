@@ -207,7 +207,6 @@ void PlayerCommander::Draw()
 
 	// UI
 	_playerUI->Draw();
-
 }
 
 void PlayerCommander::DrawMovableMass()
@@ -222,6 +221,7 @@ void PlayerCommander::DrawMovableMass()
 	else
 	{
 		_selectChar->DrawMovableMass(128);
+		_selectChar->DrawRoute(_mapPos);
 	}
 }
 

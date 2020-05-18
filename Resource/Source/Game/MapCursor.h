@@ -23,6 +23,8 @@ protected:
 
 	bool PutCheck(const Input& input, const std::string& key);
 
+	virtual void CursorMoveMoment();
+
 public:
 	MapCursor(MapCtrl& mapCtrl, Camera& camera);
 	~MapCursor();

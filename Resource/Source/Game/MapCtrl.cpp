@@ -544,3 +544,11 @@ unsigned int MapCtrl::GetCanMoveCnt() const
 	}
 	return cnt;
 }
+
+void MapCtrl::AllRouteSearch() const
+{
+	for (auto& charactor : _charactors)
+	{
+		charactor->RouteSearch();
+	}
+}

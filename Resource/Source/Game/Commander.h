@@ -36,5 +36,8 @@ public:
 	bool CheckEnd()const;
 
 	void TurnReset();
+
+	// 選択中のキャラクターのポインターを返す
+	Charactor* GetSelectCharactor()const;
 };
 

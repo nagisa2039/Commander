@@ -69,3 +69,8 @@ void Commander::TurnReset()
 	_selectChar->SetIsSelect(false);
 	_selectChar = nullptr;
 }
+
+Charactor* Commander::GetSelectCharactor() const
+{
+	return _selectChar;
+}

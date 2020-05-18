@@ -42,6 +42,7 @@
     <ClCompile Include="Resource\Source\Game\Swordsman.cpp" />
     <ClCompile Include="Resource\Source\Game\Team.cpp" />
     <ClCompile Include="Resource\Source\Game\TurnChangeAnim.cpp" />
+    <ClCompile Include="Resource\Source\Game\UI\BattlePrediction.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\CheckWindow.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\Menu.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\PlayerUI.cpp" />
@@ -92,6 +93,7 @@
     <ClInclude Include="Resource\Source\Game\Swordsman.h" />
     <ClInclude Include="Resource\Source\Game\Team.h" />
     <ClInclude Include="Resource\Source\Game\TurnChangeAnim.h" />
+    <ClInclude Include="Resource\Source\Game\UI\BattlePrediction.h" />
     <ClInclude Include="Resource\Source\Game\UI\CheckWindow.h" />
     <ClInclude Include="Resource\Source\Game\UI\Menu.h" />
     <ClInclude Include="Resource\Source\Game\UI\PlayerUI.h" />

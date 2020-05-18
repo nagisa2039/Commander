@@ -272,7 +272,8 @@ void Charactor::MoveEnd(const bool canMove)
 	_canMove = canMove;
 	_isMoveAnim = false;
 	_camera.PopTargetActor();
-	//RouteSearch();
+
+	_mapCtrl.AllRouteSearch();
 }
 
 void Charactor::RouteSearch()

@@ -179,4 +179,6 @@ public:
 
 	// キャラクターを指定したRectの範囲に描画する
 	void DrawCharactorIcon(const Rect& drawRect)const;
+
+	// 指定した座標のResultPosのポインタを返す
 };

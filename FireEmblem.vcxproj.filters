@@ -207,6 +207,9 @@
     <ClCompile Include="Resource\Source\Game\UI\StatusInfomation.cpp">
       <Filter>ソース ファイル\Game\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\BattlePrediction.cpp">
+      <Filter>ソース ファイル\Game\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -354,6 +357,9 @@
       <Filter>ヘッダー ファイル\Game\Actor\Effect</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\UI\StatusInfomation.h">
+      <Filter>ヘッダー ファイル\Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\BattlePrediction.h">
       <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
   </ItemGroup>

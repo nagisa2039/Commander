@@ -8,6 +8,8 @@ using namespace std;
 void MapCursor::CursorMove(const Input& input)
 {
 	_moveItv--;
+	auto oldMapPos = _mapPos;
+
 	auto Move = [&](const std::string& key, const Vector2Int& move)
 	{
 		if (input.GetButton(0, key))
@@ -18,10 +20,10 @@ void MapCursor::CursorMove(const Input& input)
 			}
 
 			auto mapSize = _mapCtrl.GetMapCnt();
-			if ((_mapPos + move).x >= 0 && (_mapPos + move).x < mapSize.w
-				&& (_mapPos + move).y >= 0 && (_mapPos + move).y < mapSize.h)
+			if ((oldMapPos + move).x >= 0 && (oldMapPos + move).x < mapSize.w
+				&& (oldMapPos + move).y >= 0 && (oldMapPos + move).y < mapSize.h)
 			{
-				_mapPos += move;
+				oldMapPos += move;
 			}
 			return true;
 		}
@@ -47,6 +49,13 @@ void MapCursor::CursorMove(const Input& input)
 		_moveItv = 0;
 		_moveItvCurrentMax = _moveItvMax;
 	}
+
+	if (_mapPos != oldMapPos)
+	{
+		_mapPos = oldMapPos;
+		CursorMoveMoment();
+	}
+
 	_pos = (_mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToVector2();
 }
 
@@ -99,4 +108,8 @@ void MapCursor::SetMapPos(const Vector2Int& mapPos)
 Vector2 MapCursor::GetCenterPos() const
 {
 	return Vector2(_pos + (_mapCtrl.GetChipSize() * 0.5f).ToVector2());
+}
+
+void MapCursor::CursorMoveMoment()
+{
 }

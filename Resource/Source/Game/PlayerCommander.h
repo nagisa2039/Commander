@@ -12,9 +12,16 @@ class PlayerCommander :
 private:
 	std::unique_ptr<PlayerUI> _playerUI;
 
-	void CharactorControl(const Input& input);
+	void(PlayerCommander::* _uniqueUpdater)(const Input& input);
 
-	bool _routSearch;
+	void NormalUpdate(const Input& input);
+	void SelectUpdate(const Input& input);
+	void BattlePredictionUpdate(const Input& input);	// í“¬—\‘ª‰æ–Ê
+	void BattaleUpdate(const Input& input);	// í“¬’†
+
+	void SelectCharactor(Charactor* charactor);
+
+	void CursorMoveMoment()override;
 
 public:
 	PlayerCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera);

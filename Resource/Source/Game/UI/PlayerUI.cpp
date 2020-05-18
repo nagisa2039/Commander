@@ -11,6 +11,7 @@
 #include "StatusWindow.h"
 #include "StatusInfomation.h"
 #include "BattlePrediction.h"
+#include "Charactor.h"
 
 using namespace std;
 
@@ -85,15 +86,43 @@ void PlayerUI::Update(const Input& input)
 		_statusDeque.emplace_front(make_shared<StatusWindow>(_statusDeque, *charactor));
 		return;
 	}
+}
 
-	if (_battlePreDeque.size() <= 0)
+void PlayerUI::AddBattlePre()
+{
+	auto self = _playerCommander.GetSelectCharactor();
+	if (self == nullptr)
 	{
-		auto charactor = _mapCtrl.GetMapPosChar(_playerCommander.GetMapPos());
-		if (charactor == nullptr) return;
-
-		//_battlePreDeque.emplace_front(make_shared<BattlePrediction>(_statusDeque, *charactor));
+		_battlePreDeque.clear();
 		return;
 	}
+
+	auto charactor = _mapCtrl.GetMapPosChar(_playerCommander.GetMapPos());
+	if (charactor == nullptr)
+	{
+		_battlePreDeque.clear();
+		return;
+	}
+
+	auto attackPos = self->GetResutlPos(_playerCommander.GetMapPos());
+	if (attackPos == nullptr)
+	{
+		_battlePreDeque.clear();
+		return;
+	}
+
+	if (self->GetTeam() == charactor->GetTeam())
+	{
+		_battlePreDeque.clear();
+		return;
+	}
+
+	_battlePreDeque.emplace_front(make_shared<BattlePrediction>(*self, *charactor, _battlePreDeque, *attackPos));
+}
+
+void PlayerUI::ClearBattlePre()
+{
+	_battlePreDeque.clear();
 }
 
 void PlayerUI::Draw()

@@ -39,5 +39,8 @@ public:
 	bool GetUIIsOpen()const;
 	void OpenMenu(bool animation = true);
 	void CloseMenu(bool animation = true);
+
+	void AddBattlePre();
+	void ClearBattlePre();
 };
 

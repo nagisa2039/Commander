@@ -116,4 +116,7 @@ public:
 
 	// 未行動の自軍数を返す
 	unsigned int GetCanMoveCnt()const;
+
+	// 全キャラクターの行動範囲計算を行う
+	void AllRouteSearch()const;
 };

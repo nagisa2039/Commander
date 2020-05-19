@@ -273,7 +273,7 @@ void Charactor::MoveEnd(const bool canMove)
 	_isMoveAnim = false;
 	_camera.PopTargetActor();
 
-	_mapCtrl.AllRouteSearch();
+	_mapCtrl.AllCharactorRouteSearch();
 }
 
 void Charactor::RouteSearch()
@@ -506,7 +506,7 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 	int attackMassCnt = 0;
 	for (; rp->parent != nullptr;)
 	{
-		oneLineResutlList.emplace_front(*rp);
+		oneLineResutlList.emplace_back(*rp);
 		if (rp->attack)
 		{
 			attackMassCnt++;
@@ -518,18 +518,50 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 	// UŒ‚”ÍˆÍŠO‚Ìƒ}ƒX‚ğíœ
 	for (int i = _attackRange.max; i < attackMassCnt; i++)
 	{
-		oneLineResutlList.pop_back();
+		oneLineResutlList.pop_front();
 	}
 
-	for (auto resutl : oneLineResutlList)
+	list<Astar::ResultPos> addResultPosList;
+	bool coverCheck = true;
+	for (auto itr = oneLineResutlList.begin(); itr != oneLineResutlList.end(); itr++)
 	{
-		if (resutl.moveCnt <= _status.move || resutl.attack)
+		if (itr->moveCnt > _status.move) continue;
+
+		if (itr->attack)
 		{
-			_moveDirList.emplace_back(MoveInf(resutl.dir, resutl.attack, resutl.mapPos));
+			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
+			continue;
+		}
+
+
+		if (!coverCheck)
+		{
+			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
+			continue;
+		}
+
+		if (_mapCtrl.GetMapPosChar(itr->mapPos) == nullptr)
+		{
+			coverCheck = false;
+			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
 		}
 		else
 		{
-			break;
+			addResultPosList.clear();
+			if (_mapCtrl.MoveRouteSearch(itr->mapPos, max(0, _status.move - itr->moveCnt - 1), addResultPosList, _team))
+			{
+				coverCheck = false;
+				_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
+				for (const auto& addResultPos : addResultPosList)
+				{
+					_moveDirList.emplace_back(MoveInf(addResultPos.dir, addResultPos.attack, addResultPos.mapPos));
+				}
+				for (auto resutlPos = itr->parent; resutlPos->parent != nullptr; resutlPos = resutlPos->parent)
+				{
+					_moveDirList.emplace_front(MoveInf(resutlPos->dir, resutlPos->attack, resutlPos->mapPos));
+				}
+				break;
+			}
 		}
 	}
 

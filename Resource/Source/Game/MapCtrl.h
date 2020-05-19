@@ -97,6 +97,9 @@ public:
 	// 移動可能なマスを探す
 	void RouteSearch(Charactor& charactor);
 
+	// 指定した移動力で行ける場所を探す
+	bool MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, std::list<Astar::ResultPos>& resutlPosList, const Team team);
+
 	// 指定キャラから視野範囲にいるキャラクターを返す
 	Vector2Int SearchMovePos(Charactor& charactor);
 
@@ -118,5 +121,5 @@ public:
 	unsigned int GetCanMoveCnt()const;
 
 	// 全キャラクターの行動範囲計算を行う
-	void AllRouteSearch()const;
+	void AllCharactorRouteSearch()const;
 };

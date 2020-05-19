@@ -56,11 +56,21 @@ private:
 
 	void ResetSerchPosVec2D(const std::vector<std::vector<MapData>>& mapData);
 
+	bool CheckSearchPosVec2Range(const Vector2Int& checkPos)const;
+
+	// 全ての移動可能範囲を検索
+	void AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, 
+		const std::vector<std::vector<MapData>>& mapData, std::list<Astar::ResultPos>& resutlPosList, const Team team, const bool addThrough);
+
 public:
 	Astar();
 	~Astar();
 
 	// 開始位置から終端位置までのマスをリストに格納して返す。見つからなかった場合はリストを空にして返す
-	void RouteSearch(const Vector2Int& startMapPos, const int move, const Range& attackRange, const std::vector<std::vector<MapData>>& mapData, std::list<Astar::ResultPos>& resutlPosList, const Team team);
+	void RouteSearch(const Vector2Int& startMapPos, const int move, const Range& attackRange, 
+		const std::vector<std::vector<MapData>>& mapData, std::list<Astar::ResultPos>& resutlPosList, const Team team);
+
+	// 一つのルートを見つけるようの
+	bool MoveRouteSerch(const Vector2Int& startMapPos, const int move, const std::vector<std::vector<MapData>>& mapData, std::list<Astar::ResultPos>& resutlPosList, const Team team);
 };
 

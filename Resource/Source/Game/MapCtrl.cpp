@@ -358,6 +358,14 @@ void MapCtrl::RouteSearch(Charactor& charactor)
 	return _astar->RouteSearch(charactor.GetMapPos(), charactor.GetStatus().move, charactor.GetAttackRange(), mapVec2, charactor.GetResutlPosList(), charactor.GetTeam());
 }
 
+bool MapCtrl::MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, std::list<Astar::ResultPos>& resutlPosList, const Team team)
+{
+	std::vector<std::vector<Astar::MapData>> mapVec2;
+	CreateMapVec(mapVec2, team);
+
+	return _astar->MoveRouteSerch(startPos, move, mapVec2, resutlPosList, team);
+}
+
 Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
 {
 	std::vector<std::vector<Astar::MapData>> mapVec2;
@@ -545,7 +553,7 @@ unsigned int MapCtrl::GetCanMoveCnt() const
 	return cnt;
 }
 
-void MapCtrl::AllRouteSearch() const
+void MapCtrl::AllCharactorRouteSearch() const
 {
 	for (auto& charactor : _charactors)
 	{

@@ -6,7 +6,7 @@ class Mage :
 private:
 
 public:
-	Mage(const uint8_t level, const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl,
+	Mage(const uint8_t level, const Vector2Int& mapPos, const Team team, const unsigned int groupNum, MapCtrl& mapCtrl, SceneController& ctrl,
 		std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
 	~Mage();
 };

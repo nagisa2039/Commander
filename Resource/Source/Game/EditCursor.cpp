@@ -19,6 +19,7 @@ EditCursor::EditCursor(MapCtrl& mapCtrl, Camera& camera): MapCursor(mapCtrl, cam
 	_charactorChipInf.level = 5;
 	_charactorChipInf.team = Team::player;
 	_charactorChipInf.mapPos = _mapPos;
+	_charactorChipInf.groupNum = 0;
 
 	_animCnt = 0;
 
@@ -108,11 +109,22 @@ void EditCursor::CharactorEditUpdate(const Input& input)
 		_charactorChipInf.level = min(max(0, _charactorChipInf.level - 1), 100);
 	}
 
+	if (input.GetButtonDown(KEY_INPUT_I))
+	{
+		_charactorChipInf.groupNum = min(max(0, _charactorChipInf.groupNum + 1), 99);
+	}
+	if (input.GetButtonDown(KEY_INPUT_U))
+	{
+		_charactorChipInf.groupNum = min(max(0, _charactorChipInf.groupNum + 1), 99);
+	}
+
 	_charactorChipInf.mapPos = _mapPos;
 
 	if (input.GetButtonDown(0, "space"))
 	{
-		_mapCtrl.SetCharactorChip(_charactorChipInf);
+		auto charChipInf = _charactorChipInf;
+		charChipInf.groupNum += _charactorChipInf.team == Team::enemy ? 100 : 0;
+		_mapCtrl.SetCharactorChip(charChipInf);
 	}
 }
 

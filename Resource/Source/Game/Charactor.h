@@ -96,6 +96,7 @@ protected:
 
 	bool _canMove;
 	bool _moveActive;	// true@‚ ‚é’ö“x‹ß‚Ã‚¢‚Ä‚¢‚½‚ç“®‚­		false UŒ‚”ÍˆÍ“à‚É“ü‚Á‚½‚ç“®‚­
+	unsigned int _groupNum;	// W’c”Ô†
 
 	int _moveSpeed;
 	bool _isSelect;
@@ -132,7 +133,7 @@ protected:
 	unsigned int GetTeamColor()const;
 
 public:
-	Charactor(const uint8_t level, const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl, 
+	Charactor(const uint8_t level, const Vector2Int& mapPos, const Team team, const unsigned int groupNum, MapCtrl& mapCtrl, SceneController& ctrl, 
 		std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
 	~Charactor();
 
@@ -162,11 +163,13 @@ public:
 	Range GetAttackRange()const;
 	const std::string& GetName()const;
 	const Astar::ResultPos* GetResutlPos(const Vector2Int& mapPos);
+	unsigned int GetGroupNum()const;
 
 	void SetIsSelect(const bool select);
 	void SetIsDying();
 	void SetDir(const Dir dir);
 	void SetStatus(const Status& status);
+	void SetMoveActive(const bool active);
 
 	void MoveEnd(const bool canMove = false);
 

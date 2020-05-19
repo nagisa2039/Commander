@@ -86,6 +86,9 @@ void Charactor::Move()
 		auto charactor = _mapCtrl.GetMapPosChar(it->mapPos);
 		if (charactor != nullptr && _team != charactor->GetTeam())
 		{
+			_mapCtrl.SetGroupActive(_groupNum, true);
+			_mapCtrl.SetGroupActive(charactor->GetGroupNum(), true);
+
 			// êÌì¨
 			_controller.PushScene(make_shared<BattleScene>
 				(GetBattleC(), charactor->GetBattleC(), _controller, _camera.GetCameraOffset()));
@@ -240,6 +243,11 @@ const Astar::ResultPos* Charactor::GetResutlPos(const Vector2Int& mapPos)
 	return nullptr;
 }
 
+unsigned int Charactor::GetGroupNum() const
+{
+	return _groupNum;
+}
+
 void Charactor::SetIsSelect(const bool select)
 {
 	_isSelect = select;
@@ -261,6 +269,11 @@ void Charactor::SetDir(const Dir dir)
 void Charactor::SetStatus(const Status& status)
 {
 	_status = status;
+}
+
+void Charactor::SetMoveActive(const bool active)
+{
+	_moveActive = active;
 }
 
 void Charactor::MoveEnd(const bool canMove)
@@ -359,9 +372,9 @@ void Charactor::DrawRoute(const Vector2Int& targetPos)
 
 }
 
-Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl,
+Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team team, const unsigned int groupNum, MapCtrl& mapCtrl, SceneController& ctrl,
 	std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
-	: _team(team), _mapCtrl(mapCtrl), _controller(ctrl), _effects(effects), Actor(camera)
+	: _team(team), _groupNum(groupNum), _mapCtrl(mapCtrl), _controller(ctrl), _effects(effects), Actor(camera)
 {
 	_pos = (mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToVector2();
 	_isMoveAnim = false;
@@ -369,7 +382,7 @@ Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team t
 	_moveSpeed = 4;
 	_isSelect = false;
 	_canMove = true;
-	_moveActive = true;
+	_moveActive = false;
 	_isDying = false;
 
 	_animator = make_shared<Animator>();

@@ -11,9 +11,9 @@
 
 using namespace std;
 
-Soldier::Soldier(const uint8_t level, const Vector2Int& mapPos, const Team team, MapCtrl& mapCtrl, SceneController& ctrl,
+Soldier::Soldier(const uint8_t level, const Vector2Int& mapPos, const Team team, const unsigned int groupNum, MapCtrl& mapCtrl, SceneController& ctrl,
 	std::vector<std::shared_ptr<Effect>>& effects, Camera& _camera)
-	:Charactor(level, mapPos, team, mapCtrl, ctrl, effects, _camera)
+	:Charactor(level, mapPos, team, groupNum, mapCtrl, ctrl, effects, _camera)
 {
 	_name = "Soldier";
 	const Size divSize = Size(32, 32);

@@ -123,31 +123,36 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::swordman)] = 
 		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		_charactors.emplace_back(make_shared<Swordsman>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects, camera));
+		_charactors.emplace_back(make_shared<Swordsman>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera));
+		(*_charactors.rbegin())->SetMoveActive(characotChipInf.active);
 	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::soldier)] =
 		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		_charactors.emplace_back(make_shared<Soldier>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects, camera));
+		_charactors.emplace_back(make_shared<Soldier>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera));
+		(*_charactors.rbegin())->SetMoveActive(characotChipInf.active);
 	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::warrior)] =
 		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		_charactors.emplace_back(make_shared<Warrior>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects, camera));
+		_charactors.emplace_back(make_shared<Warrior>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera));
+		(*_charactors.rbegin())->SetMoveActive(characotChipInf.active);
 	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::mage)] =
 		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		_charactors.emplace_back(make_shared<Mage>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects, camera));
+		_charactors.emplace_back(make_shared<Mage>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera));
+		(*_charactors.rbegin())->SetMoveActive(characotChipInf.active);
 	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::archer)] =
 		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		_charactors.emplace_back(make_shared<Archer>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, *this, ctrl, effects, camera));
+		_charactors.emplace_back(make_shared<Archer>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera));
+		(*_charactors.rbegin())->SetMoveActive(characotChipInf.active);
 	};
 }
 
@@ -263,6 +268,8 @@ bool MapCtrl::DrawCharactorChip(const CharactorChipInf& charactorChipInf, const 
 		return false;
 	}
 	DrawRectExtendGraph(leftup.x, leftup.y, leftup.x + chipSize.w, leftup.y + chipSize.h, 0, 0, 32, 32, handle, true);
+	DrawFormatString(leftup.x, leftup.y, 0x000000, "Level.%d", charactorChipInf.level);
+	DrawFormatString(leftup.x, leftup.y + 16, 0x000000, "GN.%d", charactorChipInf.groupNum);
 
 	return true;
 }
@@ -373,7 +380,7 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
 	auto status = charactor.GetStatus();
 
 	auto& resultPosList = charactor.GetResutlPosList();
-	_astar->RouteSearch(charactor.GetMapPos(), status.move*2, charactor.GetAttackRange(), mapVec2, resultPosList, charactor.GetTeam());
+	_astar->RouteSearch(charactor.GetMapPos(), charactor.GetMoveActive() ? 100 : status.move, charactor.GetAttackRange(), mapVec2, resultPosList, charactor.GetTeam());
 
 	struct TargetCharactor
 	{
@@ -558,5 +565,16 @@ void MapCtrl::AllCharactorRouteSearch() const
 	for (auto& charactor : _charactors)
 	{
 		charactor->RouteSearch();
+	}
+}
+
+void MapCtrl::SetGroupActive(const unsigned int groupNum, const bool active)
+{
+	for (auto& charactor : _charactors)
+	{
+		if (charactor->GetGroupNum() == groupNum)
+		{
+			charactor->SetMoveActive(active);
+		}
 	}
 }

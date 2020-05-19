@@ -122,4 +122,7 @@ public:
 
 	// 全キャラクターの行動範囲計算を行う
 	void AllCharactorRouteSearch()const;
+
+	// 指定した集団のmoveActiveを変更
+	void SetGroupActive(const unsigned int groupNum, const bool active);
 };

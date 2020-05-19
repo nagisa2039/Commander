@@ -24,7 +24,6 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	_charactors.clear();
 	_charactors.reserve(30);
 
-
 	debug = true;
 
 	_mapCtrl = make_shared<MapCtrl>(_charactors);
@@ -34,6 +33,14 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 
 	_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
 	_enemyCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy, *_camera);
+
+	list<shared_ptr<PlayerCommander>> testList;
+
+	testList.emplace_back(make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera));
+	PlayerCommander& test2 = **testList.begin();
+	testList.clear();
+
+	test2.CheckEnd();
 
 	_camera->AddTargetActor(&*_playerCommander);
 

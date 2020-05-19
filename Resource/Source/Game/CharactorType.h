@@ -17,6 +17,8 @@ struct CharactorChipInf
 {
 	Vector2Int mapPos;
 	unsigned int level;
+	unsigned int groupNum;
 	CharactorType type;
 	Team team;
+	bool active;
 };

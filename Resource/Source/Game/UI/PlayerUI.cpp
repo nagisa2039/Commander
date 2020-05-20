@@ -39,6 +39,17 @@ PlayerUI::~PlayerUI()
 
 void PlayerUI::Update(const Input& input)
 {
+	// ステータス確認
+	if (input.GetButtonDown(0, "status"))
+	{
+		auto charactor = _mapCtrl.GetMapPosChar(_playerCommander.GetMapPos());
+		if (_statusDeque.size() <= 0 && charactor != nullptr)
+		{
+			_statusDeque.emplace_front(make_shared<StatusWindow>(_statusDeque, *charactor));
+			return;
+		}
+	}
+
 	_terrainInfTrack->Update();
 	if (GetUIIsOpen())
 	{
@@ -77,15 +88,6 @@ void PlayerUI::Update(const Input& input)
 		}
 	}
 
-	// ステータス確認
-	if (input.GetButtonDown(0, "status"))
-	{
-		auto charactor = _mapCtrl.GetMapPosChar(_playerCommander.GetMapPos());
-		if (charactor == nullptr) return;
-
-		_statusDeque.emplace_front(make_shared<StatusWindow>(_statusDeque, *charactor));
-		return;
-	}
 }
 
 void PlayerUI::AddBattlePre()

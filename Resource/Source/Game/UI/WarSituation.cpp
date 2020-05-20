@@ -48,6 +48,7 @@ WarSituation::WarSituation(std::deque<std::shared_ptr<UI>>& uiDeque, const MapCt
 	_exRate->AddKey(15, 1.0f);
 
 	_updater = &WarSituation::ScalingUpdate;
+	_mapCtrl.CreateWarSituation();
 }
 
 WarSituation::~WarSituation()
@@ -99,12 +100,13 @@ void WarSituation::Draw()
 	{
 		DrawGraph(GetDrawPos(center, window1Size, Anker::center), window1H);
 
-		Size strSize;
-		int lineCnt;
+		int distance = 100;
 		int choplin20 = Application::Instance().GetFileSystem()->GetFontHandle("choplin20");
-		GetDrawFormatStringSize(&strSize.w, &strSize.h, &lineCnt, str, num);
-		auto str2DrawPos = GetDrawPos(center, strSize, Anker::center);
-		DrawFormatString(str2DrawPos.x, str2DrawPos.y, 0xffffff, str, num);
+		DrawStringToHandle(center - Vector2Int(distance / 2, 0), Anker::leftcenter, 0xffffff, choplin20, str);
+
+		char numStr[10];
+		sprintf_s(numStr, 10, "%d", num);
+		DrawStringToHandle(center + Vector2Int(distance / 2, 0), Anker::rightcenter, 0xffffff, choplin20, numStr);
 	};
 	
 	DrawWinOrLoseWindow((wsize * Vector2(0.25, 0.25)).ToVector2Int(), "Ÿ—˜ğŒ", "“G‚Ì‘S–Å");

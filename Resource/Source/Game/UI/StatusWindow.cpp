@@ -19,8 +19,8 @@ StatusWindow::~StatusWindow()
 
 void StatusWindow::Update(const Input& input)
 {
-	if (input.GetButtonDown(0, "back")
-		|| input.GetButtonDown(0, "status"))
+	if (input.GetButtonDown(0, "status") ||
+		input.GetButtonDown(0, "back"))
 	{
 		_uiDeque.pop_front();
 		_isOpen = false;

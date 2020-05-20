@@ -16,9 +16,8 @@ Archer::Archer(const uint8_t level, const Vector2Int& mapPos, const Team team, c
 	std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	:Charactor(level, mapPos, team, groupNum, mapCtrl, ctrl, effects, camera)
 {
-	_battleC = make_shared<ArcherBC>(*this, _animator->GetImageH(), _camera);
-
 	CharactorDataInit(CharactorType::archer, level);
+	_battleC = make_shared<ArcherBC>(*this, _animator->GetImageH(), _camera);
 }
 
 Archer::~Archer()

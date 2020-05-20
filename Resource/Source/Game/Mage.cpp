@@ -15,9 +15,8 @@ Mage::Mage(const uint8_t level, const Vector2Int& mapPos, const Team team, const
 	std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	:Charactor(level, mapPos, team, groupNum, mapCtrl, ctrl, effects, camera)
 {
-	_battleC = make_shared<MageBC>(*this, _animator->GetImageH(), _camera);
-
 	CharactorDataInit(CharactorType::mage, level);
+	_battleC = make_shared<MageBC>(*this, _animator->GetImageH(), _camera);
 }
 
 Mage::~Mage()

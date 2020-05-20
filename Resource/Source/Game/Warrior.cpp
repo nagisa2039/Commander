@@ -15,9 +15,8 @@ Warrior::Warrior(const uint8_t level, const Vector2Int& mapPos, const Team team,
 	std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	:Charactor(level, mapPos, team, groupNum, mapCtrl, ctrl, effects, camera)
 {
-	_battleC = make_shared<WarriorBC>(*this, _animator->GetImageH(), _camera);
-
 	CharactorDataInit(CharactorType::warrior, level);
+	_battleC = make_shared<WarriorBC>(*this, _animator->GetImageH(), _camera);
 }
 
 Warrior::~Warrior()

@@ -58,6 +58,7 @@ void Commander::TurnReset()
 			{
 				setMapPos = true;
 				_mapPos = charactor->GetMapPos();
+				_pos = (_mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToVector2();
 			}
 		}
 	}

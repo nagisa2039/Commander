@@ -32,7 +32,7 @@ void EnemyCommander::Update(const Input& input)
 		// ˆÚ“®‚ªI‚í‚Á‚½‚Ì‚Å‘Ò‹@‚É‚·‚é
 		_selectChar->MoveEnd();
 		_selectChar = nullptr;
-		_rigid = 30;
+		_rigid = 60;
 		return;
 	}
 
@@ -44,6 +44,9 @@ void EnemyCommander::Update(const Input& input)
 		{
 			_selectChar = &*charactor;
   			_selectChar->SearchAndMove();
+			_camera.AddTargetActor(this);
+			_mapPos = _selectChar->GetMapPos();
+			_pos = (_mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToVector2();
 			return;
 		}
 	}

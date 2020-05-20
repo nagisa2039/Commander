@@ -579,7 +579,6 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 	}
 
 	_isMoveAnim = true;
-	_camera.AddTargetActor(this);
 
 	_status.move = max(_status.move - startResultPos.moveCnt, 0);
 

@@ -239,6 +239,7 @@ void PlayScene::StartPlayerTurn()
 
 	_camera->ClearTargetActor();
 	_camera->AddTargetActor(&*_playerCommander);
+	_camera->SetPos(_playerCommander->GetCenterPos());
 	for (auto& charactor : _charactors)
 	{
 		charactor->RouteSearch();
@@ -255,6 +256,8 @@ void PlayScene::StartEnemyTurn()
 	_uniqueUpdaterOld = _uniqueUpdater;
 
 	_camera->ClearTargetActor();
+	_camera->AddTargetActor(&*_enemyCommander);
+	_camera->SetPos(_enemyCommander->GetCenterPos());
 	for (auto& charactor : _charactors)
 	{
 		charactor->RouteSearch();

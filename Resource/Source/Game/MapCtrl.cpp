@@ -270,6 +270,7 @@ bool MapCtrl::DrawCharactorChip(const CharactorChipInf& charactorChipInf, const 
 	DrawRectExtendGraph(leftup.x, leftup.y, leftup.x + chipSize.w, leftup.y + chipSize.h, 0, 0, 32, 32, handle, true);
 	DrawFormatString(leftup.x, leftup.y, 0x000000, "Level.%d", charactorChipInf.level);
 	DrawFormatString(leftup.x, leftup.y + 16, 0x000000, "GN.%d", charactorChipInf.groupNum);
+	DrawFormatString(leftup.x, leftup.y + 32, 0x000000, charactorChipInf.active ? "Active : True" : "False");
 
 	return true;
 }
@@ -289,10 +290,10 @@ bool MapCtrl::SaveMap(const std::string fileName)
 	string folderName("Resource/Map/");
 	fopen_s(&fp, (folderName + fileName).c_str(), "wb");
 
-	//if (fp == NULL)
-	//{
-	//	return false;
-	//}
+	if (fp == NULL)
+	{
+		return false;
+	}
 
 	// マップサイズの書き込み
 	auto mapSize = GetMapCnt();

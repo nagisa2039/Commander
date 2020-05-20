@@ -72,6 +72,7 @@ void PlayerCommander::SelectUpdate(const Input& input)
 				else
 				{
 					// 選択中のキャラを行動終了にする
+					_camera.AddTargetActor(this);
 					_selectChar->MoveEnd();
 					SelectCharactor(nullptr);
 				}
@@ -91,6 +92,7 @@ void PlayerCommander::SelectUpdate(const Input& input)
 			// 選択中のキャラがいるなら移動
 			if (_selectChar->GetCanMove())
 			{
+				_camera.AddTargetActor(this);
 				_selectChar->MoveMapPos(_mapPos);
 				return;
 			}

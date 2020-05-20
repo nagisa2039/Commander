@@ -20,6 +20,7 @@ EditCursor::EditCursor(MapCtrl& mapCtrl, Camera& camera): MapCursor(mapCtrl, cam
 	_charactorChipInf.team = Team::player;
 	_charactorChipInf.mapPos = _mapPos;
 	_charactorChipInf.groupNum = 0;
+	_charactorChipInf.active = false;
 
 	_animCnt = 0;
 
@@ -126,6 +127,10 @@ void EditCursor::CharactorEditUpdate(const Input& input)
 		charChipInf.groupNum += _charactorChipInf.team == Team::enemy ? 100 : 0;
 		_mapCtrl.SetCharactorChip(charChipInf);
 	}
+	if (input.GetButtonDown(KEY_INPUT_M))
+	{
+		_charactorChipInf.active = !_charactorChipInf.active;
+	}
 }
 
 void EditCursor::Update(const Input& input)
@@ -194,6 +199,12 @@ void EditCursor::CharactorEditDraw()
 	DrawFormatString(516, drawY, 0xffffff, "Level. %d    + : P  - : O", _charactorChipInf.level);
 	drawY += 16;
 	DrawFormatString(516, drawY, 0xffffff, "C : マップチップ配置へ変更");
+	drawY += 16;
+	string moveActive("M : moveActive : ");
+	moveActive = moveActive + (_charactorChipInf.active ? "true" : "false");
+	DrawFormatString(516, drawY, 0xffffff, moveActive.c_str());
+	drawY += 16;
+	DrawFormatString(516, drawY, 0xffffff, "GroupNum %d    + : I  - : U", _charactorChipInf.groupNum + (_charactorChipInf.team == Team::enemy ?100 : 0));
 }
 
 void EditCursor::Draw()

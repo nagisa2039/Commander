@@ -41,7 +41,7 @@ void Camera::Update()
 		}
 		Vector3 targetPos = Vector3(pos2D.x, pos2D.y, 0) / _targets.size();*/
 		pos2D = (*_targets.begin())->GetCenterPos();
-		_pos = Lerp(_pos, Vector3(pos2D.x, pos2D.y, 0), 0.05f);
+		_pos = Lerp(_pos, Vector3(pos2D.x, pos2D.y, 0), 0.1f);
 	}
 
 	_rect.center = Vector2Int(_pos.x, _pos.y);

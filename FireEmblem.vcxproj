@@ -27,6 +27,7 @@
     <ClCompile Include="Resource\Source\Game\Camera.cpp" />
     <ClCompile Include="Resource\Source\Game\Charactor.cpp" />
     <ClCompile Include="Resource\Source\Game\Commander.cpp" />
+    <ClCompile Include="Resource\Source\Game\CorsorTarget.cpp" />
     <ClCompile Include="Resource\Source\Game\DataBase.cpp" />
     <ClCompile Include="Resource\Source\Game\EditCursor.cpp" />
     <ClCompile Include="Resource\Source\Game\Effect.cpp" />
@@ -77,6 +78,7 @@
     <ClInclude Include="Resource\Source\Game\Charactor.h" />
     <ClInclude Include="Resource\Source\Game\CharactorType.h" />
     <ClInclude Include="Resource\Source\Game\Commander.h" />
+    <ClInclude Include="Resource\Source\Game\CorsorTarget.h" />
     <ClInclude Include="Resource\Source\Game\DataBase.h" />
     <ClInclude Include="Resource\Source\Game\EditCursor.h" />
     <ClInclude Include="Resource\Source\Game\Effect.h" />

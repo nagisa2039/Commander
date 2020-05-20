@@ -25,14 +25,13 @@ void EnemyCommander::Update(const Input& input)
 	// 選択中のキャラが移動中なら選択を無効にする
 	if (_selectChar != nullptr)
 	{
-		if (_selectChar->GetIsMoveAnim())
+		if (_selectChar->GetIsMoveAnim() || _selectChar->GetMoveStandby())
 		{
 			return;
 		}
 		// 移動が終わったので待機にする
 		_selectChar->MoveEnd();
 		_selectChar = nullptr;
-		_rigid = 60;
 		return;
 	}
 
@@ -43,8 +42,8 @@ void EnemyCommander::Update(const Input& input)
 			&& charactor->GetCanMove())
 		{
 			_selectChar = &*charactor;
-  			_selectChar->SearchAndMove();
-			_camera.AddTargetActor(this);
+			_selectChar->SetMoveStandby(15);
+			_camera.AddTargetActor(_selectChar);
 			_mapPos = _selectChar->GetMapPos();
 			_pos = (_mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToVector2();
 			return;

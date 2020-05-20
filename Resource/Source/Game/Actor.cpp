@@ -24,3 +24,8 @@ bool Actor::GetDelete() const
 {
 	return _delete;
 }
+
+void Actor::SetPos(const Vector2& pos)
+{
+	_pos = pos;
+}

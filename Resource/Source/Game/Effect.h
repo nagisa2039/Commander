@@ -19,5 +19,7 @@ public:
 
 	virtual void Update(const Input& input) override;
 	virtual void Draw() override;
+
+	virtual void Reset();
 };
 

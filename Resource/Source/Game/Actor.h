@@ -21,5 +21,7 @@ public:
 	Vector2 GetActorPos()const;
 	virtual Vector2 GetCenterPos()const;
 	bool GetDelete()const;
+
+	void SetPos(const Vector2& pos);
 };
 

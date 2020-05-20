@@ -113,6 +113,14 @@ protected:
 
 	std::string _iconPath;	// アイコンの画像パス
 
+	// 攻撃開始エフェクト
+	std::shared_ptr<Effect> _battleStartEffect;
+
+	// 硬直ｶｳﾝﾄ
+	int _rigid;
+	// 硬直が無くなったら移動を開始する
+	bool _moveStandby;
+
 	// 場面後のの更新を行う
 	void(Charactor::* _updater)(const Input& input);
 	// 場面後のの描画を行う
@@ -120,6 +128,8 @@ protected:
 
 	// 通常時の更新
 	void NormalUpdate(const Input& input);
+	void BattaleStartUpdate(const Input& input);
+	void BattaleStart(Charactor* charactor);
 	// 死亡時の更新
 	void DyingUpdate(const Input& input);
 
@@ -153,6 +163,7 @@ public:
 	bool GetIsSelect()const;
 	bool GetCanMove()const;
 	bool GetMoveActive()const;
+	bool GetMoveStandby()const;
 	Status GetStartStatus()const;
 	Status GetStatus()const;
 	bool GetIsDying()const;
@@ -170,6 +181,7 @@ public:
 	void SetDir(const Dir dir);
 	void SetStatus(const Status& status);
 	void SetMoveActive(const bool active);
+	void SetMoveStandby(const int time);
 
 	void MoveEnd(const bool canMove = false);
 

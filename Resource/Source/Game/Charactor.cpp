@@ -11,15 +11,44 @@
 #include "FlyText.h"
 #include <algorithm>
 #include "FileSystem.h"
+#include "CorsorTarget.h"
 
 using namespace std;
 
 void Charactor::NormalUpdate(const Input& input)
 {
+	if (_moveStandby)
+	{
+		if (--_rigid > 0)return;
+
+		_moveStandby = false; 
+		SearchAndMove();
+	}
+
 	Move();
 
 	_animator->ChangeAnim(_dirTable[_dir].animName);
 	_animator->Update();
+}
+
+void Charactor::BattaleStartUpdate(const Input& input)
+{
+	if (!_battleStartEffect->GetDelete())return;
+
+	auto charactor = _mapCtrl.GetMapPosChar((*_moveDirList.begin()).mapPos);
+	BattaleStart(charactor);
+
+	_updater = &Charactor::NormalUpdate;
+}
+
+void Charactor::BattaleStart(Charactor* charactor)
+{
+	_mapCtrl.SetGroupActive(_groupNum, true);
+	_mapCtrl.SetGroupActive(charactor->GetGroupNum(), true);
+
+	// êÌì¨
+	_controller.PushScene(make_shared<BattleScene>
+		(GetBattleC(), charactor->GetBattleC(), _controller, _camera.GetCameraOffset()));
 }
 
 void Charactor::DyingUpdate(const Input& input)
@@ -86,12 +115,16 @@ void Charactor::Move()
 		auto charactor = _mapCtrl.GetMapPosChar(it->mapPos);
 		if (charactor != nullptr && _team != charactor->GetTeam())
 		{
-			_mapCtrl.SetGroupActive(_groupNum, true);
-			_mapCtrl.SetGroupActive(charactor->GetGroupNum(), true);
-
-			// êÌì¨
-			_controller.PushScene(make_shared<BattleScene>
-				(GetBattleC(), charactor->GetBattleC(), _controller, _camera.GetCameraOffset()));
+			if (_team == Team::player)
+			{
+				BattaleStart(charactor);
+				return;
+			}
+			_battleStartEffect->SetPos(charactor->GetCenterPos());
+			_battleStartEffect->Reset();
+			_effects.emplace_back(_battleStartEffect);
+			_updater = &Charactor::BattaleStartUpdate;
+			return;
 		}
 		else
 		{
@@ -178,6 +211,11 @@ bool Charactor::GetCanMove() const
 bool Charactor::GetMoveActive() const
 {
 	return _moveActive;
+}
+
+bool Charactor::GetMoveStandby() const
+{
+	return _moveStandby;
 }
 
 Charactor::Status Charactor::GetStartStatus() const
@@ -274,6 +312,12 @@ void Charactor::SetStatus(const Status& status)
 void Charactor::SetMoveActive(const bool active)
 {
 	_moveActive = active;
+}
+
+void Charactor::SetMoveStandby(const int time)
+{
+	_moveStandby = true;
+	_rigid = time;
 }
 
 void Charactor::MoveEnd(const bool canMove)
@@ -397,6 +441,11 @@ Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team t
 	_drawer = &Charactor::NormalDraw;
 
 	_attackRange = Range(2,2);
+
+	_battleStartEffect = make_shared<CorsorTarget>(Vector2Int(), _camera, true, _mapCtrl.GetChipSize());
+
+	_rigid = 0;
+	_moveStandby = false;
 }
 
 Charactor::~Charactor()

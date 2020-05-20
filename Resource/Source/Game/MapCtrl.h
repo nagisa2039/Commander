@@ -55,7 +55,6 @@ private:
 
 	std::vector<std::shared_ptr<Charactor>>& _charactors;
 
-	std::array<std::string, static_cast<size_t>(CharactorType::max)> _iconPaths;
 	std::vector<CharactorChipInf> _charactorChips;
 
 	// CharactorType‚É‘Î‰ž‚µ‚½CharactorƒNƒ‰ƒX‚ð_charactors‚É’Ç‰Á‚·‚é

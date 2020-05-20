@@ -1,4 +1,10 @@
 #include "DataBase.h"
+#include <fstream>
+#include <sstream>
+#include "Application.h"
+#include "FileSystem.h"
+
+using namespace std;
 
 bool DataBase::SetAttributeRateValue(const Attribute self, const Attribute target, const bool advantage)
 {
@@ -31,6 +37,47 @@ DataBase::DataBase()
 	SetAttributeRateValue(Attribute::red, Attribute::green, true);
 	SetAttributeRateValue(Attribute::red, Attribute::blue, false);
 	SetAttributeRateValue(Attribute::green, Attribute::blue, true);
+
+	auto split = [](const string& input, const char delimiter, vector<string>& output)
+	{
+		istringstream stream(input);
+		string field;
+		output.clear();
+		while (getline(stream, field, delimiter))
+		{
+			output.emplace_back(field);
+		}
+	};
+
+	ifstream ifs("Resource/DataBase/charactorDataBase.csv");
+	string line;
+	vector<string> outputVec;
+	outputVec.reserve(20);
+	// 最初の行はスキップ
+	getline(ifs, line);
+	int idx = 0;
+	while (getline(ifs, line))
+	{
+		split(line, ',', outputVec);
+		CharactorData charactorData;
+		// キャラクターID
+		// 職業名
+		charactorData.name = outputVec[1];
+		// 攻撃範囲
+		charactorData.range = Range(atoi(outputVec[2].c_str()), atoi(outputVec[3].c_str()));
+		// 初期ステータス
+		charactorData.initialStatus = Status(1, atoi(outputVec[4].c_str()), atoi(outputVec[5].c_str()), atoi(outputVec[6].c_str()),
+			atoi(outputVec[7].c_str()), atoi(outputVec[8].c_str()), atoi(outputVec[9].c_str()), atoi(outputVec[10].c_str()), Attribute::red, outputVec[18] != "");
+		// ステータス成長率
+		charactorData.statusGrowRate = Status(1, atoi(outputVec[11].c_str()), atoi(outputVec[12].c_str()), atoi(outputVec[13].c_str()),
+			atoi(outputVec[14].c_str()), atoi(outputVec[15].c_str()), atoi(outputVec[16].c_str()), atoi(outputVec[17].c_str()), Attribute::red, outputVec[18] != "");
+		// キャラクター画像パス
+		charactorData.ImagePath = outputVec[19];
+		// 職業アイコンパス
+		charactorData.iconImagePath = outputVec[20];
+
+		_charactorDataTable[idx++] = charactorData;
+	}
 }
 
 DataBase::~DataBase()
@@ -49,4 +96,16 @@ float DataBase::GetAttributeRate(const Attribute self, const Attribute target)co
 	}
 
 	return _attributeRateTable.at(selfSize_t).at(targetSize_t);
+}
+
+int DataBase::GetCharactorImageHandle(const CharactorType charactorType, const Team team) const
+{
+	char str[256];
+	sprintf_s(str, 256, "%s%s", GetCharactorData(charactorType).ImagePath.c_str(), team == Team::player ? "_player.png" : "_enemy.png");
+	return Application::Instance().GetFileSystem()->GetImageHandle(str);
+}
+
+const DataBase::CharactorData& DataBase::GetCharactorData(const CharactorType charactorType) const
+{
+	return _charactorDataTable.at(static_cast<size_t>(charactorType));
 }

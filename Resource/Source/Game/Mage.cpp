@@ -15,30 +15,9 @@ Mage::Mage(const uint8_t level, const Vector2Int& mapPos, const Team team, const
 	std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	:Charactor(level, mapPos, team, groupNum, mapCtrl, ctrl, effects, camera)
 {
-	_name = "Mage";
-	const Size divSize = Size(32, 32);
-	if (_team == Team::player)
-	{
-		_animator->SetImage("Resource/Image/Charactor/mage_player.png");
-	}
-	else
-	{
-		_animator->SetImage("Resource/Image/Charactor/mage_enemy.png");
-	}
 	_battleC = make_shared<MageBC>(*this, _animator->GetImageH(), _camera);
 
-	InitAnim();
-
-	_status = Status(level, 20, 10, 5, 5, 5, 5, 5, 5, Attribute::red);
-	_status.health += level * 0.6f;
-	_status.power += level * 0.5f;
-	_status.defense += level * 0.6f;
-	_status.speed += level * 0.4f;
-	_status.skill += level * 0.5f;
-	_startStatus = _status;
-
-	_iconPath = "Resource/Image/Icon/mageIcon.png";
-	_attackRange = Range(1, 2);
+	CharactorDataInit(CharactorType::mage, level);
 }
 
 Mage::~Mage()

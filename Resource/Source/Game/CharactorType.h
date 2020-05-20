@@ -4,7 +4,6 @@
 
 enum class CharactorType
 {
-	none,
 	swordman,
 	soldier,
 	warrior,

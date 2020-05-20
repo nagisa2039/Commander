@@ -213,6 +213,9 @@
     <ClCompile Include="Resource\Source\Game\CorsorTarget.cpp">
       <Filter>ソース ファイル\Game\Actor\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Game\Status.cpp">
+      <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -367,6 +370,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\CorsorTarget.h">
       <Filter>ヘッダー ファイル\Game\Actor\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Status.h">
+      <Filter>ヘッダー ファイル\Game\Actor\Charactor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

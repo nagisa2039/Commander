@@ -40,6 +40,7 @@
     <ClCompile Include="Resource\Source\Game\PlayerCommander.cpp" />
     <ClCompile Include="Resource\Source\Game\SlashingEffect.cpp" />
     <ClCompile Include="Resource\Source\Game\Soldier.cpp" />
+    <ClCompile Include="Resource\Source\Game\Status.cpp" />
     <ClCompile Include="Resource\Source\Game\Swordsman.cpp" />
     <ClCompile Include="Resource\Source\Game\Team.cpp" />
     <ClCompile Include="Resource\Source\Game\TurnChangeAnim.cpp" />
@@ -92,6 +93,7 @@
     <ClInclude Include="Resource\Source\Game\PlayerCommander.h" />
     <ClInclude Include="Resource\Source\Game\SlashingEffect.h" />
     <ClInclude Include="Resource\Source\Game\Soldier.h" />
+    <ClInclude Include="Resource\Source\Game\Status.h" />
     <ClInclude Include="Resource\Source\Game\Swordsman.h" />
     <ClInclude Include="Resource\Source\Game\Team.h" />
     <ClInclude Include="Resource\Source\Game\TurnChangeAnim.h" />

@@ -73,13 +73,13 @@ void EditCursor::CharactorEditUpdate(const Input& input)
 		if (input.GetButtonDown(key))
 		{
 			_charactorChipInf.type = static_cast<CharactorType>(static_cast<int>(_charactorChipInf.type) + move);
-			if (_charactorChipInf.type < CharactorType::none)
+			if (static_cast<int>(_charactorChipInf.type) < 0)
 			{
-				_charactorChipInf.type = static_cast<CharactorType>(static_cast<int>(CharactorType::max) - 1);
+				_charactorChipInf.type = CharactorType::max;
 			}
-			if (_charactorChipInf.type > static_cast<CharactorType>(static_cast<int>(CharactorType::max) - 1))
+			if (_charactorChipInf.type > CharactorType::max)
 			{
-				_charactorChipInf.type = CharactorType::none;
+				_charactorChipInf.type = static_cast<CharactorType>(0);
 			}
 			_animCnt = 0;
 		}

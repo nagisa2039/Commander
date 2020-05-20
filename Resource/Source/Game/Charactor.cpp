@@ -12,6 +12,7 @@
 #include <algorithm>
 #include "FileSystem.h"
 #include "CorsorTarget.h"
+#include "DataBase.h"
 
 using namespace std;
 
@@ -218,12 +219,12 @@ bool Charactor::GetMoveStandby() const
 	return _moveStandby;
 }
 
-Charactor::Status Charactor::GetStartStatus() const
+Status Charactor::GetStartStatus() const
 {
 	return _startStatus;
 }
 
-Charactor::Status Charactor::GetStatus() const
+Status Charactor::GetStatus() const
 {
 	Status status = _status;
 
@@ -634,52 +635,29 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 	return false;
 }
 
-int Charactor::Status::GetDamage(const Status& target)const
+void Charactor::CharactorDataInit(const CharactorType& type, const uint8_t& level)
 {
-	return max(power - target.defense - target.defenseCorrection, 0);
-}
+	_charactorType = type;
 
-int Charactor::Status::GetHitRate() const
-{
-	return 100 + skill * 2;
-}
+	auto charactorData = Application::Instance().GetDataBase().GetCharactorData(_charactorType);
+	_name = charactorData.name;
+	_animator->SetImageHandle(Application::Instance().GetDataBase().GetCharactorImageHandle(_charactorType, _team));
 
-int Charactor::Status::GetHit(const Status& target) const
-{
-	return min(100, max(0, GetHitRate() - target.GetAvoidance()));
-}
+	InitAnim();
 
-int Charactor::Status::GetCriticalRate() const
-{
-	return min(100, max(0, skill / 5));
-}
 
-int Charactor::Status::GetCritical(const Status& target) const
-{
-	return min(100, max(0, skill / 5));
-}
+	_status = charactorData.initialStatus;
+	_status.attribute = Attribute::red;
 
-int Charactor::Status::GetDifense() const
-{
-	return this->defense + this->defenseCorrection;
-}
+	_status.health += level * charactorData.statusGrowRate.health / 100.0f;
+	_status.power += level * charactorData.statusGrowRate.power / 100.0f;
+	_status.defense += level * charactorData.statusGrowRate.defense / 100.0f;
+	_status.magic_defense += level * charactorData.statusGrowRate.magic_defense / 100.0f;
+	_status.speed += level * charactorData.statusGrowRate.speed / 100.0f;
+	_status.skill += level * charactorData.statusGrowRate.skill / 100.0f;
 
-int Charactor::Status::GetMagicDifense() const
-{
-	return this->magic_defense + this->defenseCorrection;
-}
+	_startStatus = _status;
 
-int Charactor::Status::GetAvoidance() const
-{
-	return GetAttackSpeed() * 2 + this->avoidanceCorrection;
-}
-
-bool Charactor::Status::CheckPursuit(const Status& target) const
-{
-	return GetAttackSpeed() - target.GetAttackSpeed() >= 4;
-}
-
-int Charactor::Status::GetAttackSpeed()const
-{
-	return this->speed;
+	_iconPath = charactorData.iconImagePath;
+	_attackRange = charactorData.range;
 }

@@ -2,6 +2,7 @@
 #include "../Utility/DxLibUtility.h"
 #include "../System/Application.h"
 #include "../System/FileSystem.h"
+#include "DataBase.h"
 #include "../Game/Camera.h"
 #include "Charactor.h"
 #include "DxLib.h"
@@ -102,23 +103,11 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 	_mapChipData[static_cast<size_t>(Map_Chip::river_corner3)]		= MapChipData( DrawData(Vector2Int(0, 256),	Size(32, 32), "mapchip1.png"), "êÏ",	0x6699ff, -1);
 	_mapChipData[static_cast<size_t>(Map_Chip::rock)]				= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip2.png"), "ä‚",	0x663300, -1);
 
-	_iconPaths[static_cast<size_t>(CharactorType::swordman)] = "none";
-	_iconPaths[static_cast<size_t>(CharactorType::swordman)] = "swordman";
-	_iconPaths[static_cast<size_t>(CharactorType::soldier)] = "soldier";
-	_iconPaths[static_cast<size_t>(CharactorType::warrior)] = "warrior";
-	_iconPaths[static_cast<size_t>(CharactorType::mage)] = "mage";
-	_iconPaths[static_cast<size_t>(CharactorType::archer)] = "archer";
-
 	_charactorChips.clear();
 	_charactorChips.reserve(30);
 
 	DrawToMapFloorScreen();
 	DrawToMapChipScreen();
-
-	_charactorCreateFuncs[static_cast<size_t>(CharactorType::none)] =
-		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
-	{
-	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::swordman)] = 
 		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
@@ -248,7 +237,7 @@ bool MapCtrl::SetCharactorChip(const CharactorChipInf& charactorChipInf)
 			itr++;
 		}
 	}
-	if (charactorChipInf.type == CharactorType::none || charactorChipInf.type == CharactorType::max)
+	if (charactorChipInf.type == CharactorType::max)
 	{
 		return true;
 	}
@@ -260,10 +249,8 @@ bool MapCtrl::DrawCharactorChip(const CharactorChipInf& charactorChipInf, const 
 {
 	auto chipSize = GetChipSize();
 	Vector2Int leftup = offset + charactorChipInf.mapPos * chipSize;
-	std::string path("Resource/Image/Charactor/");
-	path = path + _iconPaths[static_cast<size_t>(charactorChipInf.type)] + (charactorChipInf.team == Team::player ? "_player" : "_enemy") + ".png";
-	int handle = Application::Instance().GetFileSystem()->GetImageHandle(path.c_str());
-	if (charactorChipInf.type == CharactorType::none)
+	int handle = Application::Instance().GetDataBase().GetCharactorImageHandle(charactorChipInf.type, charactorChipInf.team);
+	if (charactorChipInf.type == CharactorType::max)
 	{
 		return false;
 	}

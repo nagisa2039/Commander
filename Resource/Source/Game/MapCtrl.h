@@ -77,7 +77,7 @@ public:
 	void Draw(const Camera& camera, const bool edit = false);
 
 	Size GetChipSize()const;
-	Size GetMapCnt()const;
+	Size GetMapSize()const;
 
 	// そのマスにいるキャラクターを返す
 	Charactor* GetMapPosChar(const Vector2Int mapPos)const;
@@ -97,7 +97,7 @@ public:
 	void RouteSearch(Charactor& charactor);
 
 	// 指定した移動力で行ける場所を探す
-	bool MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, std::list<Astar::ResultPos>& resutlPosList, const Team team);
+	bool MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, std::vector<std::vector<std::list<Astar::ResultPos>>>& resultPosListVec2, const Team team);
 
 	// 指定キャラから視野範囲にいるキャラクターを返す
 	Vector2Int SearchMovePos(Charactor& charactor);

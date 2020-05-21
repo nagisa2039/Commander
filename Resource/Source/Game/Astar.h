@@ -2,6 +2,7 @@
 #include <list>
 #include <vector>
 #include <array>
+#include <map>
 #include "../Utility/Geometry.h"
 #include "../Utility/Dir.h"
 #include "Team.h"
@@ -13,13 +14,14 @@ public:
 	{
 		bool attack;
 		Vector2Int mapPos;
-		ResultPos* parent;
+		ResultPos* prev;
+		ResultPos* next;
 		Dir dir;
 		int moveCnt;	// 消費する移動量
 
-		ResultPos() :attack(false), mapPos(Vector2Int()), parent(nullptr), dir(Dir::left), moveCnt(0){};
+		ResultPos() :attack(false), mapPos(Vector2Int()), prev(nullptr), next(nullptr), dir(Dir::left), moveCnt(0){};
 		ResultPos(const bool atc, const Vector2Int& mapP, ResultPos* parent, const Dir d, const unsigned int mc)
-			:attack(atc), mapPos(mapP), parent(parent), dir(d), moveCnt(mc) {};
+			:attack(atc), mapPos(mapP), prev(parent), next(nullptr), dir(d), moveCnt(mc) {};
 	};
 
 	struct MapData
@@ -60,7 +62,7 @@ private:
 
 	// 全ての移動可能範囲を検索
 	void AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, 
-		const std::vector<std::vector<MapData>>& mapData, std::list<Astar::ResultPos>& resutlPosList, const Team team, const bool addThrough, const bool heal);
+		const std::vector<std::vector<MapData>>& mapData, std::vector<std::vector<std::list<Astar::ResultPos>>>& resutlPosListVec2, const Team team, const bool addThrough, const bool heal);
 
 public:
 	Astar();
@@ -68,9 +70,9 @@ public:
 
 	// 開始位置から終端位置までのマスをリストに格納して返す。見つからなかった場合はリストを空にして返す
 	void RouteSearch(const Vector2Int& startMapPos, const int move, const Range& attackRange, 
-		const std::vector<std::vector<MapData>>& mapData, std::list<Astar::ResultPos>& resutlPosList, const Team team, const bool heal);
+		const std::vector<std::vector<MapData>>& mapData, std::vector<std::vector<std::list<Astar::ResultPos>>>& resutlPosListVec2, const Team team, const bool heal);
 
 	// 一つのルートを見つけるようの
-	bool MoveRouteSerch(const Vector2Int& startMapPos, const int move, const std::vector<std::vector<MapData>>& mapData, std::list<Astar::ResultPos>& resutlPosList, const Team team);
+	bool MoveRouteSerch(const Vector2Int& startMapPos, const int move, const std::vector<std::vector<MapData>>& mapData, std::vector<std::vector<std::list<Astar::ResultPos>>>& resutlPosListVec2, const Team team);
 };
 

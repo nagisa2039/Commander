@@ -75,7 +75,7 @@ void EditCursor::CharactorEditUpdate(const Input& input)
 			_charactorChipInf.type = static_cast<CharactorType>(static_cast<int>(_charactorChipInf.type) + move);
 			if (static_cast<int>(_charactorChipInf.type) < 0)
 			{
-				_charactorChipInf.type = static_cast<CharactorType>(static_cast<int>(CharactorType::max) - 1);
+				_charactorChipInf.type = static_cast<CharactorType>(static_cast<int>(CharactorType::max));
 			}
 			if (_charactorChipInf.type > CharactorType::max)
 			{

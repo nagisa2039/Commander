@@ -19,7 +19,7 @@ MapEditScene::MapEditScene(SceneController& controller):Scene(controller)
 
    _camera->AddTargetActor(&(*_editCursor));
 
-   auto mapSize = _mapCtrl->GetMapCnt() * _mapCtrl->GetChipSize();
+   auto mapSize = _mapCtrl->GetMapSize() * _mapCtrl->GetChipSize();
    _camera->SetLimitRect(Rect(mapSize.ToVector2Int()*0.5, mapSize));
 
    _mapCtrl->LoadMap("map0");

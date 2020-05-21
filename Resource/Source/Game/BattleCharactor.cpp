@@ -62,6 +62,21 @@ void BattleCharactor::AttackUpdate(BattleScene& battleScene)
 			auto targetStatus = _targetChar->GetCharacotr().GetStatus();
 
 			auto targetCenterPos = _targetChar->GetCenterPos();
+
+			auto Damage = [&](const int damage, const bool critical = false)
+			{
+				char damageText[10];
+				sprintf_s(damageText, 10, "%d", abs(damage));
+				battleScene.GetEffectVec().emplace_back(make_shared<FlyText>(damageText, targetCenterPos, 60 * 1, _camera, critical));
+				_targetChar->GetCharacotr().AddDamage(damage);
+			};
+
+			if (selfStatus.heal)
+			{
+				Damage(-selfStatus.GetRecover());
+				return;
+			}
+
 			// –½’†”»’è
 			if (selfStatus.GetHit(targetStatus) <= rand() % 100)
 			{
@@ -75,10 +90,7 @@ void BattleCharactor::AttackUpdate(BattleScene& battleScene)
 			int damage = selfStatus.GetDamage(targetStatus) * (critical ? 3 : 1)
 				* Application::Instance().GetDataBase().GetAttributeRate(selfStatus.attribute, targetStatus.attribute);
 
-			char damageText[10];
-			sprintf_s(damageText, 10, "%d", damage);
-			battleScene.GetEffectVec().emplace_back(make_shared<FlyText>(damageText, targetCenterPos, 60 * 1, _camera, critical));
-			_targetChar->GetCharacotr().AddDamage(damage);
+			Damage(damage, critical);
 		}
 	}
 }

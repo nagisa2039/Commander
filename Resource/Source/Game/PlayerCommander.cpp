@@ -58,9 +58,6 @@ void PlayerCommander::SelectUpdate(const Input& input)
 
 	if (input.GetButtonDown(0, "space"))
 	{
-		// 選択キャラの移動範囲外
-		if (!CheckMoveRange()) return;
-
 		auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
 		if (charactor != nullptr)
 		{
@@ -68,8 +65,15 @@ void PlayerCommander::SelectUpdate(const Input& input)
 			{
 				// 選択中のキャラを行動終了にする
 				_selectChar->MoveEnd();
-				_camera.AddTargetActor(this);
+				//_camera.AddTargetActor(this);
 				SelectCharactor(nullptr);
+				return;
+			}
+
+			// 味方ならそのキャラクターを選択する
+			if (!_selectChar->GetStatus().heal && charactor->GetTeam() == _selectChar->GetTeam())
+			{
+				SelectCharactor(charactor);
 				return;
 			}
 
@@ -92,6 +96,9 @@ void PlayerCommander::SelectUpdate(const Input& input)
 		}
 		else
 		{
+			// 移動範囲内か
+			if (!CheckMoveRange())return;
+
 			// 選択中のキャラがいるなら移動
 			_camera.AddTargetActor(_selectChar);
 			_selectChar->MoveMapPos(_mapPos);
@@ -102,26 +109,21 @@ void PlayerCommander::SelectUpdate(const Input& input)
 
 bool PlayerCommander::CheckMoveRange()
 {
-	if (_selectChar == nullptr)return false;
-	for (const auto& resutlPos : _selectChar->GetResutlPosList())
-	{
-		if (resutlPos.mapPos == _mapPos)
-		{
-			return true;
-		}
-	}
-	return false;
+	if (_selectChar == nullptr) return false;
+
+	return (_selectChar->GetResutlPosListVec2()[_mapPos.y][_mapPos.x].size() > 0);
 }
 
 bool PlayerCommander::CheckAttackMass()
 {
-	if (_selectChar == nullptr)return false;
-	for (const auto& resutlPos : _selectChar->GetResutlPosList())
+	if (_selectChar == nullptr) return false;
+
+	auto resultPosList = _selectChar->GetResutlPosListVec2()[_mapPos.y][_mapPos.x];
+	if (resultPosList.size() <= 0) return false; 
+
+	for (const auto& resultPos : resultPosList)
 	{
-		if (resutlPos.mapPos == _mapPos && resutlPos.attack)
-		{
-			return true;
-		}
+		if (resultPos.attack)return true;
 	}
 	return false;
 }

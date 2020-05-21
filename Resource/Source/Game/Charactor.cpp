@@ -165,38 +165,24 @@ void Charactor::DrawMovableMass(const uint8_t alpha) const
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 
-	int currentX = 0;
-	list<int> drawYList;
-	for (const auto& movePos : _resutlPosList)
+	for (size_t y = 0; y < _resultPosListVec2.size(); y++)
 	{
-		if (currentX != movePos.mapPos.x)
+		for (size_t x = 0; x < _resultPosListVec2[y].size(); x++)
 		{
-			currentX = movePos.mapPos.x;
-			drawYList.clear();
+			if (_resultPosListVec2[y][x].size() <= 0)continue;
+
+			Vector2Int mapPos(x,y);
+			Rect box(offset + (mapPos * chipSize.ToVector2Int() + chipSize * 0.5) + -1, chipSize);
+			unsigned int color = CheckAttackMapPos(mapPos) ? (_status.heal ? 0x00ff00 : 0xff0000) : 0x0000ff;
+			box.Draw(color);
+			box.Draw(color, false);
+
+			Vector2Int leftup = offset + mapPos * chipSize.ToVector2Int();
 		}
-		bool skip = false;
-		for (const auto drawY : drawYList)
-		{
-			if (drawY == movePos.mapPos.y)
-			{
-				skip = true;
-				break;
-			}
-		}
-
-		if (skip) { continue; }
-		drawYList.emplace_back(movePos.mapPos.y);
-
-		Rect box(offset + (movePos.mapPos * chipSize.ToVector2Int() + chipSize*0.5) +-1, chipSize);
-		unsigned int color = movePos.attack ? (_status.heal ? 0x00ff00 : 0xff0000) : 0x0000ff;
-		box.Draw(color);
-		box.Draw(color, false);
-
-		Vector2Int leftup = offset + movePos.mapPos * chipSize.ToVector2Int();
-		DrawFormatString(leftup.x, leftup.y, 0x000000, "%d", movePos.moveCnt);
 	}
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+		
 
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }
 
 bool Charactor::GetIsSelect() const
@@ -270,16 +256,9 @@ const std::string& Charactor::GetName() const
 	return _name;
 }
 
-const Astar::ResultPos* Charactor::GetResutlPos(const Vector2Int& mapPos)
+const std::list<Astar::ResultPos>& Charactor::GetResutlPosList(const Vector2Int& mapPos)
 {
-	for (const auto& resutlPos : _resutlPosList)
-	{
-		if (resutlPos.mapPos == mapPos)
-		{
-			return &resutlPos;
-		}
-	}
-	return nullptr;
+	return _resultPosListVec2[mapPos.y][mapPos.x];
 }
 
 unsigned int Charactor::GetGroupNum() const
@@ -349,9 +328,9 @@ void Charactor::SearchAndMove()
 	MoveMapPos(_mapCtrl.SearchMovePos(*this));
 }
 
-std::list<Astar::ResultPos>& Charactor::GetResutlPosList()
+std::vector<std::vector<std::list<Astar::ResultPos>>>& Charactor::GetResutlPosListVec2()
 {
-	return _resutlPosList;
+	return _resultPosListVec2;
 }
 
 void Charactor::AddDamage(const int damage)
@@ -373,9 +352,9 @@ void Charactor::DrawRoute(const Vector2Int& targetPos)
 {
 	if (targetPos == GetMapPos()) return;
 
-	auto itr = _resutlPosList.begin();
+	auto itr = _resultPosListVec2[targetPos.y][targetPos.x].begin();
 	bool locate = false;
-	for (; itr != _resutlPosList.end(); itr++)
+	for (; itr != _resultPosListVec2[targetPos.y][targetPos.x].end(); itr++)
 	{
 		if (itr->mapPos == targetPos)
 		{
@@ -388,7 +367,7 @@ void Charactor::DrawRoute(const Vector2Int& targetPos)
 
 	list<Astar::ResultPos*> routeList;
 	bool begin = true;
-	for (auto resutlPos = &*itr; resutlPos != nullptr; resutlPos = resutlPos->parent)
+	for (auto resutlPos = &*itr; resutlPos != nullptr; resutlPos = resutlPos->prev)
 	{
 		if (resutlPos->attack)continue;
 		routeList.emplace_back(resutlPos);
@@ -402,7 +381,7 @@ void Charactor::DrawRoute(const Vector2Int& targetPos)
 
 		if (0 > dir_idx || dir_idx >= _dirTable.size())return;
 
-		Vector2Int endPos = offset + (route->parent == nullptr ? GetMapPos() : route->parent->mapPos) * chipSize + chipSize * 0.5f;
+		Vector2Int endPos = offset + (route->prev == nullptr ? GetMapPos() : route->prev->mapPos) * chipSize + chipSize * 0.5f;
 		Vector2Int startPos = offset + route->mapPos * chipSize + chipSize * 0.5f;
 		DrawLine(startPos, endPos, 0xffff00, 10);
 		if (begin)
@@ -447,6 +426,13 @@ Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team t
 
 	_rigid = 0;
 	_moveStandby = false;
+
+	auto mapSize = _mapCtrl.GetMapSize();
+	_resultPosListVec2.resize(mapSize.h);
+	for (auto& resultPosListVec : _resultPosListVec2)
+	{
+		resultPosListVec.resize(mapSize.w);
+	}
 }
 
 Charactor::~Charactor()
@@ -522,21 +508,12 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 
 	_moveDirList.clear();
 
-	std::list<Astar::ResultPos> targetPosList;
-	for (const auto& resultPos : _resutlPosList)
-	{
-		if (mapPos == resultPos.mapPos)
-		{
-			targetPosList.emplace_back(resultPos);
-		}
-	}
-
-	if (targetPosList.size() <= 0)
+	if (_resultPosListVec2[mapPos.y][mapPos.x].size() <= 0)
 	{
 		return false;
 	}
 
-	Astar::ResultPos startResultPos = *targetPosList.begin();
+	Astar::ResultPos startResultPos = *_resultPosListVec2[mapPos.y][mapPos.x].begin();
 	auto targetCharactor = _mapCtrl.GetMapPosChar(mapPos);
 	if (targetCharactor != nullptr)
 	{
@@ -544,9 +521,9 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 		Range criticalRange = _attackRange.GetCriticalRange(targetRange);
 		if (criticalRange != Range(0, 0))
 		{
-			for (const auto& targetPos : targetPosList)
+			for (const auto& targetPos : _resultPosListVec2[mapPos.y][mapPos.x])
 			{
-				Vector2Int startPos = targetPos.parent == nullptr ? GetMapPos() : targetPos.parent->mapPos;
+				Vector2Int startPos = targetPos.prev == nullptr ? GetMapPos() : targetPos.prev->mapPos;
 				Vector2Int disVec = targetPos.mapPos - startPos;
 				unsigned int distance = abs(disVec.x) + abs(disVec.y);
 				if (criticalRange.Hit(distance))
@@ -563,20 +540,19 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 	std::list<Astar::ResultPos> oneLineResutlList;
 	oneLineResutlList.clear();
 	oneLineResutlList.emplace_front(startResultPos);
-	Astar::ResultPos* rp = startResultPos.parent;
+	Astar::ResultPos* rp = startResultPos.prev;
 
 	// attackマスが何マス続くかの数(攻撃範囲内かの確認のため)
 	int attackMassCnt = 0;
-	for (; rp->parent != nullptr;)
+	for (; rp->prev != nullptr;)
 	{
 		oneLineResutlList.emplace_back(*rp);
 		if (rp->attack)
 		{
 			attackMassCnt++;
 		}
-		rp = rp->parent;
+		rp = rp->prev;
 	}
-
 
 	// 攻撃範囲外のマスを削除
 	for (int i = _attackRange.max; i < attackMassCnt; i++)
@@ -584,7 +560,7 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 		oneLineResutlList.pop_front();
 	}
 
-	list<Astar::ResultPos> addResultPosList;
+	vector<vector<list<Astar::ResultPos>>> addResultPosListVec2;
 	bool coverCheck = true;
 	for (auto itr = oneLineResutlList.begin(); itr != oneLineResutlList.end(); itr++)
 	{
@@ -610,16 +586,22 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 		}
 		else
 		{
-			addResultPosList.clear();
-			if (_mapCtrl.MoveRouteSearch(itr->mapPos, max(0, _status.move - itr->moveCnt - 1), addResultPosList, _team))
+			for (auto& addResultPosListVec : addResultPosListVec2)
+			{
+				for (auto& addResultPosList : addResultPosListVec)
+				{
+					addResultPosList.clear();
+				}
+			}
+
+			if (_mapCtrl.MoveRouteSearch(itr->mapPos, max(0, _status.move - itr->moveCnt - 1), addResultPosListVec2, _team))
 			{
 				coverCheck = false;
 				_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
-				for (const auto& addResultPos : addResultPosList)
-				{
-					_moveDirList.emplace_back(MoveInf(addResultPos.dir, addResultPos.attack, addResultPos.mapPos));
-				}
-				for (auto resutlPos = itr->parent; resutlPos->parent != nullptr; resutlPos = resutlPos->parent)
+				auto addResultPos = *addResultPosListVec2[itr->mapPos.y][itr->mapPos.x].begin();
+				_moveDirList.emplace_back(MoveInf(addResultPos.dir, addResultPos.attack, addResultPos.mapPos));
+				
+				for (auto resutlPos = itr->prev; resutlPos->prev != nullptr; resutlPos = resutlPos->prev)
 				{
 					_moveDirList.emplace_front(MoveInf(resutlPos->dir, resutlPos->attack, resutlPos->mapPos));
 				}
@@ -670,4 +652,16 @@ void Charactor::CharactorDataInit(const CharactorType& type, const uint8_t& leve
 
 	_iconPath = charactorData.iconImagePath;
 	_attackRange = charactorData.range;
+}
+
+bool Charactor::CheckAttackMapPos(const Vector2Int mapPos) const
+{
+	for (const auto& resutlPos : _resultPosListVec2[mapPos.y][mapPos.x])
+	{
+		if (resutlPos.attack)
+		{
+			return true;
+		}
+	}
+	return false;
 }

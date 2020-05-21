@@ -171,7 +171,7 @@ void MapCtrl::Draw(const Camera& camera, const bool edit)
 			DrawCharactorChip(charactorChipInf, offset);
 		}
 
-		auto mapSize = GetMapCnt();
+		auto mapSize = GetMapSize();
 		for (int h = 0; h <= mapSize.h; h++)
 		{
 			DrawLine(Vector2Int(0, h * CHIP_SIZE_H) + offset, 
@@ -190,7 +190,7 @@ Size MapCtrl::GetChipSize()const
 	return Size(CHIP_SIZE_W, CHIP_SIZE_H);
 }
 
-Size MapCtrl::GetMapCnt() const
+Size MapCtrl::GetMapSize() const
 {
 	return Size(MAP_CHIP_CNT_W, MAP_CHIP_CNT_H);
 }
@@ -291,7 +291,7 @@ bool MapCtrl::SaveMap(const std::string fileName)
 	}*/
 
 	// マップサイズの書き込み
-	auto mapSize = GetMapCnt();
+	auto mapSize = GetMapSize();
 	fwrite(&mapSize, sizeof(mapSize), 1, fp);
 
 	// マップチップの書き込み
@@ -328,7 +328,7 @@ bool MapCtrl::LoadMap(const std::string fileName)
 	Size mapSize;
 	fread_s(&mapSize, sizeof(mapSize), sizeof(mapSize), 1, fp);
 
-	if (mapSize != GetMapCnt())
+	if (mapSize != GetMapSize())
 	{
 		return false;
 	}
@@ -359,15 +359,15 @@ void MapCtrl::RouteSearch(Charactor& charactor)
 	CreateMapVec(mapVec2, charactor.GetTeam());
 
 	return _astar->RouteSearch(charactor.GetMapPos(), charactor.GetStatus().move, charactor.GetAttackRange(), 
-		mapVec2, charactor.GetResutlPosList(), charactor.GetTeam(), charactor.GetStatus().heal);
+		mapVec2, charactor.GetResutlPosListVec2(), charactor.GetTeam(), charactor.GetStatus().heal);
 }
 
-bool MapCtrl::MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, std::list<Astar::ResultPos>& resutlPosList, const Team team)
+bool MapCtrl::MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, std::vector<std::vector<std::list<Astar::ResultPos>>>& resutlPosListVec2, const Team team)
 {
 	std::vector<std::vector<Astar::MapData>> mapVec2;
 	CreateMapVec(mapVec2, team);
 
-	return _astar->MoveRouteSerch(startPos, move, mapVec2, resutlPosList, team);
+	return _astar->MoveRouteSerch(startPos, move, mapVec2, resutlPosListVec2, team);
 }
 
 Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
@@ -376,9 +376,9 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
 	CreateMapVec(mapVec2, charactor.GetTeam());
 	auto status = charactor.GetStatus();
 
-	auto& resultPosList = charactor.GetResutlPosList();
+	auto& resultPosListVec2 = charactor.GetResutlPosListVec2();
 	_astar->RouteSearch(charactor.GetMapPos(), charactor.GetMoveActive() ? 100 : status.move, charactor.GetAttackRange(), 
-		mapVec2, resultPosList, charactor.GetTeam(), charactor.GetStatus().heal);
+		mapVec2, resultPosListVec2, charactor.GetTeam(), charactor.GetStatus().heal);
 
 	struct TargetCharactor
 	{
@@ -393,32 +393,37 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
 	list<TargetCharactor> targetCharactorList;
 	// 派以外の敵を格納するリスト
 	list<Charactor*> outRangeCharactorList;
-
-	for (const auto& resultPos : resultPosList)
-	{ 
-		// 攻撃マスになるまでcontinue
-		if (!resultPos.attack)
+	for (const auto& resultPosListVec : resultPosListVec2)
+	{
+		for (const auto& resultPosList : resultPosListVec)
 		{
-			continue;
-		}
+			for (const auto& resultPos : resultPosList)
+			{
+				// 攻撃マスになるまでcontinue
+				if (!resultPos.attack)
+				{
+					continue;
+				}
 
-		auto mapCharactor = GetMapPosChar(resultPos.mapPos);
-		// そのマスに敵がいるか? 居ないならcontinue
-		if (mapCharactor == nullptr || charactor.GetTeam() == mapCharactor->GetTeam())
-		{
-			continue;
-		}
+				auto mapCharactor = GetMapPosChar(resultPos.mapPos);
+				// そのマスに敵がいるか? 居ないならcontinue
+				if (mapCharactor == nullptr || charactor.GetTeam() == mapCharactor->GetTeam())
+				{
+					continue;
+				}
 
-		// 攻撃範囲外
-		if (resultPos.moveCnt > status.move)
-		{
-			outRangeCharactorList.emplace_back(mapCharactor);
-			continue;
-		}
+				// 攻撃範囲外
+				if (resultPos.moveCnt > status.move)
+				{
+					outRangeCharactorList.emplace_back(mapCharactor);
+					continue;
+				}
 
-		auto mapPosSub = mapCharactor->GetMapPos() - (resultPos.parent == nullptr ? charactor.GetMapPos() : resultPos.parent->mapPos);
-		int distance = abs(mapPosSub.x) + abs(mapPosSub.y);
-		targetCharactorList.emplace_back(TargetCharactor(mapCharactor, distance));
+				auto mapPosSub = mapCharactor->GetMapPos() - (resultPos.prev == nullptr ? charactor.GetMapPos() : resultPos.prev->mapPos);
+				int distance = abs(mapPosSub.x) + abs(mapPosSub.y);
+				targetCharactorList.emplace_back(TargetCharactor(mapCharactor, distance));
+			}
+		}
 	}
 	
 	// 選別

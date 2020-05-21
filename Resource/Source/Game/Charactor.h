@@ -50,7 +50,7 @@ protected:
 	Team _team;
 	MapCtrl& _mapCtrl;
 	SceneController& _controller;
-	std::list<Astar::ResultPos> _resutlPosList;
+	std::vector<std::vector<std::list<Astar::ResultPos>>> _resultPosListVec2;
 	std::shared_ptr<Animator> _animator;
 	std::vector<std::shared_ptr<Effect>>& _effects;
 	std::shared_ptr<BattleCharactor> _battleC;
@@ -111,6 +111,9 @@ protected:
 
 	void CharactorDataInit(const CharactorType& type, const uint8_t& level);
 
+	// 指定した座標に攻撃マスがあるか調べる
+	bool CheckAttackMapPos(const Vector2Int mapPos)const;
+
 public:
 	Charactor(const uint8_t level, const Vector2Int& mapPos, const Team team, const unsigned int groupNum, MapCtrl& mapCtrl, SceneController& ctrl, 
 		std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
@@ -142,7 +145,7 @@ public:
 	bool GetIsMoveAnim()const;
 	Range GetAttackRange()const;
 	const std::string& GetName()const;
-	const Astar::ResultPos* GetResutlPos(const Vector2Int& mapPos);
+	const std::list<Astar::ResultPos>& GetResutlPosList(const Vector2Int& mapPos);
 	unsigned int GetGroupNum()const;
 
 	void SetIsSelect(const bool select);
@@ -158,7 +161,7 @@ public:
 	void TurnReset();
 
 	void SearchAndMove();
-	std::list<Astar::ResultPos>& GetResutlPosList();
+	std::vector<std::vector<std::list<Astar::ResultPos>>>& GetResutlPosListVec2();
 
 	void AddDamage(const int damage);
 

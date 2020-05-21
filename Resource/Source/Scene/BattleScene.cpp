@@ -81,11 +81,10 @@ bool BattleScene::RightHPAnim(const Input& input)
 	_rightBC.UIAnimUpdate();
 	if (_rightBC.GetHPAnimEnd())
 	{
+		if (_leftBC.GetCharacotr().GetStatus().heal) return false;
+
 		// €‚ñ‚Å‚¢‚½‚çI‚í‚é
-		if (_rightBC.GetCharacotr().GetIsDying())
-		{
-			return false;
-		}
+		if (_rightBC.GetCharacotr().GetIsDying()) return false;
 
 		// ’ÇŒ‚”»’è
 		if (_pursuit)

@@ -106,14 +106,25 @@ void PlayerUI::AddBattlePre()
 		return;
 	}
 
-	auto attackPos = self->GetResutlPos(_playerCommander.GetMapPos());
-	if (attackPos == nullptr)
+	auto resultPosList = self->GetResutlPosList(_playerCommander.GetMapPos());
+	if(resultPosList.size() <= 0)
 	{
 		_battlePreDeque.clear();
 		return;
 	}
 
-	_battlePreDeque.emplace_front(make_shared<BattlePrediction>(*self, *charactor, _battlePreDeque, *attackPos));
+	auto itr = resultPosList.begin();
+	for (; itr != resultPosList.end(); itr++)
+	{
+		if (itr->attack)break;
+	}
+	if (itr == resultPosList.end())
+	{
+		_battlePreDeque.clear();
+		return;
+	}
+
+	_battlePreDeque.emplace_front(make_shared<BattlePrediction>(*self, *charactor, _battlePreDeque, *itr));
 }
 
 void PlayerUI::ClearBattlePre()

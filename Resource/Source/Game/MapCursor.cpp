@@ -19,7 +19,7 @@ void MapCursor::CursorMove(const Input& input)
 				return true;
 			}
 
-			auto mapSize = _mapCtrl.GetMapCnt();
+			auto mapSize = _mapCtrl.GetMapSize();
 			if ((oldMapPos + move).x >= 0 && (oldMapPos + move).x < mapSize.w
 				&& (oldMapPos + move).y >= 0 && (oldMapPos + move).y < mapSize.h)
 			{

@@ -13,6 +13,7 @@
 #include "Soldier.h"
 #include "Mage.h"
 #include "Archer.h"
+#include "Priest.h"
 
 #include "SceneController.h"
 #include "Effect.h"
@@ -143,6 +144,13 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 		_charactors.emplace_back(make_shared<Archer>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera));
 		(*_charactors.rbegin())->SetMoveActive(characotChipInf.active);
 	};
+
+	_charactorCreateFuncs[static_cast<size_t>(CharactorType::priest)] =
+		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
+	{
+		_charactors.emplace_back(make_shared<Priest>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera));
+		(*_charactors.rbegin())->SetMoveActive(characotChipInf.active);
+	};
 }
 
 MapCtrl::~MapCtrl()
@@ -249,11 +257,11 @@ bool MapCtrl::DrawCharactorChip(const CharactorChipInf& charactorChipInf, const 
 {
 	auto chipSize = GetChipSize();
 	Vector2Int leftup = offset + charactorChipInf.mapPos * chipSize;
-	int handle = Application::Instance().GetDataBase().GetCharactorImageHandle(charactorChipInf.type, charactorChipInf.team);
 	if (charactorChipInf.type == CharactorType::max)
 	{
 		return false;
 	}
+	int handle = Application::Instance().GetDataBase().GetCharactorImageHandle(charactorChipInf.type, charactorChipInf.team);
 	DrawRectExtendGraph(leftup.x, leftup.y, leftup.x + chipSize.w, leftup.y + chipSize.h, 0, 0, 32, 32, handle, true);
 	DrawFormatString(leftup.x, leftup.y, 0x000000, "Level.%d", charactorChipInf.level);
 	DrawFormatString(leftup.x, leftup.y + 16, 0x000000, "GN.%d", charactorChipInf.groupNum);
@@ -277,10 +285,10 @@ bool MapCtrl::SaveMap(const std::string fileName)
 	string folderName("Resource/Map/");
 	fopen_s(&fp, (folderName + fileName).c_str(), "wb");
 
-	if (fp == NULL)
+	/*if (fp == NULL)
 	{
 		return false;
-	}
+	}*/
 
 	// マップサイズの書き込み
 	auto mapSize = GetMapCnt();
@@ -350,7 +358,8 @@ void MapCtrl::RouteSearch(Charactor& charactor)
 	std::vector<std::vector<Astar::MapData>> mapVec2;
 	CreateMapVec(mapVec2, charactor.GetTeam());
 
-	return _astar->RouteSearch(charactor.GetMapPos(), charactor.GetStatus().move, charactor.GetAttackRange(), mapVec2, charactor.GetResutlPosList(), charactor.GetTeam());
+	return _astar->RouteSearch(charactor.GetMapPos(), charactor.GetStatus().move, charactor.GetAttackRange(), 
+		mapVec2, charactor.GetResutlPosList(), charactor.GetTeam(), charactor.GetStatus().heal);
 }
 
 bool MapCtrl::MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, std::list<Astar::ResultPos>& resutlPosList, const Team team)
@@ -368,7 +377,8 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
 	auto status = charactor.GetStatus();
 
 	auto& resultPosList = charactor.GetResutlPosList();
-	_astar->RouteSearch(charactor.GetMapPos(), charactor.GetMoveActive() ? 100 : status.move, charactor.GetAttackRange(), mapVec2, resultPosList, charactor.GetTeam());
+	_astar->RouteSearch(charactor.GetMapPos(), charactor.GetMoveActive() ? 100 : status.move, charactor.GetAttackRange(), 
+		mapVec2, resultPosList, charactor.GetTeam(), charactor.GetStatus().heal);
 
 	struct TargetCharactor
 	{

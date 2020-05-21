@@ -67,14 +67,14 @@ DataBase::DataBase()
 		charactorData.range = Range(atoi(outputVec[2].c_str()), atoi(outputVec[3].c_str()));
 		// 初期ステータス
 		charactorData.initialStatus = Status(1, atoi(outputVec[4].c_str()), atoi(outputVec[5].c_str()), atoi(outputVec[6].c_str()),
-			atoi(outputVec[7].c_str()), atoi(outputVec[8].c_str()), atoi(outputVec[9].c_str()), atoi(outputVec[10].c_str()), Attribute::red, outputVec[18] != "");
+			atoi(outputVec[7].c_str()), atoi(outputVec[8].c_str()), atoi(outputVec[9].c_str()), atoi(outputVec[10].c_str()), Attribute::red, outputVec[18] != "", outputVec[19] != "");
 		// ステータス成長率
 		charactorData.statusGrowRate = Status(1, atoi(outputVec[11].c_str()), atoi(outputVec[12].c_str()), atoi(outputVec[13].c_str()),
-			atoi(outputVec[14].c_str()), atoi(outputVec[15].c_str()), atoi(outputVec[16].c_str()), atoi(outputVec[17].c_str()), Attribute::red, outputVec[18] != "");
+			atoi(outputVec[14].c_str()), atoi(outputVec[15].c_str()), atoi(outputVec[16].c_str()), atoi(outputVec[17].c_str()), Attribute::red, outputVec[18] != "", outputVec[19] != "");
 		// キャラクター画像パス
-		charactorData.ImagePath = outputVec[19];
+		charactorData.ImagePath = outputVec[20];
 		// 職業アイコンパス
-		charactorData.iconImagePath = outputVec[20];
+		charactorData.iconImagePath = outputVec[21];
 
 		_charactorDataTable[idx++] = charactorData;
 	}

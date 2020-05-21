@@ -60,7 +60,7 @@ private:
 
 	// 全ての移動可能範囲を検索
 	void AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, 
-		const std::vector<std::vector<MapData>>& mapData, std::list<Astar::ResultPos>& resutlPosList, const Team team, const bool addThrough);
+		const std::vector<std::vector<MapData>>& mapData, std::list<Astar::ResultPos>& resutlPosList, const Team team, const bool addThrough, const bool heal);
 
 public:
 	Astar();
@@ -68,7 +68,7 @@ public:
 
 	// 開始位置から終端位置までのマスをリストに格納して返す。見つからなかった場合はリストを空にして返す
 	void RouteSearch(const Vector2Int& startMapPos, const int move, const Range& attackRange, 
-		const std::vector<std::vector<MapData>>& mapData, std::list<Astar::ResultPos>& resutlPosList, const Team team);
+		const std::vector<std::vector<MapData>>& mapData, std::list<Astar::ResultPos>& resutlPosList, const Team team, const bool heal);
 
 	// 一つのルートを見つけるようの
 	bool MoveRouteSerch(const Vector2Int& startMapPos, const int move, const std::vector<std::vector<MapData>>& mapData, std::list<Astar::ResultPos>& resutlPosList, const Team team);

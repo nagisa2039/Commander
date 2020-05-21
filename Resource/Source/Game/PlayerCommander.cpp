@@ -58,46 +58,72 @@ void PlayerCommander::SelectUpdate(const Input& input)
 
 	if (input.GetButtonDown(0, "space"))
 	{
+		// 選択キャラの移動範囲外
+		if (!CheckMoveRange()) return;
+
 		auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
 		if (charactor != nullptr)
 		{
-			// 行動可能な自軍?
-			if (charactor->GetTeam() == _ctrlTeam && charactor->GetCanMove())
+			if (_selectChar == charactor)
 			{
-				// 選択中のキャラではないか
-				if (_selectChar != &*charactor)
-				{
-					SelectCharactor(charactor);
-				}
-				else
-				{
-					// 選択中のキャラを行動終了にする
-					_camera.AddTargetActor(this);
-					_selectChar->MoveEnd();
-					SelectCharactor(nullptr);
-				}
+				// 選択中のキャラを行動終了にする
+				_selectChar->MoveEnd();
+				_camera.AddTargetActor(this);
+				SelectCharactor(nullptr);
 				return;
 			}
 
-			// 戦闘を行う	選択中のキャラがいるなら移動
-			if (_selectChar->GetCanMove())
+			if (CheckAttackMass())
 			{
+				// 戦闘を行う
 				_uniqueUpdater = &PlayerCommander::BattlePredictionUpdate;
 				_playerUI->AddBattlePre();
 				return;
+			}
+			else
+			{
+				// 行動可能な自軍?
+				if (charactor->GetTeam() == _ctrlTeam && charactor->GetCanMove())
+				{
+					SelectCharactor(charactor);
+					return;
+				}
 			}
 		}
 		else
 		{
 			// 選択中のキャラがいるなら移動
-			if (_selectChar->GetCanMove())
-			{
-				_camera.AddTargetActor(this);
-				_selectChar->MoveMapPos(_mapPos);
-				return;
-			}
+			_camera.AddTargetActor(_selectChar);
+			_selectChar->MoveMapPos(_mapPos);
+			return;
 		}
 	}
+}
+
+bool PlayerCommander::CheckMoveRange()
+{
+	if (_selectChar == nullptr)return false;
+	for (const auto& resutlPos : _selectChar->GetResutlPosList())
+	{
+		if (resutlPos.mapPos == _mapPos)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool PlayerCommander::CheckAttackMass()
+{
+	if (_selectChar == nullptr)return false;
+	for (const auto& resutlPos : _selectChar->GetResutlPosList())
+	{
+		if (resutlPos.mapPos == _mapPos && resutlPos.attack)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 void PlayerCommander::BattlePredictionUpdate(const Input& input)
@@ -108,6 +134,7 @@ void PlayerCommander::BattlePredictionUpdate(const Input& input)
 		if (_selectChar->GetCanMove())
 		{
 			_playerUI->ClearBattlePre();
+			_camera.AddTargetActor(_selectChar);
 			_selectChar->MoveMapPos(_mapPos);
 			_uniqueUpdater = &PlayerCommander::BattaleUpdate;
 			return;

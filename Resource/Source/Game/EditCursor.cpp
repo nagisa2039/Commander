@@ -15,7 +15,7 @@ EditCursor::EditCursor(MapCtrl& mapCtrl, Camera& camera): MapCursor(mapCtrl, cam
 	_mapPos = Vector2Int(0, 0);
 	_pos = Vector2(0, 0);
 	_mapChip = Map_Chip::forest;
-	_charactorChipInf.type = CharactorType::soldier;
+	_charactorChipInf.type = static_cast<CharactorType>(0);
 	_charactorChipInf.level = 5;
 	_charactorChipInf.team = Team::player;
 	_charactorChipInf.mapPos = _mapPos;
@@ -75,7 +75,7 @@ void EditCursor::CharactorEditUpdate(const Input& input)
 			_charactorChipInf.type = static_cast<CharactorType>(static_cast<int>(_charactorChipInf.type) + move);
 			if (static_cast<int>(_charactorChipInf.type) < 0)
 			{
-				_charactorChipInf.type = CharactorType::max;
+				_charactorChipInf.type = static_cast<CharactorType>(static_cast<int>(CharactorType::max) - 1);
 			}
 			if (_charactorChipInf.type > CharactorType::max)
 			{

@@ -14,7 +14,8 @@ struct Status
 	uint8_t move;
 
 	Attribute attribute;		// 属性
-	bool magicAttack;
+	bool magicAttack;	// 魔法攻撃
+	bool heal;		// 回復
 
 	uint8_t defenseCorrection;		// 守備力補正
 	uint8_t avoidanceCorrection;	// 回避力補正
@@ -22,9 +23,9 @@ struct Status
 	Status() : level(1), health(1), power(1), defense(1), magic_defense(1), speed(1), skill(1), move(1),
 		attribute(Attribute::normal), defenseCorrection(0), avoidanceCorrection(0.0f) {};
 	Status(const uint8_t lv, const uint8_t he, const uint8_t pw, const uint8_t df, const uint8_t md,
-		const uint8_t sp, const uint8_t sk, const uint8_t mv, const Attribute at, const bool ma)
+		const uint8_t sp, const uint8_t sk, const uint8_t mv, const Attribute at, const bool ma, const bool heal)
 		: level(lv), health(he), power(pw), defense(df), magic_defense(md), speed(sp), skill(sk), move(mv),
-		attribute(at), magicAttack(ma), defenseCorrection(0), avoidanceCorrection(0) {};
+		attribute(at), magicAttack(ma), heal(heal), defenseCorrection(0), avoidanceCorrection(0) {};
 
 	int GetDamage(const Status& target)const;	// ダメージ
 	int GetHitRate()const;	// 命中率

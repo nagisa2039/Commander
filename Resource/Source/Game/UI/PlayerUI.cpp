@@ -113,12 +113,6 @@ void PlayerUI::AddBattlePre()
 		return;
 	}
 
-	if (self->GetTeam() == charactor->GetTeam())
-	{
-		_battlePreDeque.clear();
-		return;
-	}
-
 	_battlePreDeque.emplace_front(make_shared<BattlePrediction>(*self, *charactor, _battlePreDeque, *attackPos));
 }
 

@@ -55,6 +55,7 @@ bool BattleScene::LeftHPAnim(const Input& input)
 		{
 			// ’ÇŒ‚Ï‚İ‚È‚Ì‚Åí“¬‚ğI—¹‚·‚é
 			_updater = &BattleScene::SceneEndAnim;
+			return true;
 		}
 		else
 		{
@@ -90,6 +91,7 @@ bool BattleScene::RightHPAnim(const Input& input)
 		if (_pursuit)
 		{
 			_updater = &BattleScene::SceneEndAnim;
+			return true;
 		}
 
 		// UŒ‚”ÍˆÍ“à‚©Šm”F

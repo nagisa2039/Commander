@@ -9,6 +9,7 @@ enum class CharactorType
 	warrior,
 	mage,
 	archer,
+	priest,
 	max
 };
 

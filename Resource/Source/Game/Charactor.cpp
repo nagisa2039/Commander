@@ -114,7 +114,7 @@ void Charactor::Move()
 	{
 		// ‚»‚Ìƒ}ƒX‚É“G‚ª‚¢‚½‚çí“¬
 		auto charactor = _mapCtrl.GetMapPosChar(it->mapPos);
-		if (charactor != nullptr && _team != charactor->GetTeam())
+		if (charactor != nullptr)
 		{
 			if (_team == Team::player)
 			{
@@ -188,7 +188,7 @@ void Charactor::DrawMovableMass(const uint8_t alpha) const
 		drawYList.emplace_back(movePos.mapPos.y);
 
 		Rect box(offset + (movePos.mapPos * chipSize.ToVector2Int() + chipSize*0.5) +-1, chipSize);
-		unsigned int color = movePos.attack ? 0xff0000 : 0x0000ff;
+		unsigned int color = movePos.attack ? (_status.heal ? 0x00ff00 : 0xff0000) : 0x0000ff;
 		box.Draw(color);
 		box.Draw(color, false);
 
@@ -625,6 +625,16 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 				}
 				break;
 			}
+		}
+	}
+
+	if (_moveDirList.size() > 0)
+	{
+		auto rItr = _moveDirList.rbegin();
+		rItr++;
+		for (;rItr != _moveDirList.rend(); rItr++)
+		{
+			rItr->attack = false;
 		}
 	}
 

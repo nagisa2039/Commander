@@ -63,20 +63,39 @@ void BattlePrediction::Draw()
 		// HP‚Ì”wŒi
 		drawPos = GetDrawPos(Vector2Int(windowRect.center.x, drawY), hpSize, anker);
 		DrawBox(drawPos, drawPos + hpSize, 0x888888);
-		// HP‚ÌŒ¸­•ª
-		auto damage = (targetStatus.CheckPursuit(selfStatus) ? 2 : 1) * targetStatus.GetDamage(selfStatus);
+		// HP‚Ì•Ï“®•ª
+		int chengePoint = 0;
+		if (dir == Dir::left)
+		{
+			if (!selfStatus.heal)
+			{
+				chengePoint = (targetStatus.CheckPursuit(selfStatus) ? 2 : 1) * targetStatus.GetDamage(selfStatus);
+			}
+		}
+		else
+		{
+			if (targetStatus.heal)
+			{
+				chengePoint = -targetStatus.GetRecover();
+			}
+			else
+			{
+				chengePoint = (targetStatus.CheckPursuit(selfStatus) ? 2 : 1) * targetStatus.GetDamage(selfStatus);
+			}
+		}
 		float before = static_cast<float>(self.GetStatus().health) / static_cast<float>(self.GetStartStatus().health);
-		float affter = static_cast<float>(max(self.GetStatus().health - damage, 0.0f))  / static_cast<float>(self.GetStartStatus().health);
+		int affterHealth = min( max(self.GetStatus().health - chengePoint, 0.0f), self.GetStartStatus().health);
+		float affter = affterHealth / static_cast<float>(self.GetStartStatus().health);
+		 
+		Size subSize(hpSize.w * (abs(before - affter))+2, hpSize.h);
+		drawPos = GetDrawPos(Vector2Int(windowRect.center.x + (before + affter)/2.0f * (dir == Dir::left ? - 1 : 1) * hpSize.w, drawY), subSize, Anker::center);
 
-		Size subSize(hpSize.w * (before - affter)+2, hpSize.h);
-		drawPos = GetDrawPos(Vector2Int(windowRect.center.x + (before + affter)/2 * (dir == Dir::left ? - 1 : 1) * hpSize.w, drawY), subSize, Anker::center);
-
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, _hpAnimAlpha->GetValue() * 255);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, _hpAnimAlpha->GetValue() * 128);
 		DrawBox(drawPos, drawPos + subSize, teamColor);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
 		// HP‚Ìc—Ê
-		Size currentSize(hpSize.w * affter, hpSize.h);
+		Size currentSize(hpSize.w * (targetStatus.heal ? before : affter), hpSize.h);
 		drawPos = GetDrawPos(Vector2Int(windowRect.center.x, drawY), currentSize, anker);
 		DrawBox(drawPos, drawPos + currentSize, teamColor);
 
@@ -96,11 +115,19 @@ void BattlePrediction::Draw()
 	int distance = 250;
 	auto DrawContent = [&](const char* name, const int leftValue, const int rightValue)
 	{
-		char str[256];
-		sprintf_s(str, 256, "%d", leftValue);
-		DrawStringToHandle(Vector2Int(windowRect.center.x - distance/2, drawY), Anker::center, 0xffffff, fontH, str);
-		sprintf_s(str, 256, "%d", rightValue);
-		DrawStringToHandle(Vector2Int(windowRect.center.x + distance/2, drawY), Anker::center, 0xffffff, fontH, str);
+		if (selfStatus.heal)
+		{
+			DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, 0xffffff, fontH, "-");
+			DrawStringToHandle(Vector2Int(windowRect.center.x + distance / 2, drawY), Anker::center, 0xffffff, fontH, "-");
+		}
+		else
+		{
+			char str[256];
+			sprintf_s(str, 256, "%d", leftValue);
+			DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, 0xffffff, fontH, str);
+			sprintf_s(str, 256, "%d", rightValue);
+			DrawStringToHandle(Vector2Int(windowRect.center.x + distance / 2, drawY), Anker::center, 0xffffff, fontH, str);
+		}
 		Rect nameRect(Vector2Int(windowRect.center.x, drawY), Size(100,30));
 		DrawExtendGraph(nameRect.Left(), nameRect.Top(), nameRect.Right(), nameRect.Botton(), window1Handle, true);
 		DrawStringToHandle(nameRect.center, Anker::center, 0xffffff, fontH, name);
@@ -110,6 +137,8 @@ void BattlePrediction::Draw()
 	auto DrawContentForPower = [&]()
 	{
 		DrawContent("ˆĞ—Í", selfStatus.GetDamage(_targetCharactor.GetStatus()), targetStatus.GetDamage(_selfCharactor.GetStatus()));
+
+		if (selfStatus.heal) return;
 
 		int tag_playerHandle = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/tag_player.png");
 		int tag_enemyHandle = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/tag_enemy.png");

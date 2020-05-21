@@ -8,6 +8,11 @@ int Status::GetDamage(const Status& target)const
 	return max(power - (magicAttack ? target.magic_defense : target.defense) - target.defenseCorrection, 0);
 }
 
+int Status::GetRecover()
+{
+	return power;
+}
+
 int Status::GetHitRate() const
 {
 	return 100 + skill * 2;

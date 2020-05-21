@@ -28,6 +28,7 @@ struct Status
 		attribute(at), magicAttack(ma), heal(heal), defenseCorrection(0), avoidanceCorrection(0) {};
 
 	int GetDamage(const Status& target)const;	// ダメージ
+	int GetRecover();	// 回復量
 	int GetHitRate()const;	// 命中率
 	int GetHit(const Status& target)const;	// 相手を考慮した命中率
 	int GetCriticalRate()const;	// 必殺率

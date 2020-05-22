@@ -73,7 +73,7 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 			for (auto& resutlPos : resutlPosList)
 			{
 				// –¡•û‚ÌêŠ‚©‚ç‚ÍUŒ‚”ÍˆÍ‚ğŒŸõ‚µ‚È‚¢
-				if (team == mapData[resutlPos.mapPos.y][resutlPos.mapPos.x].team)continue;
+				if(startMapPos != resutlPos.mapPos && team == mapData[resutlPos.mapPos.y][resutlPos.mapPos.x].team)continue;
 
 				// ‰Šú‰»
 				seachIdxList.clear();

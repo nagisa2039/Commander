@@ -355,51 +355,21 @@ void Charactor::DrawRoute(const Vector2Int& targetPos)
 
 	bool onCharactor = _mapCtrl.GetMapPosChar(targetPos) != nullptr;
 
-	list<Astar::ResultPos*> routeList;
-	for (auto itr = _resultPosListVec2[targetPos.y][targetPos.x].begin(); itr != _resultPosListVec2[targetPos.y][targetPos.x].end(); itr++)
-	{
-		if (onCharactor)
-		{
-			if (itr->attack)
-			{
-				routeList.emplace_back(&*itr);
-				break;
-			}
-		}
-		else
-		{
-			if (!itr->attack)
-			{
-				routeList.emplace_back(&*itr);
-				break;
-			}
-		}
-	}
-	if (routeList.size() <= 0)
-	{
-		routeList.emplace_back(&*_resultPosListVec2[targetPos.y][targetPos.x].begin());
-	}
-
-	auto itr = (*routeList.begin())->prev;
-	for (; itr != nullptr; itr = itr->prev)
-	{
-		if (itr->attack)continue;
-		routeList.emplace_back(itr);
-	}
+	
 
 	bool begin = true;
-	for (const auto& route : routeList)
+	for (const auto& route : CreateResultPosList(targetPos))
 	{
-		if (route->attack)continue;
+		if (begin && route.attack)continue;
 
 		auto offset = _camera.GetCameraOffset();
 		auto chipSize = _mapCtrl.GetChipSize();
-		size_t dir_idx = static_cast<size_t>(route->dir);
+		size_t dir_idx = static_cast<size_t>(route.dir);
 
 		if (0 > dir_idx || dir_idx >= _dirTable.size())return;
 
-		Vector2Int endPos = offset + (route->prev == nullptr ? GetMapPos() : route->prev->mapPos) * chipSize + chipSize * 0.5f;
-		Vector2Int startPos = offset + route->mapPos * chipSize + chipSize * 0.5f;
+		Vector2Int endPos = offset + (route.prev == nullptr ? GetMapPos() : route.prev->mapPos) * chipSize + chipSize * 0.5f;
+		Vector2Int startPos = offset + route.mapPos * chipSize + chipSize * 0.5f;
 		DrawLine(startPos, endPos, 0xffff00, 10);
 		if (begin)
 		{
@@ -435,6 +405,115 @@ bool Charactor::CheckAttackMapPos(const Vector2Int mapPos) const
 		}
 	}
 	return false;
+}
+
+std::list<Astar::ResultPos> Charactor::CreateResultPosList(const Vector2Int mapPos) const
+{
+	std::list<Astar::ResultPos> routeList;
+	routeList.clear();
+	// 移動可能なルートが無い
+	if (_resultPosListVec2[mapPos.y][mapPos.x].size() <= 0)return routeList;
+
+	Astar::ResultPos startResultPos = *_resultPosListVec2[mapPos.y][mapPos.x].begin();
+	auto targetCharactor = _mapCtrl.GetMapPosChar(mapPos);
+	if (targetCharactor != nullptr)
+	{
+		// 相手の攻撃範囲
+		auto targetRange = targetCharactor->GetAttackRange();
+		// 一方的に攻撃できる距離
+		Range criticalRange = _attackRange.GetCriticalRange(targetRange);
+		// 一方的に攻撃できる距離があるか
+		if (criticalRange != Range(0, 0))
+		{
+			for (const auto& targetPos : _resultPosListVec2[mapPos.y][mapPos.x])
+			{
+				Vector2Int startPos = targetPos.prev == nullptr ? GetMapPos() : targetPos.prev->mapPos;
+				Vector2Int disVec = targetPos.mapPos - startPos;
+				unsigned int distance = abs(disVec.x) + abs(disVec.y);
+				if (criticalRange.Hit(distance))
+				{
+					startResultPos = targetPos;
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		// 敵がいないマスへの移動なので移動マスを優先的に採用する
+		for (const auto& targetPos : _resultPosListVec2[mapPos.y][mapPos.x])
+		{
+			if (!targetPos.attack)
+			{
+				startResultPos = targetPos;
+				break;
+			}
+		}
+	}
+
+	routeList.emplace_back(startResultPos);
+	for (auto prev = startResultPos.prev; prev->prev != nullptr; prev = prev->prev)
+	{
+		routeList.emplace_back(*prev);
+	}
+	return routeList;
+}
+
+void Charactor::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosList)
+{
+	_moveDirList.clear();
+
+	vector<vector<list<Astar::ResultPos>>> addResultPosListVec2;
+	// 攻撃開始地点に敵が居ないかを確認するためのフラグ
+	bool coverCheck = true;
+	for (auto itr = resultPosList.begin(); itr != resultPosList.end(); itr++)
+	{
+		// 移動力を超えるマスは無視する
+		if (itr->moveCnt > _status.move) continue;
+
+		if (itr->attack)
+		{
+			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
+			continue;
+		}
+
+
+		if (!coverCheck)
+		{
+			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
+			continue;
+		}
+
+		if (_mapCtrl.GetMapPosChar(itr->mapPos) == nullptr)
+		{
+			coverCheck = false;
+			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
+		}
+		else
+		{
+			for (auto& addResultPosListVec : addResultPosListVec2)
+			{
+				for (auto& addResultPosList : addResultPosListVec)
+				{
+					addResultPosList.clear();
+				}
+			}
+
+			if (_mapCtrl.MoveRouteSearch(itr->mapPos, max(0, _status.move - itr->moveCnt - 1), addResultPosListVec2, _team))
+			{
+				coverCheck = false;
+				_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
+				auto addResultPos = *addResultPosListVec2[itr->mapPos.y][itr->mapPos.x].begin();
+				_moveDirList.emplace_back(MoveInf(addResultPos.dir, addResultPos.attack, addResultPos.mapPos));
+
+				for (auto resutlPos = itr->prev; resutlPos->prev != nullptr; resutlPos = resutlPos->prev)
+				{
+					_moveDirList.emplace_front(MoveInf(resutlPos->dir, resutlPos->attack, resutlPos->mapPos));
+				}
+				break;
+			}
+		}
+	}
 }
 
 Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team team, const unsigned int groupNum, MapCtrl& mapCtrl, SceneController& ctrl,
@@ -542,128 +621,52 @@ Team Charactor::GetTeam() const
 
 bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 {
-	if (mapPos == GetMapPos() || _isMoveAnim)
-	{
-		return false;
-	}
+	// 同じマスに移動 || 移動アニメーション中
+	if (mapPos == GetMapPos() || _isMoveAnim)return false;
 
 	_moveDirList.clear();
 
-	if (_resultPosListVec2[mapPos.y][mapPos.x].size() <= 0)
-	{
-		return false;
-	}
+	auto oneLineResutlList = CreateResultPosList(mapPos);
+	if (oneLineResutlList.size() <= 0)return false;
 
-	Astar::ResultPos startResultPos = *_resultPosListVec2[mapPos.y][mapPos.x].begin();
-	auto targetCharactor = _mapCtrl.GetMapPosChar(mapPos);
-	if (targetCharactor != nullptr)
-	{
-		auto targetRange = targetCharactor->GetAttackRange();
-		Range criticalRange = _attackRange.GetCriticalRange(targetRange);
-		if (criticalRange != Range(0, 0))
-		{
-			for (const auto& targetPos : _resultPosListVec2[mapPos.y][mapPos.x])
-			{
-				Vector2Int startPos = targetPos.prev == nullptr ? GetMapPos() : targetPos.prev->mapPos;
-				Vector2Int disVec = targetPos.mapPos - startPos;
-				unsigned int distance = abs(disVec.x) + abs(disVec.y);
-				if (criticalRange.Hit(distance))
-				{
-					startResultPos = targetPos;
-					break;
-				}
-			}
-		}
-	}
+	CreateMoveDirList(oneLineResutlList);
 
-	// _resultPosListからmoveDirListを作るために
-	// 終わりから始まりへと辿ったリストを作る
-	std::list<Astar::ResultPos> oneLineResutlList;
-	oneLineResutlList.clear();
-	oneLineResutlList.emplace_front(startResultPos);
-	Astar::ResultPos* rp = startResultPos.prev;
+	//// _resultPosListからmoveDirListを作るために
+	//Astar::ResultPos* rp = startResultPos.prev;
 
-	// attackマスが何マス続くかの数(攻撃範囲内かの確認のため)
-	int attackMassCnt = 0;
-	for (; rp->prev != nullptr;)
-	{
-		oneLineResutlList.emplace_back(*rp);
-		if (rp->attack)
-		{
-			attackMassCnt++;
-		}
-		rp = rp->prev;
-	}
+	//// attackマスが何マス続くかの数(攻撃範囲内かの確認のため)
+	//int attackMassCnt = 0;
+	//for (; rp->prev != nullptr;)
+	//{
+	//	oneLineResutlList.emplace_back(*rp);
+	//	if (rp->attack)
+	//	{
+	//		attackMassCnt++;
+	//	}
+	//	rp = rp->prev;
+	//}
 
-	// 攻撃範囲外のマスを削除
-	for (int i = _attackRange.max; i < attackMassCnt; i++)
-	{
-		oneLineResutlList.pop_front();
-	}
+	//// 攻撃範囲外のマスを削除
+	//for (int i = _attackRange.max; i < attackMassCnt; i++)
+	//{
+	//	oneLineResutlList.pop_front();
+	//}
 
-	vector<vector<list<Astar::ResultPos>>> addResultPosListVec2;
-	bool coverCheck = true;
-	for (auto itr = oneLineResutlList.begin(); itr != oneLineResutlList.end(); itr++)
-	{
-		if (itr->moveCnt > _status.move) continue;
+	
 
-		if (itr->attack)
-		{
-			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
-			continue;
-		}
-
-
-		if (!coverCheck)
-		{
-			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
-			continue;
-		}
-
-		if (_mapCtrl.GetMapPosChar(itr->mapPos) == nullptr)
-		{
-			coverCheck = false;
-			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
-		}
-		else
-		{
-			for (auto& addResultPosListVec : addResultPosListVec2)
-			{
-				for (auto& addResultPosList : addResultPosListVec)
-				{
-					addResultPosList.clear();
-				}
-			}
-
-			if (_mapCtrl.MoveRouteSearch(itr->mapPos, max(0, _status.move - itr->moveCnt - 1), addResultPosListVec2, _team))
-			{
-				coverCheck = false;
-				_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
-				auto addResultPos = *addResultPosListVec2[itr->mapPos.y][itr->mapPos.x].begin();
-				_moveDirList.emplace_back(MoveInf(addResultPos.dir, addResultPos.attack, addResultPos.mapPos));
-				
-				for (auto resutlPos = itr->prev; resutlPos->prev != nullptr; resutlPos = resutlPos->prev)
-				{
-					_moveDirList.emplace_front(MoveInf(resutlPos->dir, resutlPos->attack, resutlPos->mapPos));
-				}
-				break;
-			}
-		}
-	}
-
-	if (_moveDirList.size() > 0)
-	{
-		auto rItr = _moveDirList.rbegin();
-		rItr++;
-		for (;rItr != _moveDirList.rend(); rItr++)
-		{
-			rItr->attack = false;
-		}
-	}
+	//if (_moveDirList.size() > 0)
+	//{
+	//	auto rItr = _moveDirList.rbegin();
+	//	rItr++;
+	//	for (;rItr != _moveDirList.rend(); rItr++)
+	//	{
+	//		rItr->attack = false;
+	//	}
+	//}
 
 	_isMoveAnim = true;
 
-	_status.move = max(_status.move - startResultPos.moveCnt, 0);
+	_status.move = max(_status.move - oneLineResutlList.begin()->moveCnt, 0);
 
 	return false;
 }

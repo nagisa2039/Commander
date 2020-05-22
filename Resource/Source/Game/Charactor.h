@@ -115,6 +115,11 @@ protected:
 	bool CheckMoveMapPos(const Vector2Int mapPos)const;
 	// 指定した座標に攻撃マスがあるか調べる
 	bool CheckAttackMapPos(const Vector2Int mapPos)const;
+	// 指定したマスまでのResultPosListを取得する
+	std::list<Astar::ResultPos> CreateResultPosList(const Vector2Int mapPos)const;
+	// resultPosListからMoveDirListを作成する
+	void CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosList);
+
 
 public:
 	Charactor(const uint8_t level, const Vector2Int& mapPos, const Team team, const unsigned int groupNum, MapCtrl& mapCtrl, SceneController& ctrl, 

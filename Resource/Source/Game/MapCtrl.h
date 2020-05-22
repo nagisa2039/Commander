@@ -124,4 +124,7 @@ public:
 
 	// 指定した集団のmoveActiveを変更
 	void SetGroupActive(const unsigned int groupNum, const bool active);
+
+	// 指定したマスがマップの範囲内かを返す
+	bool CheckMapDataRange(const Vector2Int& mapPos);
 };

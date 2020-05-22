@@ -118,7 +118,6 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 								if (checkTeam == team || checkTeam == Team::max)
 								{
 									attackResultPosList.emplace_back(ResultPos(true, checkPos, &resutlPos, static_cast<Dir>(i), resutlPos.moveCnt));
-									resutlPos.next = &*attackResultPosList.rbegin();
 								}
 							}
 							else
@@ -126,7 +125,6 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 								if (checkTeam != team)
 								{
 									attackResultPosList.emplace_back(ResultPos(true, checkPos, &resutlPos, static_cast<Dir>(i), resutlPos.moveCnt));
-									resutlPos.next = &*attackResultPosList.rbegin();
 								}
 							}
 						}
@@ -142,29 +140,35 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 				}
 
 			}
-
-			if (heal)
-			{
-				for (auto& resutlPos : resutlPosList)
-				{
-					if (mapData[resutlPos.mapPos.y][resutlPos.mapPos.x].team != team || resutlPos.mapPos == startMapPos)
-					{
-						continue;
-					}
-
-					for (const auto& attack : attackResultPosList)
-					{
-						if (resutlPos.mapPos == attack.mapPos)
-						{
-							resutlPos.attack = true;
-							continue;
-						}
-					}
-
-				}
-			}
 		}
 	}
+
+	//if (heal)
+	//{
+	//	for (auto& resutlPosListVec : resutlPosListVec2)
+	//	{
+	//		for (auto& resutlPosList : resutlPosListVec)
+	//		{
+	//			for (auto& resutlPos : resutlPosList)
+	//			{
+	//				// ÇªÇÃèÍèäÇ…ìGÇ™Ç¢ÇÈÇ©èâä˙ç¿ïWÇ»ÇÁcontinue
+	//				if (mapData[resutlPos.mapPos.y][resutlPos.mapPos.x].team != team || resutlPos.mapPos == startMapPos)
+	//				{
+	//					continue;
+	//				}
+
+	//				for (const auto& attack : attackResultPosList)
+	//				{
+	//					if (resutlPos.mapPos == attack.mapPos)
+	//					{
+	//						resutlPos.attack = true;
+	//						continue;
+	//					}
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
 
 	// çUåÇîÕàÕï™Ç_resutlPosListÇ…åãçá
 	for (const auto& attackResultPos : attackResultPosList)
@@ -319,7 +323,6 @@ void Astar::AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, con
 				{
 					auto prev = &*resutlPosListVec2[nowPos.y][nowPos.x].begin();
 					resutlPosListVec2[checkPos.y][checkPos.x].emplace_back(ResultPos(false, checkPos, prev, static_cast<Dir>(i), moveCnt));
-					prev->next = &*resutlPosListVec2[checkPos.y][checkPos.x].rbegin();
 				}
 				else
 				{

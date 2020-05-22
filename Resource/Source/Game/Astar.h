@@ -15,13 +15,12 @@ public:
 		bool attack;
 		Vector2Int mapPos;
 		ResultPos* prev;
-		ResultPos* next;
 		Dir dir;
 		int moveCnt;	// è¡îÔÇ∑ÇÈà⁄ìÆó 
 
-		ResultPos() :attack(false), mapPos(Vector2Int()), prev(nullptr), next(nullptr), dir(Dir::left), moveCnt(0){};
+		ResultPos() :attack(false), mapPos(Vector2Int()), prev(nullptr), dir(Dir::left), moveCnt(0){};
 		ResultPos(const bool atc, const Vector2Int& mapP, ResultPos* parent, const Dir d, const unsigned int mc)
-			:attack(atc), mapPos(mapP), prev(parent), next(nullptr), dir(d), moveCnt(mc) {};
+			:attack(atc), mapPos(mapP), prev(parent), dir(d), moveCnt(mc) {};
 	};
 
 	struct MapData

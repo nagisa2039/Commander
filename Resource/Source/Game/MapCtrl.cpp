@@ -393,11 +393,11 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
 	list<TargetCharactor> targetCharactorList;
 	// ”hˆÈŠO‚Ì“G‚ðŠi”[‚·‚éƒŠƒXƒg
 	list<Charactor*> outRangeCharactorList;
-	for (const auto& resultPosListVec : resultPosListVec2)
+	for (size_t y = 0; y < resultPosListVec2.size(); y++)
 	{
-		for (const auto& resultPosList : resultPosListVec)
+		for (size_t x = 0; x < resultPosListVec2[y].size(); x++)
 		{
-			for (const auto& resultPos : resultPosList)
+			for (const auto& resultPos : resultPosListVec2[y][x])
 			{
 				// UŒ‚ƒ}ƒX‚É‚È‚é‚Ü‚Åcontinue
 				if (!resultPos.attack)
@@ -580,4 +580,9 @@ void MapCtrl::SetGroupActive(const unsigned int groupNum, const bool active)
 			charactor->SetMoveActive(active);
 		}
 	}
+}
+
+bool MapCtrl::CheckMapDataRange(const Vector2Int& mapPos)
+{
+	return mapPos.x >= 0 && mapPos.x < _mapDataVec2[mapPos.y].size() && mapPos.y >= 0 && mapPos.y < _mapDataVec2.size();
 }

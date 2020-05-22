@@ -174,11 +174,17 @@ void Charactor::DrawMovableMass(const uint8_t alpha) const
 			Vector2Int mapPos(x,y);
 			Rect box(offset + (mapPos * chipSize.ToVector2Int() + chipSize * 0.5) + -1, chipSize);
 
-			unsigned int color = CheckMoveMapPos(mapPos) ? 0x0000ff : (_status.heal ? 0x00ff00 : 0xff0000);
+			unsigned int color = CheckMoveMapPos(mapPos) ? 0x000ff : 0xff0000;
+			if (_status.heal)
+			{
+				color = CheckAttackMapPos(mapPos) ? 0x00ff00 : 0x0000ff;
+			}
 			box.Draw(color);
 			box.Draw(color, false);
 
 			Vector2Int leftup = offset + mapPos * chipSize.ToVector2Int();
+
+			DrawFormatString(leftup.x, leftup.y, 0x000000, "%d,%d", mapPos.x, mapPos.y);
 		}
 	}
 
@@ -355,8 +361,6 @@ void Charactor::DrawRoute(const Vector2Int& targetPos)
 
 	bool onCharactor = _mapCtrl.GetMapPosChar(targetPos) != nullptr;
 
-	
-
 	bool begin = true;
 	for (const auto& route : CreateResultPosList(targetPos))
 	{
@@ -418,22 +422,36 @@ std::list<Astar::ResultPos> Charactor::CreateResultPosList(const Vector2Int mapP
 	auto targetCharactor = _mapCtrl.GetMapPosChar(mapPos);
 	if (targetCharactor != nullptr)
 	{
-		// 相手の攻撃範囲
-		auto targetRange = targetCharactor->GetAttackRange();
-		// 一方的に攻撃できる距離
-		Range criticalRange = _attackRange.GetCriticalRange(targetRange);
-		// 一方的に攻撃できる距離があるか
-		if (criticalRange != Range(0, 0))
+		if (_status.heal)
 		{
 			for (const auto& targetPos : _resultPosListVec2[mapPos.y][mapPos.x])
 			{
-				Vector2Int startPos = targetPos.prev == nullptr ? GetMapPos() : targetPos.prev->mapPos;
-				Vector2Int disVec = targetPos.mapPos - startPos;
-				unsigned int distance = abs(disVec.x) + abs(disVec.y);
-				if (criticalRange.Hit(distance))
+				if (targetPos.prev->prev == nullptr || _mapCtrl.GetMapPosChar(targetPos.prev->mapPos) == nullptr)
 				{
 					startResultPos = targetPos;
 					break;
+				}
+			}
+		}
+		else
+		{
+			// 相手の攻撃範囲
+			auto targetRange = targetCharactor->GetAttackRange();
+			// 一方的に攻撃できる距離
+			Range criticalRange = _attackRange.GetCriticalRange(targetRange);
+			// 一方的に攻撃できる距離があるか
+			if (criticalRange != Range(0, 0))
+			{
+				for (const auto& targetPos : _resultPosListVec2[mapPos.y][mapPos.x])
+				{
+					Vector2Int startPos = targetPos.prev == nullptr ? GetMapPos() : targetPos.prev->mapPos;
+					Vector2Int disVec = targetPos.mapPos - startPos;
+					unsigned int distance = abs(disVec.x) + abs(disVec.y);
+					if (criticalRange.Hit(distance))
+					{
+						startResultPos = targetPos;
+						break;
+					}
 				}
 			}
 		}
@@ -477,7 +495,6 @@ void Charactor::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosLi
 			continue;
 		}
 
-
 		if (!coverCheck)
 		{
 			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
@@ -513,6 +530,15 @@ void Charactor::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosLi
 				break;
 			}
 		}
+	}
+
+	if (_moveDirList.size() <= 0) return;
+	bool onTargetCharactor = _mapCtrl.GetMapPosChar(_moveDirList.rbegin()->mapPos) == nullptr;
+	auto rItr = _moveDirList.rbegin();
+	rItr++;
+	for (; rItr != _moveDirList.rend(); rItr++)
+	{
+		rItr->attack = false;
 	}
 }
 
@@ -621,6 +647,8 @@ Team Charactor::GetTeam() const
 
 bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 {
+	if (!_mapCtrl.CheckMapDataRange(mapPos)) return false;
+
 	// 同じマスに移動 || 移動アニメーション中
 	if (mapPos == GetMapPos() || _isMoveAnim)return false;
 
@@ -630,39 +658,6 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 	if (oneLineResutlList.size() <= 0)return false;
 
 	CreateMoveDirList(oneLineResutlList);
-
-	//// _resultPosListからmoveDirListを作るために
-	//Astar::ResultPos* rp = startResultPos.prev;
-
-	//// attackマスが何マス続くかの数(攻撃範囲内かの確認のため)
-	//int attackMassCnt = 0;
-	//for (; rp->prev != nullptr;)
-	//{
-	//	oneLineResutlList.emplace_back(*rp);
-	//	if (rp->attack)
-	//	{
-	//		attackMassCnt++;
-	//	}
-	//	rp = rp->prev;
-	//}
-
-	//// 攻撃範囲外のマスを削除
-	//for (int i = _attackRange.max; i < attackMassCnt; i++)
-	//{
-	//	oneLineResutlList.pop_front();
-	//}
-
-	
-
-	//if (_moveDirList.size() > 0)
-	//{
-	//	auto rItr = _moveDirList.rbegin();
-	//	rItr++;
-	//	for (;rItr != _moveDirList.rend(); rItr++)
-	//	{
-	//		rItr->attack = false;
-	//	}
-	//}
 
 	_isMoveAnim = true;
 

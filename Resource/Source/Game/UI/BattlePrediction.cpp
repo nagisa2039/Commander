@@ -6,8 +6,34 @@
 #include <Dxlib.h>
 #include "DxLibUtility.h"
 
-BattlePrediction::BattlePrediction(const Charactor& self, const Charactor& target, std::deque<std::shared_ptr<UI>> uiDeque, const Astar::ResultPos& attackPos)
-	: _selfCharactor(self), _targetCharactor(target), UI(uiDeque), _attackPos(attackPos)
+int BattlePrediction::GetChengePoint(const Dir& dir, bool rightAttack, Status& selfStatus, Status& targetStatus)
+{
+	int chengePoint = 0;
+	if (dir == Dir::left)
+	{
+		if (!selfStatus.heal && rightAttack)
+		{
+			chengePoint = (targetStatus.CheckPursuit(selfStatus) ? 2 : 1) * targetStatus.GetDamage(selfStatus);
+		}
+		return chengePoint;
+	}
+	else
+	{
+		if (targetStatus.heal)
+		{
+			chengePoint = -targetStatus.GetRecover();
+		}
+		else
+		{
+			chengePoint = (targetStatus.CheckPursuit(selfStatus) ? 2 : 1) * targetStatus.GetDamage(selfStatus);
+		}
+		return chengePoint;
+	}
+	return chengePoint;
+}
+
+BattlePrediction::BattlePrediction(const Charactor& self, const Charactor& target, std::deque<std::shared_ptr<UI>> uiDeque, const unsigned int distance)
+	: _selfCharactor(self), _targetCharactor(target), UI(uiDeque), _distance(distance)
 {
 	_hpAnimAlpha = std::make_unique<Track<float>>(true);
 	_hpAnimAlpha->AddKey(0,0.0f);
@@ -43,6 +69,9 @@ void BattlePrediction::Draw()
 
 	auto window1Handle = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/window1.png");
 
+	// çUåÇÇ≥ÇÍÇΩë§Ç™îΩåÇÇ≈Ç´ÇÈÇ©
+	bool rightAttack = _targetCharactor.GetAttackRange().Hit(_distance);
+
 	// Ç†Ç∆Y300
 	// HP 100
 	Size hpOutSize(250, 50);
@@ -64,25 +93,7 @@ void BattlePrediction::Draw()
 		drawPos = GetDrawPos(Vector2Int(windowRect.center.x, drawY), hpSize, anker);
 		DrawBox(drawPos, drawPos + hpSize, 0x888888);
 		// HPÇÃïœìÆï™
-		int chengePoint = 0;
-		if (dir == Dir::left)
-		{
-			if (!selfStatus.heal)
-			{
-				chengePoint = (targetStatus.CheckPursuit(selfStatus) ? 2 : 1) * targetStatus.GetDamage(selfStatus);
-			}
-		}
-		else
-		{
-			if (targetStatus.heal)
-			{
-				chengePoint = -targetStatus.GetRecover();
-			}
-			else
-			{
-				chengePoint = (targetStatus.CheckPursuit(selfStatus) ? 2 : 1) * targetStatus.GetDamage(selfStatus);
-			}
-		}
+		int chengePoint = GetChengePoint(dir, rightAttack, selfStatus, targetStatus);
 		float before = static_cast<float>(self.GetStatus().health) / static_cast<float>(self.GetStartStatus().health);
 		int affterHealth = min( max(self.GetStatus().health - chengePoint, 0.0f), self.GetStartStatus().health);
 		float affter = affterHealth / static_cast<float>(self.GetStartStatus().health);
@@ -126,7 +137,7 @@ void BattlePrediction::Draw()
 			sprintf_s(str, 256, "%d", leftValue);
 			DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, 0xffffff, fontH, str);
 			sprintf_s(str, 256, "%d", rightValue);
-			DrawStringToHandle(Vector2Int(windowRect.center.x + distance / 2, drawY), Anker::center, 0xffffff, fontH, str);
+			DrawStringToHandle(Vector2Int(windowRect.center.x + distance / 2, drawY), Anker::center, 0xffffff, fontH, rightAttack ? str : "-");
 		}
 		Rect nameRect(Vector2Int(windowRect.center.x, drawY), Size(100,30));
 		DrawExtendGraph(nameRect.Left(), nameRect.Top(), nameRect.Right(), nameRect.Botton(), window1Handle, true);
@@ -151,7 +162,7 @@ void BattlePrediction::Draw()
 			DrawGraph(GetDrawPos(leftCenter, graphSize, Anker::center), tag_playerHandle);
 			DrawStringToHandle(leftCenter, Anker::center, 0xffffff, fontH, "Å~2");
 		}
-		if (targetStatus.CheckPursuit(selfStatus))
+		if (rightAttack && targetStatus.CheckPursuit(selfStatus))
 		{
 			DrawGraph(GetDrawPos(rightCenter, graphSize, Anker::center), tag_enemyHandle);
 			DrawStringToHandle(rightCenter, Anker::center, 0xffffff, fontH, "Å~2");

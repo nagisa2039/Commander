@@ -42,8 +42,8 @@ private:
 
 	bool(BattleScene::* _updater)(const Input& input);
 
-	// ’ÇŒ‚‚ğ‚·‚é‚©	”­¶‚·‚é‘¤‚ğ•Ô‚·	‚µ‚È‚¢ê‡‚Ímax‚ª•Ô‚Á‚Ä‚­‚é
-	bool PursuitAttack();
+	// ’ÇŒ‚‚Å‚«‚éƒLƒƒƒ‰‚ª‚¢‚ê‚Î’ÇŒ‚‚·‚é		rightAttack : ‰E‘¤‚ÌUŒ‚‚ª“–‚½‚é”ÍˆÍ‚©
+	bool PursuitAttack(const bool rightAttack = true);
 
 public:
 	BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, SceneController& ctrl, const Vector2Int& cameraOffset);

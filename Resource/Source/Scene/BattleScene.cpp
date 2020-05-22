@@ -102,17 +102,17 @@ bool BattleScene::RightHPAnim(const Input& input)
 		}
 		else
 		{
-			PursuitAttack();
+			PursuitAttack(false);
 		}
 	}
 	return true;
 }
 
-bool BattleScene::PursuitAttack()
+bool BattleScene::PursuitAttack(const bool rightAttack)
 {
 	auto leftStatus = _leftBC.GetCharacotr().GetStatus();
 	auto rightStatus = _rightBC.GetCharacotr().GetStatus();
-	if (leftStatus.speed - rightStatus.speed >= 4)
+	if (leftStatus.CheckPursuit(rightStatus))
 	{
 		_leftBC.StartAttackAnim();
 		_updater = &BattleScene::LeftTurn;
@@ -121,7 +121,7 @@ bool BattleScene::PursuitAttack()
 	}
 	else
 	{
-		if (rightStatus.speed - leftStatus.speed >= 4)
+		if (rightAttack && rightStatus.CheckPursuit(leftStatus))
 		{
 			_leftBC.StartAttackAnim();
 			_updater = &BattleScene::RightTurn;

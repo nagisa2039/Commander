@@ -173,14 +173,14 @@ void Charactor::DrawMovableMass(const uint8_t alpha) const
 
 			Vector2Int mapPos(x,y);
 			Rect box(offset + (mapPos * chipSize.ToVector2Int() + chipSize * 0.5) + -1, chipSize);
-			unsigned int color = CheckAttackMapPos(mapPos) ? (_status.heal ? 0x00ff00 : 0xff0000) : 0x0000ff;
+
+			unsigned int color = CheckMoveMapPos(mapPos) ? 0x0000ff : (_status.heal ? 0x00ff00 : 0xff0000);
 			box.Draw(color);
 			box.Draw(color, false);
 
 			Vector2Int leftup = offset + mapPos * chipSize.ToVector2Int();
 		}
 	}
-		
 
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }
@@ -351,30 +351,47 @@ void Charactor::DrawCharactorIcon(const Rect& drawRect)const
 void Charactor::DrawRoute(const Vector2Int& targetPos)
 {
 	if (targetPos == GetMapPos()) return;
+	if (_resultPosListVec2[targetPos.y][targetPos.x].size() <= 0)return;
 
-	auto itr = _resultPosListVec2[targetPos.y][targetPos.x].begin();
-	bool locate = false;
-	for (; itr != _resultPosListVec2[targetPos.y][targetPos.x].end(); itr++)
-	{
-		if (itr->mapPos == targetPos)
-		{
-			locate = true;
-			break;
-		}
-	}
-
-	if (!locate)return;
+	bool onCharactor = _mapCtrl.GetMapPosChar(targetPos) != nullptr;
 
 	list<Astar::ResultPos*> routeList;
-	bool begin = true;
-	for (auto resutlPos = &*itr; resutlPos != nullptr; resutlPos = resutlPos->prev)
+	for (auto itr = _resultPosListVec2[targetPos.y][targetPos.x].begin(); itr != _resultPosListVec2[targetPos.y][targetPos.x].end(); itr++)
 	{
-		if (resutlPos->attack)continue;
-		routeList.emplace_back(resutlPos);
+		if (onCharactor)
+		{
+			if (itr->attack)
+			{
+				routeList.emplace_back(&*itr);
+				break;
+			}
+		}
+		else
+		{
+			if (!itr->attack)
+			{
+				routeList.emplace_back(&*itr);
+				break;
+			}
+		}
+	}
+	if (routeList.size() <= 0)
+	{
+		routeList.emplace_back(&*_resultPosListVec2[targetPos.y][targetPos.x].begin());
 	}
 
+	auto itr = (*routeList.begin())->prev;
+	for (; itr != nullptr; itr = itr->prev)
+	{
+		if (itr->attack)continue;
+		routeList.emplace_back(itr);
+	}
+
+	bool begin = true;
 	for (const auto& route : routeList)
 	{
+		if (route->attack)continue;
+
 		auto offset = _camera.GetCameraOffset();
 		auto chipSize = _mapCtrl.GetChipSize();
 		size_t dir_idx = static_cast<size_t>(route->dir);
@@ -394,6 +411,30 @@ void Charactor::DrawRoute(const Vector2Int& targetPos)
 		}
 	}
 
+}
+
+bool Charactor::CheckMoveMapPos(const Vector2Int mapPos) const
+{
+	for (const auto& resutlPos : _resultPosListVec2[mapPos.y][mapPos.x])
+	{
+		if (!resutlPos.attack)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Charactor::CheckAttackMapPos(const Vector2Int mapPos) const
+{
+	for (const auto& resutlPos : _resultPosListVec2[mapPos.y][mapPos.x])
+	{
+		if (resutlPos.attack)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team team, const unsigned int groupNum, MapCtrl& mapCtrl, SceneController& ctrl,
@@ -652,16 +693,4 @@ void Charactor::CharactorDataInit(const CharactorType& type, const uint8_t& leve
 
 	_iconPath = charactorData.iconImagePath;
 	_attackRange = charactorData.range;
-}
-
-bool Charactor::CheckAttackMapPos(const Vector2Int mapPos) const
-{
-	for (const auto& resutlPos : _resultPosListVec2[mapPos.y][mapPos.x])
-	{
-		if (resutlPos.attack)
-		{
-			return true;
-		}
-	}
-	return false;
 }

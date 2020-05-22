@@ -124,7 +124,8 @@ void PlayerUI::AddBattlePre()
 		return;
 	}
 
-	_battlePreDeque.emplace_front(make_shared<BattlePrediction>(*self, *charactor, _battlePreDeque, *itr));
+	auto sub = (itr->prev == nullptr ? self->GetMapPos() : itr->prev->mapPos) - charactor->GetMapPos();
+	_battlePreDeque.emplace_front(make_shared<BattlePrediction>(*self, *charactor, _battlePreDeque, abs(sub.x) + abs(sub.y)));
 }
 
 void PlayerUI::ClearBattlePre()

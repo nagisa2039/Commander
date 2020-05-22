@@ -172,6 +172,18 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 		resutlPosListVec2[attackResultPos.mapPos.y][attackResultPos.mapPos.x].emplace_back(attackResultPos);
 	}
 
+	// moveCntÇÃè∏èáÇ≈ï¿Ç—ë÷Ç¶
+	for (auto& resutlPosListVec : resutlPosListVec2)
+	{
+		for (auto& resutlPosList : resutlPosListVec)
+		{
+			resutlPosList.sort([](const Astar::ResultPos& left, const Astar::ResultPos& right)
+			{
+				return left.moveCnt < right.moveCnt;
+			});
+		}
+	}
+
 	return;
 }
 

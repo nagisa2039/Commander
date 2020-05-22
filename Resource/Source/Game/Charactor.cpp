@@ -272,6 +272,11 @@ unsigned int Charactor::GetGroupNum() const
 	return _groupNum;
 }
 
+const int Charactor::GetHurtPoint() const
+{
+	return _startStatus.health - _status.health;
+}
+
 void Charactor::SetIsSelect(const bool select)
 {
 	_isSelect = select;

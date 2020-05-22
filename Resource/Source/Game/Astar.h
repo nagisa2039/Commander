@@ -27,9 +27,10 @@ public:
 	{
 		int moveCost;
 		Team team;
+		bool isHurt;
 
-		MapData():moveCost(1), team(Team::max){};
-		MapData(const int mc, const Team t) :moveCost(mc), team(t) {};
+		MapData():moveCost(1), team(Team::max), isHurt(false){};
+		MapData(const int mc, const Team t, const bool hurt) :moveCost(mc), team(t), isHurt(hurt) {};
 	};
 
 private:

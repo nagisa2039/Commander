@@ -154,6 +154,7 @@ public:
 	const std::string& GetName()const;
 	const std::list<Astar::ResultPos>& GetResutlPosList(const Vector2Int& mapPos);
 	unsigned int GetGroupNum()const;
+	const int GetHurtPoint()const;	// Å‘å‘Ì—Í‚©‚çŒ»İ‚Ì‘Ì—Í‚ğˆø‚¢‚½’l‚ğ•Ô‚·
 
 	void SetIsSelect(const bool select);
 	void SetIsDying();

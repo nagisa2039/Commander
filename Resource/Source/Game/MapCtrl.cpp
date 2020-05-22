@@ -376,9 +376,10 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
 	CreateMapVec(mapVec2, charactor.GetTeam());
 	auto status = charactor.GetStatus();
 
+	bool heal = charactor.GetStatus().heal;
 	auto& resultPosListVec2 = charactor.GetResutlPosListVec2();
 	_astar->RouteSearch(charactor.GetMapPos(), charactor.GetMoveActive() ? 100 : status.move, charactor.GetAttackRange(), 
-		mapVec2, resultPosListVec2, charactor.GetTeam(), charactor.GetStatus().heal);
+		mapVec2, resultPosListVec2, charactor.GetTeam(), heal);
 
 	struct TargetCharactor
 	{
@@ -406,11 +407,11 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
 				}
 
 				auto mapCharactor = GetMapPosChar(resultPos.mapPos);
-				// そのマスに敵がいるか? 居ないならcontinue
-				if (mapCharactor == nullptr || charactor.GetTeam() == mapCharactor->GetTeam())
-				{
-					continue;
-				}
+				// そのマスにキャラクターがいるか
+				if (mapCharactor == nullptr)continue;
+
+				// 探しているチームがいるか
+				if (heal != (charactor.GetTeam() == mapCharactor->GetTeam()))continue;
 
 				// 攻撃範囲外
 				if (resultPos.moveCnt > status.move)
@@ -439,7 +440,24 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
 	// 敵の攻撃範囲外から攻撃できないので最初に見つけた敵の場所に向かう
 	if (targetCharactorList.size() > 0)
 	{
-		return targetCharactorList.begin()->charactor->GetMapPos();
+		if (status.heal)
+		{
+			// 最もダメージを受けているキャラクターを探す
+			targetCharactorList.sort([](const TargetCharactor& left, const TargetCharactor& right)
+			{
+				return left.charactor->GetHurtPoint() > right.charactor->GetHurtPoint();
+			});
+			return targetCharactorList.begin()->charactor->GetMapPos();
+		}
+		else
+		{
+			// 最もダメージを与えられるキャラクターを探す
+			targetCharactorList.sort([&](const TargetCharactor& left, const TargetCharactor& right)
+			{
+				return status.GetDamage(left.charactor->GetStatus()) > status.GetDamage(right.charactor->GetStatus());
+			});
+			return targetCharactorList.begin()->charactor->GetMapPos();
+		}
 	}
 
 	if (outRangeCharactorList.size() > 0)
@@ -458,13 +476,14 @@ void MapCtrl::CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, co
 		mapVec2[y].resize(_mapDataVec2[y].size());
 		for (int x = 0; x < mapVec2[y].size(); x++)
 		{
-			mapVec2[y][x] = Astar::MapData(_mapChipData[static_cast<size_t>(_mapDataVec2[y][x])].moveCost, Team::max);
+			mapVec2[y][x] = Astar::MapData(_mapChipData[static_cast<size_t>(_mapDataVec2[y][x])].moveCost, Team::max, false);
 		}
 	}
 	for (const auto& charactor : _charactors)
 	{
 		auto mapPos = charactor->GetMapPos();
 		mapVec2[mapPos.y][mapPos.x].team = charactor->GetTeam();
+		mapVec2[mapPos.y][mapPos.x].isHurt = charactor->GetHurtPoint() > 0;
 	}
 }
 

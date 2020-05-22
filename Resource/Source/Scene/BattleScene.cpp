@@ -95,7 +95,7 @@ bool BattleScene::RightHPAnim(const Input& input)
 
 		// UŒ‚”ÍˆÍ“à‚©Šm”F
 		auto mapPosSub = _leftBC.GetCharacotr().GetMapPos() - _rightBC.GetCharacotr().GetMapPos();
-		if (_rightBC.GetCharacotr().GetAttackRange().Hit(abs(mapPosSub.x) + abs(mapPosSub.y)))
+		if (_rightBC.GetCharacotr().GetAttackRange().Hit(abs(mapPosSub.x) + abs(mapPosSub.y)) && !_rightBC.GetCharacotr().GetStartStatus().heal)
 		{
 			_rightBC.StartAttackAnim();
 			_updater = &BattleScene::RightTurn;

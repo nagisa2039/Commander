@@ -126,14 +126,15 @@ void BattlePrediction::Draw()
 	int distance = 250;
 	auto DrawContent = [&](const char* name, const int leftValue, const int rightValue)
 	{
+		char str[256];
 		if (selfStatus.heal)
 		{
-			DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, 0xffffff, fontH, "-");
+			sprintf_s(str, 256, "%d", leftValue);
+			DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, 0xffffff, fontH, str);
 			DrawStringToHandle(Vector2Int(windowRect.center.x + distance / 2, drawY), Anker::center, 0xffffff, fontH, "-");
 		}
 		else
 		{
-			char str[256];
 			sprintf_s(str, 256, "%d", leftValue);
 			DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, 0xffffff, fontH, str);
 			sprintf_s(str, 256, "%d", rightValue);
@@ -147,10 +148,15 @@ void BattlePrediction::Draw()
 
 	auto DrawContentForPower = [&]()
 	{
-		DrawContent("ˆÐ—Í", selfStatus.GetDamage(_targetCharactor.GetStatus()), targetStatus.GetDamage(_selfCharactor.GetStatus()));
-
-		if (selfStatus.heal) return;
-
+		if (selfStatus.heal)
+		{
+			DrawContent("‰ñ•œ", selfStatus.GetRecover(), targetStatus.GetDamage(_selfCharactor.GetStatus()));
+			return;
+		}
+		else
+		{
+			DrawContent("ˆÐ—Í", selfStatus.GetDamage(_targetCharactor.GetStatus()), targetStatus.GetDamage(_selfCharactor.GetStatus()));
+		}
 		int tag_playerHandle = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/tag_player.png");
 		int tag_enemyHandle = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/tag_enemy.png");
 		Size graphSize;

@@ -7,8 +7,8 @@
 
 using namespace std;
 
-FlyText::FlyText(const string& str, const Vector2Int& pos, const int lifeCnt, Camera& camera, bool critical)
-	:Effect(pos, camera), _str(str), _lifeCntMax(lifeCnt), _lifeCnt(lifeCnt),
+FlyText::FlyText(const string& str, const Vector2Int& pos, const int lifeCnt, Camera& camera, bool cameraActive, bool critical)
+	:Effect(pos, camera, cameraActive), _str(str), _lifeCntMax(lifeCnt), _lifeCnt(lifeCnt),
 	_anker(Anker::center), _startPos(pos.ToVector2()), _move(0, -50), _critical(critical)
 {
 	if (critical)
@@ -71,4 +71,9 @@ void FlyText::SetFontHandle(const int handle)
 void FlyText::SetColor(const unsigned int color)
 {
 	_color = color;
+}
+
+void FlyText::SetStartPos(const Vector2& startPos)
+{
+	_startPos = startPos;
 }

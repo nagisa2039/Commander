@@ -18,7 +18,7 @@ private:
 	bool _critical;
 
 public:
-	FlyText(const std::string& str, const Vector2Int& pos, const int lifeCnt, Camera& camera, bool critical = false);
+	FlyText(const std::string& str, const Vector2Int& pos, const int lifeCnt, Camera& camera, bool cameraActive, bool critical = false);
 	~FlyText();
 
 	void Update(const Input& input)override final;
@@ -28,5 +28,6 @@ public:
 	void SetMove(const Vector2& move);
 	void SetFontHandle(const int handle);
 	void SetColor(const unsigned int color);
+	void SetStartPos(const Vector2& startPos);
 };
 

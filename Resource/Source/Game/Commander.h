@@ -22,6 +22,13 @@ protected:
 
 	bool ChaeckCharactor();
 
+	// 終了するならtrueを返す
+	virtual void TerrainEffectUpdate(const Input& input);
+
+	virtual void NormalUpdate(const Input& input);
+	virtual void SelectUpdate(const Input& input);
+	virtual void BattaleUpdate(const Input& input);	// 戦闘中
+	void(Commander::* _uniqueUpdater)(const Input& input);
 
 public:
 	Commander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera);
@@ -39,5 +46,8 @@ public:
 
 	// 選択中のキャラクターのポインターを返す
 	Charactor* GetSelectCharactor()const;
+
+	void StartTerrainEffect();
+	bool GetTerrainEffectUpdate()const;
 };
 

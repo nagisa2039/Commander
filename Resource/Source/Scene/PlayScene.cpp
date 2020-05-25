@@ -20,6 +20,19 @@ using namespace std;
 
 PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 {
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin20", 20, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin30", 30, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin40", 40, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin50", 50, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin60", 60, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin100", 100, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin200", 200, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori20", 20, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori30", 30, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori40", 40, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori200", 200, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Oshidashi - M - Gothic - TT.ttf", "Oshidasi", "oshidashi200", 200, 1, true, true);
+
 	_effects.clear();
 	_charactors.clear();
 	_charactors.reserve(30);
@@ -61,18 +74,6 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 		charactor->RouteSearch();
 	}
 
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin20", 20, 1, true, true);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin30", 30, 1, true, true);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin40", 40, 1, true, true);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin50", 50, 1, true, true);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin60", 60, 1, true, true);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin100", 100, 1, true, true);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin200", 200, 1, true, true);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori20", 20, 1, true, true);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori30", 30, 1, true, true);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori40", 40, 1, true, true);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori200", 200, 1, true, true);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Oshidashi - M - Gothic - TT.ttf", "Oshidasi", "oshidashi200", 200, 1, true, true);
 
 	// プレイヤーターンを開始
 	StartPlayerTurn();
@@ -142,12 +143,29 @@ void PlayScene::Update(const Input & input)
 
 }
 
+void PlayScene::TurnChengeUpdate(const Input& input)
+{
+	_turnChangeAnim->Update(input);
+	if (_turnChangeAnim->GetAnimEnd())
+	{
+		if (_turnChangeAnim->GetCurrentTeam() == Team::player)
+		{
+			_uniqueUpdater = &PlayScene::PlayerTurnUpdate;
+			_uniqueDrawer = &PlayScene::PlayerTurnDraw;
+			_playerCommander->StartTerrainEffect();
+		}
+		else
+		{
+			_uniqueUpdater = &PlayScene::EnemyTurnUpdate;
+			_uniqueDrawer = &PlayScene::EnemyTurnDraw;
+			_enemyCommander->StartTerrainEffect();
+		}
+	}
+}
+
 void PlayScene::PlayerTurnUpdate(const Input& input)
 {
 	CharactorUpdate(input);
-
-	_turnChangeAnim->Update(input);
-	if (!_turnChangeAnim->GetAnimEnd()) return;
 
 	if (_playerCommander->CheckEnd())
 	{
@@ -230,8 +248,8 @@ void PlayScene::DrawPSTBuffer()
 
 void PlayScene::StartPlayerTurn()
 {
-	_uniqueUpdater = &PlayScene::PlayerTurnUpdate;
-	_uniqueDrawer = &PlayScene::PlayerTurnDraw;
+	_uniqueUpdater = &PlayScene::TurnChengeUpdate;
+	_uniqueDrawer = &PlayScene::TurnChengeDraw;
 	_turnChangeAnim->TurnStart(Team::player);
 	_enemyCommander->TurnReset();
 
@@ -248,8 +266,8 @@ void PlayScene::StartPlayerTurn()
 
 void PlayScene::StartEnemyTurn()
 {
-	_uniqueUpdater = &PlayScene::EnemyTurnUpdate;
-	_uniqueDrawer = &PlayScene::EnemyTurnDraw;
+	_uniqueUpdater = &PlayScene::TurnChengeUpdate;
+	_uniqueDrawer = &PlayScene::TurnChengeDraw;
 	_turnChangeAnim->TurnStart(Team::enemy);
 	_playerCommander->TurnReset();
 
@@ -335,6 +353,19 @@ void PlayScene::GameOverUpdate(const Input& input)
 {
 }
 
+void PlayScene::TurnChengeDraw(const Camera& camera)
+{
+	for (auto& charactor : _charactors)
+	{
+		charactor->Draw();
+	}
+	for (auto& effect : _effects)
+	{
+		effect->Draw();
+	}
+	_turnChangeAnim->Draw();
+}
+
 void PlayScene::PlayerTurnDraw(const Camera& camera)
 {
 	_playerCommander->DrawMovableMass();
@@ -413,9 +444,6 @@ void PlayScene::Draw(void)
 	// 場面ごとの描画
 	(this->*_uniqueDrawer)(*_camera);
 
-	// ターン交代のエフェクト描画
-	_turnChangeAnim->Draw();
-
 	// 使用するピクセルシェーダーをセット
 	SetUsePixelShader(pshandle);
 
@@ -428,6 +456,7 @@ void PlayScene::Draw(void)
 
 	if (debug)
 	{
+		DrawFormatString(0, 0, 0x000000, "%d", _effects.size());
 	}
 
 	//DrawPSTBuffer();

@@ -15,6 +15,7 @@ class MapCtrl;
 class SceneController;
 class Effect; 
 class BattleCharactor;
+class FlyText;
 
 class Charactor :
 	public Actor
@@ -82,6 +83,9 @@ protected:
 
 	// 攻撃開始エフェクト
 	std::shared_ptr<Effect> _battleStartEffect;
+
+	// 地形効果エフェクト
+	std::shared_ptr<FlyText> _terrainEffect;
 
 	// 硬直ｶｳﾝﾄ
 	int _rigid;
@@ -178,4 +182,8 @@ public:
 
 	// 指定した座標までの経路を描画する
 	void DrawRoute(const Vector2Int& targetPos);
+
+	// ターン開始時に地形効果を受けるならtrueを返す
+	bool StartTerrainEffect();
+	bool GetTerrainEffectEnd();
 };

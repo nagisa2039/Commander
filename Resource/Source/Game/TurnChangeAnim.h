@@ -33,5 +33,7 @@ public:
 
 	void TurnStart(const Team team);
 	bool GetAnimEnd()const;
+
+	Team GetCurrentTeam()const;
 };
 

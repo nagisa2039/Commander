@@ -67,7 +67,7 @@ void BattleCharactor::AttackUpdate(BattleScene& battleScene)
 			{
 				char damageText[10];
 				sprintf_s(damageText, 10, "%d", abs(damage));
-				battleScene.GetEffectVec().emplace_back(make_shared<FlyText>(damageText, targetCenterPos, 60 * 1, _camera, critical));
+				battleScene.GetEffectVec().emplace_back(make_shared<FlyText>(damageText, targetCenterPos, 60 * 1, _camera, false, critical));
 				_targetChar->GetCharacotr().AddDamage(damage);
 			};
 

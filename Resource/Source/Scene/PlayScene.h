@@ -51,6 +51,7 @@ private:
 	void StartPlayerTurn();
 	void StartEnemyTurn();
 
+	void TurnChengeUpdate(const Input& input);
 	void PlayerTurnUpdate(const Input& input);
 	void CharactorUpdate(const Input& input);
 	void EnemyTurnUpdate(const Input& input);
@@ -60,6 +61,7 @@ private:
 	void GameClearUpdate(const Input& input);
 	void GameOverUpdate(const Input& input);
 
+	void TurnChengeDraw(const Camera& camera);
 	void PlayerTurnDraw(const Camera& camera);
 	void EnemyTurnDraw(const Camera& camera);
 	void GameOverDraw(const Camera& camera);

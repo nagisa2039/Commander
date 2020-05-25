@@ -103,3 +103,8 @@ bool TurnChangeAnim::GetAnimEnd() const
 {
 	return _animEnd;
 }
+
+Team TurnChangeAnim::GetCurrentTeam() const
+{
+	return _currentTeam;
+}

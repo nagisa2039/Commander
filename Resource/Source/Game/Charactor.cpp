@@ -392,6 +392,21 @@ void Charactor::DrawRoute(const Vector2Int& targetPos)
 
 }
 
+bool Charactor::StartTerrainEffect()
+{
+	_terrainEffect->Reset();
+	_terrainEffect->SetStartPos(GetCenterPos());
+	_effects.emplace_back(_terrainEffect); 
+	_status.health = max(1, _status.health - _startStatus.health * 0.3f);
+
+	return true;
+}
+
+bool Charactor::GetTerrainEffectEnd()
+{
+	return _terrainEffect->GetDelete();
+}
+
 bool Charactor::CheckMoveMapPos(const Vector2Int mapPos) const
 {
 	for (const auto& resutlPos : _resultPosListVec2[mapPos.y][mapPos.x])
@@ -572,8 +587,10 @@ Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team t
 	_drawer = &Charactor::NormalDraw;
 
 	_attackRange = Range(2,2);
+	_dir = Dir::down;
 
 	_battleStartEffect = make_shared<CorsorTarget>(Vector2Int(), _camera, true, _mapCtrl.GetChipSize());
+	_terrainEffect = make_shared<FlyText>("damage", Vector2Int(), 120, _camera, true);
 
 	_rigid = 0;
 	_moveStandby = false;
@@ -625,7 +642,7 @@ void Charactor::InitAnim()
 	nextRectCenterOffset(animRectVec, ++cnt);
 	_animator->AddAnim("UpWalk", animRectVec, 30, true);
 
-	_animator->ChangeAnim("LeftWalk");
+	_animator->ChangeAnim("DownWalk");
 
 	_dirTable[Dir::left]	= DirInf(Vector2Int(-1, 0), "LeftWalk", 270.0f * DX_PI / 180.0f);
 	_dirTable[Dir::right]	= DirInf(Vector2Int(1, 0), "RightWalk", 90.0f * DX_PI / 180.0f);

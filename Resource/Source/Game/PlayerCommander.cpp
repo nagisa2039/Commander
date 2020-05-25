@@ -208,6 +208,8 @@ PlayerCommander::~PlayerCommander()
 
 void PlayerCommander::Update(const Input& input)
 {
+	if (GetTerrainEffectUpdate())return;
+
 	_playerUI->Update(input);
 
 	if (_end) return;

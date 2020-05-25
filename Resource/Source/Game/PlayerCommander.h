@@ -15,14 +15,15 @@ private:
 
 	void(PlayerCommander::* _uniqueUpdater)(const Input& input);
 
-	void NormalUpdate(const Input& input);
-	void SelectUpdate(const Input& input);
 	// _mapPosが_selectCharの行動範囲内科の確認
 	bool CheckMoveRange();
 	// _mapPosが_selectCharの攻撃マスかどうかの確認
 	bool CheckAttackMass();
 	void BattlePredictionUpdate(const Input& input);	// 戦闘予測画面
-	void BattaleUpdate(const Input& input);	// 戦闘中
+
+	void NormalUpdate(const Input& input)override;
+	void SelectUpdate(const Input& input)override;
+	void BattaleUpdate(const Input& input)override;	// 戦闘中
 
 	void SelectCharactor(Charactor* charactor);
 

@@ -7,9 +7,35 @@
 #include "Status.h"
 #include "Team.h"
 #include "CharactorType.h"
+#include "MapChip.h"
 
 class DataBase
 {
+public:
+	struct DrawData
+	{
+		Vector2Int leftup;
+		Size size;
+		std::string path;
+
+		DrawData() {};
+
+		DrawData(Vector2Int leftup, Size size, std::string path) :
+			leftup(leftup), size(size), path(path) {};
+
+	};
+
+	struct MapChipData
+	{
+		DrawData drawData;
+		int moveCost;
+		int defense;
+		int avoidance;
+		int recovery;
+		std::string name;
+		unsigned int simpleColor;
+	};
+
 private:
 	std::array<std::array<float, static_cast<size_t>(Attribute::max)>, static_cast<size_t>(Attribute::max)> _attributeRateTable;
 
@@ -28,6 +54,8 @@ private:
 
 	std::array<CharactorData, static_cast<size_t>(CharactorType::max)> _charactorDataTable;
 
+	std::array<MapChipData, static_cast<size_t>(Map_Chip::max)> _mapChipDataTable;
+
 public:
 	DataBase();
 	~DataBase();
@@ -38,5 +66,7 @@ public:
 	int GetCharactorImageHandle(const CharactorType charactorType, const Team team)const;
 
 	const CharactorData& GetCharactorData(const CharactorType charactorType)const;
+
+	const MapChipData& GetMapChipData(const Map_Chip mapChip)const;
 };
 

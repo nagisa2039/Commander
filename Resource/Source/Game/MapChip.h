@@ -15,5 +15,7 @@ enum class Map_Chip
 	river_corner2,
 	river_corner3,
 	rock,
+	fort,
+	lava,
 	max
 };

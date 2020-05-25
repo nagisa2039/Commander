@@ -220,7 +220,7 @@ Status Charactor::GetStatus() const
 {
 	Status status = _status;
 
-	MapCtrl::MapChipData mapchipData = _mapCtrl.GetMapChipData(GetMapPos());
+	DataBase::MapChipData mapchipData = _mapCtrl.GetMapChipData(GetMapPos());
 	status.avoidanceCorrection = mapchipData.avoidance;
 	status.defenseCorrection = mapchipData.defense;
 

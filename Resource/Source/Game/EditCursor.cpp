@@ -41,9 +41,9 @@ void EditCursor::MapEidtUpdate(const Input& input)
 			_mapChip = static_cast<Map_Chip>(static_cast<int>(_mapChip) + move);
 			if (_mapChip < Map_Chip::none)
 			{
-				_mapChip = Map_Chip::river_corner3;
+				_mapChip = static_cast<Map_Chip>(static_cast<int>(Map_Chip::max) - 1);
 			}
-			if (_mapChip > Map_Chip::river_corner3)
+			if (_mapChip >= Map_Chip::max)
 			{
 				_mapChip = Map_Chip::none;
 			}

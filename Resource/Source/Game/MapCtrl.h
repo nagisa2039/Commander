@@ -7,6 +7,7 @@
 #include "Astar.h"
 #include "CharactorType.h"
 #include <functional>
+#include "DataBase.h"
 
 class Camera;
 class Charactor;
@@ -16,41 +17,8 @@ class Effect;
 
 class MapCtrl
 {
-public:
-	struct DrawData
-	{
-		Vector2Int leftup;
-		Size size;
-		std::string path;
-
-		DrawData() {};
-
-		DrawData(Vector2Int leftup, Size size, std::string path) :
-			leftup(leftup), size(size), path(path) {};
-
-	};
-
-	struct MapChipData
-	{
-		DrawData drawData;
-		int moveCost;
-		int defense;
-		int avoidance;
-		const char* name;
-		unsigned int simpleColor;
-
-		MapChipData() : drawData(DrawData()), name(""), moveCost(1), defense(0), avoidance(0), simpleColor(0x000000){};
-		MapChipData(const DrawData& dd, const char* na, unsigned int sc) :
-			drawData(dd), name(na), simpleColor(sc), moveCost(1), defense(0), avoidance(0) {};
-		MapChipData(const DrawData& dd, const char* na, unsigned int sc, const int mc) :
-			drawData(dd), name(na), simpleColor(sc), moveCost(mc), defense(0), avoidance(0) {};
-		MapChipData(const DrawData& dd, const char* na, unsigned int sc, const int mc, const int fe, const int av) :
-			drawData(dd), name(na), simpleColor(sc), moveCost(mc), defense(fe), avoidance(av) {};
-	};
-
 private:
 	std::vector<std::vector<Map_Chip>> _mapDataVec2;			// マップデータ
-	std::array<MapChipData, static_cast<size_t>(Map_Chip::max)> _mapChipData;	// マップチップのデータ
 	std::shared_ptr<Astar> _astar;
 
 	std::vector<std::shared_ptr<Charactor>>& _charactors;
@@ -105,7 +73,7 @@ public:
 	void CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, const Team team);
 
 	// 指定した座標のMapChipDataを取得する
-	MapChipData GetMapChipData(const Vector2Int& mapPos)const;
+	DataBase::MapChipData GetMapChipData(const Vector2Int& mapPos)const;
 
 	// 戦況確認用の画像を生成する(更新する)
 	void CreateWarSituation()const;

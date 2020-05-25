@@ -90,20 +90,6 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 		}
 	}
 
-	_mapChipData[static_cast<size_t>(Map_Chip::none)]				= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip0.png"), "ëêå¥",	0x000000, +1);
-	_mapChipData[static_cast<size_t>(Map_Chip::floor_meadow)]		= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip0.png"), "ëêå¥",	0x000000, +1);
-	_mapChipData[static_cast<size_t>(Map_Chip::forest)]				= MapChipData( DrawData(Vector2Int(32, 32), Size(32, 32), "mapchip0.png"), "êX",	0x00ff00, +2, 0, 30);
-	_mapChipData[static_cast<size_t>(Map_Chip::river_pond)]			= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip1.png"), "êÏ",	0x6699ff, -1, 0, 0);
-	_mapChipData[static_cast<size_t>(Map_Chip::river_vertical)]		= MapChipData( DrawData(Vector2Int(0, 32),	Size(32, 32), "mapchip1.png"), "êÏ",	0x6699ff, -1);
-	_mapChipData[static_cast<size_t>(Map_Chip::river_horizontal)]	= MapChipData( DrawData(Vector2Int(0, 64),	Size(32, 32), "mapchip1.png"), "êÏ",	0x6699ff, -1);
-	_mapChipData[static_cast<size_t>(Map_Chip::river_cross)]		= MapChipData( DrawData(Vector2Int(0, 96),	Size(32, 32), "mapchip1.png"), "êÏ",	0x6699ff, -1);
-	_mapChipData[static_cast<size_t>(Map_Chip::river_all)]			= MapChipData( DrawData(Vector2Int(0, 128), Size(32, 32), "mapchip1.png"), "êÏ",	0x6699ff, -1);
-	_mapChipData[static_cast<size_t>(Map_Chip::river_corner0)]		= MapChipData( DrawData(Vector2Int(0, 160), Size(32, 32), "mapchip1.png"), "êÏ",	0x6699ff, -1);
-	_mapChipData[static_cast<size_t>(Map_Chip::river_corner1)]		= MapChipData( DrawData(Vector2Int(0, 192), Size(32, 32), "mapchip1.png"), "êÏ",	0x6699ff, -1);
-	_mapChipData[static_cast<size_t>(Map_Chip::river_corner2)]		= MapChipData( DrawData(Vector2Int(0, 224), Size(32, 32), "mapchip1.png"), "êÏ",	0x6699ff, -1);
-	_mapChipData[static_cast<size_t>(Map_Chip::river_corner3)]		= MapChipData( DrawData(Vector2Int(0, 256),	Size(32, 32), "mapchip1.png"), "êÏ",	0x6699ff, -1);
-	_mapChipData[static_cast<size_t>(Map_Chip::rock)]				= MapChipData( DrawData(Vector2Int(0, 0),	Size(32, 32), "mapchip2.png"), "ä‚",	0x663300, -1);
-
 	_charactorChips.clear();
 	_charactorChips.reserve(30);
 
@@ -221,7 +207,7 @@ bool MapCtrl::SetMapChip(const Vector2Int& mapPos, const Map_Chip mapChip)
 
 bool MapCtrl::DrawMapChip(const Vector2Int& mapPos, const Map_Chip mapChip, const Vector2Int& offset)
 {
-	auto drawData = _mapChipData[static_cast<size_t>(mapChip)].drawData;
+	auto drawData = Application::Instance().GetDataBase().GetMapChipData(mapChip).drawData;
 
 	auto graphH = Application::Instance().GetFileSystem()->GetImageHandle((imageFolderPath + drawData.path).c_str());
 	DrawRectExtendGraph(offset.x + CHIP_SIZE_W * mapPos.x, offset.y + CHIP_SIZE_H * mapPos.y,
@@ -476,7 +462,7 @@ void MapCtrl::CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, co
 		mapVec2[y].resize(_mapDataVec2[y].size());
 		for (int x = 0; x < mapVec2[y].size(); x++)
 		{
-			mapVec2[y][x] = Astar::MapData(_mapChipData[static_cast<size_t>(_mapDataVec2[y][x])].moveCost, Team::max, false);
+			mapVec2[y][x] = Astar::MapData(Application::Instance().GetDataBase().GetMapChipData(_mapDataVec2[y][x]).moveCost, Team::max, false);
 		}
 	}
 	for (const auto& charactor : _charactors)
@@ -487,21 +473,9 @@ void MapCtrl::CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, co
 	}
 }
 
-MapCtrl::MapChipData MapCtrl::GetMapChipData(const Vector2Int& mapPos) const
+DataBase::MapChipData MapCtrl::GetMapChipData(const Vector2Int& mapPos) const
 {
-	if ( 0 > mapPos.x && MAP_CHIP_CNT_W <= mapPos.x
-	  && 0 > mapPos.y && MAP_CHIP_CNT_H <= mapPos.y)
-	{
-		return MapChipData();
-	}
-
-	Map_Chip mapChip = _mapDataVec2[mapPos.y][mapPos.x];
-	if (static_cast<int>(mapChip) < 0 && mapChip >= Map_Chip::max)
-	{
-		return MapChipData();
-	}
-
-	return _mapChipData[static_cast<size_t>(mapChip)];
+	return Application::Instance().GetDataBase().GetMapChipData(_mapDataVec2[mapPos.y][mapPos.x]);
 }
 
 void MapCtrl::CreateWarSituation()const

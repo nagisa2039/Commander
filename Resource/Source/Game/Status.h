@@ -17,8 +17,8 @@ struct Status
 	bool magicAttack;	// –‚–@UŒ‚
 	bool heal;		// ‰ñ•œ
 
-	uint8_t defenseCorrection;		// ç”õ—Í•â³
-	uint8_t avoidanceCorrection;	// ‰ñ”ğ—Í•â³
+	int defenseCorrection;		// ç”õ—Í•â³
+	int avoidanceCorrection;	// ‰ñ”ğ—Í•â³
 
 	Status() : level(1), health(1), power(1), defense(1), magic_defense(1), speed(1), skill(1), move(1),
 		attribute(Attribute::normal), defenseCorrection(0), avoidanceCorrection(0.0f) {};

@@ -176,14 +176,14 @@ void PlayerUI::DrawTerrainInf()
 	DrawGraph(terrainInfRect.Left(), terrainInfRect.Top(), Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/terrainInf.png"), true);
 
 	int drawY = terrainInfRect.Top();
-	MapCtrl::MapChipData mapChipData = _mapCtrl.GetMapChipData(_playerCommander.GetMapPos());
+	auto mapChipData = _mapCtrl.GetMapChipData(_playerCommander.GetMapPos());
 
 	int choplin40 = Application::Instance().GetFileSystem()->GetFontHandle("choplin40");
 	Size strSize;
 	int lineCnt;
-	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, choplin40, mapChipData.name);
+	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, choplin40, mapChipData.name.c_str());
 	auto namePos = GetDrawPos(Vector2Int(terrainInfRect.center.x, drawY), strSize, Anker::centerup);
-	DrawFormatStringToHandle(namePos.x, namePos.y, 0xffffff, choplin40, mapChipData.name);
+	DrawFormatStringToHandle(namePos.x, namePos.y, 0xffffff, choplin40, mapChipData.name.c_str());
 	drawY += strSize.h;
 
 	int choplin20 = Application::Instance().GetFileSystem()->GetFontHandle("choplin20");

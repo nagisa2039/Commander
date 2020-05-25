@@ -23,5 +23,6 @@ public:
 	bool GetDelete()const;
 
 	void SetPos(const Vector2& pos);
+	void SetDelete(const bool value);
 };
 

@@ -32,35 +32,6 @@ bool Commander::ChaeckCharactor()
 	return _end;
 }
 
-void Commander::TerrainEffectUpdate(const Input& input)
-{
-	bool end = true;
-	for (auto& charactor : _charactors)
-	{
-		if (charactor->GetTeam() != _ctrlTeam)continue;
-
-		bool effectEnd = charactor->GetTerrainEffectEnd();
-		end = end && effectEnd;
-	}
-
-	if (end)
-	{
-		_uniqueUpdater = &Commander::NormalUpdate;
-	}
-}
-
-void Commander::NormalUpdate(const Input& input)
-{
-}
-
-void Commander::SelectUpdate(const Input& input)
-{
-}
-
-void Commander::BattaleUpdate(const Input& input)
-{
-}
-
 void Commander::DrawMovableMass()
 {
 }
@@ -115,9 +86,4 @@ void Commander::StartTerrainEffect()
 
 		charactor->StartTerrainEffect();
 	}
-}
-
-bool Commander::GetTerrainEffectUpdate() const
-{
-	return _uniqueUpdater == & Commander::TerrainEffectUpdate;
 }

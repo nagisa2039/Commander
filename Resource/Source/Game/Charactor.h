@@ -70,6 +70,9 @@ protected:
 	bool _isSelect;
 	Dir _dir;
 
+	// ターン開始時のマップ座標
+	Vector2Int _startMapPos;
+
 	//	死亡アニメーション中
 	bool _isDying;
 
@@ -159,6 +162,7 @@ public:
 	const std::list<Astar::ResultPos>& GetResutlPosList(const Vector2Int& mapPos);
 	unsigned int GetGroupNum()const;
 	const int GetHurtPoint()const;	// 最大体力から現在の体力を引いた値を返す
+	bool GetMoved()const;	// 移動済みか調べる
 
 	void SetIsSelect(const bool select);
 	void SetIsDying();
@@ -171,6 +175,7 @@ public:
 
 	void RouteSearch();
 	void TurnReset();
+	void MoveCancel();
 
 	void SearchAndMove();
 	std::vector<std::vector<std::list<Astar::ResultPos>>>& GetResutlPosListVec2();

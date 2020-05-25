@@ -22,14 +22,6 @@ protected:
 
 	bool ChaeckCharactor();
 
-	// I—¹‚·‚é‚È‚çtrue‚ğ•Ô‚·
-	virtual void TerrainEffectUpdate(const Input& input);
-
-	virtual void NormalUpdate(const Input& input);
-	virtual void SelectUpdate(const Input& input);
-	virtual void BattaleUpdate(const Input& input);	// í“¬’†
-	void(Commander::* _uniqueUpdater)(const Input& input);
-
 public:
 	Commander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera);
 	~Commander();
@@ -48,6 +40,5 @@ public:
 	Charactor* GetSelectCharactor()const;
 
 	void StartTerrainEffect();
-	bool GetTerrainEffectUpdate()const;
 };
 

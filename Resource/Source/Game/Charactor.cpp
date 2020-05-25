@@ -90,6 +90,9 @@ void Charactor::NormalDraw()
 
 	// レベルの描画
 	DrawFormatString(drawPos.x, drawPos.y, 0x000000, "Level.%d", _status.level);
+	// canMoveの描画
+	drawPos.y += 16;
+	DrawFormatString(drawPos.x, drawPos.y, 0x000000, "CanMove "+ _canMove ? "true" : "false");
 }
 
 void Charactor::DyingDraw()
@@ -129,7 +132,7 @@ void Charactor::Move()
 		}
 		else
 		{
-			MoveEnd(_status.move > 0);
+			MoveEnd(true);
 		}
 		return;
 	}
@@ -140,7 +143,7 @@ void Charactor::Move()
 		_moveDirList.pop_front();
 		if (_moveDirList.size() <= 0)
 		{
-			MoveEnd(_status.move > 0);
+			MoveEnd(true);
 		}
 	}
 }
@@ -277,6 +280,11 @@ const int Charactor::GetHurtPoint() const
 	return _startStatus.health - _status.health;
 }
 
+bool Charactor::GetMoved() const
+{
+	return _status.move != _startStatus.move;
+}
+
 void Charactor::SetIsSelect(const bool select)
 {
 	_isSelect = select;
@@ -332,6 +340,16 @@ void Charactor::RouteSearch()
 void Charactor::TurnReset()
 {
 	_canMove = true;
+	_startMapPos = GetMapPos();
+}
+
+void Charactor::MoveCancel()
+{
+	if (_status.move == _startStatus.move)return;
+
+	_pos = (_mapCtrl.GetChipSize().ToVector2Int() * _startMapPos).ToVector2();
+	_status.move = _startStatus.move;
+	RouteSearch();
 }
 
 void Charactor::SearchAndMove()
@@ -394,10 +412,14 @@ void Charactor::DrawRoute(const Vector2Int& targetPos)
 
 bool Charactor::StartTerrainEffect()
 {
-	_terrainEffect->Reset();
-	_terrainEffect->SetStartPos(GetCenterPos());
-	_effects.emplace_back(_terrainEffect); 
-	_status.health = max(1, _status.health - _startStatus.health * 0.3f);
+	auto mapChipData = _mapCtrl.GetMapChipData(GetMapPos());
+	if (mapChipData.recovery != 0)
+	{
+		_terrainEffect->Reset();
+		_terrainEffect->SetStartPos(GetCenterPos());
+		_effects.emplace_back(_terrainEffect);
+		_status.health = min(_startStatus.health, max(1, _status.health + _startStatus.health * mapChipData.recovery / 100.0f));
+	}
 
 	return true;
 }
@@ -566,7 +588,9 @@ Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team t
 	std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	: _team(team), _groupNum(groupNum), _mapCtrl(mapCtrl), _controller(ctrl), _effects(effects), Actor(camera)
 {
-	_pos = (mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToVector2();
+	_startMapPos = mapPos;
+	_pos = _startMapPos.ToVector2() * (_mapCtrl.GetChipSize().ToVector2Int()).ToVector2();
+
 	_isMoveAnim = false;
 
 	_moveSpeed = 4;
@@ -591,6 +615,7 @@ Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team t
 
 	_battleStartEffect = make_shared<CorsorTarget>(Vector2Int(), _camera, true, _mapCtrl.GetChipSize());
 	_terrainEffect = make_shared<FlyText>("damage", Vector2Int(), 120, _camera, true);
+	_terrainEffect->SetDelete(true);
 
 	_rigid = 0;
 	_moveStandby = false;
@@ -669,12 +694,16 @@ Team Charactor::GetTeam() const
 
 bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 {
-	if (!_mapCtrl.CheckMapDataRange(mapPos)) return false;
+	_moveDirList.clear();
+	if (!_mapCtrl.CheckMapDataRange(mapPos))
+	{
+		MoveEnd(false);
+		return false;
+	}
 
 	// 同じマスに移動 || 移動アニメーション中
 	if (mapPos == GetMapPos() || _isMoveAnim)return false;
 
-	_moveDirList.clear();
 
 	auto oneLineResutlList = CreateResultPosList(mapPos);
 	if (oneLineResutlList.size() <= 0)return false;

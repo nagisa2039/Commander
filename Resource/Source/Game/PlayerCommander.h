@@ -20,10 +20,10 @@ private:
 	// _mapPosが_selectCharの攻撃マスかどうかの確認
 	bool CheckAttackMass();
 	void BattlePredictionUpdate(const Input& input);	// 戦闘予測画面
-
-	void NormalUpdate(const Input& input)override;
-	void SelectUpdate(const Input& input)override;
-	void BattaleUpdate(const Input& input)override;	// 戦闘中
+	void TerrainEffectUpdate(const Input& input);
+	void NormalUpdate(const Input& input);
+	void SelectUpdate(const Input& input);
+	void BattaleUpdate(const Input& input);	// 戦闘中
 
 	void SelectCharactor(Charactor* charactor);
 

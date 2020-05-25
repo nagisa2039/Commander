@@ -40,14 +40,6 @@ private:
 	// 場面ごとの更新を行う関数ポインタ
 	void(PlayScene::* _uniqueDrawer)(const Camera& camera);
 
-	// ポストエフェクト実験
-	int _targetBf;
-	int _shrinkBf;
-
-
-	void MakePSTBuffer(const int targetHandle);
-	void DrawPSTBuffer();
-
 	void StartPlayerTurn();
 	void StartEnemyTurn();
 

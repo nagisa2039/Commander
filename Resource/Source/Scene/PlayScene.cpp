@@ -44,7 +44,7 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 
 	_turnChangeAnim = make_shared<TurnChangeAnim>();
 
-	_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
+	_playerCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
 	_enemyCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy, *_camera);
 
 	list<shared_ptr<PlayerCommander>> testList;
@@ -187,63 +187,6 @@ void PlayScene::CharactorUpdate(const Input& input)
 			_uniqueUpdater = &PlayScene::CharactorDyingUpdate;
 		}
 	}
-}
-
-void PlayScene::MakePSTBuffer(const int targetHandle)
-{
-	if (targetHandle == -1) return;
-
-	Size buffSize;
-	GetGraphSize(targetHandle, &buffSize.w, &buffSize.h);
-
-	// 縮小バッファをtargetBfの半分のサイズで作成
-	Size shrinkSize = Size(buffSize.w / 2, buffSize.h);
-	_shrinkBf = MakeScreen(shrinkSize.w, shrinkSize.h, true);
-
-	// _shrinkBfへの描画
-	SetDrawScreen(_shrinkBf);
-	ClsDrawScreen();
-
-	int drawY = 0;
-	int shrinkCnt = 4;
-
-	shrinkSize.h /= 2;
-	for (int i = 0; i < shrinkCnt; i++)
-	{
-		DrawExtendGraph(0, drawY, shrinkSize.w, drawY + shrinkSize.h, targetHandle, true);
-		drawY += shrinkSize.h;
-		shrinkSize *= 0.5f;
-	}
-
-	// 縮小バッファを拡大して加算
-	SetDrawScreen(targetHandle);
-
-	GraphFilter(_shrinkBf, DX_GRAPH_FILTER_GAUSS, 8, 100);
-
-	SetDrawBlendMode(DX_BLENDMODE_ADD, 255);
-
-	shrinkSize = buffSize * 0.5f;
-	drawY = 0;
-	for (int i = 0; i < shrinkCnt; i++)
-	{
-		DrawRectExtendGraph(0, 0, buffSize.w - 1, buffSize.h - 1, 
-			0, drawY, shrinkSize.w, shrinkSize.h, _shrinkBf, true);
-		drawY += shrinkSize.h;
-		shrinkSize *= 0.5f;
-	}
-
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-
-	SetDrawScreen(DX_SCREEN_BACK);
-
-	//GraphFilter(targetHandle, DX_GRAPH_FILTER_GAUSS, 8, 100);
-}
-
-void PlayScene::DrawPSTBuffer()
-{
-	auto wsize = Application::Instance().GetWindowSize();
-	DrawRotaGraph(wsize.w/2, wsize.h/2, 1.0f, 0.0f, _targetBf, true);
-	DrawGraph(0, 0, _shrinkBf, true);
 }
 
 void PlayScene::StartPlayerTurn()

@@ -7,16 +7,7 @@
 
 using namespace std;
 
-EnemyCommander::EnemyCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera):
-	Commander(charactors, mapCtrl, ctrlTeam, camera)
-{
-}
-
-EnemyCommander::~EnemyCommander()
-{
-}
-
-void EnemyCommander::Update(const Input& input)
+void EnemyCommander::NormalUpdate(const Input& input)
 {
 	// d’¼
 	_rigid = std::max(_rigid - 1, 0);
@@ -30,7 +21,7 @@ void EnemyCommander::Update(const Input& input)
 			return;
 		}
 		// ˆÚ“®‚ªI‚í‚Á‚½‚Ì‚Å‘Ò‹@‚É‚·‚é
-		_selectChar->MoveEnd();
+		_selectChar->MoveEnd(false);
 		_selectChar = nullptr;
 		return;
 	}
@@ -38,7 +29,7 @@ void EnemyCommander::Update(const Input& input)
 	// ˆÚ“®‰Â”\‚ÈƒLƒƒƒ‰‚ð’T‚·
 	for (auto charactor : _charactors)
 	{
-		if (charactor->GetTeam() == _ctrlTeam 
+		if (charactor->GetTeam() == _ctrlTeam
 			&& charactor->GetCanMove())
 		{
 			_selectChar = &*charactor;
@@ -54,6 +45,38 @@ void EnemyCommander::Update(const Input& input)
 	_end = true;
 
 	return;
+}
+
+void EnemyCommander::TerrainEffectUpdate(const Input& input)
+{
+	bool end = true;
+	for (auto& charactor : _charactors)
+	{
+		if (charactor->GetTeam() != _ctrlTeam)continue;
+
+		bool effectEnd = charactor->GetTerrainEffectEnd();
+		end = end && effectEnd;
+	}
+
+	if (end)
+	{
+		_uniqueUpdater = &EnemyCommander::NormalUpdate;
+	}
+}
+
+EnemyCommander::EnemyCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera):
+	Commander(charactors, mapCtrl, ctrlTeam, camera)
+{
+	_uniqueUpdater = &EnemyCommander::TerrainEffectUpdate;
+}
+
+EnemyCommander::~EnemyCommander()
+{
+}
+
+void EnemyCommander::Update(const Input& input)
+{
+	(this->*_uniqueUpdater)(input);
 }
 
 void EnemyCommander::Draw()

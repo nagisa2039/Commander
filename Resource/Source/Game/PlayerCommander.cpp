@@ -105,6 +105,17 @@ void PlayerCommander::SelectUpdate(const Input& input)
 			return;
 		}
 	}
+
+	if (input.GetButtonDown(0, "back"))
+	{
+		if (_selectChar->GetMoved())
+		{
+			_selectChar->MoveCancel();
+			return;
+		}
+		SelectCharactor(nullptr);
+		return;
+	}
 }
 
 bool PlayerCommander::CheckMoveRange()
@@ -126,6 +137,23 @@ bool PlayerCommander::CheckAttackMass()
 		if (resultPos.attack)return true;
 	}
 	return false;
+}
+
+void PlayerCommander::TerrainEffectUpdate(const Input& input)
+{
+	bool end = true;
+	for (auto& charactor : _charactors)
+	{
+		if (charactor->GetTeam() != _ctrlTeam)continue;
+
+		bool effectEnd = charactor->GetTerrainEffectEnd();
+		end = end && effectEnd;
+	}
+
+	if (end)
+	{
+		_uniqueUpdater = &PlayerCommander::NormalUpdate;
+	}
 }
 
 void PlayerCommander::BattlePredictionUpdate(const Input& input)
@@ -199,7 +227,7 @@ PlayerCommander::PlayerCommander(std::vector<std::shared_ptr<Charactor>>& charac
 {
 	_playerUI = make_unique<PlayerUI>(*this, mapCtrl);
 
-	_uniqueUpdater = &PlayerCommander::NormalUpdate;
+	_uniqueUpdater = &PlayerCommander::TerrainEffectUpdate;
 }
 
 PlayerCommander::~PlayerCommander()
@@ -208,8 +236,6 @@ PlayerCommander::~PlayerCommander()
 
 void PlayerCommander::Update(const Input& input)
 {
-	if (GetTerrainEffectUpdate())return;
-
 	_playerUI->Update(input);
 
 	if (_end) return;

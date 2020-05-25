@@ -7,6 +7,11 @@ class EnemyCommander :
 {
 private:
 
+	void(EnemyCommander::* _uniqueUpdater)(const Input& input);
+
+	void NormalUpdate(const Input& input);
+	void TerrainEffectUpdate(const Input& input);
+
 public:
 	EnemyCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera);
 	~EnemyCommander();

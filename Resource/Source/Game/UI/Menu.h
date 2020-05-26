@@ -2,6 +2,7 @@
 #include "UI.h"
 #include <array>
 #include <functional>
+#include <vector>
 #include "Geometry.h"
 #include "TimeLine.h"
 
@@ -11,9 +12,11 @@ class MapCtrl;
 class Menu :
 	public UI
 {
-private:
+protected:
 	PlayerCommander& _playerCommander;
 	const MapCtrl& _mapCtrl;
+
+	size_t _selectContent;
 
 	std::unique_ptr<Track<float>> _penAnimTrack;
 
@@ -31,24 +34,24 @@ private:
 
 	std::array<std::function<Vector2Int(const int idx)>, static_cast<size_t>(State::max)> _drawCenterPosFuncs;
 
-	enum class Content
+	struct ContentInf
 	{
-		situation,
-		retreat,
-		turnEnd,
-		max
+		std::string name;
+		Vector2Int centerPos;
+		std::function<void()> func;
+
+		ContentInf() {};
+		ContentInf(const std::string& na, const Vector2Int cp, const std::function<void()>& fu)
+			:name(na), centerPos(cp), func(fu) {}
 	};
 
-	std::array<std::string, static_cast<size_t>(Content::max)> _contentNames;
-	std::array<Vector2Int, static_cast<size_t>(Content::max)> _centerPoss;
-	std::array<std::function<void()>, static_cast<size_t>(Content::max)> _contentFunc;
-
-	Content _selectContent;
+	std::vector<ContentInf> _contentInfs;
+	std::vector<unsigned int> _contentList;
 
 	void (Menu::* _updater)(const Input& input);
 	void (Menu::* _drawer)();
 
-	void OpenUpdate(const Input& input);
+	virtual void OpenUpdate(const Input& input);
 	void CloseUpdate(const Input& input);
 	void OpenAnimUpdate(const Input& input);
 	void CloseAnimUpdate(const Input& input);
@@ -61,12 +64,17 @@ private:
 	void DrawPen();
 	void DrawContent(const Vector2Int& drawCenterPos, const unsigned int idx);
 
+	void Init(const size_t contentNum, const int frameH);
+
+	virtual void Back();
+	virtual void Decision();
+
 public:
 	Menu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl);
 	~Menu();
 
 	void Update(const Input& input)override;
-	void Draw()override;
+	virtual void Draw()override;
 
 	void Open(bool animation = true);
 	void Close(bool animation = true);

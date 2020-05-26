@@ -6,7 +6,8 @@
 #include <Dxlib.h>
 #include "Application.h"
 #include "FileSystem.h"
-#include "Menu.h"
+#include "PlayerMenu.h"
+#include "MoveMenu.h"
 #include "Input.h"
 #include "StatusWindow.h"
 #include "StatusInfomation.h"
@@ -17,13 +18,16 @@ using namespace std;
 
 PlayerUI::PlayerUI(PlayerCommander& playerCommander, const MapCtrl& mapCtrl): _playerCommander(playerCommander), _mapCtrl(mapCtrl)
 {
-	_menuDeque.clear();
-
+	_playerMenuDeque.clear();
+	_moveMenuDeque.clear();
 	_statusDeque.clear();
 	_battlePreDeque.clear();
 
-	_menu = make_shared<Menu>(_menuDeque, playerCommander, _mapCtrl);
-	_menuDeque.emplace_front(_menu);
+	_playerMenu = make_shared<PlayerMenu>(_playerMenuDeque, playerCommander, _mapCtrl);
+	_playerMenuDeque.emplace_front(_playerMenu);
+
+	_moveMenu = make_shared<MoveMenu>(_playerMenuDeque, playerCommander, _mapCtrl);
+	_moveMenuDeque.emplace_back(_moveMenu);
 
 	_statusInfDeque.clear();
 	_statusInfDeque.emplace_back(make_shared<StatusInfomation>(_statusInfDeque, _mapCtrl, _playerCommander, *this));
@@ -75,16 +79,17 @@ void PlayerUI::Update(const Input& input)
 			(*deque.begin())->Update(input);
 		}
 	};
-	UpdateDeque(_menuDeque, input);
+	UpdateDeque(_playerMenuDeque, input);
+	UpdateDeque(_moveMenuDeque, input);
 	UpdateDeque(_statusDeque, input);
 	UpdateDeque(_statusInfDeque, input);
 	UpdateDeque(_battlePreDeque, input);
 
-	if (_menu->GetIsOpen())
+	if (_playerMenu->GetIsOpen())
 	{
-		if ((*_menuDeque.begin())->GetDelete())
+		if ((*_playerMenuDeque.begin())->GetDelete())
 		{
-			_menuDeque.pop_front();
+			_playerMenuDeque.pop_front();
 		}
 	}
 
@@ -146,25 +151,34 @@ void PlayerUI::Draw()
 
 	DequeDraw(_statusInfDeque);
 	DequeDraw(_statusDeque);
-	DequeDraw(_menuDeque);
+	DequeDraw(_playerMenuDeque);
+	if (_moveMenuDeque.size() > 0)
+	{
+		(*_moveMenuDeque.begin())->Draw();
+	}
 	DequeDraw(_battlePreDeque);
 }
 
 bool PlayerUI::GetUIIsOpen() const
 {
-	return _menu->GetIsOpen() || _statusDeque.size() > 0;
+	return _playerMenu->GetIsOpen() || _statusDeque.size() > 0 || _moveMenu->GetIsOpen();
 }
 
-void PlayerUI::OpenMenu(bool animation)
+void PlayerUI::OpenPlayerMenu(bool animation)
 {
-	if (_menu->GetIsOpen())return;
-	_menu->Open(animation);
+	if (_playerMenu->GetIsOpen())return;
+	_playerMenu->Open(animation);
 }
 
-void PlayerUI::CloseMenu(bool animation)
+void PlayerUI::ClosePlayerMenu(bool animation)
 {
 	if (!GetUIIsOpen()) return;
-	_menu->Close(animation);
+	_playerMenu->Close(animation);
+}
+
+std::shared_ptr<MoveMenu> PlayerUI::GetMoveMenu()
+{
+	return _moveMenu;
 }
 
 void PlayerUI::DrawTerrainInf()

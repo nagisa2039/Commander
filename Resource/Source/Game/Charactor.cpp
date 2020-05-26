@@ -319,6 +319,12 @@ void Charactor::SetMoveStandby(const int time)
 	_rigid = time;
 }
 
+void Charactor::MoveDecision()
+{
+	_status.move = 0;
+	RouteSearch();
+}
+
 void Charactor::MoveEnd(const bool canMove)
 {
 	if (!canMove)
@@ -345,8 +351,6 @@ void Charactor::TurnReset()
 
 void Charactor::MoveCancel()
 {
-	if (_status.move == _startStatus.move)return;
-
 	_pos = (_mapCtrl.GetChipSize().ToVector2Int() * _startMapPos).ToVector2();
 	_status.move = _startStatus.move;
 	RouteSearch();
@@ -427,6 +431,25 @@ bool Charactor::StartTerrainEffect()
 bool Charactor::GetTerrainEffectEnd()
 {
 	return _terrainEffect->GetDelete();
+}
+
+std::list<Vector2Int> Charactor::GetAttackPosList() const
+{
+	std::list<Vector2Int> attackPosList;
+	attackPosList.clear();
+
+	for (const auto& resultPosListVec : _resultPosListVec2)
+	{
+		for (const auto& resultPosList : resultPosListVec)
+		{
+			for (const auto& resultPos : resultPosList)
+			{
+				if (resultPos.mapPos == GetMapPos() || _mapCtrl.GetMapPosChar(resultPos.mapPos) == nullptr) continue;
+				attackPosList.emplace_back(resultPos.mapPos);
+			}
+		}
+	}
+	return attackPosList;
 }
 
 bool Charactor::CheckMoveMapPos(const Vector2Int mapPos) const
@@ -712,7 +735,7 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 
 	_isMoveAnim = true;
 
-	_status.move = max(_status.move - oneLineResutlList.begin()->moveCnt, 0);
+	_status.move = /*max(_status.move - oneLineResutlList.begin()->moveCnt, 0);*/0;
 
 	return false;
 }

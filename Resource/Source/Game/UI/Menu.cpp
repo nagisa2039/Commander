@@ -4,28 +4,31 @@
 #include "Application.h"
 #include "FileSystem.h"
 #include <Dxlib.h>
-#include "CheckWindow.h"
-#include "PlayerCommander.h"
-#include "WarSituation.h"
 
 using namespace std;
 
 Menu::Menu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl)
 	: _playerCommander(playerCom), _mapCtrl(mapCtrl), UI(uiDeque)
 {
+	_selectContent = 0;
+}
+
+void Menu::Init(const size_t contentNum, const int frameH)
+{
+	_contentInfs.resize(contentNum);
+
 	auto wsize = Application::Instance().GetWindowSize();
 	Vector2Int offset(-30, 60);
 
 	// 行間
 	int lineSpace = 30;
-	auto menuFrameH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/menuFrame.png");
 	Size menuFrameSize;
-	GetGraphSize(menuFrameH, menuFrameSize);
+	GetGraphSize(frameH, menuFrameSize);
 	Vector2Int center = Vector2Int(offset.x + wsize.w - menuFrameSize.w / 2, offset.y + menuFrameSize.h / 2);
 
-	for (auto& centerPos : _centerPoss)
+	for (auto& contentInf : _contentInfs)
 	{
-		centerPos = center;
+		contentInf.centerPos = center;
 		center.y += lineSpace + menuFrameSize.h;
 	}
 
@@ -44,25 +47,6 @@ Menu::Menu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom,
 	_updater = &Menu::CloseUpdate;
 	_drawer = &Menu::CloseDraw;
 	_isOpen = false;
-
-	_contentNames[static_cast<size_t>(Content::situation)] = "戦況";
-	_contentNames[static_cast<size_t>(Content::retreat)] = "退却";
-	_contentNames[static_cast<size_t>(Content::turnEnd)] = "ターン終了";
-
-	_contentFunc[static_cast<size_t>(Content::situation)] = [&]()
-	{
-		_uiDeque.emplace_front(make_shared<WarSituation>(_uiDeque, _mapCtrl));
-	};
-	_contentFunc[static_cast<size_t>(Content::retreat)] = [&]()
-	{
-		_uiDeque.emplace_front(make_shared<CheckWindow>("退却しますか？", _uiDeque, [&](){_playerCommander.End();}));
-	};
-	_contentFunc[static_cast<size_t>(Content::turnEnd)] = [&]()
-	{
-		_uiDeque.emplace_front(make_shared<CheckWindow>("ターンを終了しますか？", _uiDeque, [&](){_playerCommander.End();}));
-	};
-
-	_selectContent = Content::situation;
 }
 
 Menu::~Menu()
@@ -95,7 +79,7 @@ void Menu::Open(bool animation)
 		_drawer = &Menu::OpenDraw;
 	}
 	_openAnimTrack->Reset();
-	_selectContent = Content::situation;
+	_selectContent = 0;
 }
 
 void Menu::Close(bool animation)
@@ -116,26 +100,36 @@ void Menu::Close(bool animation)
 	_closeAnimTrack->Reset();
 }
 
+void Menu::Back()
+{
+	Close();
+}
+
+void Menu::Decision()
+{
+	_contentInfs[_contentList[_selectContent]].func();
+}
+
 void Menu::OpenUpdate(const Input& input)
 {
 	if (input.GetButtonDown(0, "back"))
 	{
-		Close();
+		Back();
 	}
 
 	if (input.GetButtonDown(0, "space"))
 	{
-		_contentFunc[static_cast<size_t>(_selectContent)]();
+		Decision();
 	}
 
-	if (input.GetButtonDown(0, "up") && static_cast<int>(_selectContent) > 0)
+	if (input.GetButtonDown(0, "up") && _selectContent > 0)
 	{
-		_selectContent = static_cast<Content>(static_cast<int>(_selectContent) - 1);
+		_selectContent = _selectContent - 1;
 	}
 
-	if (input.GetButtonDown(0, "down") && static_cast<int>(_selectContent) < static_cast<int>(Content::max) - 1)
+	if (input.GetButtonDown(0, "down") && _selectContent < _contentList.size() - 1)
 	{
-		_selectContent = static_cast<Content>(static_cast<int>(_selectContent) + 1);
+		_selectContent = _selectContent + 1;
 	}
 	_penAnimTrack->Update();
 }
@@ -167,9 +161,9 @@ void Menu::CloseAnimUpdate(const Input& input)
 
 void Menu::OpenDraw()
 {
-	for (int idx = 0; idx < static_cast<int>(Content::max); idx++)
+	for (int idx = 0; idx < _contentList.size(); idx++)
 	{
-		DrawContent(_centerPoss[idx], idx);
+		DrawContent(_contentInfs[idx].centerPos, _contentList[idx]);
 	}
 
 	DrawPen();
@@ -187,13 +181,12 @@ void Menu::OpenAnimDraw()
 
 	auto GetCenterPos = [&](const unsigned int idx)
 	{
-
-		return Lerp(Vector2Int(_centerPoss[idx].x, -menuFrameSize.h / 2), _centerPoss[idx], _openAnimTrack->GetValue());
+		return Lerp(Vector2Int(_contentInfs[idx].centerPos.x, -menuFrameSize.h / 2), _contentInfs[idx].centerPos, _openAnimTrack->GetValue());
 	};
 
-	for (int idx = 0; idx < static_cast<int>(Content::max); idx++)
+	for (int idx = 0; idx < _contentList.size(); idx++)
 	{
-		DrawContent(GetCenterPos(idx), idx);
+		DrawContent(GetCenterPos(idx), _contentList[idx]);
 	}
 }
 
@@ -206,12 +199,12 @@ void Menu::CloseAnimDraw()
 
 	auto GetCenterPos = [&](const unsigned int idx)
 	{
-		return Lerp(_centerPoss[idx], Vector2Int(wsize.w + menuFrameSize.w / 2, _centerPoss[idx].y), _closeAnimTrack->GetValue());
+		return Lerp(_contentInfs[idx].centerPos, Vector2Int(wsize.w + menuFrameSize.w / 2, _contentInfs[idx].centerPos.y), _closeAnimTrack->GetValue());
 	};
 
-	for (int idx = 0; idx < static_cast<int>(Content::max); idx++)
+	for (int idx = 0; idx < _contentList.size(); idx++)
 	{
-		DrawContent(GetCenterPos(idx), idx);
+		DrawContent(GetCenterPos(idx), _contentList[idx]);
 	}
 }
 
@@ -226,7 +219,7 @@ void Menu::DrawPen()
 	Size menuFrameSize;
 	GetGraphSize(menuFrameH, menuFrameSize);
 
-	Vector2Int penDrawPos = penMove * _penAnimTrack->GetValue() + _centerPoss[static_cast<size_t>(_selectContent)] - Vector2Int(menuFrameSize.w / 2 - 10, -10);
+	Vector2Int penDrawPos = penMove * _penAnimTrack->GetValue() + _contentInfs[static_cast<size_t>(_selectContent)].centerPos - Vector2Int(menuFrameSize.w / 2 - 10, -10);
 	DrawGraph(GetDrawPos(penDrawPos, penSize, Anker::rightdown), penH, true);
 }
 
@@ -240,8 +233,8 @@ void Menu::DrawContent(const Vector2Int& drawCenterPos, const unsigned int idx)
 	Size strSize;
 	int lineCnt;
 	Vector2Int namePos = Vector2Int();
-	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, choplin30, _contentNames[idx].c_str());
+	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, choplin30, _contentInfs[idx].name.c_str());
 
 	auto drawPos = GetDrawPos(drawCenterPos, strSize, Anker::center);
-	DrawFormatStringToHandle(drawPos.x, drawPos.y, 0xffffff, choplin30, _contentNames[idx].c_str());
+	DrawFormatStringToHandle(drawPos.x, drawPos.y, 0xffffff, choplin30, _contentInfs[idx].name.c_str());
 }

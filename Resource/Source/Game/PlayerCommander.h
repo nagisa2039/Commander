@@ -25,8 +25,6 @@ private:
 	void SelectUpdate(const Input& input);
 	void BattaleUpdate(const Input& input);	// êÌì¨íÜ
 
-	void SelectCharactor(Charactor* charactor);
-
 	void CursorMoveMoment()override;
 
 public:
@@ -39,5 +37,11 @@ public:
 	void DrawMovableMass()override;
 
 	void End()override;
+
+	void SelectCharactor(Charactor* charactor, const bool nextTarget);
+
+	bool AttackPrePos(const Vector2Int& mapPos);
+	void BattleStart();
+	void BackBattalePrediction();
 };
 

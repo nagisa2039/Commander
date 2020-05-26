@@ -9,6 +9,7 @@
 #include "Application.h"
 #include "FileSystem.h"
 #include "UI/PlayerUI.h"
+#include "UI/MoveMenu.h"
 
 #include "UI/StatusWindow.h"
 
@@ -29,14 +30,14 @@ void PlayerCommander::NormalUpdate(const Input& input)
 				// 未選択ならそのキャラを選択中にする
 				if (_selectChar == nullptr)
 				{
-					SelectCharactor(charactor);
+					SelectCharactor(charactor, true);
 				}
 			}
 			return;
 		}
 
 		// メニューを開く
-		_playerUI->OpenMenu();
+		_playerUI->OpenPlayerMenu();
 		return;
 	}
 }
@@ -51,9 +52,16 @@ void PlayerCommander::SelectUpdate(const Input& input)
 	// 選択しているキャラが行動不可なら選択を強制解除する
 	if ( !_selectChar->GetCanMove())
 	{
-		SelectCharactor(nullptr);
+		SelectCharactor(nullptr, true);
 
 		return;
+	}
+
+	if (_selectChar->GetMoved())
+	{
+		auto moveMenu = _playerUI->GetMoveMenu();
+		moveMenu->SetContent(_selectChar->GetAttackPosList());
+		moveMenu->Open();
 	}
 
 	if (input.GetButtonDown(0, "space"))
@@ -63,36 +71,36 @@ void PlayerCommander::SelectUpdate(const Input& input)
 		{
 			if (_selectChar == charactor)
 			{
+				_selectChar->MoveDecision();
+				auto moveMenu = _playerUI->GetMoveMenu();
+				moveMenu->SetContent(_selectChar->GetAttackPosList());
+				moveMenu->Open();
 				// 選択中のキャラを行動終了にする
-				_selectChar->MoveEnd();
-				//_camera.AddTargetActor(this);
-				SelectCharactor(nullptr);
+				/*_selectChar->MoveEnd();
+				_camera.AddTargetActor(this);
+				SelectCharactor(nullptr, true);*/
 				return;
 			}
 
 			// 味方ならそのキャラクターを選択する
-			if (!_selectChar->GetStatus().heal && charactor->GetTeam() == _selectChar->GetTeam())
+			/*if (!_selectChar->GetStatus().heal && charactor->GetTeam() == _selectChar->GetTeam())
 			{
-				SelectCharactor(charactor);
+				SelectCharactor(charactor, true);
 				return;
-			}
+			}*/
 
-			if (CheckAttackMass())
-			{
-				// 戦闘を行う
-				_uniqueUpdater = &PlayerCommander::BattlePredictionUpdate;
-				_playerUI->AddBattlePre();
-				return;
-			}
-			else
-			{
-				// 行動可能な自軍?
-				if (charactor->GetTeam() == _ctrlTeam && charactor->GetCanMove())
-				{
-					SelectCharactor(charactor);
-					return;
-				}
-			}
+			// 指定したマスを攻撃
+			AttackPrePos(_mapPos);
+			
+			//else
+			//{
+			//	// 行動可能な自軍?
+			//	if (charactor->GetTeam() == _ctrlTeam && charactor->GetCanMove())
+			//	{
+			//		SelectCharactor(charactor, true);
+			//		return;
+			//	}
+			//}
 		}
 		else
 		{
@@ -108,12 +116,9 @@ void PlayerCommander::SelectUpdate(const Input& input)
 
 	if (input.GetButtonDown(0, "back"))
 	{
-		if (_selectChar->GetMoved())
-		{
-			_selectChar->MoveCancel();
-			return;
-		}
-		SelectCharactor(nullptr);
+		_selectChar->MoveCancel();
+		_mapPos = _selectChar->GetMapPos();
+		SelectCharactor(nullptr, false);
 		return;
 	}
 }
@@ -163,20 +168,22 @@ void PlayerCommander::BattlePredictionUpdate(const Input& input)
 		// 戦闘を行う	選択中のキャラがいるなら移動
 		if (_selectChar->GetCanMove())
 		{
-			_playerUI->ClearBattlePre();
-			_camera.AddTargetActor(_selectChar);
-			_selectChar->MoveMapPos(_mapPos);
-			_uniqueUpdater = &PlayerCommander::BattaleUpdate;
+			BattleStart();
 			return;
 		}
 	}
 
 	if (input.GetButtonDown(0, "back"))
 	{
-		_playerUI->ClearBattlePre();
-		_uniqueUpdater = &PlayerCommander::SelectUpdate;
+		BackBattalePrediction();
 		return;
 	}
+}
+
+void PlayerCommander::BackBattalePrediction()
+{
+	_playerUI->ClearBattlePre();
+	_uniqueUpdater = &PlayerCommander::SelectUpdate;
 }
 
 void PlayerCommander::BattaleUpdate(const Input& input)
@@ -184,12 +191,12 @@ void PlayerCommander::BattaleUpdate(const Input& input)
 	if (!_selectChar->GetCanMove())
 	{
 		_uniqueUpdater = &PlayerCommander::NormalUpdate;
-		SelectCharactor(nullptr);
+		SelectCharactor(nullptr, true);
 		return;
 	}
 }
 
-void PlayerCommander::SelectCharactor(Charactor* charactor)
+void PlayerCommander::SelectCharactor(Charactor* charactor, const bool nextTarget)
 {
 	if (_selectChar != nullptr)
 	{
@@ -199,6 +206,8 @@ void PlayerCommander::SelectCharactor(Charactor* charactor)
 	{
 		_selectChar = nullptr;
 		_uniqueUpdater = &PlayerCommander::NormalUpdate;
+
+		if (!nextTarget)return;
 
 		for (const auto& charactor : _charactors)
 		{
@@ -216,6 +225,27 @@ void PlayerCommander::SelectCharactor(Charactor* charactor)
 		_selectChar->SetIsSelect(true);
 		_uniqueUpdater = &PlayerCommander::SelectUpdate;
 	}
+}
+
+bool PlayerCommander::AttackPrePos(const Vector2Int& mapPos)
+{
+	_mapPos = mapPos;
+	if (CheckAttackMass())
+	{
+		// 戦闘を行う
+		_uniqueUpdater = &PlayerCommander::BattlePredictionUpdate;
+		_playerUI->AddBattlePre();
+		return true;
+	}
+	return false;
+}
+
+void PlayerCommander::BattleStart()
+{
+	_playerUI->ClearBattlePre();
+	_camera.AddTargetActor(_selectChar);
+	_selectChar->MoveMapPos(_mapPos);
+	_uniqueUpdater = &PlayerCommander::BattaleUpdate;
 }
 
 void PlayerCommander::CursorMoveMoment()
@@ -273,12 +303,14 @@ void PlayerCommander::DrawMovableMass()
 	if (_selectChar == nullptr)
 	{
 		auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
-		if (charactor == nullptr) return;
+		if (charactor == nullptr || !charactor->GetCanMove()) return;
 
 		charactor->DrawMovableMass(92);
 	}
 	else
 	{
+		if (_selectChar->GetIsMoveAnim())return;
+
 		_selectChar->DrawMovableMass(128);
 		_selectChar->DrawRoute(_mapPos);
 	}
@@ -287,5 +319,5 @@ void PlayerCommander::DrawMovableMass()
 void PlayerCommander::End()
 {
 	Commander::End();
-	_playerUI->CloseMenu(false);
+	_playerUI->ClosePlayerMenu(false);
 }

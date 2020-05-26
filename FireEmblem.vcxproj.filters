@@ -219,6 +219,12 @@
     <ClCompile Include="Resource\Source\Game\Priest.cpp">
       <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\PlayerMenu.cpp">
+      <Filter>ソース ファイル\Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\MoveMenu.cpp">
+      <Filter>ソース ファイル\Game\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -379,6 +385,12 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\CharactorType.h">
       <Filter>ヘッダー ファイル\Game\Actor\Charactor</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\PlayerMenu.h">
+      <Filter>ヘッダー ファイル\Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\MoveMenu.h">
+      <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -170,6 +170,7 @@ public:
 	void SetStatus(const Status& status);
 	void SetMoveActive(const bool active);
 	void SetMoveStandby(const int time);
+	void MoveDecision();
 
 	void MoveEnd(const bool canMove = false);
 
@@ -191,4 +192,7 @@ public:
 	// ターン開始時に地形効果を受けるならtrueを返す
 	bool StartTerrainEffect();
 	bool GetTerrainEffectEnd();
+
+	// 現在の場所から攻撃できる相手の座標を返す
+	std::list<Vector2Int> GetAttackPosList()const;
 };

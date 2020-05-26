@@ -10,7 +10,8 @@ class PlayerCommander;
 class MapCtrl;
 class Input;
 class UI;
-class Menu;
+class PlayerMenu;
+class MoveMenu;
 class StatusInfomation;
 
 class PlayerUI
@@ -19,8 +20,11 @@ private:
 	const MapCtrl& _mapCtrl;
 	PlayerCommander& _playerCommander;
 
-	std::deque<std::shared_ptr<UI>> _menuDeque;
-	std::shared_ptr<Menu> _menu;
+	std::deque<std::shared_ptr<UI>> _playerMenuDeque;
+	std::shared_ptr<PlayerMenu> _playerMenu;
+
+	std::deque<std::shared_ptr<UI>> _moveMenuDeque;
+	std::shared_ptr<MoveMenu> _moveMenu;
 
 	std::deque<std::shared_ptr<UI>> _statusDeque;
 	std::deque<std::shared_ptr<UI>> _statusInfDeque;
@@ -37,8 +41,10 @@ public:
 	void Draw();
 
 	bool GetUIIsOpen()const;
-	void OpenMenu(bool animation = true);
-	void CloseMenu(bool animation = true);
+	void OpenPlayerMenu(bool animation = true);
+	void ClosePlayerMenu(bool animation = true);
+
+	std::shared_ptr<MoveMenu> GetMoveMenu();
 
 	void AddBattlePre();
 	void ClearBattlePre();

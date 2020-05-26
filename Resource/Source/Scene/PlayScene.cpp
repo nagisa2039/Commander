@@ -44,7 +44,7 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 
 	_turnChangeAnim = make_shared<TurnChangeAnim>();
 
-	_playerCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
+	_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
 	_enemyCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy, *_camera);
 
 	list<shared_ptr<PlayerCommander>> testList;

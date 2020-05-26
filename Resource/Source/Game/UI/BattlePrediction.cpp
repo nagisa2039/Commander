@@ -54,7 +54,10 @@ void BattlePrediction::Draw()
 {
 	auto wsize = Application::Instance().GetWindowSize();
 	Rect windowRect(wsize.ToVector2Int()*0.5f, Size(400, 600));
+
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
 	windowRect.Draw(0x000000);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
 	Size iconSize(200, 200);
 	int drawY = windowRect.Top() + iconSize.h/2 + 50;

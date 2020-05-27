@@ -31,6 +31,8 @@
     <ClCompile Include="Resource\Source\Game\EditCursor.cpp" />
     <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\ArrowEffect.cpp" />
     <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\BattleEffect.cpp" />
+    <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\MagicEffect.cpp" />
+    <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\RecoverEffect.cpp" />
     <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\SlashingEffect.cpp" />
     <ClCompile Include="Resource\Source\Game\Effect\CorsorTarget.cpp" />
     <ClCompile Include="Resource\Source\Game\Effect\Effect.cpp" />
@@ -88,6 +90,8 @@
     <ClInclude Include="Resource\Source\Game\EditCursor.h" />
     <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\ArrowEffect.h" />
     <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\BattleEffect.h" />
+    <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\MagicEffect.h" />
+    <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\RecoverEffect.h" />
     <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\SlashingEffect.h" />
     <ClInclude Include="Resource\Source\Game\Effect\CorsorTarget.h" />
     <ClInclude Include="Resource\Source\Game\Effect\Effect.h" />

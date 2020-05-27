@@ -4,7 +4,7 @@
 #include "Camera.h"
 #include "Animator.h"
 #include "../Scene/SceneController.h"
-#include "Effect/BattleEffect/SlashingEffect.h"
+#include "Effect/BattleEffect/RecoverEffect.h"
 #include "Application.h"
 #include <DxLib.h>
 #include "FileSystem.h"
@@ -57,5 +57,5 @@ PriestBC::~PriestBC()
 
 std::shared_ptr<Effect> PriestBC::CreateAttackEffect(std::vector<std::shared_ptr<Effect>> effects)
 {
-	return make_shared<SlashingEffect>(*this, *_targetChar, effects, _camera);
+	return make_shared<RecoverEffect>(*this, *_targetChar, effects, _camera);
 }

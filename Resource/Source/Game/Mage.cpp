@@ -4,7 +4,7 @@
 #include "Camera.h"
 #include "Animator.h"
 #include "../Scene/SceneController.h"
-#include "Effect/BattleEffect/SlashingEffect.h"
+#include "Effect/BattleEffect/MagicEffect.h"
 #include "Application.h"
 #include <DxLib.h>
 #include "FileSystem.h"
@@ -57,5 +57,5 @@ MageBC::~MageBC()
 
 std::shared_ptr<Effect> MageBC::CreateAttackEffect(std::vector<std::shared_ptr<Effect>> effects)
 {
-	return make_shared<SlashingEffect>(*this, *_targetChar, effects, _camera);
+	return make_shared<MagicEffect>(*this, *_targetChar, effects, _camera);
 }

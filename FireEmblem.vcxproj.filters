@@ -237,6 +237,12 @@
     <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\ArrowEffect.cpp">
       <Filter>ソース ファイル\Game\Actor\Effect\BattleEffect</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\MagicEffect.cpp">
+      <Filter>ソース ファイル\Game\Actor\Effect\BattleEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\RecoverEffect.cpp">
+      <Filter>ソース ファイル\Game\Actor\Effect\BattleEffect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -408,6 +414,12 @@
       <Filter>ヘッダー ファイル\Game\Actor\Effect\BattleEffect</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\ArrowEffect.h">
+      <Filter>ヘッダー ファイル\Game\Actor\Effect\BattleEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\RecoverEffect.h">
+      <Filter>ヘッダー ファイル\Game\Actor\Effect\BattleEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\MagicEffect.h">
       <Filter>ヘッダー ファイル\Game\Actor\Effect\BattleEffect</Filter>
     </ClInclude>
   </ItemGroup>

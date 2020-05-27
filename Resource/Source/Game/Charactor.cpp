@@ -5,13 +5,13 @@
 #include "Animator.h"
 #include "../Scene/SceneController.h"
 #include "../Scene/BattleScene.h"
-#include "Effect.h"
+#include "Effect/Effect.h"
 #include <DxLib.h>
 #include "Application.h"
-#include "FlyText.h"
+#include "Effect/FlyText.h"
 #include <algorithm>
 #include "FileSystem.h"
-#include "CorsorTarget.h"
+#include "Effect/CorsorTarget.h"
 #include "DataBase.h"
 
 using namespace std;

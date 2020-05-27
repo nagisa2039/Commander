@@ -5,10 +5,10 @@
 #include "Charactor.h"
 #include "BattleScene.h"
 #include "DxLibUtility.h"
-#include "FlyText.h"
+#include "Effect/FlyText.h"
 #include "FileSystem.h"
 #include "DataBase.h"
-#include "MissEffect.h"
+#include "Effect/MissEffect.h"
 
 using namespace std;
 
@@ -26,6 +26,8 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 	_attackAnimX->AddKey(0, 0);
 	_attackAnimX->AddKey(15, 50);
 	_attackAnimX->AddKey(30, 0);
+
+	_attackEffect = nullptr;
 }
 
 BattleCharactor::~BattleCharactor()
@@ -84,7 +86,9 @@ void BattleCharactor::AttackUpdate(BattleScene& battleScene)
 				return;
 			}
 
-			battleScene.GetEffectVec().emplace_back(CreateAttackEffect(targetCenterPos));
+			auto& effects = battleScene.GetEffectVec();
+			_attackEffect = CreateAttackEffect(GetCenterPos(), targetCenterPos, effects);
+			effects.emplace_back(_attackEffect);
 
 			bool critical = selfStatus.GetCritical(targetStatus) > rand() % 100;
 			int damage = selfStatus.GetDamage(targetStatus) * (critical ? 3 : 1)
@@ -212,7 +216,7 @@ void BattleCharactor::StartAttackAnim()
 
 bool BattleCharactor::GetAttackAnimEnd()
 {
-	return _attackAnimX->GetEnd();
+	return _attackAnimX->GetEnd() && (_attackEffect == nullptr || _attackEffect->GetDelete());
 }
 
 void BattleCharactor::StartHPAnim()

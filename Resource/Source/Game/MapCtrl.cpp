@@ -16,7 +16,7 @@
 #include "Priest.h"
 
 #include "SceneController.h"
-#include "Effect.h"
+#include "Effect/Effect.h"
 
 using namespace std;
 
@@ -24,7 +24,7 @@ constexpr unsigned int CHIP_SIZE_W = 32*2.5;
 constexpr unsigned int CHIP_SIZE_H = 32*2.5;
 
 constexpr unsigned int MAP_CHIP_CNT_W = 20;
-constexpr unsigned int MAP_CHIP_CNT_H = 30;
+constexpr unsigned int MAP_CHIP_CNT_H = 20;
 
 constexpr unsigned int WAR_SITUATION_CHIP_SIZE = 20;
 

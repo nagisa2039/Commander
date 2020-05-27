@@ -4,7 +4,7 @@
 #include "Camera.h"
 #include "Animator.h"
 #include "../Scene/SceneController.h"
-#include "SlashingEffect.h"
+#include "Effect//BattleEffect/SlashingEffect.h"
 #include "Application.h"
 #include <DxLib.h>
 #include "FileSystem.h"
@@ -55,8 +55,8 @@ ArcherBC::~ArcherBC()
 {
 }
 
-std::shared_ptr<Effect> ArcherBC::CreateAttackEffect(const Vector2Int& effectPos)
+std::shared_ptr<Effect> ArcherBC::CreateAttackEffect(const Vector2Int& effectPos, const Vector2Int& targetPos, std::vector<std::shared_ptr<Effect>> effects)
 {
-	return make_shared<SlashingEffect>(effectPos, _camera);
+	return make_shared<SlashingEffect>(effectPos, targetPos, effects, _camera);
 }
 

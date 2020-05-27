@@ -4,10 +4,10 @@
 #include "../System/Application.h"
 #include "../Utility/Input.h"
 #include "../System/FileSystem.h"
-#include "Effect.h"
+#include "Effect/Effect.h"
 #include "Camera.h"
 #include <DxLib.h>
-#include "FlyText.h"
+#include "Effect/FlyText.h"
 #include "BattleCharactor.h"
 
 using namespace std;

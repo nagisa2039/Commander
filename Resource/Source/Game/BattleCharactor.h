@@ -28,6 +28,7 @@ protected:
 	Size _uiSize;
 
 	std::unique_ptr<Track<int>> _attackAnimX;
+	std::shared_ptr<Effect> _attackEffect;
 
 	uint8_t _animHealth;
 	int _animHealthCnt;
@@ -63,7 +64,7 @@ public:
 	void SetTargetCharactor(BattleCharactor* target);	// 戦う相手のポインター
 
 	// 攻撃エフェクトの作成
-	virtual std::shared_ptr<Effect> CreateAttackEffect(const Vector2Int& effectPos) = 0;
+	virtual std::shared_ptr<Effect> CreateAttackEffect(const Vector2Int& effectPos, const Vector2Int& targetPos, std::vector<std::shared_ptr<Effect>> effects) = 0;
 	// 攻撃外れエフェクトの作成
 	std::shared_ptr<Effect> CreateMissEffect(const Vector2Int& effectPos);
 };

@@ -12,8 +12,8 @@
 
 #include "PlayerCommander.h"
 #include "EnemyCommander.h"
-#include "Effect.h"
-#include "FlyText.h"
+#include "Effect/Effect.h"
+#include "Effect/FlyText.h"
 #include "TurnChangeAnim.h"
 
 using namespace std;

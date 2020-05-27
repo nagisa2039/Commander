@@ -21,5 +21,5 @@ public:
 	PriestBC(Charactor& charactor, const int imageHandle, Camera& camera);
 	~PriestBC();
 
-	std::shared_ptr<Effect> CreateAttackEffect(const Vector2Int& effectPos)override final;
+	std::shared_ptr<Effect> CreateAttackEffect(const Vector2Int& effectPos, const Vector2Int& targetPos, std::vector<std::shared_ptr<Effect>> effects)override final;
 };

@@ -67,6 +67,12 @@
     <Filter Include="ヘッダー ファイル\Game\UI">
       <UniqueIdentifier>{3deaf85b-c19e-4d3c-8ee7-bc3d7472f34d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Game\Actor\Effect\BattleEffect">
+      <UniqueIdentifier>{ff5e0d89-8686-4008-ab4a-4fb6a68681cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Game\Actor\Effect\BattleEffect">
+      <UniqueIdentifier>{c41cfa6b-30fc-4688-a796-b59ec5ffef96}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Resource\Source\System\FileSystem.cpp">
@@ -129,17 +135,8 @@
     <ClCompile Include="Resource\Source\Game\MapCursor.cpp">
       <Filter>ソース ファイル\Game\Actor</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Game\Effect.cpp">
-      <Filter>ソース ファイル\Game\Actor\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Game\SlashingEffect.cpp">
-      <Filter>ソース ファイル\Game\Actor\Effect</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Source\System\FontLoader.cpp">
       <Filter>ソース ファイル\System</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Game\FlyText.cpp">
-      <Filter>ソース ファイル\Game\Actor\Effect</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\Team.cpp">
       <Filter>ソース ファイル\Game</Filter>
@@ -201,17 +198,11 @@
     <ClCompile Include="Resource\Source\Game\UI\StatusWindow.cpp">
       <Filter>ソース ファイル\Game\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Game\MissEffect.cpp">
-      <Filter>ソース ファイル\Game\Actor\Effect</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Source\Game\UI\StatusInfomation.cpp">
       <Filter>ソース ファイル\Game\UI</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\UI\BattlePrediction.cpp">
       <Filter>ソース ファイル\Game\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Game\CorsorTarget.cpp">
-      <Filter>ソース ファイル\Game\Actor\Effect</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\Status.cpp">
       <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
@@ -224,6 +215,24 @@
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\UI\MoveMenu.cpp">
       <Filter>ソース ファイル\Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\Effect\MissEffect.cpp">
+      <Filter>ソース ファイル\Game\Actor\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\Effect\CorsorTarget.cpp">
+      <Filter>ソース ファイル\Game\Actor\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\Effect\Effect.cpp">
+      <Filter>ソース ファイル\Game\Actor\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\Effect\FlyText.cpp">
+      <Filter>ソース ファイル\Game\Actor\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\BattleEffect.cpp">
+      <Filter>ソース ファイル\Game\Actor\Effect\BattleEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\SlashingEffect.cpp">
+      <Filter>ソース ファイル\Game\Actor\Effect\BattleEffect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -293,17 +302,8 @@
     <ClInclude Include="Resource\Source\Game\MapCursor.h">
       <Filter>ヘッダー ファイル\Game\Actor</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Source\Game\Effect.h">
-      <Filter>ヘッダー ファイル\Game\Actor\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Game\SlashingEffect.h">
-      <Filter>ヘッダー ファイル\Game\Actor\Effect</Filter>
-    </ClInclude>
     <ClInclude Include="Resource\Source\System\FontLoader.h">
       <Filter>ヘッダー ファイル\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Game\FlyText.h">
-      <Filter>ヘッダー ファイル\Game\Actor\Effect</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\Commander.h">
       <Filter>ヘッダー ファイル\Game\Actor\Commander</Filter>
@@ -365,17 +365,11 @@
     <ClInclude Include="Resource\Source\Game\UI\StatusWindow.h">
       <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Source\Game\MissEffect.h">
-      <Filter>ヘッダー ファイル\Game\Actor\Effect</Filter>
-    </ClInclude>
     <ClInclude Include="Resource\Source\Game\UI\StatusInfomation.h">
       <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\UI\BattlePrediction.h">
       <Filter>ヘッダー ファイル\Game\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Game\CorsorTarget.h">
-      <Filter>ヘッダー ファイル\Game\Actor\Effect</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\Status.h">
       <Filter>ヘッダー ファイル\Game\Actor\Charactor</Filter>
@@ -391,6 +385,24 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\UI\MoveMenu.h">
       <Filter>ヘッダー ファイル\Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\BattleEffect.h">
+      <Filter>ヘッダー ファイル\Game\Actor\Effect\BattleEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Effect\FlyText.h">
+      <Filter>ヘッダー ファイル\Game\Actor\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Effect\MissEffect.h">
+      <Filter>ヘッダー ファイル\Game\Actor\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Effect\CorsorTarget.h">
+      <Filter>ヘッダー ファイル\Game\Actor\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Effect\Effect.h">
+      <Filter>ヘッダー ファイル\Game\Actor\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\SlashingEffect.h">
+      <Filter>ヘッダー ファイル\Game\Actor\Effect\BattleEffect</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

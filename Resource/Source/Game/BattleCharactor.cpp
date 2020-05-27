@@ -8,6 +8,7 @@
 #include "FileSystem.h"
 #include "DataBase.h"
 #include "Effect/MissEffect.h"
+#include "Effect/FlyText.h"
 
 using namespace std;
 
@@ -73,6 +74,24 @@ void BattleCharactor::AttackUpdate(BattleScene& battleScene)
 
 			_attackEffect = CreateAttackEffect(battleScene.GetEffectVec());
 			battleScene.GetEffectVec().emplace_back(_attackEffect);
+
+			bool critical = selfStatus.GetCritical(targetStatus) > rand() % 100;
+			int damage = 0;
+			if (selfStatus.heal)
+			{
+				damage = -selfStatus.GetRecover();
+			}
+			else
+			{
+				damage = selfStatus.GetDamage(targetStatus) * (critical ? 3 : 1)
+					* Application::Instance().GetDataBase().GetAttributeRate(selfStatus.attribute, targetStatus.attribute);
+			}
+
+			char damageText[10];
+			sprintf_s(damageText, 10, "%d", abs(damage));
+			auto flyText = std::make_shared<FlyText>(damageText, targetCenterPos, 60, _camera, false, critical);
+			battleScene.GetEffectVec().emplace_back(flyText);
+			_targetChar->GetCharacotr().AddDamage(damage);
 		}
 	}
 }

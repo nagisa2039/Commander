@@ -28,10 +28,10 @@ bool Astar::CheckSearchPosVec2Range(const Vector2Int& checkPos) const
 
 Astar::Astar()
 {
-	_dirTable[Dir::left]		= Vector2Int(-1,  0);
-	_dirTable[Dir::right]	= Vector2Int( 1,  0);
-	_dirTable[Dir::up]		= Vector2Int( 0, -1);
-	_dirTable[Dir::down]		= Vector2Int( 0,  1);
+	_dirTable[static_cast<size_t>(Dir::left)]		= Vector2Int(-1,  0);
+	_dirTable[static_cast<size_t>(Dir::right)]	= Vector2Int( 1,  0);
+	_dirTable[static_cast<size_t>(Dir::up)]		= Vector2Int( 0, -1);
+	_dirTable[static_cast<size_t>(Dir::down)]		= Vector2Int( 0,  1);
 }
 
 Astar::~Astar()
@@ -90,7 +90,7 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 				for (auto it = seachIdxList.begin(); it != seachIdxList.end();)
 				{
 					// 開始地点から四方向のサーチを行う
-					for (int i = 0; i < Dir::max; i++)
+					for (int i = 0; i < static_cast<int>(Dir::max); i++)
 					{
 						// 範囲外チェック
 						auto checkPos = *it + _dirTable[i];
@@ -210,7 +210,7 @@ bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const 
 		Vector2Int nowPos = *it;
 
 		// 開始地点から四方向のサーチを行う
-		for (int i = 0; i < Dir::max; i++)
+		for (int i = 0; i < static_cast<int>(Dir::max); i++)
 		{
 			// 範囲外チェック
 			auto checkPos = nowPos + _dirTable[i];
@@ -290,7 +290,7 @@ void Astar::AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, con
 		Vector2Int nowPos = *it;
 
 		// 開始地点から四方向のサーチを行う
-		for (int i = 0; i < Dir::max; i++)
+		for (int i = 0; i < static_cast<int>(Dir::max); i++)
 		{
 			// 範囲外チェック
 			auto checkPos = nowPos + _dirTable[i];

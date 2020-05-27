@@ -1,6 +1,6 @@
 #pragma once
 
-enum Dir
+enum class Dir
 {
 	left,
 	right,

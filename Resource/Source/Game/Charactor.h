@@ -60,7 +60,7 @@ protected:
 
 	bool _isMoveAnim;	// 移動アニメーション中
 	std::list<MoveInf> _moveDirList;
-	std::array<DirInf, Dir::max> _dirTable;
+	std::array<DirInf, static_cast<size_t>(Dir::max)> _dirTable;
 
 	bool _canMove;
 	bool _moveActive;	// true　ある程度近づいていたら動く		false 攻撃範囲内に入ったら動く

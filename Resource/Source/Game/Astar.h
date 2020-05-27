@@ -54,7 +54,7 @@ private:
 
 	std::vector<std::vector<SearchPos>> _searchPosVec2Move;
 	std::vector<std::vector<SearchPos>> _searchPosVec2Attack;
-	std::array<Vector2Int, Dir::max> _dirTable;
+	std::array<Vector2Int, static_cast<size_t>(Dir::max)> _dirTable;
 
 	void ResetSerchPosVec2D(const std::vector<std::vector<MapData>>& mapData);
 

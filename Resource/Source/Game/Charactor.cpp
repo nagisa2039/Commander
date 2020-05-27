@@ -28,7 +28,7 @@ void Charactor::NormalUpdate(const Input& input)
 
 	Move();
 
-	_animator->ChangeAnim(_dirTable[_dir].animName);
+	_animator->ChangeAnim(_dirTable[static_cast<size_t>(_dir)].animName);
 	_animator->Update();
 }
 
@@ -137,7 +137,7 @@ void Charactor::Move()
 		return;
 	}
 
-	_pos += (_dirTable[it->dir].moveVec * _moveSpeed).ToVector2();
+	_pos += (_dirTable[static_cast<size_t>(it->dir)].moveVec * _moveSpeed).ToVector2();
 	if (_pos.ToVector2Int() % _mapCtrl.GetChipSize().ToVector2Int() == Vector2Int(0, 0))
 	{
 		_moveDirList.pop_front();
@@ -692,10 +692,10 @@ void Charactor::InitAnim()
 
 	_animator->ChangeAnim("DownWalk");
 
-	_dirTable[Dir::left]	= DirInf(Vector2Int(-1, 0), "LeftWalk", 270.0f * DX_PI / 180.0f);
-	_dirTable[Dir::right]	= DirInf(Vector2Int(1, 0), "RightWalk", 90.0f * DX_PI / 180.0f);
-	_dirTable[Dir::up]		= DirInf(Vector2Int(0, -1), "UpWalk",	0.0f * DX_PI / 180.0f);
-	_dirTable[Dir::down]	= DirInf(Vector2Int(0, 1), "DownWalk",	180.0f *  DX_PI / 180.0f);
+	_dirTable[static_cast<size_t>(Dir::left)]	= DirInf(Vector2Int(-1, 0), "LeftWalk", 270.0f * DX_PI / 180.0f);
+	_dirTable[static_cast<size_t>(Dir::right)]	= DirInf(Vector2Int(1, 0), "RightWalk", 90.0f * DX_PI / 180.0f);
+	_dirTable[static_cast<size_t>(Dir::up)]		= DirInf(Vector2Int(0, -1), "UpWalk",	0.0f * DX_PI / 180.0f);
+	_dirTable[static_cast<size_t>(Dir::down)]	= DirInf(Vector2Int(0, 1), "DownWalk",	180.0f *  DX_PI / 180.0f);
 
 	_dir = Dir::down;
 }

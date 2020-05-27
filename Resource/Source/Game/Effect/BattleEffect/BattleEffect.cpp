@@ -8,3 +8,8 @@ BattleEffect::BattleEffect(const Vector2Int& pos, const Vector2Int targetPos, st
 BattleEffect::~BattleEffect()
 {
 }
+
+void BattleEffect::Update(const Input& input)
+{
+	Effect::Update(input);
+}

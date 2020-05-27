@@ -29,6 +29,7 @@
     <ClCompile Include="Resource\Source\Game\Commander.cpp" />
     <ClCompile Include="Resource\Source\Game\DataBase.cpp" />
     <ClCompile Include="Resource\Source\Game\EditCursor.cpp" />
+    <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\ArrowEffect.cpp" />
     <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\BattleEffect.cpp" />
     <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\SlashingEffect.cpp" />
     <ClCompile Include="Resource\Source\Game\Effect\CorsorTarget.cpp" />
@@ -85,6 +86,7 @@
     <ClInclude Include="Resource\Source\Game\Commander.h" />
     <ClInclude Include="Resource\Source\Game\DataBase.h" />
     <ClInclude Include="Resource\Source\Game\EditCursor.h" />
+    <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\ArrowEffect.h" />
     <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\BattleEffect.h" />
     <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\SlashingEffect.h" />
     <ClInclude Include="Resource\Source\Game\Effect\CorsorTarget.h" />

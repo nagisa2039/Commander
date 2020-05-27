@@ -52,7 +52,10 @@ void MoveMenu::OpenUpdate(const Input& input)
 	}
 	if (input.GetButtonDown(0, "left"))
 	{
-		if (_attackPosListItr == _attackPosList.begin())return;
+		if (_attackPosListItr == _attackPosList.begin())
+		{
+			_attackPosListItr = _attackPosList.end();
+		}
 		_attackPosListItr--;
 		_playerCommander.BackBattalePrediction();
 		_playerCommander.AttackPrePos(*_attackPosListItr);
@@ -114,6 +117,10 @@ void MoveMenu::SetContent(const std::list<Vector2Int>& attackPosList)
 		if (idx == static_cast<size_t>(Content::battle) && _attackPosList.size() <= 0)continue;
 		_contentList.emplace_back(idx);
 	}
+
+	auto selectChar = _playerCommander.GetSelectCharactor();
+	if (selectChar == nullptr)return;
+	_contentInfs[static_cast<size_t>(Content::battle)].name = selectChar->GetStatus().heal ? "âÒïú" : "êÌì¨";
 }
 
 void MoveMenu::Draw()

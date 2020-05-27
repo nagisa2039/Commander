@@ -64,7 +64,7 @@ public:
 	void SetTargetCharactor(BattleCharactor* target);	// 戦う相手のポインター
 
 	// 攻撃エフェクトの作成
-	virtual std::shared_ptr<Effect> CreateAttackEffect(std::vector<std::shared_ptr<Effect>> effects) = 0;
+	virtual std::shared_ptr<Effect> CreateAttackEffect(std::vector<std::shared_ptr<Effect>>& effects) = 0;
 	// 攻撃外れエフェクトの作成
 	std::shared_ptr<Effect> CreateMissEffect(const Vector2Int& effectPos);
 };

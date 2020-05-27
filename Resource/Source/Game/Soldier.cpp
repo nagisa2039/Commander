@@ -56,7 +56,7 @@ SoldierBC::~SoldierBC()
 {
 }
 
-std::shared_ptr<Effect> SoldierBC::CreateAttackEffect(std::vector<std::shared_ptr<Effect>> effects)
+std::shared_ptr<Effect> SoldierBC::CreateAttackEffect(std::vector<std::shared_ptr<Effect>>& effects)
 {
 	return make_shared<SlashingEffect>(*this, *_targetChar, effects, _camera);
 }

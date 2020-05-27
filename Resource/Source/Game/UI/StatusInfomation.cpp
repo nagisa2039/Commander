@@ -40,21 +40,21 @@ void StatusInfomation::Update(const Input& input)
 			_moveAnimTrack->SetReverse(false);
 			_moveAnimTrack->Reset();
 		}
+
+		auto currentMapPos = _cursor.GetMapPos();
+		if (_targetPosList.size() <= 0 || *_targetPosList.begin() != currentMapPos)
+		{
+			_targetPosList.emplace_front(currentMapPos);
+			_moveAnimTrack->SetReverse(false);
+			_moveAnimTrack->Reset();
+		}
 	}
 
-	auto currentMapPos = _cursor.GetMapPos();
-	if (_targetPosList.size() <= 0 || *_targetPosList.begin() != currentMapPos)
-	{
-		_targetPosList.emplace_front(currentMapPos);
-		_moveAnimTrack->SetReverse(false);
-		_moveAnimTrack->Reset();
-	}
 	_moveAnimTrack->Update();
 }
 
 void StatusInfomation::Draw()
 {
-	//if (_currentItr == _targetPosList.end())return;
 	if (_targetPosList.size() <= 0) return;
 	auto charactor = _mapCtrl.GetMapPosChar(*_targetPosList.begin());
 	if (charactor == nullptr)return;

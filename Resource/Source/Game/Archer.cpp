@@ -55,7 +55,7 @@ ArcherBC::~ArcherBC()
 {
 }
 
-std::shared_ptr<Effect> ArcherBC::CreateAttackEffect(std::vector<std::shared_ptr<Effect>> effects)
+std::shared_ptr<Effect> ArcherBC::CreateAttackEffect(std::vector<std::shared_ptr<Effect>>& effects)
 {
 	return make_shared<ArrowEffect>(*this, *_targetChar, effects, _camera);
 }

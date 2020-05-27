@@ -66,7 +66,7 @@ void StatusWindow::Draw()
 		// –¼‘O
 		GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &line, choplin40, _charactor.GetName().c_str());
 		auto drawPos = GetDrawPos(center, strSize, Anker::center);
-		DrawFormatStringToHandle(drawPos.x, drawPos.y, 0x000000, choplin40, _charactor.GetName().c_str());
+		DrawFormatStringToHandle(drawPos.x, drawPos.y, 0xffffff, choplin40, _charactor.GetName().c_str());
 		center.y += contentSize.h;
 
 		auto DrawNumContent = [&](const string& leftStr, const string& rightStr)
@@ -75,11 +75,11 @@ void StatusWindow::Draw()
 			int line;
 			GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &line, choplin40, leftStr.c_str());
 			auto drawPos = GetDrawPos(Vector2Int(statusRect0.Left(), center.y), strSize, Anker::leftcenter);
-			DrawFormatStringToHandle(drawPos.x + 10, drawPos.y, 0x000000, choplin40, leftStr.c_str());
+			DrawFormatStringToHandle(drawPos.x + 10, drawPos.y, 0xffffff, choplin40, leftStr.c_str());
 
 			GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &line, choplin40, rightStr.c_str());
 			drawPos = GetDrawPos(Vector2Int(statusRect0.Right(), center.y), strSize, Anker::rightcenter);
-			DrawFormatStringToHandle(drawPos.x - 10, drawPos.y, 0x000000, choplin40, rightStr.c_str());
+			DrawFormatStringToHandle(drawPos.x - 10, drawPos.y, 0xffffff, choplin40, rightStr.c_str());
 			center.y += contentSize.h;
 		};
 
@@ -113,7 +113,7 @@ void StatusWindow::Draw()
 			int line;
 			GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &line, choplin40, content.c_str());
 			auto drawPos = GetDrawPos(center, strSize, Anker::center);
-			DrawFormatStringToHandle(drawPos.x, drawPos.y, 0x000000, choplin40, content.c_str());
+			DrawFormatStringToHandle(drawPos.x, drawPos.y, 0xffffff, choplin40, content.c_str());
 		};
 
 		auto DrawContentNum = [&](const Vector2Int& center, const int num)
@@ -187,11 +187,11 @@ void StatusWindow::Draw()
 			int line;
 			GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &line, choplin40, leftStr.c_str());
 			auto drawPos = GetDrawPos(Vector2Int(contentRect.Left(), contentRect.center.y), strSize, Anker::leftcenter);
-			DrawFormatStringToHandle(drawPos.x + 10, drawPos.y, 0x000000, choplin40, leftStr.c_str());
+			DrawFormatStringToHandle(drawPos.x + 10, drawPos.y, 0xffffff, choplin40, leftStr.c_str());
 
 			GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &line, choplin40, rightStr.c_str());
 			drawPos = GetDrawPos(Vector2Int(contentRect.Right(), contentRect.center.y), strSize, Anker::rightcenter);
-			DrawFormatStringToHandle(drawPos.x - 10, drawPos.y, 0x000000, choplin40, rightStr.c_str());
+			DrawFormatStringToHandle(drawPos.x - 10, drawPos.y, 0xffffff, choplin40, rightStr.c_str());
 		};
 
 		string num;

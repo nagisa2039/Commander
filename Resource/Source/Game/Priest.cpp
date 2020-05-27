@@ -55,7 +55,7 @@ PriestBC::~PriestBC()
 {
 }
 
-std::shared_ptr<Effect> PriestBC::CreateAttackEffect(std::vector<std::shared_ptr<Effect>> effects)
+std::shared_ptr<Effect> PriestBC::CreateAttackEffect(std::vector<std::shared_ptr<Effect>>& effects)
 {
 	return make_shared<RecoverEffect>(*this, *_targetChar, effects, _camera);
 }

@@ -14,5 +14,6 @@ public:
 	~BattleEffect();
 
 	virtual void Update(const Input& input)override;
+	virtual void Draw()override;
 };
 

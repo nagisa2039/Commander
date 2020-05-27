@@ -7,6 +7,7 @@
 Animator::Animator()
 {
 	_imageH = -1;
+	_reverseY = false;
 }
 
 
@@ -23,6 +24,11 @@ void Animator::SetImage(const char * path)
 void Animator::SetImageHandle(const int handle)
 {
 	_imageH = handle;
+}
+
+void Animator::SetReverseY(const bool value)
+{
+	_reverseY = value;
 }
 
 void Animator::Update()
@@ -58,7 +64,7 @@ void Animator::Draw(const Vector2Int & pos)
 	}
 
 	auto rect = GetAnimRect();
-	DrawRectGraph(pos.x, pos.y, rect.Left(), rect.Top(), rect.Width(), rect.Height(), _imageH, true);
+	DrawRectRotaGraph(pos.x - rect.Width()/2, pos.y - rect.Height()/2, rect.Left(), rect.Top(), rect.Width(), rect.Height(), 1.0f, 0.0f, _imageH, true, _reverseY);
 }
 
 void Animator::Draw(const Vector2Int& pos, Size size)
@@ -69,7 +75,7 @@ void Animator::Draw(const Vector2Int& pos, Size size)
 	}
 
 	auto rect = GetAnimRect();
-	DrawRectExtendGraph(pos.x, pos.y, pos.x + size.h, pos.y + size.w, rect.Left(), rect.Top(), rect.Width(), rect.Height(), _imageH, true);
+	DrawRectRotaGraph(pos.x + size.w/2, pos.y + size.h/2, rect.Left(), rect.Top(), rect.Width(), rect.Height(), size.w / static_cast<float>(rect.Width()), 0.0f, _imageH, true, _reverseY);
 }
 
 void Animator::AddAnim(const std::string& animName, const AnimInfo& animInfo)

@@ -21,6 +21,7 @@ public:
 
 	inline Track(const bool loop = false)
 	{
+		_frame = 0;
 		_keys.clear();
 		_loop = loop;
 		_end = false;

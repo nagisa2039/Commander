@@ -13,3 +13,8 @@ void BattleEffect::Update(const Input& input)
 {
 	Effect::Update(input);
 }
+
+void BattleEffect::Draw()
+{
+	Effect::Draw();
+}

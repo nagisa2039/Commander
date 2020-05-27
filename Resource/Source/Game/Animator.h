@@ -25,6 +25,7 @@ private:
 	std::string _animName;
 	int _animFrame;
 	bool _animEnd;
+	bool _reverseY;	// YŽ²”½“]
 
 public:
 	Animator();
@@ -32,6 +33,7 @@ public:
 
 	void SetImage(const char* path);
 	void SetImageHandle(const int handle);
+	void SetReverseY(const bool value);
 
 	void Update();
 	void Draw(const Vector2Int& pos);

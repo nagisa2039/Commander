@@ -5,7 +5,6 @@
 #include "Charactor.h"
 #include "BattleScene.h"
 #include "DxLibUtility.h"
-#include "Effect/FlyText.h"
 #include "FileSystem.h"
 #include "DataBase.h"
 #include "Effect/MissEffect.h"
@@ -65,36 +64,15 @@ void BattleCharactor::AttackUpdate(BattleScene& battleScene)
 
 			auto targetCenterPos = _targetChar->GetCenterPos();
 
-			auto Damage = [&](const int damage, const bool critical = false)
-			{
-				char damageText[10];
-				sprintf_s(damageText, 10, "%d", abs(damage));
-				battleScene.GetEffectVec().emplace_back(make_shared<FlyText>(damageText, targetCenterPos, 60 * 1, _camera, false, critical));
-				_targetChar->GetCharacotr().AddDamage(damage);
-			};
-
-			if (selfStatus.heal)
-			{
-				Damage(-selfStatus.GetRecover());
-				return;
-			}
-
 			// –½’†”»’è
-			if (selfStatus.GetHit(targetStatus) <= rand() % 100)
+			if (!selfStatus.heal && selfStatus.GetHit(targetStatus) <= rand() % 100)
 			{
 				battleScene.GetEffectVec().emplace_back(CreateMissEffect(targetCenterPos));
 				return;
 			}
 
-			auto& effects = battleScene.GetEffectVec();
-			_attackEffect = CreateAttackEffect(GetCenterPos(), targetCenterPos, effects);
-			effects.emplace_back(_attackEffect);
-
-			bool critical = selfStatus.GetCritical(targetStatus) > rand() % 100;
-			int damage = selfStatus.GetDamage(targetStatus) * (critical ? 3 : 1)
-				* Application::Instance().GetDataBase().GetAttributeRate(selfStatus.attribute, targetStatus.attribute);
-
-			Damage(damage, critical);
+			_attackEffect = CreateAttackEffect(battleScene.GetEffectVec());
+			battleScene.GetEffectVec().emplace_back(_attackEffect);
 		}
 	}
 }

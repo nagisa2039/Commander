@@ -3,9 +3,13 @@
 #include <dxlib.h>
 #include "DxLibUtility.h"
 #include "Camera.h"
+#include "Charactor.h"
+#include "BattleCharactor.h"
+#include <vector>
+#include <memory>
 
-ArrowEffect::ArrowEffect(const Vector2Int& pos, const Vector2Int& targetPos, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
-	: BattleEffect(pos, targetPos, effects, camera)
+ArrowEffect::ArrowEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
+	: BattleEffect(self, target, effects, camera)
 {
 	_delete = false;
 	_animator->SetImage("Resource/Image/Effect/arrow.png");
@@ -13,10 +17,13 @@ ArrowEffect::ArrowEffect(const Vector2Int& pos, const Vector2Int& targetPos, std
 	_animator->AddAnimDiv("normal", Rect(_size.ToVector2Int() * 0.5, _size), 1, 3, true, false);
 	_animator->ChangeAnim("normal");
 
+	auto startPos = self.GetCenterPos();
+	auto targetPos = target.GetCenterPos();
+
 	_moveTrack = std::make_shared<Track<Vector2Int>>();
 	_moveTrack->ClearKey();
-	_moveTrack->AddKey(0, pos);
-	if ((targetPos - pos).x > 0)
+	_moveTrack->AddKey(0, startPos);
+	if ((targetPos - startPos).x > 0)
 	{
 		_moveTrack->AddKey(30, targetPos - Vector2Int(_animator->GetImageSize().w/2, 0));
 	}
@@ -41,6 +48,7 @@ void ArrowEffect::Update(const Input& input)
 	_moveTrack->Update();
 	if (_moveTrack->GetEnd())
 	{
+		AddDamage();
 		_delete = true;
 	}
 }

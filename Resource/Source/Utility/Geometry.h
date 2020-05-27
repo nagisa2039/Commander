@@ -12,6 +12,7 @@ struct Vector2Int
 	Vector2Int(int x, int y) :x(x), y(y) {}
 	void operator*=(const float scale);
 
+	void operator=(const Vector2& pos);
 	void operator+=(const Vector2Int& pos);
 	void operator-=(const Vector2Int& pos);
 

@@ -329,6 +329,12 @@ void Vector2Int::operator*=(const float scale)
 	this->y = static_cast<int>(y * scale);
 }
 
+void Vector2Int::operator=(const Vector2& pos)
+{
+	this->x = static_cast<int>(pos.x);
+	this->y = static_cast<int>(pos.y);
+}
+
 void Vector2Int::operator+=(const Vector2Int & pos)
 {
 	this->x += pos.x;

@@ -2,15 +2,20 @@
 #include "../Effect.h"
 #include <vector>
 
+class BattleCharactor;
+
 class BattleEffect :
 	public Effect
 {
-private:
-	Vector2Int _targetPos;
+protected:
 	std::vector<std::shared_ptr<Effect>>& _effects;
+	BattleCharactor& _self;
+	BattleCharactor& _target;
+
+	void AddDamage();
 
 public:
-	BattleEffect(const Vector2Int& pos, const Vector2Int targetPos, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera, bool cameraActive = false);
+	BattleEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera, bool cameraActive = false);
 	~BattleEffect();
 
 	virtual void Update(const Input& input)override;

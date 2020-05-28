@@ -10,9 +10,9 @@ class BattleEffect :
 protected:
 	std::vector<std::shared_ptr<Effect>>& _effects;
 	BattleCharactor& _self;
-	BattleCharactor& _target;
+	BattleCharactor& _target; 
 
-	void AddDamage();
+	unsigned int AddDamage();
 
 public:
 	BattleEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera, bool cameraActive = false);

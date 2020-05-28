@@ -33,6 +33,8 @@ protected:
 	uint8_t _animHealth;
 	int _animHealthCnt;
 
+	unsigned int _givenDamage;	// 与えたダメージ
+
 public:
 	BattleCharactor(Charactor& charactor, const int imageHandle, Camera& camera);
 	~BattleCharactor();
@@ -58,10 +60,14 @@ public:
 	Vector2Int GetPos()const;	// 足元の座標
 	Vector2Int GetStartPos()const;	// 開始位置の足元座標
 	Charactor& GetCharacotr();
+	const unsigned int& GetGivenDamage()const;
+	BattleCharactor* GetTargetBattleCharactor();
 
 	void SetStartPos(const Vector2& startPos);	// 描画する座標(中央下)
 	void SetDir(const Dir dir);	//  攻撃か守備の設定
 	void SetTargetCharactor(BattleCharactor* target);	// 戦う相手のポインター
+	void SetGivenDamage(const unsigned int value);
+	void AddGivenDamage(const unsigned int value);
 
 	// 攻撃エフェクトの作成
 	virtual std::shared_ptr<Effect> CreateAttackEffect(std::vector<std::shared_ptr<Effect>>& effects) = 0;

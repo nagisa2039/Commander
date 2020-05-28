@@ -195,4 +195,10 @@ public:
 
 	// 現在の場所から攻撃できる相手の座標を返す
 	std::list<Vector2Int> GetAttackPosList()const;
+
+	// 経験値取得	レベルアップするならtrueを返す
+	bool AddExp(unsigned int exp);
+	void AddStatus(Status status);
+
+	Status GetLevelUpStatus();
 };

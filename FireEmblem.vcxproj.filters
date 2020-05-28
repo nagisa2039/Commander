@@ -243,6 +243,9 @@
     <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\RecoverEffect.cpp">
       <Filter>ソース ファイル\Game\Actor\Effect\BattleEffect</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\Experience.cpp">
+      <Filter>ソース ファイル\Game\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -421,6 +424,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\MagicEffect.h">
       <Filter>ヘッダー ファイル\Game\Actor\Effect\BattleEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\Experience.h">
+      <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

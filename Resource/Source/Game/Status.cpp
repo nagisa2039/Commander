@@ -53,6 +53,17 @@ bool Status::CheckPursuit(const Status& target) const
 	return GetAttackSpeed() - target.GetAttackSpeed() >= 4;
 }
 
+void Status::AddStatus(Status addStatus)
+{
+	level += addStatus.level;
+	health += addStatus.health;
+	power += addStatus.power;
+	defense += addStatus.defense;
+	magic_defense += addStatus.magic_defense;
+	skill += addStatus.skill;
+	speed += addStatus.speed;
+}
+
 int Status::GetAttackSpeed()const
 {
 	return this->speed;

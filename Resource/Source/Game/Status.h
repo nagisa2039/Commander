@@ -16,16 +16,17 @@ struct Status
 	Attribute attribute;		// 属性
 	bool magicAttack;	// 魔法攻撃
 	bool heal;		// 回復
+	unsigned int exp;	// 経験値
 
 	int defenseCorrection;		// 守備力補正
 	int avoidanceCorrection;	// 回避力補正
 
-	Status() : level(1), health(1), power(1), defense(1), magic_defense(1), speed(1), skill(1), move(1),
+	Status() : level(1), health(1), power(1), defense(1), magic_defense(1), speed(1), skill(1), move(1), exp(0),
 		attribute(Attribute::normal), defenseCorrection(0), avoidanceCorrection(0.0f) {};
 	Status(const uint8_t lv, const uint8_t he, const uint8_t pw, const uint8_t df, const uint8_t md,
 		const uint8_t sp, const uint8_t sk, const uint8_t mv, const Attribute at, const bool ma, const bool heal)
 		: level(lv), health(he), power(pw), defense(df), magic_defense(md), speed(sp), skill(sk), move(mv),
-		attribute(at), magicAttack(ma), heal(heal), defenseCorrection(0), avoidanceCorrection(0) {};
+		attribute(at), magicAttack(ma), heal(heal), exp(0), defenseCorrection(0), avoidanceCorrection(0) {};
 
 	int GetDamage(const Status& target)const;	// ダメージ
 	int GetRecover();	// 回復量
@@ -38,4 +39,6 @@ struct Status
 	int GetMagicDifense()const;	// 耐魔(補正値込みの魔法守備力)
 	int GetAvoidance()const;	// 回避(補正値込みの回避力)
 	bool CheckPursuit(const Status& target)const;	// 追撃が取れるか確認
+
+	void AddStatus(Status addStatus);
 };

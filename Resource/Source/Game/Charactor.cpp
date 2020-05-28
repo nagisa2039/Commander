@@ -452,6 +452,42 @@ std::list<Vector2Int> Charactor::GetAttackPosList() const
 	return attackPosList;
 }
 
+bool Charactor::AddExp(unsigned int exp)
+{
+	_status.exp += exp;
+	if (_status.exp >= Application::Instance().GetDataBase().GetExpData(_status.level).maxPoint)
+	{
+		_status.exp = 0;
+		return true;
+	}
+	return false;
+}
+
+void Charactor::AddStatus(Status status)
+{
+	auto health = _status.health;
+	auto move = _status.move;
+	_startStatus.AddStatus(status);
+	_status = _startStatus;
+	_status.health = health;
+	_status.move = move;
+}
+
+Status Charactor::GetLevelUpStatus()
+{
+	Status status;
+	auto growRate = Application::Instance().GetDataBase().GetCharactorData(_charactorType).statusGrowRate;
+	status.level = 1;
+	status.health = growRate.health > (rand() % 100);
+	status.power = growRate.power > (rand() % 100);
+	status.defense = growRate.defense > (rand() % 100);
+	status.magic_defense = growRate.magic_defense > (rand() % 100);
+	status.skill = growRate.skill > (rand() % 100);
+	status.speed = growRate.speed > (rand() % 100);
+
+	return status;
+}
+
 bool Charactor::CheckMoveMapPos(const Vector2Int mapPos) const
 {
 	for (const auto& resutlPos : _resultPosListVec2[mapPos.y][mapPos.x])

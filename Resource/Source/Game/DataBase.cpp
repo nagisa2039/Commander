@@ -82,39 +82,54 @@ DataBase::DataBase()
 	}
 
 	{
-			ifstream ifs("Resource/DataBase/mapChipDataBase.csv");
-			string line;
-			vector<string> outputVec;
-			outputVec.reserve(20);
-			// 最初の行はスキップ
-			getline(ifs, line);
-			int idx = 0;
-			while (getline(ifs, line))
-			{
-				split(line, ',', outputVec);
-				MapChipData mapChipData;
-				// 名前
-				mapChipData.name = outputVec[1];
-				// パス
-				mapChipData.drawData.path = outputVec[2];
-				// 画像の左上座標
-				mapChipData.drawData.leftup = Vector2Int(atoi(outputVec[3].c_str()), atoi(outputVec[4].c_str()));
-				// 画像のサイズ
-				mapChipData.drawData.size = Size(atoi(outputVec[5].c_str()), atoi(outputVec[6].c_str()));
-				// 簡略化色
-				mapChipData.simpleColor = atoi(outputVec[7].c_str());
-				// 移動コスト
-				mapChipData.moveCost = atoi(outputVec[8].c_str());
-				// 防御補正値
-				mapChipData.defense = atoi(outputVec[9].c_str());
-				// 回避補正値
-				mapChipData.avoidance = atoi(outputVec[10].c_str());
-				// 回復量
-				mapChipData.recovery = atoi(outputVec[11].c_str());
+		ifstream ifs("Resource/DataBase/mapChipDataBase.csv");
+		string line;
+		vector<string> outputVec;
+		outputVec.reserve(20);
+		// 最初の行はスキップ
+		getline(ifs, line);
+		int idx = 0;
+		while (getline(ifs, line))
+		{
+			split(line, ',', outputVec);
+			MapChipData mapChipData;
+			// 名前
+			mapChipData.name = outputVec[1];
+			// パス
+			mapChipData.drawData.path = outputVec[2];
+			// 画像の左上座標
+			mapChipData.drawData.leftup = Vector2Int(atoi(outputVec[3].c_str()), atoi(outputVec[4].c_str()));
+			// 画像のサイズ
+			mapChipData.drawData.size = Size(atoi(outputVec[5].c_str()), atoi(outputVec[6].c_str()));
+			// 簡略化色
+			mapChipData.simpleColor = atoi(outputVec[7].c_str());
+			// 移動コスト
+			mapChipData.moveCost = atoi(outputVec[8].c_str());
+			// 防御補正値
+			mapChipData.defense = atoi(outputVec[9].c_str());
+			// 回避補正値
+			mapChipData.avoidance = atoi(outputVec[10].c_str());
+			// 回復量
+			mapChipData.recovery = atoi(outputVec[11].c_str());
 
-				_mapChipDataTable[idx] = mapChipData;
-				idx++;
-			}
+			_mapChipDataTable[idx] = mapChipData;
+			idx++;
+		}
+	}
+
+	{
+		_expDataTable.reserve(50);
+		ifstream ifs("Resource/DataBase/expDataBase.csv");
+		string line;
+		vector<string> outputVec;
+		outputVec.reserve(3);
+		// 最初の行はスキップ
+		getline(ifs, line);
+		while (getline(ifs, line))
+		{
+			split(line, ',', outputVec);
+			_expDataTable.emplace_back(ExpData(atoi(outputVec[1].c_str()), atoi(outputVec[2].c_str())));
+		}
 	}
 }
 
@@ -151,4 +166,9 @@ const DataBase::CharactorData& DataBase::GetCharactorData(const CharactorType ch
 const DataBase::MapChipData& DataBase::GetMapChipData(const Map_Chip mapChip) const
 {
 	return _mapChipDataTable.at(static_cast<size_t>(mapChip));
+}
+
+const DataBase::ExpData& DataBase::GetExpData(const uint8_t level) const
+{
+	return _expDataTable.at(level);
 }

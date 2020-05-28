@@ -5,7 +5,7 @@
 #include "DataBase.h"
 #include "../FlyText.h"
 
-void BattleEffect::AddDamage()
+unsigned int  BattleEffect::AddDamage()
 {
 	auto selfStatus = _self.GetCharacotr().GetStatus();
 	auto targetStatus = _target.GetCharacotr().GetStatus();
@@ -30,6 +30,7 @@ void BattleEffect::AddDamage()
 	{
 		flyText->SetColor(0x80ff00);
 	}
+	return selfStatus.heal ? 0 : damage;
 }
 
 BattleEffect::BattleEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera, bool cameraActive)

@@ -28,6 +28,8 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 	_attackAnimX->AddKey(30, 0);
 
 	_attackEffect = nullptr;
+
+	_givenDamage = 0;
 }
 
 BattleCharactor::~BattleCharactor()
@@ -42,6 +44,8 @@ void BattleCharactor::Init(const Vector2& startPos, const Dir dir, BattleCharact
 
 	_animHealth = _selfChar.GetStatus().health;
 	_animHealthCnt = 0;
+
+	_givenDamage = 0;
 }
 
 void BattleCharactor::AnimUpdate()
@@ -233,6 +237,16 @@ Charactor& BattleCharactor::GetCharacotr()
 	return _selfChar;
 }
 
+const unsigned int& BattleCharactor::GetGivenDamage() const
+{
+	return _givenDamage;
+}
+
+BattleCharactor* BattleCharactor::GetTargetBattleCharactor()
+{
+	return _targetChar;
+}
+
 void BattleCharactor::SetStartPos(const Vector2& startPos)
 {
 	_startPos = startPos;
@@ -256,6 +270,16 @@ void BattleCharactor::SetDir(const Dir dir)
 void BattleCharactor::SetTargetCharactor(BattleCharactor* target)
 {
 	_targetChar = target;
+}
+
+void BattleCharactor::SetGivenDamage(const unsigned int value)
+{
+	_givenDamage = value;
+}
+
+void BattleCharactor::AddGivenDamage(const unsigned int value)
+{
+	_givenDamage += value;
 }
 
 std::shared_ptr<Effect> BattleCharactor::CreateMissEffect(const Vector2Int& effectPos)

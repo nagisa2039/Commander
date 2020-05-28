@@ -8,6 +8,7 @@
 #include "Team.h"
 #include "CharactorType.h"
 #include "MapChip.h"
+#include <vector>
 
 class DataBase
 {
@@ -52,9 +53,19 @@ private:
 		std::string iconImagePath;
 	};
 
+	struct ExpData
+	{
+		unsigned int maxPoint;	// •K—v—Ê
+		unsigned int getPoint;	// Žæ“¾—Ê
+		ExpData() :maxPoint(0), getPoint(0) {};
+		ExpData(unsigned int m, unsigned int g) :maxPoint(m), getPoint(g) {};
+	};
+
 	std::array<CharactorData, static_cast<size_t>(CharactorType::max)> _charactorDataTable;
 
 	std::array<MapChipData, static_cast<size_t>(Map_Chip::max)> _mapChipDataTable;
+
+	std::vector<ExpData> _expDataTable;
 
 public:
 	DataBase();
@@ -68,5 +79,7 @@ public:
 	const CharactorData& GetCharactorData(const CharactorType charactorType)const;
 
 	const MapChipData& GetMapChipData(const Map_Chip mapChip)const;
+
+	const ExpData& GetExpData(const uint8_t level)const;
 };
 

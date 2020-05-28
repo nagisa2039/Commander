@@ -51,6 +51,7 @@
     <ClCompile Include="Resource\Source\Game\TurnChangeAnim.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\BattlePrediction.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\CheckWindow.cpp" />
+    <ClCompile Include="Resource\Source\Game\UI\Experience.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\Menu.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\MoveMenu.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\PlayerMenu.cpp" />
@@ -111,6 +112,7 @@
     <ClInclude Include="Resource\Source\Game\TurnChangeAnim.h" />
     <ClInclude Include="Resource\Source\Game\UI\BattlePrediction.h" />
     <ClInclude Include="Resource\Source\Game\UI\CheckWindow.h" />
+    <ClInclude Include="Resource\Source\Game\UI\Experience.h" />
     <ClInclude Include="Resource\Source\Game\UI\Menu.h" />
     <ClInclude Include="Resource\Source\Game\UI\MoveMenu.h" />
     <ClInclude Include="Resource\Source\Game\UI\PlayerMenu.h" />

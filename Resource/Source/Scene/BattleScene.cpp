@@ -9,26 +9,30 @@
 #include <DxLib.h>
 #include "Effect/FlyText.h"
 #include "BattleCharactor.h"
+#include "UI/Experience.h"
 
 using namespace std;
 
-bool BattleScene::SceneStartAnim(const Input& input)
+void BattleScene::SceneStartAnim(const Input& input)
 {
 	if (_exRateTL->GetEnd())
 	{
 		_leftBC.StartAttackAnim();
 		_updater = &BattleScene::LeftTurn;
 	}
-	return true;
 }
 
-bool BattleScene::SceneEndAnim(const Input& input)
+void BattleScene::SceneEndAnim(const Input& input)
 {
 	_brightTL->Update();
-	return !_brightTL->GetEnd();
+	if (_brightTL->GetEnd())
+	{
+		End();
+		return;
+	}
 }
 
-bool BattleScene::LeftTurn(const Input& input)
+void BattleScene::LeftTurn(const Input& input)
 {
 	_leftBC.AttackUpdate(*this);
 	if (_leftBC.GetAttackAnimEnd())
@@ -36,10 +40,9 @@ bool BattleScene::LeftTurn(const Input& input)
 		_rightBC.StartHPAnim();
 		_updater = &BattleScene::RightHPAnim;
 	}
-	return true;
 }
 
-bool BattleScene::LeftHPAnim(const Input& input)
+void BattleScene::LeftHPAnim(const Input& input)
 {
 	_leftBC.UIAnimUpdate();
 	if (_leftBC.GetHPAnimEnd())
@@ -47,25 +50,25 @@ bool BattleScene::LeftHPAnim(const Input& input)
 		// 死んでいたら終わる
 		if (_leftBC.GetCharacotr().GetIsDying())
 		{
-			return false;
+			StartExpUpdate();
+			return;
 		}
 
 		// 追撃判定
 		if (_pursuit)
 		{
 			// 追撃済みなので戦闘を終了する
-			_updater = &BattleScene::SceneEndAnim;
-			return true;
+			StartExpUpdate();
+			return;
 		}
 		else
 		{
 			PursuitAttack();
 		}
 	}
-	return true;
 }
 
-bool BattleScene::RightTurn(const Input& input)
+void BattleScene::RightTurn(const Input& input)
 {
 	_rightBC.AttackUpdate(*this);
 	if (_rightBC.GetAttackAnimEnd())
@@ -73,24 +76,31 @@ bool BattleScene::RightTurn(const Input& input)
 		_leftBC.StartHPAnim();
 		_updater = &BattleScene::LeftHPAnim;
 	}
-	return true;
 }
 
-bool BattleScene::RightHPAnim(const Input& input)
+void BattleScene::RightHPAnim(const Input& input)
 {
 	_rightBC.UIAnimUpdate();
 	if (_rightBC.GetHPAnimEnd())
 	{
-		if (_leftBC.GetCharacotr().GetStatus().heal) return false;
+		if (_leftBC.GetCharacotr().GetStatus().heal)
+		{
+			StartExpUpdate();
+			return;
+		}
 
 		// 死んでいたら終わる
-		if (_rightBC.GetCharacotr().GetIsDying()) return false;
+		if (_rightBC.GetCharacotr().GetIsDying())
+		{
+			StartExpUpdate();
+			return;
+		}
 
 		// 追撃判定
 		if (_pursuit)
 		{
-			_updater = &BattleScene::SceneEndAnim;
-			return true;
+			StartExpUpdate();
+			return;
 		}
 
 		// 攻撃範囲内か確認
@@ -105,7 +115,21 @@ bool BattleScene::RightHPAnim(const Input& input)
 			PursuitAttack(false);
 		}
 	}
-	return true;
+}
+
+void BattleScene::ExpUpdate(const Input& input)
+{
+	if (_expUIDeque.size() <= 0)
+	{
+		return;
+	}
+	(*_expUIDeque.begin())->Update(input);
+	if (_expUIDeque.size() <= 0)
+	{
+		// 追撃済みなので戦闘を終了する
+		_updater = &BattleScene::SceneEndAnim;
+		return;
+	}
 }
 
 bool BattleScene::PursuitAttack(const bool rightAttack)
@@ -131,8 +155,14 @@ bool BattleScene::PursuitAttack(const bool rightAttack)
 	}
 
 	// 追撃不可なので終了
-	_updater = &BattleScene::SceneEndAnim;
+	StartExpUpdate();
 	return false;
+}
+
+void BattleScene::End()
+{
+	_leftBC.GetCharacotr().MoveEnd();
+	_controller.PopScene();
 }
 
 BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, SceneController& ctrl, const Vector2Int& cameraOffset)
@@ -171,6 +201,8 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 	_brightTL->AddKey(30, 0.0f);
 
 	_updater = &BattleScene::SceneStartAnim;
+
+	_expUIDeque.clear();
 }
 
 BattleScene::~BattleScene()
@@ -186,25 +218,36 @@ void BattleScene::Update(const Input& input)
 	_leftBC.AnimUpdate();
 	_rightBC.AnimUpdate();
 
-	if (!(this->*_updater)(input))
-	{
-		BattleEnd();
-		return;
-	}
+	(this->*_updater)(input);
 
-	for (auto& effect : _effects)
+	if (_effects.size() > 0)
 	{
-		effect->Update(input);
+		for (auto& effect : _effects)
+		{
+			effect->Update(input);
+		}
+
+		auto newEnd = remove_if(_effects.begin(), _effects.end(),
+			[](const std::shared_ptr<Effect>& effect) { return effect->GetDelete(); });
+		_effects.erase(newEnd, _effects.end());
 	}
-	auto newEnd = remove_if(_effects.begin(), _effects.end(),
-		[](const std::shared_ptr<Effect>& effect) { return effect->GetDelete(); });
-	_effects.erase(newEnd, _effects.end());
 }
 
-void BattleScene::BattleEnd()
+void BattleScene::StartExpUpdate()
 {
-	_leftBC.GetCharacotr().MoveEnd();
-	_controller.PopScene();
+	if (_leftBC.GetCharacotr().GetTeam() == Team::player)
+	{
+		_expUIDeque.emplace_front(make_shared<Experience>(_leftBC, _expUIDeque));
+		_updater = &BattleScene::ExpUpdate;
+		return;
+	}
+	if (_rightBC.GetCharacotr().GetTeam() == Team::player && _rightBC.GetGivenDamage() > 0)
+	{
+		_expUIDeque.emplace_front(make_shared<Experience>(_rightBC, _expUIDeque));
+		_updater = &BattleScene::ExpUpdate;
+		return;
+	}
+	_updater = &BattleScene::SceneEndAnim;
 }
 
 void BattleScene::Draw(void)
@@ -236,6 +279,11 @@ void BattleScene::Draw(void)
 	for (auto& effect : _effects)
 	{
 		effect->Draw();
+	}
+
+	for (auto rItr = _expUIDeque.rbegin(); rItr != _expUIDeque.rend(); rItr++)
+	{
+		(*rItr)->Draw();
 	}
 
 	if (!_exRateTL->GetEnd())

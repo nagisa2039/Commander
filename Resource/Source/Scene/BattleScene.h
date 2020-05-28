@@ -4,8 +4,10 @@
 #include "../Utility/Geometry.h"
 #include <vector>
 #include <memory>
+#include <deque>
 #include "TimeLine.h"
 
+class UI;
 class Camera;
 class Effect;
 class Charactor;
@@ -23,6 +25,7 @@ private:
 	std::shared_ptr<Camera> _camera;
 
 	std::vector<std::shared_ptr<Effect>> _effects;
+	std::deque< std::shared_ptr<UI>> _expUIDeque;
 
 	Vector2Int _startPos;
 	float _floatY;
@@ -31,26 +34,29 @@ private:
 	std::unique_ptr<Track<float>> _exRateTL;
 	std::unique_ptr<Track<float>> _brightTL;	// ‰æ–Ê‚“x
 
-	bool SceneStartAnim(const Input& input);
-	bool SceneEndAnim(const Input& input);
+	void SceneStartAnim(const Input& input);
+	void SceneEndAnim(const Input& input);
 
-	bool LeftTurn(const Input& input);
-	bool LeftHPAnim(const Input& input);
+	void LeftTurn(const Input& input);
+	void LeftHPAnim(const Input& input);
 
-	bool RightTurn(const Input& input);
-	bool RightHPAnim(const Input& input);
+	void RightTurn(const Input& input);
+	void RightHPAnim(const Input& input);
 
-	bool(BattleScene::* _updater)(const Input& input);
+	void ExpUpdate(const Input& input);
+
+	void(BattleScene::* _updater)(const Input& input);
 
 	// ’ÇŒ‚‚Å‚«‚éƒLƒƒƒ‰‚ª‚¢‚ê‚Î’ÇŒ‚‚·‚é		rightAttack : ‰E‘¤‚ÌUŒ‚‚ª“–‚½‚é”ÍˆÍ‚©
 	bool PursuitAttack(const bool rightAttack = true);
+	void End();
+	void StartExpUpdate();
 
 public:
 	BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, SceneController& ctrl, const Vector2Int& cameraOffset);
 	~BattleScene();
 
 	void Update(const Input& input) override final;
-	void BattleEnd();
 	void Draw(void) override final;
 
 	std::vector<std::shared_ptr<Effect>>& GetEffectVec();

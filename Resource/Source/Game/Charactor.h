@@ -172,7 +172,7 @@ public:
 	void SetMoveStandby(const int time);
 	void MoveDecision();
 
-	void MoveEnd(const bool canMove = false);
+	void MoveEnd(const bool canMove = false, bool removeCamera = true);
 
 	void RouteSearch();
 	void TurnReset();

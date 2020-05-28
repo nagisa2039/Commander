@@ -82,7 +82,7 @@ MoveMenu::MoveMenu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& pl
 		auto selectChar = _playerCommander.GetSelectCharactor();
 		if (selectChar == nullptr)return;
 
-		selectChar->MoveEnd();
+		selectChar->MoveEnd(false, false);
 		_playerCommander.SelectCharactor(nullptr, true);
 		Close();
 	};

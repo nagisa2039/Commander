@@ -325,7 +325,7 @@ void Charactor::MoveDecision()
 	RouteSearch();
 }
 
-void Charactor::MoveEnd(const bool canMove)
+void Charactor::MoveEnd(const bool canMove, const bool removeCamera)
 {
 	if (!canMove)
 	{
@@ -333,7 +333,10 @@ void Charactor::MoveEnd(const bool canMove)
 	}
 	_canMove = canMove;
 	_isMoveAnim = false;
-	_camera.PopTargetActor();
+	if (removeCamera)
+	{
+		_camera.PopTargetActor();
+	}
 
 	_mapCtrl.AllCharactorRouteSearch();
 }

@@ -63,6 +63,7 @@ void BattlePreparationCursor::Select()
 			charactor->InitmapPos(_selectChar->GetMapPos());
 			_selectChar->InitmapPos(_mapPos);
 		}
+		_selectChar = nullptr;
 	}
 }
 

@@ -136,11 +136,6 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 		_charactors.emplace_back(make_shared<Priest>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera));
 		(*_charactors.rbegin())->SetMoveActive(characotChipInf.active);
 	};
-
-	// 仮のセーブデータ
-	_charactorSaveDataVec.emplace_back(SaveData(CharactorType::archer, Status(5, 20, 15, 10, 10, 10, 10, 5, Attribute::red, false, false)));
-	_charactorSaveDataVec.emplace_back(SaveData(CharactorType::archer, Status(5, 20, 15, 10, 10, 10, 10, 5, Attribute::red, false, false)));
-	_charactorSaveDataVec.emplace_back(SaveData(CharactorType::archer, Status(5, 20, 15, 10, 10, 10, 10, 5, Attribute::red, false, false)));
 }
 
 MapCtrl::~MapCtrl()
@@ -294,12 +289,14 @@ void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr
 					auto saveData = *_charactorSaveDataVec.rbegin();
 					auto charactorChip = mapData.charactorChip;
 					_charactorCreateFuncs[static_cast<size_t>(saveData.charType)](mapData.charactorChip, ctrl, effects, camera);
+					(*_charactors.rbegin())->InitStatus(saveData.status);
 					_charactorSaveDataVec.pop_back();
 				}
 			}
 			else
 			{
 				_charactorCreateFuncs[static_cast<size_t>(mapData.charactorChip.type)](mapData.charactorChip, ctrl, effects, camera);
+				(*_charactors.rbegin())->InitStatus(GetLevelInitStatus(mapData.charactorChip.level, mapData.charactorChip.type));
 			}
 		}
 	}
@@ -311,7 +308,6 @@ bool MapCtrl::SaveMap(const std::string fileName)
 
 	string folderName("Resource/Map/");
 	fopen_s(&fp, (folderName + fileName).c_str(), "wb");
-	fseek(fp, 0, SEEK_SET);
 
 	// マップサイズの書き込み
 	auto mapSize = GetMapSize();
@@ -606,22 +602,28 @@ bool MapCtrl::CheckMapDataRange(const Vector2Int& mapPos)
 
 bool MapCtrl::CreateCharactorData()
 {
+	// 仮のセーブデータ	もしかしたらcsvにするかも
+	_charactorSaveDataVec.clear();
+	_charactorSaveDataVec.emplace_back(SaveData(CharactorType::archer, GetLevelInitStatus(5, CharactorType::archer)));
+	_charactorSaveDataVec.emplace_back(SaveData(CharactorType::priest, GetLevelInitStatus(5, CharactorType::priest)));
+	_charactorSaveDataVec.emplace_back(SaveData(CharactorType::swordman, GetLevelInitStatus(5, CharactorType::swordman)));
+	_charactorSaveDataVec.emplace_back(SaveData(CharactorType::warrior, GetLevelInitStatus(5, CharactorType::warrior)));
+	_charactorSaveDataVec.emplace_back(SaveData(CharactorType::soldier, GetLevelInitStatus(5, CharactorType::soldier)));
+	_charactorSaveDataVec.emplace_back(SaveData(CharactorType::mage, GetLevelInitStatus(5, CharactorType::mage)));
+
 	FILE* fp = nullptr;
 
 	fopen_s(&fp, "Resource/SaveData/savedata", "ab");
 	if (fp == nullptr)
 	{
+		fclose(fp);
 		return false;
 	}
 	// キャラクター数の書き込み
-	int cnt = 6;
+	int cnt = _charactorSaveDataVec.size();
 	fwrite(&cnt, sizeof(cnt), 1, fp);
 	// キャラクターデータの書き込み
-	for (CharactorType type = static_cast<CharactorType>(0); type != CharactorType::max; type = static_cast<CharactorType>(static_cast<int>(type) + 1))
-	{
-		SaveData saveData(type, GetLevelInitStatus(5, type));
-		fwrite(&saveData, sizeof(saveData), 1, fp);
-	}
+	fwrite(_charactorSaveDataVec.data(), sizeof(_charactorSaveDataVec[0]), cnt, fp);
 
 	fclose(fp);
 
@@ -632,8 +634,7 @@ bool MapCtrl::SaveCharactorData()
 {
 	FILE* fp = nullptr;
 
-	fopen_s(&fp, "Resource/SaveData/savedata", "ab");
-	fseek(fp, 0, SEEK_SET);
+	fopen_s(&fp, "Resource/SaveData/savedata", "wb");
 
 	int cnt = 0;
 	for (const auto& charactor : _charactors)
@@ -647,7 +648,7 @@ bool MapCtrl::SaveCharactorData()
 	for (const auto& charactor : _charactors)
 	{
 		if (charactor->GetTeam() != Team::player)continue;
-		SaveData saveData(charactor->GetCharactorType(), charactor->GetStatus());
+		SaveData saveData(charactor->GetCharactorType(), charactor->GetStartStatus());
 
 		fwrite(&saveData, sizeof(saveData), 1, fp);
 	}
@@ -659,13 +660,15 @@ bool MapCtrl::SaveCharactorData()
 
 bool MapCtrl::LoadCharactorData()
 {
+	_charactorSaveDataVec.clear();
 	FILE* fp = nullptr;
 
 	fopen_s(&fp, "Resource/SaveData/savedata", "rb");
-	fseek(fp, 0, SEEK_SET);
 
 	if (fp == NULL)
 	{
+		fclose(fp);
+		CreateCharactorData();
 		return false;
 	}
 
@@ -676,6 +679,8 @@ bool MapCtrl::LoadCharactorData()
 
 	// キャラクターデータの読み込み
 	fread_s(_charactorSaveDataVec.data(), sizeof(SaveData) * cnt, sizeof(SaveData), cnt, fp);
+
+	fclose(fp);
 
 	return true;
 }

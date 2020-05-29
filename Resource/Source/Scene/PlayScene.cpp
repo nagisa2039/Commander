@@ -66,6 +66,7 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	_camera->SetLimitRect(Rect(mapSize.ToVector2Int() * 0.5, mapSize));
 
 	_mapCtrl->LoadMap("map0");
+	_mapCtrl->LoadCharactorData();
 	_mapCtrl->CreateCharactor(ctrl, _effects, *_camera);
 
 	_dyingCharItr = _charactors.end();
@@ -87,8 +88,6 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 		}
 	}
 
-	_mapCtrl->CreateCharactorData();
-	_mapCtrl->LoadCharactorData();
 
 	_uniqueUpdater = &PlayScene::PreparationUpdate;
 	_uniqueDrawer = &PlayScene::PreparationDraw;
@@ -224,6 +223,7 @@ void PlayScene::StartPlayerTurn()
 	_uniqueDrawer = &PlayScene::TurnChengeDraw;
 	_turnChangeAnim->TurnStart(Team::player);
 	_enemyCommander->TurnReset();
+	_playerCommander->TurnReset();
 
 	_uniqueUpdaterOld = _uniqueUpdater;
 
@@ -241,6 +241,7 @@ void PlayScene::StartEnemyTurn()
 	_uniqueUpdater = &PlayScene::TurnChengeUpdate;
 	_uniqueDrawer = &PlayScene::TurnChengeDraw;
 	_turnChangeAnim->TurnStart(Team::enemy);
+	_enemyCommander->TurnReset();
 	_playerCommander->TurnReset();
 
 	_uniqueUpdaterOld = _uniqueUpdater;
@@ -319,6 +320,7 @@ void PlayScene::CharactorDyingUpdate(const Input& input)
 
 void PlayScene::GameClearUpdate(const Input& input)
 {
+	_mapCtrl->SaveCharactorData();
 }
 
 void PlayScene::GameOverUpdate(const Input& input)

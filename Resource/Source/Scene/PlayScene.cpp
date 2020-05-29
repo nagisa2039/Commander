@@ -76,6 +76,8 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 		charactor->RouteSearch();
 	}
 
+	_mapCtrl->CreateCharactorData();
+	_mapCtrl->LoadCharactorData();
 
 	// プレイヤーターンを開始
 	StartPlayerTurn();

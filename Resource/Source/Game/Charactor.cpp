@@ -285,6 +285,11 @@ bool Charactor::GetMoved() const
 	return _status.move != _startStatus.move;
 }
 
+CharactorType Charactor::GetCharactorType() const
+{
+	return _charactorType;
+}
+
 void Charactor::SetIsSelect(const bool select)
 {
 	_isSelect = select;
@@ -306,6 +311,12 @@ void Charactor::SetDir(const Dir dir)
 void Charactor::SetStatus(const Status& status)
 {
 	_status = status;
+}
+
+void Charactor::InitStatus(const Status& status)
+{
+	_status = status;
+	_startStatus = status;
 }
 
 void Charactor::SetMoveActive(const bool active)
@@ -790,16 +801,9 @@ void Charactor::CharactorDataInit(const CharactorType& type, const uint8_t& leve
 	InitAnim();
 
 
-	_status = charactorData.initialStatus;
 	_status.attribute = Attribute::red;
 
-	_status.health += level * charactorData.statusGrowRate.health / 100.0f;
-	_status.power += level * charactorData.statusGrowRate.power / 100.0f;
-	_status.defense += level * charactorData.statusGrowRate.defense / 100.0f;
-	_status.magic_defense += level * charactorData.statusGrowRate.magic_defense / 100.0f;
-	_status.speed += level * charactorData.statusGrowRate.speed / 100.0f;
-	_status.skill += level * charactorData.statusGrowRate.skill / 100.0f;
-
+	_status = _mapCtrl.GetLevelInitStatus(level, type);
 	_startStatus = _status;
 
 	_iconPath = charactorData.iconImagePath;

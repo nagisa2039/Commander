@@ -11,6 +11,7 @@ enum class CharactorType
 	archer,
 	priest,
 	max
+
 };
 
 struct CharactorChipInf

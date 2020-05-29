@@ -18,6 +18,15 @@ class Effect;
 class MapCtrl
 {
 private:
+	struct SaveData
+	{
+		CharactorType charType;
+		Status status;
+		SaveData():charType(CharactorType::max), status(Status()) {};
+		SaveData(const CharactorType ct, const Status& st):charType(ct), status(st) {};
+	};
+	std::vector<SaveData> _charactorSaveDataVec;
+
 	std::vector<std::vector<Map_Chip>> _mapDataVec2;			// マップデータ
 	std::shared_ptr<Astar> _astar;
 
@@ -95,4 +104,10 @@ public:
 
 	// 指定したマスがマップの範囲内かを返す
 	bool CheckMapDataRange(const Vector2Int& mapPos);
+
+	bool CreateCharactorData();
+	bool SaveCharactorData();
+	bool LoadCharactorData();
+
+	Status GetLevelInitStatus(const uint8_t level, const CharactorType charType);
 };

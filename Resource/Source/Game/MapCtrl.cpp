@@ -270,11 +270,7 @@ bool MapCtrl::SaveMap(const std::string fileName)
 
 	string folderName("Resource/Map/");
 	fopen_s(&fp, (folderName + fileName).c_str(), "wb");
-
-	/*if (fp == NULL)
-	{
-		return false;
-	}*/
+	fseek(fp, 0, SEEK_SET);
 
 	// マップサイズの書き込み
 	auto mapSize = GetMapSize();
@@ -304,6 +300,7 @@ bool MapCtrl::LoadMap(const std::string fileName)
 
 	string folderName("Resource/Map/");
 	fopen_s(&fp, (folderName + fileName).c_str(), "rb");
+	fseek(fp, 0, SEEK_SET);
 
 	if (fp == NULL)
 	{
@@ -578,4 +575,95 @@ void MapCtrl::SetGroupActive(const unsigned int groupNum, const bool active)
 bool MapCtrl::CheckMapDataRange(const Vector2Int& mapPos)
 {
 	return mapPos.x >= 0 && mapPos.x < _mapDataVec2[mapPos.y].size() && mapPos.y >= 0 && mapPos.y < _mapDataVec2.size();
+}
+
+bool MapCtrl::CreateCharactorData()
+{
+	FILE* fp = nullptr;
+
+	fopen_s(&fp, "Resource/SaveData/savedata", "ab");
+	if (fp == nullptr)
+	{
+		return false;
+	}
+	// キャラクター数の書き込み
+	int cnt = 6;
+	fwrite(&cnt, sizeof(cnt), 1, fp);
+	// キャラクターデータの書き込み
+	for (CharactorType type = static_cast<CharactorType>(0); type != CharactorType::max; type = static_cast<CharactorType>(static_cast<int>(type) + 1))
+	{
+		SaveData saveData(type, GetLevelInitStatus(5, type));
+		fwrite(&saveData, sizeof(saveData), 1, fp);
+	}
+
+	fclose(fp);
+
+	return true;
+}
+
+bool MapCtrl::SaveCharactorData()
+{
+	FILE* fp = nullptr;
+
+	fopen_s(&fp, "Resource/SaveData/savedata", "ab");
+	fseek(fp, 0, SEEK_SET);
+
+	int cnt = 0;
+	for (const auto& charactor : _charactors)
+	{
+		if (charactor->GetTeam() != Team::player)continue;
+		cnt++;
+	}
+	// キャラクター数の書き込み
+	fwrite(&cnt, sizeof(cnt), 1, fp);
+	// キャラクターデータの書き込み
+	for (const auto& charactor : _charactors)
+	{
+		if (charactor->GetTeam() != Team::player)continue;
+		SaveData saveData(charactor->GetCharactorType(), charactor->GetStatus());
+
+		fwrite(&saveData, sizeof(saveData), 1, fp);
+	}
+
+	fclose(fp);
+
+	return true;
+}
+
+bool MapCtrl::LoadCharactorData()
+{
+	FILE* fp = nullptr;
+
+	fopen_s(&fp, "Resource/SaveData/savedata", "rb");
+	fseek(fp, 0, SEEK_SET);
+
+	if (fp == NULL)
+	{
+		return false;
+	}
+
+	// キャラクターサイズの読み込み
+	int cnt = 0;
+	fread_s(&cnt, sizeof(cnt), sizeof(cnt), 1, fp);
+	_charactorSaveDataVec.resize(cnt);
+
+	// キャラクターデータの読み込み
+	fread_s(_charactorSaveDataVec.data(), sizeof(SaveData) * cnt, sizeof(SaveData), cnt, fp);
+
+	return true;
+}
+
+Status MapCtrl::GetLevelInitStatus(const uint8_t level, const CharactorType charType)
+{
+	Status status;
+	auto charactorData = Application::Instance().GetDataBase().GetCharactorData(charType);
+	status = charactorData.initialStatus;
+	status.level = level;
+	status.health += level * charactorData.statusGrowRate.health / 100.0f;
+	status.power += level * charactorData.statusGrowRate.power / 100.0f;
+	status.defense += level * charactorData.statusGrowRate.defense / 100.0f;
+	status.magic_defense += level * charactorData.statusGrowRate.magic_defense / 100.0f;
+	status.speed += level * charactorData.statusGrowRate.speed / 100.0f;
+	status.skill += level * charactorData.statusGrowRate.skill / 100.0f;
+	return status;
 }

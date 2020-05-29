@@ -163,11 +163,13 @@ public:
 	unsigned int GetGroupNum()const;
 	const int GetHurtPoint()const;	// Å‘å‘Ì—Í‚©‚çŒ»İ‚Ì‘Ì—Í‚ğˆø‚¢‚½’l‚ğ•Ô‚·
 	bool GetMoved()const;	// ˆÚ“®Ï‚İ‚©’²‚×‚é
+	CharactorType GetCharactorType()const;
 
 	void SetIsSelect(const bool select);
 	void SetIsDying();
 	void SetDir(const Dir dir);
 	void SetStatus(const Status& status);
+	void InitStatus(const Status& status);
 	void SetMoveActive(const bool active);
 	void SetMoveStandby(const int time);
 	void MoveDecision();

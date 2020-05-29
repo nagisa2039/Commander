@@ -35,6 +35,7 @@ private:
 	std::vector<std::shared_ptr<Effect>> _effects;
 
 	std::unique_ptr<BattlePreparationCursor> _battlePreparationCursor;
+	std::unique_ptr<PreparationUI>
 
 	// 場面ごとの更新を行う関数ポインタ
 	void(PlayScene::*_uniqueUpdater)(const Input& input);

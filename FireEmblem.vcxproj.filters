@@ -249,6 +249,9 @@
     <ClCompile Include="Resource\Source\Game\BattlePreparationCursor.cpp">
       <Filter>ソース ファイル\Game\Actor</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\PreparationUI.cpp">
+      <Filter>ソース ファイル\Game\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -433,6 +436,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\BattlePreparationCursor.h">
       <Filter>ヘッダー ファイル\Game\Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\PreparationUI.h">
+      <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

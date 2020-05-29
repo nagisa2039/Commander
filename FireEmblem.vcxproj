@@ -57,6 +57,7 @@
     <ClCompile Include="Resource\Source\Game\UI\MoveMenu.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\PlayerMenu.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\PlayerUI.cpp" />
+    <ClCompile Include="Resource\Source\Game\UI\PreparationUI.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\StatusInfomation.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\StatusWindow.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\UI.cpp" />
@@ -119,6 +120,7 @@
     <ClInclude Include="Resource\Source\Game\UI\MoveMenu.h" />
     <ClInclude Include="Resource\Source\Game\UI\PlayerMenu.h" />
     <ClInclude Include="Resource\Source\Game\UI\PlayerUI.h" />
+    <ClInclude Include="Resource\Source\Game\UI\PreparationUI.h" />
     <ClInclude Include="Resource\Source\Game\UI\StatusInfomation.h" />
     <ClInclude Include="Resource\Source\Game\UI\StatusWindow.h" />
     <ClInclude Include="Resource\Source\Game\UI\UI.h" />

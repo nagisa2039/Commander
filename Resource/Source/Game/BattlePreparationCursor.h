@@ -1,5 +1,7 @@
 #pragma once
 #include "MapCursor.h"
+#include <memory>
+#include <deque>
 
 class Charactor;
 
@@ -22,5 +24,7 @@ public:
 	void DrawsSortieMass();
 
 	bool GetEnd()const;
+
+	void Start();
 };
 

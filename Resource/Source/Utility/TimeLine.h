@@ -127,6 +127,12 @@ public:
 	{
 		return _frame;
 	}
+
+	inline void End()
+	{
+		_frame = _keys.rbegin()->first;
+		_end = true;
+	}
 };
 
 class TimeLine

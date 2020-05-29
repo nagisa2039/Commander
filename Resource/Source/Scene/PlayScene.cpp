@@ -7,7 +7,7 @@
 #include "../Game/Camera.h"
 #include "../Game/MapCtrl.h"
 #include "MapEditScene.h"
-#include "BattlePreparationCursor.h"
+#include "UI/PreparationUI.h"
 
 #include "Charactor.h"
 
@@ -50,8 +50,6 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
 	_enemyCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy, *_camera);
 
-	_battlePreparationCursor = make_unique<BattlePreparationCursor>(*_mapCtrl, *_camera);
-
 	list<shared_ptr<PlayerCommander>> testList;
 
 	testList.emplace_back(make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera));
@@ -88,11 +86,13 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 		}
 	}
 
+	_preparationDeque.clear();
+	_preparationUI = make_shared<PreparationUI>(_preparationDeque, *_camera, *_mapCtrl);
+	_preparationDeque.emplace_back(_preparationUI);
 
+	_preparationUI->Open(true);
 	_uniqueUpdater = &PlayScene::PreparationUpdate;
 	_uniqueDrawer = &PlayScene::PreparationDraw;
-	_camera->AddTargetActor(&*_battlePreparationCursor);
-	_battlePreparationCursor->SetMapPos(cursorMapPos);
 	Vector2 cameraPos2D = (cursorMapPos * _mapCtrl->GetChipSize()).ToVector2();
 	_camera->SetPos(Vector3(cameraPos2D.x, cameraPos2D.y, 0));
 
@@ -163,8 +163,8 @@ void PlayScene::Update(const Input & input)
 
 void PlayScene::PreparationUpdate(const Input& input)
 {
-	_battlePreparationCursor->Update(input);
-	if (_battlePreparationCursor->GetEnd())
+	(*_preparationDeque.begin())->Update(input);
+	if (_preparationUI->GetDelete())
 	{
 		// プレイヤーターンを開始
 		StartPlayerTurn();
@@ -331,7 +331,7 @@ void PlayScene::PreparationDraw(const Camera& camera)
 {
 	_mapCtrl->Draw(*_camera, false);
 
-	_battlePreparationCursor->DrawsSortieMass();
+	_preparationUI->BeginDraw();
 
 	for (auto& charactor : _charactors)
 	{
@@ -341,11 +341,8 @@ void PlayScene::PreparationDraw(const Camera& camera)
 	{
 		effect->Draw();
 	}
-	_battlePreparationCursor->Draw();
 
-	int fontH = Application::Instance().GetFileSystem()->GetFontHandle("choplin40");
-	auto screenCenter = Application::Instance().GetWindowSize().ToVector2Int() * 0.5;
-	DrawStringToHandle(screenCenter, Anker::center, 0xffffff, fontH, "PUSH ENTER KEY");
+	(*_preparationDeque.begin())->Draw();
 }
 
 void PlayScene::TurnChengeDraw(const Camera& camera)

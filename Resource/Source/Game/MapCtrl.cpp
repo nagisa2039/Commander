@@ -699,3 +699,8 @@ Status MapCtrl::GetLevelInitStatus(const uint8_t level, const CharactorType char
 	status.skill += level * charactorData.statusGrowRate.skill / 100.0f;
 	return status;
 }
+
+const std::vector<std::shared_ptr<Charactor>>& MapCtrl::GetCharacots() const
+{
+	return _charactors;
+}

@@ -6,6 +6,7 @@
 #include "Charactor.h"
 #include "FileSystem.h"
 #include "DxLibUtility.h"
+#include "UI/PreparationUI.h"
 
 BattlePreparationCursor::BattlePreparationCursor(MapCtrl& mapCtrl, Camera& camera):MapCursor(mapCtrl, camera)
 {
@@ -71,6 +72,7 @@ void BattlePreparationCursor::Draw()
 {
 	auto chipSize = _mapCtrl.GetChipSize();
 	auto offset = _camera.GetCameraOffset();
+	
 	auto handle = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/MapChip/cursor.png");
 	Size graphSize;
 	GetGraphSize(handle, graphSize);
@@ -103,4 +105,18 @@ void BattlePreparationCursor::DrawsSortieMass()
 bool BattlePreparationCursor::GetEnd() const
 {
 	return _end;
+}
+
+void BattlePreparationCursor::Start()
+{
+	_camera.AddTargetActor(this);
+	for (const auto& charactor : _mapCtrl.GetCharacots())
+	{
+		if (charactor->GetTeam() == Team::player)
+		{
+			_mapPos = charactor->GetMapPos();
+			_camera.SetPos(charactor->GetCenterPos());
+			break;
+		}
+	}
 }

@@ -118,4 +118,7 @@ public:
 	bool LoadCharactorData();
 
 	Status GetLevelInitStatus(const uint8_t level, const CharactorType charType);
+
+	// キャラクターの配列を取得
+	const std::vector<std::shared_ptr<Charactor>>& GetCharacots()const;
 };

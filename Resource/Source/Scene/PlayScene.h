@@ -14,7 +14,8 @@ class Camera;
 class Commander;
 class Effect;
 class TurnChangeAnim;
-class BattlePreparationCursor;
+class PreparationUI;
+class UI;
 
 class PlayScene :
 	public Scene
@@ -34,8 +35,8 @@ private:
 	std::shared_ptr<Commander> _enemyCommander;
 	std::vector<std::shared_ptr<Effect>> _effects;
 
-	std::unique_ptr<BattlePreparationCursor> _battlePreparationCursor;
-	std::unique_ptr<PreparationUI>
+	std::deque<std::shared_ptr<UI>> _preparationDeque;
+	std::shared_ptr<PreparationUI> _preparationUI;
 
 	// 場面ごとの更新を行う関数ポインタ
 	void(PlayScene::*_uniqueUpdater)(const Input& input);

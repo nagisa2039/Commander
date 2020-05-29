@@ -14,6 +14,7 @@ class Camera;
 class Commander;
 class Effect;
 class TurnChangeAnim;
+class BattlePreparationCursor;
 
 class PlayScene :
 	public Scene
@@ -33,6 +34,8 @@ private:
 	std::shared_ptr<Commander> _enemyCommander;
 	std::vector<std::shared_ptr<Effect>> _effects;
 
+	std::unique_ptr<BattlePreparationCursor> _battlePreparationCursor;
+
 	// 場面ごとの更新を行う関数ポインタ
 	void(PlayScene::*_uniqueUpdater)(const Input& input);
 	void(PlayScene::* _uniqueUpdaterOld)(const Input& input);
@@ -43,6 +46,8 @@ private:
 	void StartPlayerTurn();
 	void StartEnemyTurn();
 
+	// 準備画面
+	void PreparationUpdate(const Input& input);
 	void TurnChengeUpdate(const Input& input);
 	void PlayerTurnUpdate(const Input& input);
 	void CharactorUpdate(const Input& input);
@@ -53,6 +58,7 @@ private:
 	void GameClearUpdate(const Input& input);
 	void GameOverUpdate(const Input& input);
 
+	void PreparationDraw(const Camera& camera);
 	void TurnChengeDraw(const Camera& camera);
 	void PlayerTurnDraw(const Camera& camera);
 	void EnemyTurnDraw(const Camera& camera);

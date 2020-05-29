@@ -165,6 +165,7 @@ public:
 	bool GetMoved()const;	// ˆÚ“®Ï‚İ‚©’²‚×‚é
 	CharactorType GetCharactorType()const;
 
+	void InitmapPos(const Vector2Int& mapPos);
 	void SetIsSelect(const bool select);
 	void SetIsDying();
 	void SetDir(const Dir dir);

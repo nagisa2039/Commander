@@ -85,9 +85,18 @@ void EditCursor::CharactorEditUpdate(const Input& input)
 		}
 	};
 
-	CharactorChange(KEY_INPUT_Z, 1);
-	CharactorChange(KEY_INPUT_X, -1);
-
+	if (_charactorChipInf.team != Team::player)
+	{
+		CharactorChange(KEY_INPUT_Z, 1);
+		CharactorChange(KEY_INPUT_X, -1);
+	}
+	else
+	{
+		if (input.GetButtonDown(KEY_INPUT_Z) || input.GetButtonDown(KEY_INPUT_X))
+		{
+			_charactorChipInf.type = _charactorChipInf.type == CharactorType::max ? CharactorType::swordman : CharactorType::max;
+		}
+	}
 
 	if (input.GetButtonDown(0, "change"))
 	{
@@ -176,7 +185,14 @@ void EditCursor::CharactorEditDraw()
 	int alpha = abs(255 - (_animCnt % 512));
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 
-	_mapCtrl.DrawCharactorChip(_charactorChipInf, offset);
+	if (_charactorChipInf.team == Team::player)
+	{
+		_mapCtrl.DrawSortieMass(offset, _charactorChipInf);
+	}
+	else
+	{
+		_mapCtrl.DrawCharactorChip(_charactorChipInf, offset);
+	}
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - alpha);
 

@@ -154,7 +154,14 @@ void MapCtrl::Draw(const Camera& camera, const bool edit)
 	{
 		for (const auto& charactorChipInf : _charactorChips)
 		{
-			DrawCharactorChip(charactorChipInf, offset);
+			if (charactorChipInf.team != Team::player)
+			{
+				DrawCharactorChip(charactorChipInf, offset);
+			}
+			else
+			{
+				DrawSortieMass(offset, charactorChipInf);
+			}
 		}
 
 		auto mapSize = GetMapSize();
@@ -169,6 +176,18 @@ void MapCtrl::Draw(const Camera& camera, const bool edit)
 				Vector2Int(w * CHIP_SIZE_W, mapSize.h * CHIP_SIZE_H) + offset, 0xffffff);
 		}
 	}
+}
+
+void MapCtrl::DrawSortieMass(const Vector2Int& offset, const CharactorChipInf& charactorChipInf, const unsigned int color, const unsigned int frameColor)
+{
+	if (charactorChipInf.type == CharactorType::max)return;
+
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+	auto chipSize = GetChipSize();
+	Vector2Int leftup = offset + charactorChipInf.mapPos * chipSize;
+	DrawBox(leftup, leftup + chipSize, color);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+	DrawBox(leftup + 1, leftup + chipSize, frameColor, false);
 }
 
 Size MapCtrl::GetChipSize()const
@@ -216,6 +235,27 @@ bool MapCtrl::DrawMapChip(const Vector2Int& mapPos, const Map_Chip mapChip, cons
 		graphH, true);
 
 	return true;
+}
+
+const std::vector<CharactorChipInf>& MapCtrl::GetCharactorChips() const
+{
+	return _charactorChips;
+}
+
+CharactorChipInf MapCtrl::GetCharactorChipInf(const Vector2Int& mapPos) const
+{
+	CharactorChipInf cci;
+	cci.team == Team::max;
+	for (auto itr = _charactorChips.begin(); itr != _charactorChips.end();)
+	{
+		if (itr->mapPos == mapPos)
+		{
+			cci = *itr;
+			break;
+		}
+	}
+
+	return cci;
 }
 
 bool MapCtrl::SetCharactorChip(const CharactorChipInf& charactorChipInf)

@@ -7,6 +7,7 @@
 #include "../Game/Camera.h"
 #include "../Game/MapCtrl.h"
 #include "MapEditScene.h"
+#include "BattlePreparationCursor.h"
 
 #include "Charactor.h"
 
@@ -49,6 +50,8 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
 	_enemyCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy, *_camera);
 
+	_battlePreparationCursor = make_unique<BattlePreparationCursor>(*_mapCtrl, *_camera);
+
 	list<shared_ptr<PlayerCommander>> testList;
 
 	testList.emplace_back(make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera));
@@ -68,19 +71,31 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	_dyingCharItr = _charactors.end();
 
 	_playerCommander->TurnReset();
+	_enemyCommander->TurnReset();
 
 	_mapCtrl->CreateWarSituation();
 
+	bool getCursorMapPos = false;
+	Vector2Int cursorMapPos = Vector2Int(0, 0);
 	for (auto& charactor : _charactors)
 	{
 		charactor->RouteSearch();
+		if (!getCursorMapPos && charactor->GetTeam() == Team::player)
+		{
+			getCursorMapPos = true;
+			cursorMapPos = charactor->GetMapPos();
+		}
 	}
 
 	_mapCtrl->CreateCharactorData();
 	_mapCtrl->LoadCharactorData();
 
-	// プレイヤーターンを開始
-	StartPlayerTurn();
+	_uniqueUpdater = &PlayScene::PreparationUpdate;
+	_uniqueDrawer = &PlayScene::PreparationDraw;
+	_camera->AddTargetActor(&*_battlePreparationCursor);
+	_battlePreparationCursor->SetMapPos(cursorMapPos);
+	Vector2 cameraPos2D = (cursorMapPos * _mapCtrl->GetChipSize()).ToVector2();
+	_camera->SetPos(Vector3(cameraPos2D.x, cameraPos2D.y, 0));
 
 	// ピクセルシェーダーバイナリコードの読み込み
 	pshandle = LoadPixelShader("Resource/Source/Shader/HPBer.cso");
@@ -145,6 +160,16 @@ void PlayScene::Update(const Input & input)
 		[](const std::shared_ptr<Effect>& effect) { return effect->GetDelete(); });
 	_effects.erase(newEffectEnd, _effects.end());
 
+}
+
+void PlayScene::PreparationUpdate(const Input& input)
+{
+	_battlePreparationCursor->Update(input);
+	if (_battlePreparationCursor->GetEnd())
+	{
+		// プレイヤーターンを開始
+		StartPlayerTurn();
+	}
 }
 
 void PlayScene::TurnChengeUpdate(const Input& input)
@@ -300,8 +325,31 @@ void PlayScene::GameOverUpdate(const Input& input)
 {
 }
 
+void PlayScene::PreparationDraw(const Camera& camera)
+{
+	_mapCtrl->Draw(*_camera, false);
+
+	_battlePreparationCursor->DrawsSortieMass();
+
+	for (auto& charactor : _charactors)
+	{
+		charactor->Draw();
+	}
+	for (auto& effect : _effects)
+	{
+		effect->Draw();
+	}
+	_battlePreparationCursor->Draw();
+
+	int fontH = Application::Instance().GetFileSystem()->GetFontHandle("choplin40");
+	auto screenCenter = Application::Instance().GetWindowSize().ToVector2Int() * 0.5;
+	DrawStringToHandle(screenCenter, Anker::center, 0xffffff, fontH, "PUSH ENTER KEY");
+}
+
 void PlayScene::TurnChengeDraw(const Camera& camera)
 {
+	_mapCtrl->Draw(*_camera);
+
 	for (auto& charactor : _charactors)
 	{
 		charactor->Draw();
@@ -315,6 +363,8 @@ void PlayScene::TurnChengeDraw(const Camera& camera)
 
 void PlayScene::PlayerTurnDraw(const Camera& camera)
 {
+	_mapCtrl->Draw(*_camera);
+
 	_playerCommander->DrawMovableMass();
 	for (auto& charactor : _charactors)
 	{
@@ -330,6 +380,8 @@ void PlayScene::PlayerTurnDraw(const Camera& camera)
 
 void PlayScene::EnemyTurnDraw(const Camera& camera)
 {
+	_mapCtrl->Draw(*_camera);
+
 	for (auto& charactor : _charactors)
 	{
 		charactor->Draw();
@@ -342,6 +394,8 @@ void PlayScene::EnemyTurnDraw(const Camera& camera)
 
 void PlayScene::GameOverDraw(const Camera& camera)
 {
+	_mapCtrl->Draw(*_camera);
+
 	for (auto& charactor : _charactors)
 	{
 		charactor->Draw();
@@ -360,6 +414,8 @@ void PlayScene::GameOverDraw(const Camera& camera)
 
 void PlayScene::GameClearDraw(const Camera& camera)
 {
+	_mapCtrl->Draw(*_camera);
+
 	for (auto& charactor : _charactors)
 	{
 		charactor->Draw();
@@ -386,8 +442,6 @@ Size PlayScene::GetStringSizseToHandle(const std::string& str, const int fontHan
 
 void PlayScene::Draw(void)
 {
-	_mapCtrl->Draw(*_camera);
-
 	// 場面ごとの描画
 	(this->*_uniqueDrawer)(*_camera);
 

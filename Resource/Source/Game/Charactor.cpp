@@ -290,6 +290,12 @@ CharactorType Charactor::GetCharactorType() const
 	return _charactorType;
 }
 
+void Charactor::InitmapPos(const Vector2Int& mapPos)
+{
+	_startMapPos = mapPos;
+	_pos = _startMapPos.ToVector2() * (_mapCtrl.GetChipSize().ToVector2Int()).ToVector2();
+}
+
 void Charactor::SetIsSelect(const bool select)
 {
 	_isSelect = select;
@@ -661,9 +667,7 @@ Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team t
 	std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	: _team(team), _groupNum(groupNum), _mapCtrl(mapCtrl), _controller(ctrl), _effects(effects), Actor(camera)
 {
-	_startMapPos = mapPos;
-	_pos = _startMapPos.ToVector2() * (_mapCtrl.GetChipSize().ToVector2Int()).ToVector2();
-
+	InitmapPos(mapPos);
 	_isMoveAnim = false;
 
 	_moveSpeed = 4;

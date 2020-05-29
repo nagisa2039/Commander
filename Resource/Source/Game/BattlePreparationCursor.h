@@ -10,6 +10,8 @@ private:
 	Charactor* _selectChar;
 	bool _end;
 
+	void Select();
+
 public:
 	BattlePreparationCursor(MapCtrl& mapCtrl, Camera& camera);
 	~BattlePreparationCursor();

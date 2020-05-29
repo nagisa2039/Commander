@@ -27,12 +27,16 @@ private:
 	};
 	std::vector<SaveData> _charactorSaveDataVec;
 
-	std::vector<std::vector<Map_Chip>> _mapDataVec2;			// マップデータ
+	struct MapData
+	{
+		Map_Chip mapChip;
+		CharactorChipInf charactorChip;
+	};
+
+	std::vector<std::vector<MapData>> _mapDataVec2;			// マップデータ
 	std::shared_ptr<Astar> _astar;
 
 	std::vector<std::shared_ptr<Charactor>>& _charactors;
-
-	std::vector<CharactorChipInf> _charactorChips;
 
 	// CharactorTypeに対応したCharactorクラスを_charactorsに追加する
 	std::array<std::function<void(const CharactorChipInf&, SceneController&, std::vector<std::shared_ptr<Effect>>&, Camera& camera)>,
@@ -53,7 +57,7 @@ public:
 
 	void Draw(const Camera& camera, const bool edit = false);
 
-	void DrawSortieMass(const Vector2Int& offset, const CharactorChipInf& charactorChipInf, const unsigned int color = 0x00ffff, const unsigned int frameColor = 0x0000ff);
+	bool DrawSortieMass(const Vector2Int& offset, const CharactorChipInf& charactorChipInf, const unsigned int color = 0x00ffff, const unsigned int frameColor = 0x0000ff);
 
 	Size GetChipSize()const;
 	Size GetMapSize()const;
@@ -64,7 +68,7 @@ public:
 	bool SetMapChip(const Vector2Int& mapPos, const Map_Chip mapChip);
 	bool DrawMapChip(const Vector2Int& mapPos, const Map_Chip mapChip, const Vector2Int& offset = Vector2Int(0,0));
 
-	const std::vector<CharactorChipInf>& GetCharactorChips()const;
+	const std::vector<std::vector<MapData>>& GetMapData()const;
 	CharactorChipInf GetCharactorChipInf(const Vector2Int& mapPos)const;
 	bool SetCharactorChip(const CharactorChipInf& charactorChipInf);
 	bool DrawCharactorChip(const CharactorChipInf& charactorChipInf, const Vector2Int& offset = Vector2Int(0,0));

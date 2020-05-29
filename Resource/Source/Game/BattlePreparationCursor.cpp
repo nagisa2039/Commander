@@ -23,26 +23,46 @@ void BattlePreparationCursor::Update(const Input& input)
 
 	if (input.GetButtonDown(0, "space"))
 	{
-		auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
-		if (charactor != nullptr && charactor->GetTeam() != Team::player)return;
-
-		if (_selectChar == nullptr)
-		{
-			_selectChar = charactor;
-		}
-		else
-		{
-			if (_selectChar == charactor)return;
-
-			charactor->InitmapPos(_selectChar->GetMapPos());
-			_selectChar->InitmapPos(_mapPos);
-			_selectChar = nullptr;
-		}
+		Select();
 	}
 
 	if (input.GetButtonDown(0, "ok"))
 	{
 		_end = true;
+	}
+}
+
+void BattlePreparationCursor::Select()
+{
+	auto charactorChips = _mapCtrl.GetCharactorChipInf(_mapPos);
+	auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
+	if (charactor != nullptr && charactor->GetTeam() != Team::player)return;
+
+	if (_selectChar == nullptr)
+	{
+		if (charactor == nullptr)return;
+
+		_selectChar = charactor;
+	}
+	else
+	{
+		if (_selectChar == charactor)
+		{
+			_selectChar = nullptr;
+			return;
+		}
+
+		if (charactor == nullptr)
+		{
+			if (charactorChips.team != Team::player)return;
+
+			_selectChar->InitmapPos(charactorChips.mapPos);
+		}
+		else
+		{
+			charactor->InitmapPos(_selectChar->GetMapPos());
+			_selectChar->InitmapPos(_mapPos);
+		}
 	}
 }
 
@@ -61,17 +81,20 @@ void BattlePreparationCursor::Draw()
 void BattlePreparationCursor::DrawsSortieMass()
 {
 	auto offset = _camera.GetCameraOffset();
-	for (const auto& charactorChip : _mapCtrl.GetCharactorChips())
+	for (const auto& mapDataVec : _mapCtrl.GetMapData())
 	{
-		if (charactorChip.team != Team::player)continue;
+		for (const auto& mapData : mapDataVec)
+		{
+			if (mapData.charactorChip.team != Team::player)continue;
 
-		if (_selectChar != nullptr && charactorChip.mapPos == _selectChar->GetMapPos())
-		{
-			_mapCtrl.DrawSortieMass(offset, charactorChip, 0xffff00, 0xffff00);
-		}
-		else
-		{
-			_mapCtrl.DrawSortieMass(offset, charactorChip);
+			if (_selectChar != nullptr && mapData.charactorChip.mapPos == _selectChar->GetMapPos())
+			{
+				_mapCtrl.DrawSortieMass(offset, mapData.charactorChip, 0xffff00, 0xffff00);
+			}
+			else
+			{
+				_mapCtrl.DrawSortieMass(offset, mapData.charactorChip);
+			}
 		}
 	}
 }

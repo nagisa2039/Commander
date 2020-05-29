@@ -37,9 +37,9 @@ void MapCtrl::DrawToMapChipScreen()
 	{
 		for (int x = 0; x < _mapDataVec2[y].size(); x++)
 		{
-			if (_mapDataVec2[y][x] > Map_Chip::none && _mapDataVec2[y][x] < Map_Chip::max)
+			if (_mapDataVec2[y][x].mapChip > Map_Chip::none && _mapDataVec2[y][x].mapChip < Map_Chip::max)
 			{
-				DrawMapChip(Vector2Int(x, y), _mapDataVec2[y][x]);
+				DrawMapChip(Vector2Int(x, y), _mapDataVec2[y][x].mapChip);
 			}
 		}
 	}
@@ -81,17 +81,16 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 			if (y < frameNum || y >= MAP_CHIP_CNT_H - frameNum
 			 || x < frameNum || x >= MAP_CHIP_CNT_W - frameNum)
 			{
-				_mapDataVec2[y][x] = Map_Chip::rock;
+				_mapDataVec2[y][x].mapChip = Map_Chip::rock;
 			}
 			else
 			{
-				_mapDataVec2[y][x] = Map_Chip::none;
+				_mapDataVec2[y][x].mapChip = Map_Chip::none;
 			}
+			_mapDataVec2[y][x].charactorChip.team = Team::max;
+			_mapDataVec2[y][x].charactorChip.mapPos = Vector2Int(x, y);
 		}
 	}
-
-	_charactorChips.clear();
-	_charactorChips.reserve(30);
 
 	DrawToMapFloorScreen();
 	DrawToMapChipScreen();
@@ -137,6 +136,11 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 		_charactors.emplace_back(make_shared<Priest>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera));
 		(*_charactors.rbegin())->SetMoveActive(characotChipInf.active);
 	};
+
+	// 仮のセーブデータ
+	_charactorSaveDataVec.emplace_back(SaveData(CharactorType::archer, Status(5, 20, 15, 10, 10, 10, 10, 5, Attribute::red, false, false)));
+	_charactorSaveDataVec.emplace_back(SaveData(CharactorType::archer, Status(5, 20, 15, 10, 10, 10, 10, 5, Attribute::red, false, false)));
+	_charactorSaveDataVec.emplace_back(SaveData(CharactorType::archer, Status(5, 20, 15, 10, 10, 10, 10, 5, Attribute::red, false, false)));
 }
 
 MapCtrl::~MapCtrl()
@@ -152,15 +156,11 @@ void MapCtrl::Draw(const Camera& camera, const bool edit)
 
 	if (edit)
 	{
-		for (const auto& charactorChipInf : _charactorChips)
+		for (const auto& mapDataVec : _mapDataVec2)
 		{
-			if (charactorChipInf.team != Team::player)
+			for (const auto& mapData : mapDataVec)
 			{
-				DrawCharactorChip(charactorChipInf, offset);
-			}
-			else
-			{
-				DrawSortieMass(offset, charactorChipInf);
+				DrawCharactorChip(mapData.charactorChip, offset);
 			}
 		}
 
@@ -178,16 +178,16 @@ void MapCtrl::Draw(const Camera& camera, const bool edit)
 	}
 }
 
-void MapCtrl::DrawSortieMass(const Vector2Int& offset, const CharactorChipInf& charactorChipInf, const unsigned int color, const unsigned int frameColor)
+bool MapCtrl::DrawSortieMass(const Vector2Int& offset, const CharactorChipInf& charactorChipInf, const unsigned int color, const unsigned int frameColor)
 {
-	if (charactorChipInf.type == CharactorType::max)return;
-
+	if (charactorChipInf.team != Team::player || charactorChipInf.type == CharactorType::max)return false;
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
 	auto chipSize = GetChipSize();
 	Vector2Int leftup = offset + charactorChipInf.mapPos * chipSize;
 	DrawBox(leftup, leftup + chipSize, color);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 	DrawBox(leftup + 1, leftup + chipSize, frameColor, false);
+	return true;
 }
 
 Size MapCtrl::GetChipSize()const
@@ -217,7 +217,7 @@ bool MapCtrl::SetMapChip(const Vector2Int& mapPos, const Map_Chip mapChip)
 	if (mapPos.x >= 0 && mapPos.x < _mapDataVec2[0].size()
 		&& mapPos.y >= 0 && mapPos.y < _mapDataVec2.size())
 	{
-		_mapDataVec2[mapPos.y][mapPos.x] = mapChip;
+		_mapDataVec2[mapPos.y][mapPos.x].mapChip = mapChip;
 		DrawToMapChipScreen();
 		return true;
 	}
@@ -237,45 +237,25 @@ bool MapCtrl::DrawMapChip(const Vector2Int& mapPos, const Map_Chip mapChip, cons
 	return true;
 }
 
-const std::vector<CharactorChipInf>& MapCtrl::GetCharactorChips() const
+const std::vector<std::vector<MapCtrl::MapData>>& MapCtrl::GetMapData() const
 {
-	return _charactorChips;
+	return _mapDataVec2;
 }
 
 CharactorChipInf MapCtrl::GetCharactorChipInf(const Vector2Int& mapPos) const
 {
-	CharactorChipInf cci;
-	cci.team == Team::max;
-	for (auto itr = _charactorChips.begin(); itr != _charactorChips.end();)
-	{
-		if (itr->mapPos == mapPos)
-		{
-			cci = *itr;
-			break;
-		}
-	}
-
-	return cci;
+	return _mapDataVec2[mapPos.y][mapPos.x].charactorChip;
 }
 
 bool MapCtrl::SetCharactorChip(const CharactorChipInf& charactorChipInf)
 {
-	for (auto itr = _charactorChips.begin(); itr != _charactorChips.end();)
+	// 移動不可のマスには設置できないようにする
+	if (Application::Instance().GetDataBase().GetMapChipData(_mapDataVec2[charactorChipInf.mapPos.y][charactorChipInf.mapPos.x].mapChip).moveCost < 0)
 	{
-		if (itr->mapPos == charactorChipInf.mapPos)
-		{
-			itr = _charactorChips.erase(itr);
-		}
-		else
-		{
-			itr++;
-		}
+		return false;
 	}
-	if (charactorChipInf.type == CharactorType::max)
-	{
-		return true;
-	}
-	_charactorChips.emplace_back(charactorChipInf);
+
+	_mapDataVec2[charactorChipInf.mapPos.y][charactorChipInf.mapPos.x].charactorChip = charactorChipInf;
 	return true;
 }
 
@@ -283,24 +263,45 @@ bool MapCtrl::DrawCharactorChip(const CharactorChipInf& charactorChipInf, const 
 {
 	auto chipSize = GetChipSize();
 	Vector2Int leftup = offset + charactorChipInf.mapPos * chipSize;
-	if (charactorChipInf.type == CharactorType::max)
+
+	if(!DrawSortieMass(offset, charactorChipInf))
 	{
-		return false;
+		if (charactorChipInf.team == Team::enemy && charactorChipInf.type != CharactorType::max)
+		{
+			int handle = Application::Instance().GetDataBase().GetCharactorImageHandle(charactorChipInf.type, charactorChipInf.team);
+			DrawRectExtendGraph(leftup.x, leftup.y, leftup.x + chipSize.w, leftup.y + chipSize.h, 0, 0, 32, 32, handle, true);
+			DrawFormatString(leftup.x, leftup.y, 0x000000, "Level.%d", charactorChipInf.level);
+			DrawFormatString(leftup.x, leftup.y + 16, 0x000000, "GN.%d", charactorChipInf.groupNum);
+			DrawFormatString(leftup.x, leftup.y + 32, 0x000000, charactorChipInf.active ? "Active : True" : "False");
+		}
 	}
-	int handle = Application::Instance().GetDataBase().GetCharactorImageHandle(charactorChipInf.type, charactorChipInf.team);
-	DrawRectExtendGraph(leftup.x, leftup.y, leftup.x + chipSize.w, leftup.y + chipSize.h, 0, 0, 32, 32, handle, true);
-	DrawFormatString(leftup.x, leftup.y, 0x000000, "Level.%d", charactorChipInf.level);
-	DrawFormatString(leftup.x, leftup.y + 16, 0x000000, "GN.%d", charactorChipInf.groupNum);
-	DrawFormatString(leftup.x, leftup.y + 32, 0x000000, charactorChipInf.active ? "Active : True" : "False");
 
 	return true;
 }
 
 void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 {
-	for (const auto& charactorChipInf : _charactorChips)
+	for (const auto& mapDataVec : _mapDataVec2)
 	{
-		_charactorCreateFuncs[static_cast<size_t>(charactorChipInf.type)](charactorChipInf, ctrl, effects, camera);
+		for (const auto& mapData : mapDataVec)
+		{
+			if (mapData.charactorChip.type == CharactorType::max || mapData.charactorChip.team == Team::max)continue;
+
+			if (mapData.charactorChip.team == Team::player)
+			{
+				if (_charactorSaveDataVec.size() > 0)
+				{
+					auto saveData = *_charactorSaveDataVec.rbegin();
+					auto charactorChip = mapData.charactorChip;
+					_charactorCreateFuncs[static_cast<size_t>(saveData.charType)](mapData.charactorChip, ctrl, effects, camera);
+					_charactorSaveDataVec.pop_back();
+				}
+			}
+			else
+			{
+				_charactorCreateFuncs[static_cast<size_t>(mapData.charactorChip.type)](mapData.charactorChip, ctrl, effects, camera);
+			}
+		}
 	}
 }
 
@@ -319,15 +320,8 @@ bool MapCtrl::SaveMap(const std::string fileName)
 	// マップチップの書き込み
 	for (const auto& mapChipVec : _mapDataVec2)
 	{
-		fwrite(mapChipVec.data(), sizeof(Map_Chip), mapChipVec.size(), fp);
+		fwrite(mapChipVec.data(), sizeof(MapData), mapChipVec.size(), fp);
 	}
-
-	// キャラクターチップ数の書き込み
-	unsigned int charactorChipCnt = _charactorChips.size();
-	fwrite(&charactorChipCnt, sizeof(unsigned int), 1, fp);
-
-	// キャラクターチップの書き込み
-	fwrite(_charactorChips.data(), sizeof(CharactorChipInf), charactorChipCnt, fp);
 
 	fclose(fp);
 
@@ -340,7 +334,6 @@ bool MapCtrl::LoadMap(const std::string fileName)
 
 	string folderName("Resource/Map/");
 	fopen_s(&fp, (folderName + fileName).c_str(), "rb");
-	fseek(fp, 0, SEEK_SET);
 
 	if (fp == NULL)
 	{
@@ -360,14 +353,8 @@ bool MapCtrl::LoadMap(const std::string fileName)
 	for (auto& mapChipVec : _mapDataVec2)
 	{
 		mapChipVec.resize(mapSize.w);
-		fread_s(mapChipVec.data(), sizeof(Map_Chip) * mapSize.w, sizeof(Map_Chip), mapSize.w, fp);
+		fread_s(mapChipVec.data(), sizeof(MapData) * mapSize.w, sizeof(MapData), mapSize.w, fp);
 	}
-
-	// キャラクターチップの読み込み
-	unsigned int charactorChipCnt = 0;
-	fread_s(&charactorChipCnt, sizeof(charactorChipCnt), sizeof(charactorChipCnt), 1, fp);
-	_charactorChips.resize(charactorChipCnt);
-	fread_s(_charactorChips.data(), sizeof(CharactorChipInf) * charactorChipCnt, sizeof(CharactorChipInf), charactorChipCnt, fp);
 
 	fclose(fp);
 
@@ -499,7 +486,7 @@ void MapCtrl::CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, co
 		mapVec2[y].resize(_mapDataVec2[y].size());
 		for (int x = 0; x < mapVec2[y].size(); x++)
 		{
-			mapVec2[y][x] = Astar::MapData(Application::Instance().GetDataBase().GetMapChipData(_mapDataVec2[y][x]).moveCost, Team::max, false);
+			mapVec2[y][x] = Astar::MapData(Application::Instance().GetDataBase().GetMapChipData(_mapDataVec2[y][x].mapChip).moveCost, Team::max, false);
 		}
 	}
 	for (const auto& charactor : _charactors)
@@ -512,7 +499,7 @@ void MapCtrl::CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, co
 
 DataBase::MapChipData MapCtrl::GetMapChipData(const Vector2Int& mapPos) const
 {
-	return Application::Instance().GetDataBase().GetMapChipData(_mapDataVec2[mapPos.y][mapPos.x]);
+	return Application::Instance().GetDataBase().GetMapChipData(_mapDataVec2[mapPos.y][mapPos.x].mapChip);
 }
 
 void MapCtrl::CreateWarSituation()const

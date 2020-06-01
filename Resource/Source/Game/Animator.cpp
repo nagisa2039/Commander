@@ -114,6 +114,33 @@ void Animator::AddAnimDiv(const std::string & animName, const Rect & startRect, 
 	_animInfoMap.emplace(animName, animInfo);
 }
 
+void Animator::AddAnimDiv(const std::string& animName, const Vector2Int& animCnt, const int animItv, const bool loop)
+{
+	AnimInfo animInfo;
+	animInfo.rectVec.resize(animCnt.x * animCnt.y);
+
+	auto graphSize = GetImageSize();
+	auto rectSize = Size(graphSize.w / animCnt.x, graphSize.h / animCnt.y);
+	auto rectCenter = rectSize.ToVector2Int() * 0.5;
+	for (int i = 0; i < 15; i++)
+	{
+		animInfo.rectVec.emplace_back(Rect(rectCenter, rectSize));
+		if (i % 5 == 4)
+		{
+			rectCenter.x = (rectSize.ToVector2Int() * 0.5f).x;
+			rectCenter.y += rectSize.h;
+		}
+		else
+		{
+			rectCenter.x += rectSize.w;
+		}
+	}
+
+	animInfo.itv = animItv;
+	animInfo.isLoop = loop;
+	_animInfoMap.emplace(animName, animInfo);
+}
+
 void Animator::ChangeAnim(std::string animName)
 {
 	if (_animName == animName)

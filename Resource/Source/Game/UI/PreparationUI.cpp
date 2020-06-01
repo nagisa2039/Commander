@@ -33,20 +33,20 @@ void PreparationUI::CloseUpdate(const Input& input)
 
 void PreparationUI::OpenUpdate(const Input& input)
 {
-	if (input.GetButtonDown(0, "space"))
+	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
 	{
 		Close(true);
 		_execution = true;
 		return;
 	}
-	if (input.GetButtonDown(0, "up"))
+	if (input.GetButtonDown(0, "up") || input.GetButtonDown(1, "up"))
 	{
 		if (_selectItem > static_cast<Item>(0))
 		{
 			_selectItem = static_cast<Item>(static_cast<int>(_selectItem) - 1);
 		}
 	}
-	if (input.GetButtonDown(0, "down"))
+	if (input.GetButtonDown(0, "down") || input.GetButtonDown(1, "down"))
 	{
 		if (_selectItem < static_cast<Item>(static_cast<int>(Item::max) - 1))
 		{
@@ -115,6 +115,7 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>& uiDeque, Camera& c
 	_animTrack->AddKey(15, 1.0f);
 
 	_battlePreparationCursor = make_unique<BattlePreparationCursor>(_mapCtrl, _camera);
+	_battlePreparationCursor->SetCursorStartPosition();
 
 	_selectItem = Item::start;
 	_execution = false;

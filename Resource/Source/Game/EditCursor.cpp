@@ -130,7 +130,7 @@ void EditCursor::CharactorEditUpdate(const Input& input)
 
 	_charactorChipInf.mapPos = _mapPos;
 
-	if (input.GetButtonDown(0, "space"))
+	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
 	{
 		auto charChipInf = _charactorChipInf;
 		charChipInf.groupNum += _charactorChipInf.team == Team::enemy ? 100 : 0;

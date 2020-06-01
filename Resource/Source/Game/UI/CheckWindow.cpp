@@ -44,7 +44,7 @@ void CheckWindow::Update(const Input& input)
 
 void CheckWindow::NormalUpdate(const Input& input)
 {
-	if (input.GetButtonDown(0, "space"))
+	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
 	{
 		_exRateTrack->Reset();
 		_exRateTrack->SetReverse(true);
@@ -53,7 +53,7 @@ void CheckWindow::NormalUpdate(const Input& input)
 	}
 
 	_selectEcRateTrack->Update();
-	if (input.GetButtonDown(0, "left"))
+	if (input.GetButtonDown(0, "left") || input.GetButtonDown(1, "left"))
 	{
 		if (_select > Select::yes)
 		{
@@ -62,7 +62,7 @@ void CheckWindow::NormalUpdate(const Input& input)
 		}
 	}
 
-	if (input.GetButtonDown(0, "right"))
+	if (input.GetButtonDown(0, "right") || input.GetButtonDown(1, "right"))
 	{
 		if (_select < Select::no)
 		{

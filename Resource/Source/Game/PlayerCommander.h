@@ -43,5 +43,7 @@ public:
 	bool AttackPrePos(const Vector2Int& mapPos);
 	void BattleStart();
 	void BackBattalePrediction();
+
+	bool MoveCancel();
 };
 

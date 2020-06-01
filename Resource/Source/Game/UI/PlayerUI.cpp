@@ -44,7 +44,7 @@ PlayerUI::~PlayerUI()
 void PlayerUI::Update(const Input& input)
 {
 	// ステータス確認
-	if (input.GetButtonDown(0, "status"))
+	if (input.GetButtonDown(0, "status") || input.GetButtonDown(1, "status"))
 	{
 		auto charactor = _mapCtrl.GetMapPosChar(_playerCommander.GetMapPos());
 		if (_statusDeque.size() <= 0 && charactor != nullptr)

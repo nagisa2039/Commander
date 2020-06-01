@@ -2,6 +2,7 @@
 #include "MapCursor.h"
 #include <memory>
 #include <deque>
+#include "TimeLine.h"
 
 class Charactor;
 
@@ -10,6 +11,7 @@ class BattlePreparationCursor :
 {
 private:
 	Charactor* _selectChar;
+	std::unique_ptr<Track<float>> _exRateTrack;
 	bool _end;
 
 	void Select();
@@ -26,5 +28,6 @@ public:
 	bool GetEnd()const;
 
 	void Start();
+	void SetCursorStartPosition();
 };
 

@@ -13,6 +13,17 @@ struct PeripheralInfo
 	int code;		// 周辺機器生入力情報 (例：PAD_INPUT_1)
 };
 
+struct MY_XINPUT_STATE
+{
+	unsigned char			Buttons[16];					// ボタン１６個( 添字には XINPUT_BUTTON_DPAD_UP 等を使用する、0:押されていない  1:押されている )
+	unsigned char			LeftTrigger;					// 左トリガー( 0～255 )
+	unsigned char			RightTrigger;					// 右トリガー( 0～255 )
+	short					ThumbLX;						// 左スティックの横軸値( -32768 ～ 32767 )
+	short					ThumbLY;						// 左スティックの縦軸値( -32768 ～ 32767 )
+	short					ThumbRX;						// 右スティックの横軸値( -32768 ～ 32767 )
+	short					ThumbRY;						// 右スティックの縦軸値( -32768 ～ 32767 )
+};
+ 
 bool operator< (const PeripheralInfo& lval, const PeripheralInfo& rval);
 bool operator==(const PeripheralInfo& lval, const PeripheralInfo& rval);
 bool operator!=(const PeripheralInfo& lval, const PeripheralInfo& rval);
@@ -40,6 +51,9 @@ private:
 	std::array<char, 256> _keystate;		// 現在のキーボードの状況
 	std::array<char, 256> _lastKeystate;	// 1フレーム前のキーボードの状況
 	std::vector<int> _padState;				// 現在のパッドの状況
+	
+	std::vector<MY_XINPUT_STATE> _currentXInputState;	// Xinputの入力情報
+	std::vector<MY_XINPUT_STATE> _lastXInputState;	// Xinputの入力情報
 	int _mouseState;						// 現在のマウス入力情報
 	int _lastMouseState;					// 1フレーム前のﾏｳｽの状況
 	Vector2Int _mousePos;					// マウスの座標
@@ -98,5 +112,7 @@ public:
 	bool GetButton(const char keycode)const;
 	bool GetButtonDown(const char keycode)const;
 	bool GetButtonUp(const char keycode)const;
+
+	bool GetXInputButtonDown(const int padNum, const int keycode)const;
 };
 

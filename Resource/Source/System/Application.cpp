@@ -85,11 +85,10 @@ void Application::KeySetUp()
 	_input->AddCommand(0, "up", 0, KEY_INPUT_UP);
 	_input->AddCommand(0, "right", 0, KEY_INPUT_RIGHT);
 	_input->AddCommand(0, "left", 0, KEY_INPUT_LEFT);
-	_input->AddCommand(0, "ok", 0, KEY_INPUT_RETURN);
 	_input->AddCommand(0, "pause", 0, KEY_INPUT_P);
 	_input->AddCommand(0, "ctrl", 0, KEY_INPUT_LCONTROL);
 	_input->AddCommand(0, "debug", 0, KEY_INPUT_D);
-	_input->AddCommand(0, "space", 0, KEY_INPUT_SPACE);
+	_input->AddCommand(0, "ok", 0, KEY_INPUT_SPACE);
 	_input->AddCommand(0, "change", 0, KEY_INPUT_C);
 	_input->AddCommand(0, "team", 0, KEY_INPUT_T);
 	_input->AddCommand(0, "back", 0, KEY_INPUT_BACK);
@@ -118,9 +117,11 @@ void Application::KeySetUp()
 		_input->AddCommand(j, "up", DX_INPUT_PAD1 + j, PAD_INPUT_UP);
 		_input->AddCommand(j, "right", DX_INPUT_PAD1 + j, PAD_INPUT_RIGHT);
 		_input->AddCommand(j, "left", DX_INPUT_PAD1 + j, PAD_INPUT_LEFT);
-		_input->AddCommand(j, "ok", DX_INPUT_PAD1 + j, PAD_INPUT_1);
 		_input->AddCommand(j, "pause", DX_INPUT_PAD1 + j, PAD_INPUT_START);
-		_input->AddCommand(j, "jump", DX_INPUT_PAD1 + j, PAD_INPUT_1);
+		_input->AddCommand(j, "ok", DX_INPUT_PAD1 + j, PAD_INPUT_1);		// Aボタン
+		_input->AddCommand(j, "back", DX_INPUT_PAD1 + j, PAD_INPUT_2);		// Bボタン
+		//_input->AddCommand(j, "", DX_INPUT_PAD1 + j, PAD_INPUT_3);		// Xボタン
+		_input->AddCommand(j, "status", DX_INPUT_PAD1 + j, PAD_INPUT_4);	// Yボタン
 	}
 }
 

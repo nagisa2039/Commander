@@ -26,10 +26,7 @@ void MoveMenu::Back()
 		return;
 	}
 
-	auto selectChar = _playerCommander.GetSelectCharactor();
-	if (selectChar == nullptr)return;
-
-	selectChar->MoveCancel();
+	_playerCommander.MoveCancel();
 	Close();
 }
 
@@ -39,7 +36,7 @@ void MoveMenu::OpenUpdate(const Input& input)
 
 	if (!_isBattle)return;
 
-	if (input.GetButtonDown(0, "right"))
+	if (input.GetButtonDown(0, "right") || input.GetButtonDown(1, "right"))
 	{
 		if (_attackPosListItr == _attackPosList.end())return;
 		_attackPosListItr++;
@@ -50,7 +47,7 @@ void MoveMenu::OpenUpdate(const Input& input)
 		_playerCommander.BackBattalePrediction();
 		_playerCommander.AttackPrePos(*_attackPosListItr);
 	}
-	if (input.GetButtonDown(0, "left"))
+	if (input.GetButtonDown(0, "left") || input.GetButtonDown(1, "left"))
 	{
 		if (_attackPosListItr == _attackPosList.begin())
 		{
@@ -88,11 +85,7 @@ MoveMenu::MoveMenu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& pl
 	};
 	_contentInfs[static_cast<size_t>(Content::close)].func = [&]()
 	{
-		auto selectChar = _playerCommander.GetSelectCharactor();
-		if (selectChar == nullptr)return;
-
-		selectChar->MoveCancel();
-		_playerCommander.SetMapPos(selectChar->GetMapPos());
+		_playerCommander.MoveCancel();
 		Close();
 	};
 

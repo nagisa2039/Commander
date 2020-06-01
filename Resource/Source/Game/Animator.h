@@ -42,6 +42,7 @@ public:
 	void AddAnim(const std::string& animName, const AnimInfo& animInfo);
 	void AddAnim(const std::string& animName, const std::vector<Rect>& rectvec, const int animItv, const bool loop);
 	void AddAnimDiv(const std::string& animName, const Rect& startRect, const int animCnt, const int animItv, const bool loop, const bool vertical = true);
+	void AddAnimDiv(const std::string& animName, const Vector2Int& animCnt, const int animItv, const bool loop);
 
 	void ChangeAnim(std::string animName);			// アニメーションの変更
 	void AnimRestart();	// アニメーションをはじめからやり直す

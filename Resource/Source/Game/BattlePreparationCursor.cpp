@@ -12,6 +12,11 @@ BattlePreparationCursor::BattlePreparationCursor(MapCtrl& mapCtrl, Camera& camer
 {
 	_selectChar = nullptr;
 	_end = false;
+
+	_exRateTrack = std::make_unique<Track<float>>(true);
+	_exRateTrack->AddKey(0, 0.8f);
+	_exRateTrack->AddKey(30, 1.0f);
+	_exRateTrack->AddKey(60, 0.8f);
 }
 
 BattlePreparationCursor::~BattlePreparationCursor()
@@ -21,13 +26,14 @@ BattlePreparationCursor::~BattlePreparationCursor()
 void BattlePreparationCursor::Update(const Input& input)
 {
 	CursorMove(input);
+	_exRateTrack->Update();
 
-	if (input.GetButtonDown(0, "space"))
+	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
 	{
 		Select();
 	}
 
-	if (input.GetButtonDown(0, "ok"))
+	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
 	{
 		_end = true;
 	}
@@ -78,7 +84,7 @@ void BattlePreparationCursor::Draw()
 	GetGraphSize(handle, graphSize);
 
 	DrawRectRotaGraph(offset + _mapPos * chipSize + chipSize * 0.5, Vector2Int(0, 0), graphSize,
-		chipSize.w / graphSize.w, 0.0f, handle);
+		_exRateTrack->GetValue() * (chipSize.w / static_cast<float>(graphSize.w)), 0.0f, handle);
 }
 
 void BattlePreparationCursor::DrawsSortieMass()
@@ -109,7 +115,13 @@ bool BattlePreparationCursor::GetEnd() const
 
 void BattlePreparationCursor::Start()
 {
+	_end = false;
 	_camera.AddTargetActor(this);
+	SetCursorStartPosition();
+}
+
+void BattlePreparationCursor::SetCursorStartPosition()
+{
 	for (const auto& charactor : _mapCtrl.GetCharacots())
 	{
 		if (charactor->GetTeam() == Team::player)

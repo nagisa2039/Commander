@@ -49,6 +49,8 @@ void Input::SetPlayerCnt(const int pcount)
 	_currentInputState.resize(playerCnt);
 	_lastInputState.resize(playerCnt);
 	_padState.resize(playerCnt);
+	_currentXInputState.resize(playerCnt-1);
+	_lastXInputState.resize(playerCnt - 1);
 }
 
 void Input::Update(void)
@@ -62,11 +64,16 @@ void Input::Update(void)
 	_mouseState = GetMouseInput();
 	GetMousePoint(&_mousePos.x, &_mousePos.y);
 
+	_lastXInputState = _currentXInputState;
+
 	// 接続数分回す
 	for (int j = 0; j < GetJoypadNum(); j++)
 	{
 		// 各パッドの入力状態更新
 		_padState[j] = GetJoypadInputState(DX_INPUT_PAD1 + j);
+		XINPUT_STATE xinputSate;
+		GetJoypadXInputState(DX_INPUT_PAD1 + j, &xinputSate);
+		memcpy_s(&_currentXInputState[j], sizeof(_currentXInputState[j]), &xinputSate, sizeof(_currentXInputState[j]));
 	}
 
 	// 入力の状態更新
@@ -188,4 +195,9 @@ bool Input::GetButtonDown(const char keycode)const
 bool Input::GetButtonUp(const char keycode)const
 {
 	return !_keystate[keycode] && _lastKeystate[keycode];
+}
+
+bool Input::GetXInputButtonDown(const int padNum, const int keycode) const
+{
+	return _currentXInputState[padNum-1].Buttons[keycode] && !(_lastXInputState[padNum-1].Buttons[keycode]);
 }

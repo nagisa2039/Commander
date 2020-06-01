@@ -112,22 +112,22 @@ void Menu::Decision()
 
 void Menu::OpenUpdate(const Input& input)
 {
-	if (input.GetButtonDown(0, "back"))
+	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
 	{
 		Back();
 	}
 
-	if (input.GetButtonDown(0, "space"))
+	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
 	{
 		Decision();
 	}
 
-	if (input.GetButtonDown(0, "up") && _selectContent > 0)
+	if ((input.GetButtonDown(0, "up") || input.GetButtonDown(1, "up")) && _selectContent > 0)
 	{
 		_selectContent = _selectContent - 1;
 	}
 
-	if (input.GetButtonDown(0, "down") && _selectContent < _contentList.size() - 1)
+	if ((input.GetButtonDown(0, "down") || input.GetButtonDown(1, "down")) && _selectContent < _contentList.size() - 1)
 	{
 		_selectContent = _selectContent + 1;
 	}

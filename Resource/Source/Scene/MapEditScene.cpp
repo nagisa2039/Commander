@@ -35,9 +35,10 @@ void MapEditScene::Update(const Input& input)
 
     _camera->Update();
 
-    if (input.GetButtonDown(0, "F1"))
+    if (input.GetButtonDown(0, "F1") || input.GetButtonDown(1, "pause"))
     {
         _controller.ChangeScene(make_unique<PlayScene>(_controller));
+        return;
     }
     if (input.GetButtonDown(0, "F2"))
     {
@@ -50,6 +51,13 @@ void MapEditScene::Update(const Input& input)
     if (input.GetButtonDown(0, "F5"))
     {
 
+    }
+    XINPUT_STATE xis;
+    GetJoypadXInputState(DX_INPUT_PAD1, &xis);
+    if (input.GetButtonDown(0, "pause") || input.GetXInputButtonDown(1, XINPUT_BUTTON_START))
+    {
+        _controller.ChangeScene(make_unique<PlayScene>(_controller));
+        return;
     }
 }
 

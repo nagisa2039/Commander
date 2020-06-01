@@ -19,7 +19,7 @@ void PlayerCommander::NormalUpdate(const Input& input)
 {
 	CursorMove(input);
 
-	if (input.GetButtonDown(0, "space"))
+	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
 	{
 		auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
 		if (charactor != nullptr)
@@ -64,7 +64,7 @@ void PlayerCommander::SelectUpdate(const Input& input)
 		moveMenu->Open();
 	}
 
-	if (input.GetButtonDown(0, "space"))
+	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
 	{
 		auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
 		if (charactor != nullptr)
@@ -75,32 +75,11 @@ void PlayerCommander::SelectUpdate(const Input& input)
 				auto moveMenu = _playerUI->GetMoveMenu();
 				moveMenu->SetContent(_selectChar->GetAttackPosList());
 				moveMenu->Open();
-				// 選択中のキャラを行動終了にする
-				/*_selectChar->MoveEnd();
-				_camera.AddTargetActor(this);
-				SelectCharactor(nullptr, true);*/
 				return;
 			}
 
-			// 味方ならそのキャラクターを選択する
-			/*if (!_selectChar->GetStatus().heal && charactor->GetTeam() == _selectChar->GetTeam())
-			{
-				SelectCharactor(charactor, true);
-				return;
-			}*/
-
 			// 指定したマスを攻撃
 			AttackPrePos(_mapPos);
-			
-			//else
-			//{
-			//	// 行動可能な自軍?
-			//	if (charactor->GetTeam() == _ctrlTeam && charactor->GetCanMove())
-			//	{
-			//		SelectCharactor(charactor, true);
-			//		return;
-			//	}
-			//}
 		}
 		else
 		{
@@ -114,10 +93,9 @@ void PlayerCommander::SelectUpdate(const Input& input)
 		}
 	}
 
-	if (input.GetButtonDown(0, "back"))
+	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
 	{
-		_selectChar->MoveCancel();
-		_mapPos = _selectChar->GetMapPos();
+		MoveCancel();
 		SelectCharactor(nullptr, false);
 		return;
 	}
@@ -163,7 +141,7 @@ void PlayerCommander::TerrainEffectUpdate(const Input& input)
 
 void PlayerCommander::BattlePredictionUpdate(const Input& input)
 {
-	if (input.GetButtonDown(0, "space"))
+	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
 	{
 		// 戦闘を行う	選択中のキャラがいるなら移動
 		if (_selectChar->GetCanMove())
@@ -173,7 +151,7 @@ void PlayerCommander::BattlePredictionUpdate(const Input& input)
 		}
 	}
 
-	if (input.GetButtonDown(0, "back"))
+	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
 	{
 		BackBattalePrediction();
 		return;
@@ -184,6 +162,16 @@ void PlayerCommander::BackBattalePrediction()
 {
 	_playerUI->ClearBattlePre();
 	_uniqueUpdater = &PlayerCommander::SelectUpdate;
+}
+
+bool PlayerCommander::MoveCancel()
+{
+	if (_selectChar == nullptr)return false;
+
+	_selectChar->MoveCancel();
+	_mapPos = _selectChar->GetMapPos();
+
+	return true;
 }
 
 void PlayerCommander::BattaleUpdate(const Input& input)
@@ -293,6 +281,7 @@ void PlayerCommander::Draw()
 
 	DrawRectRotaGraph(offset + _mapPos * chipSize + chipSize * 0.5, Vector2Int(0, 0), graphSize,
 		(Lerp(0.8f, 1.0f, alpha)) * chipSize.w / graphSize.w, 0.0f, handle);
+
 
 	// UI
 	_playerUI->Draw();

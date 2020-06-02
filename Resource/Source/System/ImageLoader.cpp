@@ -21,6 +21,7 @@ bool ImageLoader::Load(const char * path, Data & data)
 		img._handle = LoadGraph(path);
 		if (img._handle == -1)
 		{
+			assert(false);
 			return false;
 		}
 		else

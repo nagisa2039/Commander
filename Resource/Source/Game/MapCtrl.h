@@ -8,6 +8,7 @@
 #include "CharactorType.h"
 #include <functional>
 #include "DataBase.h"
+#include <windows.h>
 
 class Camera;
 class Charactor;
@@ -51,6 +52,11 @@ private:
 	void DrawToMapFloorScreen();
 	void DrawToMapChipScreen();
 
+	bool FileSave(const HWND hWnd, const char* ext, const char* filter, const char* title, std::string& saveFilePath);
+	bool FileLoad(const HWND hWnd, const char* ext, const char* filter, const char* title, std::string& loadFilePath);
+	void SaveMapData(const std::string& saveFilePath);
+	bool LoadMapData(const std::string& filePath);
+
 public:
 	MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors);
 	~MapCtrl();
@@ -75,8 +81,9 @@ public:
 
 	void CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
 
-	bool SaveMap(const std::string fileName);
+	bool SaveMap();
 	bool LoadMap(const std::string fileName);
+	bool LoadMap();
 
 	// ˆÚ“®‰Â”\‚Èƒ}ƒX‚ð’T‚·
 	void RouteSearch(Charactor& charactor);

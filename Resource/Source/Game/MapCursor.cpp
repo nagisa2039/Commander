@@ -40,7 +40,7 @@ void MapCursor::CursorMove(const Input& input)
 	{
 		if (_moveItv <= 0)
 		{
-			_moveItv = std::max(_moveItvCurrentMax / 2, 5);
+			_moveItv = max(_moveItvCurrentMax / 2, 5);
 			_moveItvCurrentMax = _moveItvCurrentMax /2;
 		}
 	}
@@ -66,7 +66,7 @@ bool MapCursor::PutCheck(const Input& input, const std::string& key)
 	{
 		if (_putItv <= 0)
 		{
-			_putItv = std::max(_putItvCurrentMax / 2, 5);
+			_putItv = max(_putItvCurrentMax / 2, 5);
 			_putItvCurrentMax = _putItvCurrentMax / 2;
 			return true;
 		}

@@ -63,7 +63,7 @@ PlayScene::PlayScene(SceneController & ctrl):Scene(ctrl)
 	auto mapSize = _mapCtrl->GetMapSize() * _mapCtrl->GetChipSize();
 	_camera->SetLimitRect(Rect(mapSize.ToVector2Int() * 0.5, mapSize));
 
-	_mapCtrl->LoadMap("map0");
+	_mapCtrl->LoadMap("map0.map");
 	_mapCtrl->LoadCharactorData();
 	_mapCtrl->CreateCharactor(ctrl, _effects, *_camera);
 

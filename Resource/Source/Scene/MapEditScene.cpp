@@ -22,7 +22,7 @@ MapEditScene::MapEditScene(SceneController& controller):Scene(controller)
    auto mapSize = _mapCtrl->GetMapSize() * _mapCtrl->GetChipSize();
    _camera->SetLimitRect(Rect(mapSize.ToVector2Int()*0.5, mapSize));
 
-   _mapCtrl->LoadMap("map0");
+   _mapCtrl->LoadMap();
 }
 
 MapEditScene::~MapEditScene()
@@ -42,11 +42,11 @@ void MapEditScene::Update(const Input& input)
     }
     if (input.GetButtonDown(0, "F2"))
     {
-        _mapCtrl->SaveMap("map0");
+        _mapCtrl->SaveMap();
     }
     if (input.GetButtonDown(0, "F3"))
     {
-        _mapCtrl->LoadMap("map0");
+        _mapCtrl->LoadMap();
     }
     if (input.GetButtonDown(0, "F5"))
     {

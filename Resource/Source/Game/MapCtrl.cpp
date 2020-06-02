@@ -302,34 +302,44 @@ void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr
 	}
 }
 
-bool MapCtrl::SaveMap(const std::string fileName)
+bool MapCtrl::SaveMap()
 {
-	FILE* fp = nullptr;
-
-	string folderName("Resource/Map/");
-	fopen_s(&fp, (folderName + fileName).c_str(), "wb");
-
-	// マップサイズの書き込み
-	auto mapSize = GetMapSize();
-	fwrite(&mapSize, sizeof(mapSize), 1, fp);
-
-	// マップチップの書き込み
-	for (const auto& mapChipVec : _mapDataVec2)
+	string filePath;
+	if (!FileSave(GetMainWindowHandle(), "map", "MAPファイル(*.map)\n*.map\n", "マップデータを保存します。", filePath))
 	{
-		fwrite(mapChipVec.data(), sizeof(MapData), mapChipVec.size(), fp);
+		return false;
 	}
-
-	fclose(fp);
-
+	SaveMapData(filePath.c_str());
 	return true;
 }
 
+
 bool MapCtrl::LoadMap(const std::string fileName)
+{
+	char filePath[MAX_PATH];
+	sprintf_s(filePath, MAX_PATH, "Resource/Map/%s", fileName.c_str());
+	return LoadMapData(filePath);
+}
+
+bool MapCtrl::LoadMap()
+{
+	string filePath;
+	if (!FileLoad(GetMainWindowHandle(), "map", "MAPファイル(*.map)\n*.map\n", "マップデータを開きます。", filePath))
+	{
+		return false;
+	}
+
+	return LoadMapData(filePath);
+}
+
+bool MapCtrl::LoadMapData(const std::string& filePath)
 {
 	FILE* fp = nullptr;
 
-	string folderName("Resource/Map/");
-	fopen_s(&fp, (folderName + fileName).c_str(), "rb");
+	fopen_s(&fp, filePath.c_str(), "rb");
+
+	TCHAR initPath[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, initPath);
 
 	if (fp == NULL)
 	{
@@ -342,6 +352,7 @@ bool MapCtrl::LoadMap(const std::string fileName)
 
 	if (mapSize != GetMapSize())
 	{
+		fclose(fp);
 		return false;
 	}
 
@@ -703,4 +714,85 @@ Status MapCtrl::GetLevelInitStatus(const uint8_t level, const CharactorType char
 const std::vector<std::shared_ptr<Charactor>>& MapCtrl::GetCharacots() const
 {
 	return _charactors;
+}
+
+bool MapCtrl::FileSave(const HWND hWnd, const char* ext, const char* filter, const char* title, std::string& filePath)
+{
+	static OPENFILENAME     ofn;
+	static TCHAR            path[MAX_PATH];
+	static TCHAR            file[MAX_PATH];
+
+	TCHAR initPath[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, initPath);
+
+	if (path[0] == TEXT('\n'))
+	{
+		GetCurrentDirectory(MAX_PATH, path);
+	}
+	if (ofn.lStructSize == 0)
+	{
+		ofn.lStructSize = sizeof(OPENFILENAME);
+		ofn.hwndOwner = hWnd;
+		ofn.lpstrInitialDir = path;       // 初期フォルダ位置
+		ofn.lpstrFile = file;       // 選択ファイル格納
+		ofn.nMaxFile = MAX_PATH;
+		ofn.lpstrDefExt = TEXT(ext);
+		ofn.lpstrFilter = TEXT(filter);
+		ofn.lpstrTitle = TEXT(title);
+		ofn.Flags = OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
+	}
+	bool result = GetSaveFileName(&ofn);
+	SetCurrentDirectory(initPath);
+	filePath = file;
+
+	return result;
+}
+
+bool MapCtrl::FileLoad(const HWND hWnd, const char* ext, const char* filter, const char* title, std::string& loadFilePath)
+{
+	static OPENFILENAME     ofn;
+	static TCHAR            path[MAX_PATH];
+	static TCHAR            file[MAX_PATH];
+
+	TCHAR initPath[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, initPath);
+
+	if (path[0] == TEXT('\n'))
+	{
+		GetCurrentDirectory(MAX_PATH, path);
+	}
+	if (ofn.lStructSize == 0)
+	{
+		ofn.lStructSize = sizeof(OPENFILENAME);
+		ofn.hwndOwner = hWnd;
+		ofn.lpstrInitialDir = path;       // 初期フォルダ位置
+		ofn.lpstrFile = file;       // 選択ファイル格納
+		ofn.nMaxFile = MAX_PATH;
+		ofn.lpstrDefExt = TEXT(ext);
+		ofn.lpstrFilter = TEXT(filter);
+		ofn.lpstrTitle = TEXT(title);
+		ofn.Flags = OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
+	}
+	bool result = GetOpenFileName(&ofn);
+	SetCurrentDirectory(initPath);
+	loadFilePath = file;
+	return result;
+}
+
+void MapCtrl::SaveMapData(const std::string& saveFilePath)
+{
+	FILE* fp = nullptr;
+	fopen_s(&fp, saveFilePath.c_str(), "wb");
+
+	// マップサイズの書き込み
+	auto mapSize = GetMapSize();
+	fwrite(&mapSize, sizeof(mapSize), 1, fp);
+
+	// マップチップの書き込み
+	for (const auto& mapChipVec : _mapDataVec2)
+	{
+		fwrite(mapChipVec.data(), sizeof(MapData), mapChipVec.size(), fp);
+	}
+
+	fclose(fp);
 }

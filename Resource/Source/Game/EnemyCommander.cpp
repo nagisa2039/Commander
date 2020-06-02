@@ -10,7 +10,7 @@ using namespace std;
 void EnemyCommander::NormalUpdate(const Input& input)
 {
 	// d’¼
-	_rigid = std::max(_rigid - 1, 0);
+	_rigid = max(_rigid - 1, 0);
 	if (_rigid > 0)  return;
 
 	// ‘I‘ð’†‚ÌƒLƒƒƒ‰‚ªˆÚ“®’†‚È‚ç‘I‘ð‚ð–³Œø‚É‚·‚é

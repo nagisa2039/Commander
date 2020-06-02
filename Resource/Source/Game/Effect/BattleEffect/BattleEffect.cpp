@@ -18,7 +18,7 @@ unsigned int  BattleEffect::AddDamage()
 	else
 	{
 		damage = selfStatus.GetDamage(targetStatus) * (critical ? 3 : 1)
-			* Application::Instance().GetDataBase().GetAttributeRate(selfStatus.attribute, targetStatus.attribute);
+			* Application::Instance().GetDataBase().GetAttributeRate(selfStatus.attributeId, targetStatus.attributeId);
 	}
 
 	char damageText[10];

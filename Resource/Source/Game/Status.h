@@ -1,6 +1,5 @@
 #pragma once
 #include <cstdint>
-#include "Attribute.h"
 
 struct Status
 {
@@ -13,7 +12,7 @@ struct Status
 	uint8_t skill;
 	uint8_t move;
 
-	Attribute attribute;		// 属性
+	unsigned int attributeId;		// 属性
 	bool magicAttack;	// 魔法攻撃
 	bool heal;		// 回復
 	unsigned int exp;	// 経験値
@@ -22,11 +21,11 @@ struct Status
 	int avoidanceCorrection;	// 回避力補正
 
 	Status() : level(1), health(1), power(1), defense(1), magic_defense(1), speed(1), skill(1), move(1), exp(0),
-		attribute(Attribute::normal), defenseCorrection(0), avoidanceCorrection(0.0f) {};
+		attributeId(0), defenseCorrection(0), avoidanceCorrection(0.0f) {};
 	Status(const uint8_t lv, const uint8_t he, const uint8_t pw, const uint8_t df, const uint8_t md,
-		const uint8_t sp, const uint8_t sk, const uint8_t mv, const Attribute at, const bool ma, const bool heal)
+		const uint8_t sp, const uint8_t sk, const uint8_t mv, const unsigned int at, const bool ma, const bool heal)
 		: level(lv), health(he), power(pw), defense(df), magic_defense(md), speed(sp), skill(sk), move(mv),
-		attribute(at), magicAttack(ma), heal(heal), exp(0), defenseCorrection(0), avoidanceCorrection(0) {};
+		attributeId(at), magicAttack(ma), heal(heal), exp(0), defenseCorrection(0), avoidanceCorrection(0) {};
 
 	int GetDamage(const Status& target)const;	// ダメージ
 	int GetRecover();	// 回復量

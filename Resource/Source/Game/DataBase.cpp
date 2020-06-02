@@ -6,38 +6,8 @@
 
 using namespace std;
 
-bool DataBase::SetAttributeRateValue(const Attribute self, const Attribute target, const bool advantage)
-{
-	auto selfSize_t = static_cast<size_t>(self);
-	auto targetSize_t = static_cast<size_t>(target);
-
-	if (_attributeRateTable.size() <= selfSize_t
-		|| _attributeRateTable[0].size() <= targetSize_t)
-	{
-		return false;
-	}
-
-	const float good = 1.2f;
-	const float bad = 0.8f;
-
-	_attributeRateTable[selfSize_t][targetSize_t] = advantage	? good : bad;
-	_attributeRateTable[targetSize_t][selfSize_t] = !advantage	? good : bad;
-
-	return true;
-}
-
 DataBase::DataBase()
 {
-	// _attributeRateTableの初期化
-	for (auto& valueArray : _attributeRateTable)
-	{
-		valueArray.fill(1.0f);
-	}
-
-	SetAttributeRateValue(Attribute::red, Attribute::green, true);
-	SetAttributeRateValue(Attribute::red, Attribute::blue, false);
-	SetAttributeRateValue(Attribute::green, Attribute::blue, true);
-
 	auto split = [](const string& input, const char delimiter, vector<string>& output)
 	{
 		istringstream stream(input);
@@ -49,6 +19,7 @@ DataBase::DataBase()
 		}
 	};
 
+	// キャラクターデータテーブルの読み込み
 	{
 		ifstream ifs("Resource/DataBase/charactorDataBase.csv");
 		string line;
@@ -68,10 +39,10 @@ DataBase::DataBase()
 			charactorData.range = Range(atoi(outputVec[2].c_str()), atoi(outputVec[3].c_str()));
 			// 初期ステータス
 			charactorData.initialStatus = Status(1, atoi(outputVec[4].c_str()), atoi(outputVec[5].c_str()), atoi(outputVec[6].c_str()),
-				atoi(outputVec[7].c_str()), atoi(outputVec[8].c_str()), atoi(outputVec[9].c_str()), atoi(outputVec[10].c_str()), Attribute::red, outputVec[18] != "", outputVec[19] != "");
+				atoi(outputVec[7].c_str()), atoi(outputVec[8].c_str()), atoi(outputVec[9].c_str()), atoi(outputVec[10].c_str()), atoi(outputVec[17].c_str()), outputVec[18] != "", outputVec[19] != "");
 			// ステータス成長率
 			charactorData.statusGrowRate = Status(1, atoi(outputVec[11].c_str()), atoi(outputVec[12].c_str()), atoi(outputVec[13].c_str()),
-				atoi(outputVec[14].c_str()), atoi(outputVec[15].c_str()), atoi(outputVec[16].c_str()), atoi(outputVec[17].c_str()), Attribute::red, outputVec[18] != "", outputVec[19] != "");
+				atoi(outputVec[14].c_str()), atoi(outputVec[15].c_str()), atoi(outputVec[16].c_str()), atoi(outputVec[10].c_str()), atoi(outputVec[17].c_str()), outputVec[18] != "", outputVec[19] != "");
 			// キャラクター画像パス
 			charactorData.ImagePath = outputVec[20];
 			// 職業アイコンパス
@@ -81,6 +52,7 @@ DataBase::DataBase()
 		}
 	}
 
+	// マップチップテーブルの読み込み
 	{
 		ifstream ifs("Resource/DataBase/mapChipDataBase.csv");
 		string line;
@@ -117,6 +89,7 @@ DataBase::DataBase()
 		}
 	}
 
+	// 経験値テーブルの読み込み
 	{
 		_expDataTable.reserve(50);
 		ifstream ifs("Resource/DataBase/expDataBase.csv");
@@ -131,24 +104,60 @@ DataBase::DataBase()
 			_expDataTable.emplace_back(ExpData(atoi(outputVec[1].c_str()), atoi(outputVec[2].c_str())));
 		}
 	}
+
+	// 属性テーブルの読み込み
+	{
+		_attributeDataTable.reserve(10);
+		ifstream ifs("Resource/DataBase/attributeDataBase.csv");
+		string line;
+		vector<string> outputVec;
+		outputVec.reserve(10);
+		// 最初の行はスキップ
+		getline(ifs, line);
+		while (getline(ifs, line))
+		{
+			split(line, ',', outputVec);
+			if (outputVec.size() <= 0)break;
+			_attributeDataTable.emplace_back(AttributeData(outputVec[1], atoi(outputVec[2].c_str())));
+		}
+	}
+
+	// rateTableの読み込み
+	{
+		ifstream ifs("Resource/DataBase/attributeRateDataBase.csv");
+		string line;
+		vector<string> outputVec;
+		outputVec.reserve(5);
+		_attributeRateTable.resize(_attributeDataTable.size());
+		int attributeIdx = 0;
+		// 最初の行はスキップ
+		getline(ifs, line);
+		while (getline(ifs, line))
+		{
+			split(line, ',', outputVec);
+			_attributeRateTable[attributeIdx].resize(_attributeDataTable.size());
+			for (int idx = 0; idx < _attributeRateTable[attributeIdx].size(); idx++)
+			{
+				_attributeRateTable[attributeIdx][idx] = atof(outputVec[idx + 1].c_str());
+			}
+			attributeIdx++;
+		}
+	}
 }
 
 DataBase::~DataBase()
 {
 }
 
-float DataBase::GetAttributeRate(const Attribute self, const Attribute target)const
+float DataBase::GetAttributeRate(const unsigned int selfAtributeId, const unsigned int targetAtributeId)const
 {
-	auto selfSize_t = static_cast<size_t>(self);
-	auto targetSize_t = static_cast<size_t>(target);
-
-	if (_attributeRateTable.size() <= selfSize_t
-		|| _attributeRateTable[0].size() <= targetSize_t)
+	if (_attributeRateTable.size() <= selfAtributeId
+		|| _attributeRateTable[selfAtributeId].size() <= targetAtributeId)
 	{
 		return 0.0f;
 	}
 
-	return _attributeRateTable.at(selfSize_t).at(targetSize_t);
+	return _attributeRateTable.at(selfAtributeId).at(targetAtributeId);
 }
 
 int DataBase::GetCharactorImageHandle(const CharactorType charactorType, const Team team) const
@@ -171,4 +180,9 @@ const DataBase::MapChipData& DataBase::GetMapChipData(const Map_Chip mapChip) co
 const DataBase::ExpData& DataBase::GetExpData(const uint8_t level) const
 {
 	return _expDataTable.at(level);
+}
+
+const DataBase::AttributeData& DataBase::GetAttributeData(const unsigned int attributeId)const
+{
+	return _attributeDataTable.at(attributeId);
 }

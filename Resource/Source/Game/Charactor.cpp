@@ -805,8 +805,6 @@ void Charactor::CharactorDataInit(const CharactorType& type, const uint8_t& leve
 	InitAnim();
 
 
-	_status.attribute = Attribute::red;
-
 	_status = _mapCtrl.GetLevelInitStatus(level, type);
 	_startStatus = _status;
 

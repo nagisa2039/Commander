@@ -1,7 +1,6 @@
 #pragma once
 
 #include <array>
-#include "Attribute.h"
 #include <string>
 #include "Geometry.h"
 #include "Status.h"
@@ -38,10 +37,7 @@ public:
 	};
 
 private:
-	std::array<std::array<float, static_cast<size_t>(Attribute::max)>, static_cast<size_t>(Attribute::max)> _attributeRateTable;
-
-	//	テーブルに値を設定する 有利不利がセットで設定される	SetAttributeRateValue(攻撃する側,	攻撃される側, 有効か？)
-	bool SetAttributeRateValue(const Attribute self, const Attribute target, const bool advantage);
+	std::vector<std::vector<float>> _attributeRateTable;
 
 	struct CharactorData
 	{
@@ -61,18 +57,28 @@ private:
 		ExpData(unsigned int m, unsigned int g) :maxPoint(m), getPoint(g) {};
 	};
 
+	struct AttributeData
+	{
+		std::string name;
+		unsigned int color;
+		AttributeData():name(""), color(0) {};
+		AttributeData(const std::string na, const unsigned int c) :name(na), color(c) {};
+	};
+
 	std::array<CharactorData, static_cast<size_t>(CharactorType::max)> _charactorDataTable;
 
 	std::array<MapChipData, static_cast<size_t>(Map_Chip::max)> _mapChipDataTable;
 
 	std::vector<ExpData> _expDataTable;
 
+	std::vector<AttributeData> _attributeDataTable;
+
 public:
 	DataBase();
 	~DataBase();
 
 	// 属性ごとの威力倍率を取得する		GetAttributeRate(攻撃する側,	攻撃される側)
-	float GetAttributeRate(const Attribute self, const Attribute target)const;
+	float GetAttributeRate(const unsigned int selfAtributeId, const unsigned int targetAtributeId)const;
 
 	int GetCharactorImageHandle(const CharactorType charactorType, const Team team)const;
 
@@ -81,5 +87,7 @@ public:
 	const MapChipData& GetMapChipData(const Map_Chip mapChip)const;
 
 	const ExpData& GetExpData(const uint8_t level)const;
+
+	const AttributeData& GetAttributeData(const unsigned int attributeId)const;
 };
 

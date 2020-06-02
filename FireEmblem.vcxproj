@@ -126,7 +126,6 @@
     <ClInclude Include="Resource\Source\Game\UI\UI.h" />
     <ClInclude Include="Resource\Source\Game\UI\WarSituation.h" />
     <ClInclude Include="Resource\Source\Game\Warrior.h" />
-    <ClInclude Include="Resource\Source\Game\Attribute.h" />
     <ClInclude Include="Resource\Source\Scene\BattleScene.h" />
     <ClInclude Include="Resource\Source\Scene\MapEditScene.h" />
     <ClInclude Include="Resource\Source\Scene\PlayScene.h" />

@@ -57,6 +57,9 @@ private:
 	void SaveMapData(const std::string& saveFilePath);
 	bool LoadMapData(const std::string& filePath);
 
+	// 指定したマスがマップの変更可能な範囲化を調べる
+	bool CheckMapPosPutRange(const Vector2Int& mapPos);
+
 public:
 	MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors);
 	~MapCtrl();

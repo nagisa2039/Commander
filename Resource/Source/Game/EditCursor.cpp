@@ -54,7 +54,7 @@ void EditCursor::MapEidtUpdate(const Input& input)
 	ChipChange(KEY_INPUT_Z, 1);
 	ChipChange(KEY_INPUT_X, -1);
 
-	if (input.GetButtonDown(0, "space"))
+	if (input.GetButtonDown(0, "ok"))
 	{
 		_mapCtrl.SetMapChip(_mapPos, _mapChip);
 	}

@@ -78,15 +78,7 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 		_mapDataVec2[y].resize(MAP_CHIP_CNT_W);
 		for (int x = 0; x < MAP_CHIP_CNT_W; x++)
 		{
-			if (y < frameNum || y >= MAP_CHIP_CNT_H - frameNum
-			 || x < frameNum || x >= MAP_CHIP_CNT_W - frameNum)
-			{
-				_mapDataVec2[y][x].mapChip = Map_Chip::rock;
-			}
-			else
-			{
-				_mapDataVec2[y][x].mapChip = Map_Chip::none;
-			}
+			_mapDataVec2[y][x].mapChip = CheckMapPosPutRange(Vector2Int(x, y)) ? Map_Chip::none : Map_Chip::rock;
 			_mapDataVec2[y][x].charactorChip.team = Team::max;
 			_mapDataVec2[y][x].charactorChip.mapPos = Vector2Int(x, y);
 		}
@@ -209,8 +201,7 @@ Charactor* MapCtrl::GetMapPosChar(const Vector2Int mapPos)const
 
 bool MapCtrl::SetMapChip(const Vector2Int& mapPos, const Map_Chip mapChip)
 {
-	if (mapPos.x >= 0 && mapPos.x < _mapDataVec2[0].size()
-		&& mapPos.y >= 0 && mapPos.y < _mapDataVec2.size())
+	if (CheckMapPosPutRange(mapPos))
 	{
 		_mapDataVec2[mapPos.y][mapPos.x].mapChip = mapChip;
 		DrawToMapChipScreen();
@@ -368,6 +359,13 @@ bool MapCtrl::LoadMapData(const std::string& filePath)
 	DrawToMapChipScreen();
 
 	return true;
+}
+
+bool MapCtrl::CheckMapPosPutRange(const Vector2Int& mapPos)
+{
+	int frameNum = 2;
+	return mapPos.y >= frameNum && mapPos.y < MAP_CHIP_CNT_H - frameNum
+		&& mapPos.x >= frameNum && mapPos.x < MAP_CHIP_CNT_W - frameNum;
 }
 
 void MapCtrl::RouteSearch(Charactor& charactor)

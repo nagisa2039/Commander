@@ -43,35 +43,35 @@ void BattlePreparationCursor::Select()
 {
 	auto charactorChips = _mapCtrl.GetCharactorChipInf(_mapPos);
 	auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
-	if (charactor != nullptr && charactor->GetTeam() != Team::player)return;
+
+	if(charactorChips.team != Team::player || charactorChips.type == CharactorType::max)return;
 
 	if (_selectChar == nullptr)
 	{
 		if (charactor == nullptr)return;
 
 		_selectChar = charactor;
+		return;
+	}
+
+	if (_selectChar == charactor)
+	{
+		_selectChar = nullptr;
+		return;
+	}
+
+	if (charactor == nullptr)
+	{
+		if (charactorChips.team != Team::player)return;
+
+		_selectChar->InitmapPos(charactorChips.mapPos);
 	}
 	else
 	{
-		if (_selectChar == charactor)
-		{
-			_selectChar = nullptr;
-			return;
-		}
-
-		if (charactor == nullptr)
-		{
-			if (charactorChips.team != Team::player)return;
-
-			_selectChar->InitmapPos(charactorChips.mapPos);
-		}
-		else
-		{
-			charactor->InitmapPos(_selectChar->GetMapPos());
-			_selectChar->InitmapPos(_mapPos);
-		}
-		_selectChar = nullptr;
+		charactor->InitmapPos(_selectChar->GetMapPos());
+		_selectChar->InitmapPos(_mapPos);
 	}
+	_selectChar = nullptr;
 }
 
 void BattlePreparationCursor::Draw()

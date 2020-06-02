@@ -1,11 +1,14 @@
 #include "Status.h"
 #include <algorithm>
+#include "Application.h"
+#include "DataBase.h"
 
 using namespace std;
 
 int Status::GetDamage(const Status& target)const
 {
-	return max(power - (magicAttack ? target.magic_defense : target.defense) - target.defenseCorrection, 0);
+	auto rate = Application::Instance().GetDataBase().GetAttributeRate(attributeId, target.attributeId);
+	return max( static_cast<int>((power - (magicAttack ? target.magic_defense : target.defense)) * rate) - target.defenseCorrection, 0);
 }
 
 int Status::GetRecover()

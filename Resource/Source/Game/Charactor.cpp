@@ -388,7 +388,7 @@ std::vector<std::vector<std::list<Astar::ResultPos>>>& Charactor::GetResutlPosLi
 
 void Charactor::AddDamage(const int damage)
 {
-	_status.health = max(_status.health - damage, 0);
+	_status.health = min(max(_status.health - damage, 0), _startStatus.health);
 	if (_status.health <= 0)
 	{
 		SetIsDying();

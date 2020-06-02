@@ -23,6 +23,7 @@ public:
 
 	void Update(const Input& input)override;
 	void Draw()override;
-	
+
+	void DrawHPBer(int& drawY, const Rect& windowRect, bool rightAttack, int fontH);
 };
 

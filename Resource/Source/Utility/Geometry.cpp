@@ -608,6 +608,16 @@ Size operator*(const Size& lval, const Size& rval)
 	return Size(lval.w * rval.w, lval.h * rval.h);
 }
 
+Size operator/(const Size& lval, const Size& rval)
+{
+	return Size(lval.w / rval.w, lval.h / rval.h);
+}
+
+Size operator/(const Size& lval, const Vector2Int& rval)
+{
+	return Size(lval.w / rval.x, lval.h / rval.y);
+}
+
 Size operator+(const Size& lval, const float& rval)
 {
 	return Size(lval.w + rval, lval.h + rval);

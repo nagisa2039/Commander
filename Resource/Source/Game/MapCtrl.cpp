@@ -625,9 +625,8 @@ bool MapCtrl::CreateCharactorData()
 	FILE* fp = nullptr;
 
 	fopen_s(&fp, "Resource/SaveData/savedata", "ab");
-	if (fp == nullptr)
+	if (fp == NULL)
 	{
-		fclose(fp);
 		return false;
 	}
 	// キャラクター数の書き込み
@@ -678,7 +677,6 @@ bool MapCtrl::LoadCharactorData()
 
 	if (fp == NULL)
 	{
-		fclose(fp);
 		CreateCharactorData();
 		return false;
 	}

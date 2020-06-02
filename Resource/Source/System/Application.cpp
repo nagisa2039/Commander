@@ -64,8 +64,8 @@ bool Application::Initialize()
 
 	_fileSystem = make_shared<FileSystem>();
 	_sceneController = make_unique<SceneController>();
-	//_sceneController->ChangeScene(make_unique<PlayScene>(*_sceneController));
-	_sceneController->ChangeScene(make_unique<MapEditScene>(*_sceneController));
+	_sceneController->ChangeScene(make_unique<PlayScene>(*_sceneController));
+	//_sceneController->ChangeScene(make_unique<MapEditScene>(*_sceneController));
 
 	// input‚Ì‰Šú‰»
 	_input = make_unique<Input>();

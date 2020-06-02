@@ -168,6 +168,8 @@ struct Size
 
 Size operator+(const Size& lval, const Size& rval);
 Size operator*(const Size& lval, const Size& rval);
+Size operator/(const Size& lval, const Size& rval);
+Size operator/(const Size& lval, const Vector2Int& rval);
 
 Size operator+(const Size& lval, const float& rval);
 Size operator*(const Size& lval, const float& rval);

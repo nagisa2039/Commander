@@ -72,6 +72,7 @@ void BattleCharactor::AttackUpdate(BattleScene& battleScene)
 			// ñΩíÜîªíË
 			if (!selfStatus.heal && selfStatus.GetHit(targetStatus) <= rand() % 100)
 			{
+				// äOÇÍ
 				battleScene.GetEffectVec().emplace_back(CreateMissEffect(targetCenterPos));
 				return;
 			}
@@ -110,6 +111,9 @@ void BattleCharactor::UIDraw()
 	auto teamColor = GetTeamColorBattle(_selfChar.GetTeam());
 	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin40");
 
+	Vector2Int mapPosSub(_targetChar->GetCharacotr().GetMapPos() - _selfChar.GetMapPos());
+	unsigned int distance = abs(mapPosSub.x) + abs(mapPosSub.y);
+
 	// UIÇÃç∂è„ÇÃç¿ïW
 	Vector2Int dirDownPos;
 	Vector2Int paramDrawPos;
@@ -141,17 +145,35 @@ void BattleCharactor::UIDraw()
 	_paramRect.Draw(0xffffff, false);
 	auto drawParam = [&](const int itemNum, const int fontH, const unsigned int color, const char* string, const int num)
 	{
-		Size strSize;
-		int lineCnt;
-		GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, fontH, "%d", num);
-		Vector2Int paramNumDrawPos = GetDrawPos(Vector2Int(_paramRect.Right(), _paramRect.Top()), strSize, Anker::rightup);
-		DrawFormatStringToHandle(paramDrawPos.x + 10, paramDrawPos.y + 40 * itemNum, color, fontH, string);
-		DrawFormatStringToHandle(paramNumDrawPos.x - 10, paramNumDrawPos.y + 40 * itemNum, color, fontH, "%d", num);
+		DrawStringToHandle(Vector2Int(_paramRect.Left()  + 10, _paramRect.Top() + 40 * itemNum), Anker::leftup,  color, fontH, string);
+		// çUåÇÇ≈Ç´ÇÈÇ©
+		if(_selfChar.GetAttackRange().Hit(distance) && (!status.heal || _dir == Dir::left))
+		{
+			char numStr[10];
+			sprintf_s(numStr, 10, "%d", num);
+			DrawStringToHandle(Vector2Int(_paramRect.Right() - 10, _paramRect.Top() + 40 * itemNum), Anker::rightup, color, fontH, numStr);
+		}
+		else
+		{
+			DrawStringToHandle(Vector2Int(_paramRect.Right() - 10, _paramRect.Top() + 40 * itemNum), Anker::rightup, color, fontH, "-");
+		}
 	};
 
 	int itemNum = 0;
 	// çUåÇóÕ
-	drawParam(itemNum++, fontHandle, 0xaaaaaa, "ATK", status.GetDamage(targetStatus));
+	const char* name = "";
+	int num = 0;
+	if (status.heal)
+	{
+		name = "RCV";
+		num = status.GetRecover();
+	}
+	else
+	{
+		name = "ATK";
+		num = status.GetDamage(targetStatus);
+	}
+	drawParam(itemNum++, fontHandle, 0xaaaaaa, name, num);
 	// ñΩíÜ
 	drawParam(itemNum++, fontHandle, 0xaaaaaa, "HIT", status.GetHit(targetStatus));
 	// ïKéE

@@ -5,6 +5,7 @@
 #include "Input.h"
 #include <Dxlib.h>
 #include "DxLibUtility.h"
+#include "DataBase.h"
 
 int BattlePrediction::GetChengePoint(const Dir& dir, bool rightAttack, Status& selfStatus, Status& targetStatus)
 {
@@ -73,75 +74,36 @@ void BattlePrediction::Draw()
 	auto window1Handle = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/window1.png");
 
 	// çUåÇÇ≥ÇÍÇΩë§Ç™îΩåÇÇ≈Ç´ÇÈÇ©
-	bool rightAttack = _targetCharactor.GetAttackRange().Hit(_distance);
+	bool rightAttack = _targetCharactor.GetAttackRange().Hit(_distance) && !targetStatus.heal;
 
 	// Ç†Ç∆Y300
 	// HP 100
-	Size hpOutSize(250, 50);
-	Size hpSize(200, 30);
-	drawY += hpOutSize.h / 2;
-
-	auto DrawHP = [&](const Dir dir, const Charactor& self, const Charactor& target)
-	{
-		Anker anker = dir == Dir::left ? Anker::rightcenter : Anker::leftcenter;
-		auto teamColor = GetTeamColor(self.GetTeam());
-
-		auto selfStatus = self.GetStatus();
-		auto targetStatus = target.GetStatus();
-
-		// HPë‰éÜ
-		auto drawPos = GetDrawPos(Vector2Int(windowRect.center.x, drawY), hpOutSize, anker);
-		DrawBox(drawPos, drawPos + hpOutSize, 0xffffff);
-		// HPÇÃîwåi
-		drawPos = GetDrawPos(Vector2Int(windowRect.center.x, drawY), hpSize, anker);
-		DrawBox(drawPos, drawPos + hpSize, 0x888888);
-		// HPÇÃïœìÆï™
-		int chengePoint = GetChengePoint(dir, rightAttack, selfStatus, targetStatus);
-		float before = static_cast<float>(self.GetStatus().health) / static_cast<float>(self.GetStartStatus().health);
-		int affterHealth = min( max(self.GetStatus().health - chengePoint, 0.0f), self.GetStartStatus().health);
-		float affter = affterHealth / static_cast<float>(self.GetStartStatus().health);
-		 
-		Size subSize(hpSize.w * (abs(before - affter))+2, hpSize.h);
-		drawPos = GetDrawPos(Vector2Int(windowRect.center.x + (before + affter)/2.0f * (dir == Dir::left ? - 1 : 1) * hpSize.w, drawY), subSize, Anker::center);
-
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, _hpAnimAlpha->GetValue() * 128);
-		DrawBox(drawPos, drawPos + subSize, teamColor);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-
-		// HPÇÃécó 
-		Size currentSize(hpSize.w * (targetStatus.heal ? before : affter), hpSize.h);
-		drawPos = GetDrawPos(Vector2Int(windowRect.center.x, drawY), currentSize, anker);
-		DrawBox(drawPos, drawPos + currentSize, teamColor);
-
-		char str[256];
-		sprintf_s(str, 256, "%d", self.GetStatus().health);
-		DrawStringToHandle(Vector2Int(windowRect.center.x + (dir == Dir::left ? -1 : 1) * (hpSize.w + 20), drawY), Anker::center, 0xffffff, fontH, str);
-	};
-
-	DrawHP(Dir::left, _selfCharactor, _targetCharactor);
-	DrawHP(Dir::right, _targetCharactor, _selfCharactor);
-	// çÄñ⁄ñºï\é¶
-	auto center = Vector2Int(windowRect.center.x, drawY);
-	DrawRotaGraph(center, 1.1, 0.0f, Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/window3.png"), true);
-	DrawStringToHandle(center, Anker::center, 0xffffff, fontH, "HP");
-	drawY += hpOutSize.h / 2;
+	DrawHPBer(drawY, windowRect, rightAttack, fontH);
 
 	int distance = 250;
-	auto DrawContent = [&](const char* name, const int leftValue, const int rightValue)
+	auto DrawContent = [&](const char* name, const int leftValue, const int rightValue, 
+		const unsigned int leftColor = 0xffffff, const unsigned int rightColor = 0xffffff)
 	{
 		char str[256];
 		if (selfStatus.heal)
 		{
 			sprintf_s(str, 256, "%d", leftValue);
-			DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, 0xffffff, fontH, str);
+			DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, leftColor, fontH, str);
 			DrawStringToHandle(Vector2Int(windowRect.center.x + distance / 2, drawY), Anker::center, 0xffffff, fontH, "-");
 		}
 		else
 		{
 			sprintf_s(str, 256, "%d", leftValue);
-			DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, 0xffffff, fontH, str);
-			sprintf_s(str, 256, "%d", rightValue);
-			DrawStringToHandle(Vector2Int(windowRect.center.x + distance / 2, drawY), Anker::center, 0xffffff, fontH, rightAttack ? str : "-");
+			DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, leftColor, fontH, str);
+			if (rightAttack)
+			{
+				sprintf_s(str, 256, "%d", rightValue);
+				DrawStringToHandle(Vector2Int(windowRect.center.x + distance / 2, drawY), Anker::center, rightColor, fontH, str);
+			}
+			else
+			{
+				DrawStringToHandle(Vector2Int(windowRect.center.x + distance / 2, drawY), Anker::center, 0xffffff, fontH, "-");
+			}
 		}
 		Rect nameRect(Vector2Int(windowRect.center.x, drawY), Size(100,30));
 		DrawExtendGraph(nameRect.Left(), nameRect.Top(), nameRect.Right(), nameRect.Botton(), window1Handle, true);
@@ -153,12 +115,30 @@ void BattlePrediction::Draw()
 	{
 		if (selfStatus.heal)
 		{
-			DrawContent("âÒïú", selfStatus.GetRecover(), targetStatus.GetDamage(_selfCharactor.GetStatus()));
+			DrawContent("âÒïú", selfStatus.GetRecover(), targetStatus.GetDamage(selfStatus));
 			return;
 		}
 		else
 		{
-			DrawContent("à–óÕ", selfStatus.GetDamage(_targetCharactor.GetStatus()), targetStatus.GetDamage(_selfCharactor.GetStatus()));
+			auto GetAttackColor = [](const float rate)
+			{
+				float color = 0xffffff;
+				if (rate > 1.01f)
+				{
+					color = 0x00ff80;
+				}
+				else if (rate < 0.99f)
+				{
+					color = 0xff0000;
+				}
+				return color;
+			};
+
+			unsigned int selfColor		= GetAttackColor(Application::Instance().GetDataBase().GetAttributeRate(selfStatus.attributeId, targetStatus.attributeId));
+			unsigned int targetColor	= GetAttackColor(Application::Instance().GetDataBase().GetAttributeRate(targetStatus.attributeId, selfStatus.attributeId));
+
+			DrawContent("à–óÕ", selfStatus.GetDamage(targetStatus), 
+				targetStatus.GetDamage(selfStatus), selfColor, targetColor);
 		}
 		int tag_playerHandle = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/tag_player.png");
 		int tag_enemyHandle = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/tag_enemy.png");
@@ -188,5 +168,57 @@ void BattlePrediction::Draw()
 	// ïKéE
 	drawY += 40;
 	DrawContent("ïKéE", selfStatus.GetCritical(targetStatus), targetStatus.GetCritical(selfStatus));
+}
 
+void BattlePrediction::DrawHPBer(int& drawY, const Rect& windowRect, bool rightAttack, int fontH)
+{
+	Size hpSize(200, 30);
+	Size hpOutSize(250, 50);
+	drawY += hpOutSize.h / 2;
+
+	auto DrawHP = [&](const Dir dir, const Charactor& self, const Charactor& target)
+	{
+		Anker anker = dir == Dir::left ? Anker::rightcenter : Anker::leftcenter;
+		auto teamColor = GetTeamColor(self.GetTeam());
+
+		auto selfStatus = self.GetStatus();
+		auto targetStatus = target.GetStatus();
+
+		// HPë‰éÜ
+		auto drawPos = GetDrawPos(Vector2Int(windowRect.center.x, drawY), hpOutSize, anker);
+		DrawBox(drawPos, drawPos + hpOutSize, 0xffffff);
+		// HPÇÃîwåi
+		drawPos = GetDrawPos(Vector2Int(windowRect.center.x, drawY), hpSize, anker);
+		DrawBox(drawPos, drawPos + hpSize, 0x888888);
+		// HPÇÃïœìÆï™
+		int chengePoint = GetChengePoint(dir, rightAttack, selfStatus, targetStatus);
+		float before = static_cast<float>(self.GetStatus().health) / static_cast<float>(self.GetStartStatus().health);
+		int affterHealth = min(max(self.GetStatus().health - chengePoint, 0.0f), self.GetStartStatus().health);
+		float affter = affterHealth / static_cast<float>(self.GetStartStatus().health);
+
+		Size subSize(hpSize.w * (abs(before - affter)) + 2, hpSize.h);
+		drawPos = GetDrawPos(Vector2Int(windowRect.center.x + (before + affter) / 2.0f * (dir == Dir::left ? -1 : 1) * hpSize.w, drawY), subSize, Anker::center);
+
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, _hpAnimAlpha->GetValue() * 128);
+		DrawBox(drawPos, drawPos + subSize, teamColor);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+
+		// HPÇÃécó 
+		Size currentSize(hpSize.w * (targetStatus.heal ? before : affter), hpSize.h);
+		drawPos = GetDrawPos(Vector2Int(windowRect.center.x, drawY), currentSize, anker);
+		DrawBox(drawPos, drawPos + currentSize, teamColor);
+
+		char str[256];
+		sprintf_s(str, 256, "%d", self.GetStatus().health);
+		DrawStringToHandle(Vector2Int(windowRect.center.x + (dir == Dir::left ? -1 : 1) * (hpSize.w + 20), drawY), Anker::center, 0xffffff, fontH, str);
+	};
+
+	DrawHP(Dir::left, _selfCharactor, _targetCharactor);
+	DrawHP(Dir::right, _targetCharactor, _selfCharactor);
+	
+	// çÄñ⁄ñºï\é¶
+	auto center = Vector2Int(windowRect.center.x, drawY);
+	DrawRotaGraph(center, 1.1, 0.0f, Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/window3.png"), true);
+	DrawStringToHandle(center, Anker::center, 0xffffff, fontH, "HP");
+	drawY += hpOutSize.h / 2;
 }

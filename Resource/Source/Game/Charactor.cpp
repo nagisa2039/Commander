@@ -76,8 +76,13 @@ void Charactor::NormalDraw()
 	SetDrawBright(255, 255, 255);
 
 	// ƒAƒCƒRƒ“‚Ì•`‰æ
+	float sizeRate = 0.3f;
+	auto iconRect= Rect(_camera.GetCameraOffset() + _pos.ToVector2Int() + chipSize * Vector2(sizeRate / 2.0f, sizeRate / 2.0f), 
+		(chipSize * sizeRate).ToSize());
 	int handle = Application::Instance().GetFileSystem()->GetImageHandle(_iconPath.c_str());
-	DrawGraph(_camera.GetCameraOffset() + _pos.ToVector2Int(), handle, false);
+	iconRect.Draw(0x000000);
+	auto attributeData = Application::Instance().GetDataBase().GetAttributeData(_status.attributeId);
+	Rect(iconRect.center, iconRect.size * 0.8f).Draw(attributeData.color);
 
 	// HPBer‚Ì•`‰æ
 	Size hpberSize = (chipSize * Vector2(0.8f, 0.1f)).ToSize();

@@ -339,7 +339,6 @@ void Charactor::SetMoveStandby(const int time)
 void Charactor::MoveDecision()
 {
 	_status.move = 0;
-	RouteSearch();
 }
 
 void Charactor::MoveEnd(const bool canMove, const bool removeCamera)
@@ -373,7 +372,7 @@ void Charactor::MoveCancel()
 {
 	_pos = (_mapCtrl.GetChipSize().ToVector2Int() * _startMapPos).ToVector2();
 	_status.move = _startStatus.move;
-	RouteSearch();
+	_mapCtrl.AllCharactorRouteSearch();
 }
 
 void Charactor::SearchAndMove()

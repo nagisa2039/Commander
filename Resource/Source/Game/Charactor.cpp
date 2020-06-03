@@ -344,6 +344,7 @@ void Charactor::SetMoveStandby(const int time)
 void Charactor::MoveDecision()
 {
 	_status.move = 0;
+	RouteSearch();
 }
 
 void Charactor::MoveEnd(const bool canMove, const bool removeCamera)

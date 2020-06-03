@@ -8,6 +8,7 @@
 #include "MapCtrl.h"
 #include "../BattlePreparationCursor.h"
 #include "WarSituation.h"
+#include "CheckWindow.h"
 
 using namespace std;
 
@@ -33,6 +34,8 @@ void PreparationUI::CloseUpdate(const Input& input)
 
 void PreparationUI::OpenUpdate(const Input& input)
 {
+	if (_backMapSelect)return;
+
 	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
 	{
 		Close(true);
@@ -52,6 +55,10 @@ void PreparationUI::OpenUpdate(const Input& input)
 		{
 			_selectItem = static_cast<Item>(static_cast<int>(_selectItem) + 1);
 		}
+	}
+	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
+	{
+		_itemInfTable[static_cast<size_t>(Item::back)].func();
 	}
 }
 
@@ -87,9 +94,10 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>& uiDeque, Camera& c
 
 	int spaceY = 150;
 	Vector2Int currentDrawPos = screenCenter - Vector2Int(0, (static_cast<int>(Item::max)-1) / 2.0f * spaceY);
-	_itemInfTable[static_cast<size_t>(Item::start)].name =			"戦闘開始";
-	_itemInfTable[static_cast<size_t>(Item::placement)].name =		"マップ・配置";
-	_itemInfTable[static_cast<size_t>(Item::warsituation)].name =	"戦況確認";
+	_itemInfTable[static_cast<size_t>(Item::start)].name		= "戦闘開始";
+	_itemInfTable[static_cast<size_t>(Item::placement)].name	= "マップ・配置";
+	_itemInfTable[static_cast<size_t>(Item::warsituation)].name = "戦況確認";
+	_itemInfTable[static_cast<size_t>(Item::back)].name			= "退却";
 
 	_itemInfTable[static_cast<size_t>(Item::start)].func = [&]()
 	{
@@ -102,6 +110,10 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>& uiDeque, Camera& c
 	_itemInfTable[static_cast<size_t>(Item::warsituation)].func = [&]()
 	{
 		_uiDeque.emplace_front(make_shared<WarSituation>(_uiDeque, _mapCtrl));
+	};
+	_itemInfTable[static_cast<size_t>(Item::back)].func = [&]()
+	{
+		_uiDeque.emplace_front(make_shared<CheckWindow>("退却しますか？", _uiDeque, [&](){SetBackMapSelect(true);}));
 	};
 
 	for (auto& itemInf : _itemInfTable)
@@ -119,6 +131,7 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>& uiDeque, Camera& c
 
 	_selectItem = Item::start;
 	_execution = false;
+	_backMapSelect = false;
 }
 
 PreparationUI::~PreparationUI()
@@ -192,4 +205,14 @@ void PreparationUI::Close(const bool animation)
 		_animTrack->End();
 	}
 	_updater = &PreparationUI::CloseAnimUpdate;
+}
+
+void PreparationUI::SetBackMapSelect(const bool backMapSelect)
+{
+	_backMapSelect = backMapSelect;
+}
+
+bool PreparationUI::GetBackMapSelect()
+{
+	return _backMapSelect;
 }

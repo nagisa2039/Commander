@@ -18,6 +18,7 @@ private:
 		start,	//　戦闘開始
 		placement,	// 配置換え
 		warsituation,	// 戦況確認
+		back,
 		max
 	};
 
@@ -33,6 +34,7 @@ private:
 	MapCtrl& _mapCtrl;
 
 	bool _execution;
+	bool _backMapSelect;
 
 	void (PreparationUI::* _updater)(const Input& input);
 
@@ -57,4 +59,7 @@ public:
 
 	void Open(const bool animation);
 	void Close(const bool animation);
+
+	void SetBackMapSelect(const bool backMapSelect);
+	bool GetBackMapSelect();
 };

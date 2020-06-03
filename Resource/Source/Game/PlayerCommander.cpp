@@ -174,6 +174,16 @@ bool PlayerCommander::MoveCancel()
 	return true;
 }
 
+bool PlayerCommander::GetBackMapSelect() const
+{
+	return _backMapSelect;
+}
+
+void PlayerCommander::SetBackMapSelect(const bool value)
+{
+	_backMapSelect = value;
+}
+
 void PlayerCommander::BattaleUpdate(const Input& input)
 {
 	if (!_selectChar->GetCanMove())
@@ -246,6 +256,8 @@ PlayerCommander::PlayerCommander(std::vector<std::shared_ptr<Charactor>>& charac
 	_playerUI = make_unique<PlayerUI>(*this, mapCtrl);
 
 	_uniqueUpdater = &PlayerCommander::TerrainEffectUpdate;
+
+	_backMapSelect = false;
 }
 
 PlayerCommander::~PlayerCommander()

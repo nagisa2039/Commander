@@ -21,7 +21,7 @@ PlayerMenu::PlayerMenu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander
 	};
 	_contentInfs[static_cast<size_t>(Content::retreat)].func = [&]()
 	{
-		_uiDeque.emplace_front(make_shared<CheckWindow>("ëﬁãpÇµÇ‹Ç∑Ç©ÅH", _uiDeque, [&]() {_playerCommander.End(); }));
+		_uiDeque.emplace_front(make_shared<CheckWindow>("ëﬁãpÇµÇ‹Ç∑Ç©ÅH", _uiDeque, [&]() {_playerCommander.SetBackMapSelect(true); }));
 	};
 	_contentInfs[static_cast<size_t>(Content::turnEnd)].func = [&]()
 	{

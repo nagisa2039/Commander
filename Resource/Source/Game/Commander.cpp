@@ -36,6 +36,11 @@ void Commander::DrawMovableMass()
 {
 }
 
+bool Commander::GetBackMapSelect() const
+{
+	return false;
+}
+
 void Commander::End()
 {
 	_end = true;

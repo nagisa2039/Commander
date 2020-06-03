@@ -30,6 +30,7 @@ public:
 	virtual void Draw()override = 0;
 
 	virtual void DrawMovableMass();
+	virtual bool GetBackMapSelect()const;
 
 	virtual void End();
 	bool CheckEnd()const;

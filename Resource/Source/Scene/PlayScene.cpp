@@ -16,6 +16,7 @@
 #include "Effect/Effect.h"
 #include "Effect/FlyText.h"
 #include "TurnChangeAnim.h"
+#include "MapSelectScene.h"
 
 using namespace std;
 
@@ -133,7 +134,10 @@ void PlayScene::Update(const Input & input)
 	}
 
 
-	(this->*_uniqueUpdater)(input);
+	if (!(this->*_uniqueUpdater)(input))
+	{
+		return;
+	}
 
 	_camera->Update();
 	for (auto& effect : _effects)
@@ -146,17 +150,23 @@ void PlayScene::Update(const Input & input)
 
 }
 
-void PlayScene::PreparationUpdate(const Input& input)
+bool PlayScene::PreparationUpdate(const Input& input)
 {
 	(*_preparationDeque.begin())->Update(input);
+	if (_preparationUI->GetBackMapSelect())
+	{
+		_controller.ChangeScene(make_shared<MapSelectScene>(_controller));
+		return false;
+	}
 	if (_preparationUI->GetDelete())
 	{
 		// プレイヤーターンを開始
 		StartPlayerTurn();
 	}
+	return true;
 }
 
-void PlayScene::TurnChengeUpdate(const Input& input)
+bool PlayScene::TurnChengeUpdate(const Input& input)
 {
 	_turnChangeAnim->Update(input);
 	if (_turnChangeAnim->GetAnimEnd())
@@ -174,21 +184,28 @@ void PlayScene::TurnChengeUpdate(const Input& input)
 			_enemyCommander->StartTerrainEffect();
 		}
 	}
+	return true;
 }
 
-void PlayScene::PlayerTurnUpdate(const Input& input)
+bool PlayScene::PlayerTurnUpdate(const Input& input)
 {
 	CharactorUpdate(input);
+	if (_playerCommander->GetBackMapSelect())
+	{
+		_controller.ChangeScene(make_shared<MapSelectScene>(_controller));
+		return false;
+	}
 
 	if (_playerCommander->CheckEnd())
 	{
 		StartEnemyTurn();
-		return;
+		return true;
 	}
 	_playerCommander->Update(input);
+	return true;
 }
 
-void PlayScene::CharactorUpdate(const Input& input)
+bool PlayScene::CharactorUpdate(const Input& input)
 {
 	for (auto itr = _charactors.begin(); itr != _charactors.end(); itr++)
 	{
@@ -200,6 +217,7 @@ void PlayScene::CharactorUpdate(const Input& input)
 			_uniqueUpdater = &PlayScene::CharactorDyingUpdate;
 		}
 	}
+	return true;
 }
 
 void PlayScene::StartPlayerTurn()
@@ -240,29 +258,30 @@ void PlayScene::StartEnemyTurn()
 	}
 }
 
-void PlayScene::EnemyTurnUpdate(const Input& input)
+bool PlayScene::EnemyTurnUpdate(const Input& input)
 {
 	CharactorUpdate(input);
 
 	_turnChangeAnim->Update(input);
-	if (!_turnChangeAnim->GetAnimEnd()) return;
+	if (!_turnChangeAnim->GetAnimEnd()) return true;
 
 	if (_enemyCommander->CheckEnd())
 	{
 		StartPlayerTurn();
-		return;
+		return true;
 	}
 	_enemyCommander->Update(input);
+	return true;
 }
 
-void PlayScene::CharactorDyingUpdate(const Input& input)
+bool PlayScene::CharactorDyingUpdate(const Input& input)
 {
 	// dyingが終わっているか確認
 	if (!(*_dyingCharItr)->GetDelete())
 	{
 		// 終わっていないので更新する
 		(*_dyingCharItr)->Update(input);
-		return;
+		return true;
 	}
 
 	// 削除処理
@@ -289,27 +308,30 @@ void PlayScene::CharactorDyingUpdate(const Input& input)
 			// ゲームオーバー
 			_uniqueUpdater = &PlayScene::GameOverUpdate;
 			_uniqueDrawer = &PlayScene::GameOverDraw;
-			return;
+			return true;
 		}
 		else
 		{
 			// ゲームクリア
+			_mapCtrl->SaveCharactorData();
 			_uniqueUpdater = &PlayScene::GameClearUpdate;
 			_uniqueDrawer = &PlayScene::GameClearDraw;
-			return;
+			return true;
 		}
 	}
 
 	_uniqueUpdater = _uniqueUpdaterOld;
+	return true;
 }
 
-void PlayScene::GameClearUpdate(const Input& input)
+bool PlayScene::GameClearUpdate(const Input& input)
 {
-	_mapCtrl->SaveCharactorData();
+	return true;
 }
 
-void PlayScene::GameOverUpdate(const Input& input)
+bool PlayScene::GameOverUpdate(const Input& input)
 {
+	return true;
 }
 
 void PlayScene::PreparationDraw(const Camera& camera)

@@ -38,9 +38,9 @@ private:
 	std::deque<std::shared_ptr<UI>> _preparationDeque;
 	std::shared_ptr<PreparationUI> _preparationUI;
 
-	// 場面ごとの更新を行う関数ポインタ
-	void(PlayScene::*_uniqueUpdater)(const Input& input);
-	void(PlayScene::* _uniqueUpdaterOld)(const Input& input);
+	// 場面ごとの更新を行う関数ポインタ playSceneを継続するかを返す
+	bool(PlayScene::*_uniqueUpdater)(const Input& input);
+	bool(PlayScene::* _uniqueUpdaterOld)(const Input& input);
 
 	// 場面ごとの更新を行う関数ポインタ
 	void(PlayScene::* _uniqueDrawer)(const Camera& camera);
@@ -49,16 +49,16 @@ private:
 	void StartEnemyTurn();
 
 	// 準備画面
-	void PreparationUpdate(const Input& input);
-	void TurnChengeUpdate(const Input& input);
-	void PlayerTurnUpdate(const Input& input);
-	void CharactorUpdate(const Input& input);
-	void EnemyTurnUpdate(const Input& input);
+	bool PreparationUpdate(const Input& input);
+	bool TurnChengeUpdate(const Input& input);
+	bool PlayerTurnUpdate(const Input& input);
+	bool CharactorUpdate(const Input& input);
+	bool EnemyTurnUpdate(const Input& input);
 
-	void CharactorDyingUpdate(const Input& input);
+	bool CharactorDyingUpdate(const Input& input);
 
-	void GameClearUpdate(const Input& input);
-	void GameOverUpdate(const Input& input);
+	bool GameClearUpdate(const Input& input);
+	bool GameOverUpdate(const Input& input);
 
 	void PreparationDraw(const Camera& camera);
 	void TurnChengeDraw(const Camera& camera);

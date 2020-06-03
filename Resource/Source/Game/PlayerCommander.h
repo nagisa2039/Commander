@@ -12,6 +12,7 @@ class PlayerCommander :
 {
 private:
 	std::unique_ptr<PlayerUI> _playerUI;
+	bool _backMapSelect;
 
 	void(PlayerCommander::* _uniqueUpdater)(const Input& input);
 
@@ -45,5 +46,8 @@ public:
 	void BackBattalePrediction();
 
 	bool MoveCancel();
+
+	virtual bool GetBackMapSelect()const;
+	void SetBackMapSelect(const bool value);
 };
 

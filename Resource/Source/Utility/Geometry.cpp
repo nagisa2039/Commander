@@ -268,6 +268,12 @@ void Rect::Draw(const Vector2& offset, int color, const bool fill)
 		color, fill);
 }
 
+bool Rect::IsHit(const Rect& rect)
+{
+	return abs(center.x - rect.center.x) < (size.w + rect.size.w) / 2 &&
+		abs(center.y - rect.center.y) <= (size.h + rect.size.h) / 2;
+}
+
 const bool Rect::IsHit(const Rect & aRect, const Rect & bRect)
 {
 	return abs(aRect.center.x - bRect.center.x) < (aRect.size.w + bRect.size.w) / 2 &&

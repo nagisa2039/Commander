@@ -9,6 +9,7 @@
 #include "../Scene/PlayScene.h"
 #include "../Scene/MapEditScene.h"
 #include "../Scene/PlayScene.h"
+#include "../Scene/MapSelectScene.h"
 #include "DataBase.h"
 
 using namespace std;
@@ -64,8 +65,9 @@ bool Application::Initialize()
 
 	_fileSystem = make_shared<FileSystem>();
 	_sceneController = make_unique<SceneController>();
-	_sceneController->ChangeScene(make_unique<PlayScene>(*_sceneController));
+	//_sceneController->ChangeScene(make_unique<PlayScene>(*_sceneController));
 	//_sceneController->ChangeScene(make_unique<MapEditScene>(*_sceneController));
+	_sceneController->ChangeScene(make_unique<MapSelectScene>(*_sceneController));
 
 	// inputの初期化
 	_input = make_unique<Input>();
@@ -74,6 +76,21 @@ bool Application::Initialize()
 	// コマンドの登録
 	KeySetUp();
 
+	// フォント読込
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin20", 20, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin30", 30, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin40", 40, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin50", 50, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin60", 60, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin70", 70, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin80", 80, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin100", 100, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin200", 200, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori20", 20, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori30", 30, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori40", 40, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori200", 200, 1, true, true);
+	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Oshidashi - M - Gothic - TT.ttf", "Oshidasi", "oshidashi200", 200, 1, true, true);
 
 	return true;
 }

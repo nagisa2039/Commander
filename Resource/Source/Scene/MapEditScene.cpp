@@ -37,7 +37,7 @@ void MapEditScene::Update(const Input& input)
 
     if (input.GetButtonDown(0, "F1") || input.GetButtonDown(1, "pause"))
     {
-        _controller.ChangeScene(make_unique<PlayScene>(_controller));
+        _controller.ChangeScene(make_shared<PlayScene>(_controller, "map0.map"));
         return;
     }
     if (input.GetButtonDown(0, "F2"))
@@ -56,7 +56,7 @@ void MapEditScene::Update(const Input& input)
     GetJoypadXInputState(DX_INPUT_PAD1, &xis);
     if (input.GetButtonDown(0, "pause") || input.GetXInputButtonDown(1, XINPUT_BUTTON_START))
     {
-        _controller.ChangeScene(make_unique<PlayScene>(_controller));
+        _controller.ChangeScene(make_shared<PlayScene>(_controller, "map0.map"));
         return;
     }
 }

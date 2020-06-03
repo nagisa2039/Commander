@@ -117,3 +117,8 @@ void Camera::SetLimitRect(const Rect& rect)
 {
 	_limitRect = rect;
 }
+
+const Rect& Camera::GetRect() const
+{
+	return _rect;
+}

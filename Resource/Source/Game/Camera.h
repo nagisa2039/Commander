@@ -29,5 +29,7 @@ public:
 	Vector2Int GetCameraOffset()const;
 	void SetPos(const Vector3& pos);
 	void SetLimitRect(const Rect& rect);
+
+	const Rect& GetRect()const;
 };
 

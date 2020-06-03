@@ -75,7 +75,7 @@ private:
 	FLOAT4 _waveC;
 
 public:
-	PlayScene(SceneController & ctrl);
+	PlayScene(SceneController & ctrl, const std::string& mapFile);
 	~PlayScene();
 
 	void Update(const Input& input) override final;

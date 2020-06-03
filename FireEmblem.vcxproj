@@ -65,6 +65,7 @@
     <ClCompile Include="Resource\Source\Game\Warrior.cpp" />
     <ClCompile Include="Resource\Source\Scene\BattleScene.cpp" />
     <ClCompile Include="Resource\Source\Scene\MapEditScene.cpp" />
+    <ClCompile Include="Resource\Source\Scene\MapSelectScene.cpp" />
     <ClCompile Include="Resource\Source\Scene\PlayScene.cpp" />
     <ClCompile Include="Resource\Source\Scene\Scene.cpp" />
     <ClCompile Include="Resource\Source\Scene\SceneController.cpp" />
@@ -128,6 +129,7 @@
     <ClInclude Include="Resource\Source\Game\Warrior.h" />
     <ClInclude Include="Resource\Source\Scene\BattleScene.h" />
     <ClInclude Include="Resource\Source\Scene\MapEditScene.h" />
+    <ClInclude Include="Resource\Source\Scene\MapSelectScene.h" />
     <ClInclude Include="Resource\Source\Scene\PlayScene.h" />
     <ClInclude Include="Resource\Source\Scene\Scene.h" />
     <ClInclude Include="Resource\Source\Scene\SceneController.h" />

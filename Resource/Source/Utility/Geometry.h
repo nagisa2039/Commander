@@ -209,6 +209,7 @@ struct Rect
 	void Draw(const Vector2Int&  offset, const int color = 0xffffff, const bool fill = true);
 	void Draw(const Vector2& offset, const int color = 0xffffff, const bool fill = true);
 
+	bool IsHit(const Rect& rect);
 	static const bool IsHit(const Rect& aRect, const Rect& bRect);
 	static const Size OverlapSize(const Rect& aRect, const Rect& bRect);
 };

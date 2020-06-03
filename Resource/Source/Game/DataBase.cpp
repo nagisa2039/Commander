@@ -21,7 +21,7 @@ DataBase::DataBase()
 
 	// キャラクターデータテーブルの読み込み
 	{
-		ifstream ifs("Resource/DataBase/charactorDataBase.csv");
+		ifstream ifs("Resource/DataBase/Charactor.csv");
 		string line;
 		vector<string> outputVec;
 		outputVec.reserve(20);
@@ -54,7 +54,7 @@ DataBase::DataBase()
 
 	// マップチップテーブルの読み込み
 	{
-		ifstream ifs("Resource/DataBase/mapChipDataBase.csv");
+		ifstream ifs("Resource/DataBase/MapChip.csv");
 		string line;
 		vector<string> outputVec;
 		outputVec.reserve(20);
@@ -64,6 +64,8 @@ DataBase::DataBase()
 		while (getline(ifs, line))
 		{
 			split(line, ',', outputVec);
+			if (outputVec[0] == "")break;
+
 			MapChipData mapChipData;
 			// 名前
 			mapChipData.name = outputVec[1];
@@ -92,7 +94,7 @@ DataBase::DataBase()
 	// 経験値テーブルの読み込み
 	{
 		_expDataTable.reserve(50);
-		ifstream ifs("Resource/DataBase/expDataBase.csv");
+		ifstream ifs("Resource/DataBase/Exp.csv");
 		string line;
 		vector<string> outputVec;
 		outputVec.reserve(3);
@@ -101,6 +103,7 @@ DataBase::DataBase()
 		while (getline(ifs, line))
 		{
 			split(line, ',', outputVec);
+			if (outputVec[0] == "")break;
 			_expDataTable.emplace_back(ExpData(atoi(outputVec[1].c_str()), atoi(outputVec[2].c_str())));
 		}
 	}
@@ -108,7 +111,7 @@ DataBase::DataBase()
 	// 属性テーブルの読み込み
 	{
 		_attributeDataTable.reserve(10);
-		ifstream ifs("Resource/DataBase/attributeDataBase.csv");
+		ifstream ifs("Resource/DataBase/Attribute.csv");
 		string line;
 		vector<string> outputVec;
 		outputVec.reserve(10);
@@ -117,14 +120,14 @@ DataBase::DataBase()
 		while (getline(ifs, line))
 		{
 			split(line, ',', outputVec);
-			if (outputVec.size() <= 0)break;
+			if (outputVec[0] == "")break;
 			_attributeDataTable.emplace_back(AttributeData(outputVec[1], atoi(outputVec[2].c_str())));
 		}
 	}
 
 	// rateTableの読み込み
 	{
-		ifstream ifs("Resource/DataBase/attributeRateDataBase.csv");
+		ifstream ifs("Resource/DataBase/AttributeRate.csv");
 		string line;
 		vector<string> outputVec;
 		outputVec.reserve(5);
@@ -135,12 +138,29 @@ DataBase::DataBase()
 		while (getline(ifs, line))
 		{
 			split(line, ',', outputVec);
+			if (outputVec[0] == "")break;
 			_attributeRateTable[attributeIdx].resize(_attributeDataTable.size());
 			for (int idx = 0; idx < _attributeRateTable[attributeIdx].size(); idx++)
 			{
 				_attributeRateTable[attributeIdx][idx] = atof(outputVec[idx + 1].c_str());
 			}
 			attributeIdx++;
+		}
+	}
+
+	// mapDataTableの読み込み
+	{
+		ifstream ifs("Resource/DataBase/Map.csv");
+		string line;
+		vector<string> outputVec;
+		outputVec.reserve(5);
+		// 最初の行はスキップ
+		getline(ifs, line);
+		while (getline(ifs, line))
+		{
+			split(line, ',', outputVec);
+			if (outputVec[0] == "")break;
+			_mapDataTable.emplace_back(MapData(outputVec[1], outputVec[2]));
 		}
 	}
 }
@@ -185,4 +205,14 @@ const DataBase::ExpData& DataBase::GetExpData(const uint8_t level) const
 const DataBase::AttributeData& DataBase::GetAttributeData(const unsigned int attributeId)const
 {
 	return _attributeDataTable.at(attributeId);
+}
+
+const std::vector<DataBase::MapData>& DataBase::GetMapDataTable() const
+{
+	return _mapDataTable;
+}
+
+const DataBase::MapData& DataBase::GetMapData(const unsigned int mapDataId) const
+{
+	return _mapDataTable.at(mapDataId);
 }

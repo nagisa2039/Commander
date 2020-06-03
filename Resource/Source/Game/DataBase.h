@@ -62,7 +62,15 @@ private:
 		std::string name;
 		unsigned int color;
 		AttributeData():name(""), color(0) {};
-		AttributeData(const std::string na, const unsigned int c) :name(na), color(c) {};
+		AttributeData(const std::string& na, const unsigned int c) :name(na), color(c) {};
+	};
+
+	struct MapData
+	{
+		std::string name;
+		std::string path;
+		MapData() :name(""), path("") {};
+		MapData(const std::string& na, const std::string& pa) :name(na), path(pa) {};
 	};
 
 	std::array<CharactorData, static_cast<size_t>(CharactorType::max)> _charactorDataTable;
@@ -73,21 +81,26 @@ private:
 
 	std::vector<AttributeData> _attributeDataTable;
 
+	std::vector<MapData> _mapDataTable;
+
 public:
 	DataBase();
 	~DataBase();
 
 	// 属性ごとの威力倍率を取得する		GetAttributeRate(攻撃する側,	攻撃される側)
 	float GetAttributeRate(const unsigned int selfAtributeId, const unsigned int targetAtributeId)const;
-
+	// キャラクターの画像を取得する
 	int GetCharactorImageHandle(const CharactorType charactorType, const Team team)const;
-
+	// キャラクターのﾃﾞｰﾀを取得する
 	const CharactorData& GetCharactorData(const CharactorType charactorType)const;
-
+	// マップチップデータを取得する
 	const MapChipData& GetMapChipData(const Map_Chip mapChip)const;
-
+	// 経験値データを取得する
 	const ExpData& GetExpData(const uint8_t level)const;
-
+	// 属性データを取得する
 	const AttributeData& GetAttributeData(const unsigned int attributeId)const;
+	// マップデータを取得する
+	const std::vector<MapData>& GetMapDataTable()const;
+	const MapData& GetMapData(const unsigned int mapDataId)const;
 };
 

@@ -7,6 +7,7 @@
 #include "Charactor.h"
 #include "DxLib.h"
 #include <algorithm>
+#include "SaveData.h"
 
 #include "Swordsman.h"
 #include "Warrior.h"
@@ -267,6 +268,10 @@ bool MapCtrl::DrawCharactorChip(const CharactorChipInf& charactorChipInf, const 
 
 void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 {
+	auto dataBase = Application::Instance().GetDataBase();
+	auto charactorDataVec = Application::Instance().GetSaveData()->GetCharactorDataVec();
+	auto itr = charactorDataVec.begin();
+
 	for (const auto& mapDataVec : _mapDataVec2)
 	{
 		for (const auto& mapData : mapDataVec)
@@ -275,19 +280,19 @@ void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr
 
 			if (mapData.charactorChip.team == Team::player)
 			{
-				if (_charactorSaveDataVec.size() > 0)
+				if (itr != charactorDataVec.end())
 				{
-					auto saveData = *_charactorSaveDataVec.rbegin();
+					auto saveData = *itr;
 					auto charactorChip = mapData.charactorChip;
 					_charactorCreateFuncs[static_cast<size_t>(saveData.charType)](mapData.charactorChip, ctrl, effects, camera);
 					(*_charactors.rbegin())->InitStatus(saveData.status);
-					_charactorSaveDataVec.pop_back();
+					itr++;
 				}
 			}
 			else
 			{
 				_charactorCreateFuncs[static_cast<size_t>(mapData.charactorChip.type)](mapData.charactorChip, ctrl, effects, camera);
-				(*_charactors.rbegin())->InitStatus(GetLevelInitStatus(mapData.charactorChip.level, mapData.charactorChip.type));
+				(*_charactors.rbegin())->InitStatus(dataBase.GetLevelInitStatus(mapData.charactorChip.level, mapData.charactorChip.type));
 			}
 		}
 	}
@@ -607,104 +612,6 @@ void MapCtrl::SetGroupActive(const unsigned int groupNum, const bool active)
 bool MapCtrl::CheckMapDataRange(const Vector2Int& mapPos)
 {
 	return mapPos.x >= 0 && mapPos.x < _mapDataVec2[mapPos.y].size() && mapPos.y >= 0 && mapPos.y < _mapDataVec2.size();
-}
-
-bool MapCtrl::CreateCharactorData()
-{
-	// 仮のセーブデータ	もしかしたらcsvにするかも
-	_charactorSaveDataVec.clear();
-	_charactorSaveDataVec.emplace_back(SaveData(CharactorType::archer, GetLevelInitStatus(5, CharactorType::archer)));
-	_charactorSaveDataVec.emplace_back(SaveData(CharactorType::priest, GetLevelInitStatus(5, CharactorType::priest)));
-	_charactorSaveDataVec.emplace_back(SaveData(CharactorType::swordman, GetLevelInitStatus(5, CharactorType::swordman)));
-	_charactorSaveDataVec.emplace_back(SaveData(CharactorType::warrior, GetLevelInitStatus(5, CharactorType::warrior)));
-	_charactorSaveDataVec.emplace_back(SaveData(CharactorType::soldier, GetLevelInitStatus(5, CharactorType::soldier)));
-	_charactorSaveDataVec.emplace_back(SaveData(CharactorType::mage, GetLevelInitStatus(5, CharactorType::mage)));
-
-	FILE* fp = nullptr;
-
-	fopen_s(&fp, "Resource/SaveData/savedata", "ab");
-	if (fp == NULL)
-	{
-		return false;
-	}
-	// キャラクター数の書き込み
-	int cnt = _charactorSaveDataVec.size();
-	fwrite(&cnt, sizeof(cnt), 1, fp);
-	// キャラクターデータの書き込み
-	fwrite(_charactorSaveDataVec.data(), sizeof(_charactorSaveDataVec[0]), cnt, fp);
-
-	fclose(fp);
-
-	return true;
-}
-
-bool MapCtrl::SaveCharactorData()
-{
-	FILE* fp = nullptr;
-
-	fopen_s(&fp, "Resource/SaveData/savedata", "wb");
-
-	int cnt = 0;
-	for (const auto& charactor : _charactors)
-	{
-		if (charactor->GetTeam() != Team::player)continue;
-		cnt++;
-	}
-	// キャラクター数の書き込み
-	fwrite(&cnt, sizeof(cnt), 1, fp);
-	// キャラクターデータの書き込み
-	for (const auto& charactor : _charactors)
-	{
-		if (charactor->GetTeam() != Team::player)continue;
-		SaveData saveData(charactor->GetCharactorType(), charactor->GetStartStatus());
-
-		fwrite(&saveData, sizeof(saveData), 1, fp);
-	}
-
-	fclose(fp);
-
-	return true;
-}
-
-bool MapCtrl::LoadCharactorData()
-{
-	_charactorSaveDataVec.clear();
-	FILE* fp = nullptr;
-
-	fopen_s(&fp, "Resource/SaveData/savedata", "rb");
-
-	if (fp == NULL)
-	{
-		CreateCharactorData();
-		return false;
-	}
-
-	// キャラクターサイズの読み込み
-	int cnt = 0;
-	fread_s(&cnt, sizeof(cnt), sizeof(cnt), 1, fp);
-	_charactorSaveDataVec.resize(cnt);
-
-	// キャラクターデータの読み込み
-	fread_s(_charactorSaveDataVec.data(), sizeof(SaveData) * cnt, sizeof(SaveData), cnt, fp);
-
-	fclose(fp);
-
-	return true;
-}
-
-Status MapCtrl::GetLevelInitStatus(const uint8_t level, const CharactorType charType)
-{
-	Status status;
-	auto charactorData = Application::Instance().GetDataBase().GetCharactorData(charType);
-	status = charactorData.initialStatus;
-	status.level = level;
-	status.health += level * charactorData.statusGrowRate.health / 100.0f;
-	status.power += level * charactorData.statusGrowRate.power / 100.0f;
-	status.defense += level * charactorData.statusGrowRate.defense / 100.0f;
-	status.magic_defense += level * charactorData.statusGrowRate.magic_defense / 100.0f;
-	status.speed += level * charactorData.statusGrowRate.speed / 100.0f;
-	status.skill += level * charactorData.statusGrowRate.skill / 100.0f;
-	return status;
 }
 
 const std::vector<std::shared_ptr<Charactor>>& MapCtrl::GetCharacots() const

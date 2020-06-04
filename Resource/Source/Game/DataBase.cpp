@@ -3,6 +3,7 @@
 #include <sstream>
 #include "Application.h"
 #include "FileSystem.h"
+#include "SaveData.h"
 
 using namespace std;
 
@@ -190,6 +191,21 @@ int DataBase::GetCharactorImageHandle(const CharactorType charactorType, const T
 const DataBase::CharactorData& DataBase::GetCharactorData(const CharactorType charactorType) const
 {
 	return _charactorDataTable.at(static_cast<size_t>(charactorType));
+}
+
+Status DataBase::GetLevelInitStatus(const uint8_t level, const CharactorType charType)const
+{
+	Status status;
+	auto charactorData = Application::Instance().GetDataBase().GetCharactorData(charType);
+	status = charactorData.initialStatus;
+	status.level = level;
+	status.health += level * charactorData.statusGrowRate.health / 100.0f;
+	status.power += level * charactorData.statusGrowRate.power / 100.0f;
+	status.defense += level * charactorData.statusGrowRate.defense / 100.0f;
+	status.magic_defense += level * charactorData.statusGrowRate.magic_defense / 100.0f;
+	status.speed += level * charactorData.statusGrowRate.speed / 100.0f;
+	status.skill += level * charactorData.statusGrowRate.skill / 100.0f;
+	return status;
 }
 
 const DataBase::MapChipData& DataBase::GetMapChipData(const Map_Chip mapChip) const

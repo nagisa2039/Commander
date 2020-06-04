@@ -8,13 +8,13 @@ struct Vector2Int;
 class SceneController;
 class FileSystem;
 class DataBase;
+class SaveData;
 
 // アプリケーション全体を
 // 制御するシングルトンクラス
 class Application
 {
 public:
-
 	class Configure 
 	{
 	private:
@@ -36,6 +36,8 @@ public:
 	const Size& GetWindowSize(void);
 
 	const DataBase& GetDataBase()const;
+
+	std::shared_ptr<SaveData> GetSaveData();
 
 	std::shared_ptr<FileSystem> const GetFileSystem()const;
 
@@ -70,5 +72,6 @@ private:
 
 	std::shared_ptr<Configure> _configure;
 	std::shared_ptr<DataBase> _dataBase;
+	std::shared_ptr<SaveData> _saveData;
 };
 

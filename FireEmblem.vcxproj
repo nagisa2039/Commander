@@ -45,6 +45,7 @@
     <ClCompile Include="Resource\Source\Game\MapCursor.cpp" />
     <ClCompile Include="Resource\Source\Game\PlayerCommander.cpp" />
     <ClCompile Include="Resource\Source\Game\Priest.cpp" />
+    <ClCompile Include="Resource\Source\Game\SaveData.cpp" />
     <ClCompile Include="Resource\Source\Game\Soldier.cpp" />
     <ClCompile Include="Resource\Source\Game\Status.cpp" />
     <ClCompile Include="Resource\Source\Game\Swordsman.cpp" />
@@ -109,6 +110,7 @@
     <ClInclude Include="Resource\Source\Game\MapCursor.h" />
     <ClInclude Include="Resource\Source\Game\PlayerCommander.h" />
     <ClInclude Include="Resource\Source\Game\Priest.h" />
+    <ClInclude Include="Resource\Source\Game\SaveData.h" />
     <ClInclude Include="Resource\Source\Game\Soldier.h" />
     <ClInclude Include="Resource\Source\Game\Status.h" />
     <ClInclude Include="Resource\Source\Game\Swordsman.h" />

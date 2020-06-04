@@ -27,6 +27,8 @@ private:
 	std::shared_ptr<MapCtrl> _mapCtrl;
 	std::shared_ptr<Camera> _camera;
 
+	unsigned int _mapId;
+
 	std::shared_ptr<TurnChangeAnim> _turnChangeAnim;
 
 	std::vector<std::shared_ptr<Charactor>> _charactors;
@@ -75,7 +77,7 @@ private:
 	FLOAT4 _waveC;
 
 public:
-	PlayScene(SceneController & ctrl, const std::string& mapFile);
+	PlayScene(SceneController & ctrl, const unsigned int mapId);
 	~PlayScene();
 
 	void Update(const Input& input) override final;

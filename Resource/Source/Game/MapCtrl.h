@@ -12,21 +12,12 @@
 
 class Camera;
 class Charactor;
-
 class SceneController;
 class Effect;
 
 class MapCtrl
 {
 private:
-	struct SaveData
-	{
-		CharactorType charType;
-		Status status;
-		SaveData():charType(CharactorType::max), status(Status()) {};
-		SaveData(const CharactorType ct, const Status& st):charType(ct), status(st) {};
-	};
-	std::vector<SaveData> _charactorSaveDataVec;
 
 	struct MapData
 	{
@@ -122,12 +113,6 @@ public:
 
 	// 指定したマスがマップの範囲内かを返す
 	bool CheckMapDataRange(const Vector2Int& mapPos);
-
-	bool CreateCharactorData();
-	bool SaveCharactorData();
-	bool LoadCharactorData();
-
-	Status GetLevelInitStatus(const uint8_t level, const CharactorType charType);
 
 	// キャラクターの配列を取得
 	const std::vector<std::shared_ptr<Charactor>>& GetCharacots()const;

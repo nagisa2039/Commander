@@ -11,6 +11,7 @@
 #include "../Scene/PlayScene.h"
 #include "../Scene/MapSelectScene.h"
 #include "DataBase.h"
+#include "SaveData.h"
 
 using namespace std;
 
@@ -44,6 +45,11 @@ const DataBase& Application::GetDataBase() const
 	return *_dataBase;
 }
 
+shared_ptr<SaveData> Application::GetSaveData()
+{
+	return _saveData;
+}
+
 std::shared_ptr<FileSystem> const Application::GetFileSystem() const
 {
 	return _fileSystem;
@@ -53,6 +59,7 @@ bool Application::Initialize()
 {
 	_configure = make_shared<Configure>();
 	_dataBase = make_shared<DataBase>();
+	_saveData = make_shared<SaveData>();
 
 	// Dxlib‚Ì‰Šú‰»
 	ChangeWindowMode(TRUE);

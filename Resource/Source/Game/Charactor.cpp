@@ -13,6 +13,7 @@
 #include "FileSystem.h"
 #include "Effect/CorsorTarget.h"
 #include "DataBase.h"
+#include "SaveData.h"
 
 using namespace std;
 
@@ -607,7 +608,6 @@ void Charactor::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosLi
 {
 	_moveDirList.clear();
 
-	vector<vector<list<Astar::ResultPos>>> addResultPosListVec2;
 	// 攻撃開始地点に敵が居ないかを確認するためのフラグ
 	bool coverCheck = true;
 	for (auto itr = resultPosList.begin(); itr != resultPosList.end(); itr++)
@@ -627,6 +627,7 @@ void Charactor::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosLi
 			continue;
 		}
 
+		// 攻撃開始地点にキャラクターがいないか
 		if (_mapCtrl.GetMapPosChar(itr->mapPos) == nullptr)
 		{
 			coverCheck = false;
@@ -634,16 +635,23 @@ void Charactor::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosLi
 		}
 		else
 		{
+			// 攻撃開始地点にほかのキャラクターがいるのでルートの再建策を行う
+			Size mapSize = _mapCtrl.GetMapSize();
+			vector<vector<list<Astar::ResultPos>>> addResultPosListVec2;
+			addResultPosListVec2.resize(mapSize.h);
 			for (auto& addResultPosListVec : addResultPosListVec2)
 			{
-				for (auto& addResultPosList : addResultPosListVec)
-				{
-					addResultPosList.clear();
-				}
+				addResultPosListVec.resize(mapSize.w);
 			}
 
 			if (_mapCtrl.MoveRouteSearch(itr->mapPos, max(0, _status.move - itr->moveCnt - 1), addResultPosListVec2, _team))
 			{
+				// 移動可能な場所がなければ
+				if (addResultPosListVec2[itr->mapPos.y][itr->mapPos.x].size() <= 0)
+				{
+					_moveDirList.clear();
+					continue;
+				}
 				coverCheck = false;
 				_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
 				auto addResultPos = *addResultPosListVec2[itr->mapPos.y][itr->mapPos.x].begin();
@@ -803,14 +811,15 @@ void Charactor::CharactorDataInit(const CharactorType& type, const uint8_t& leve
 {
 	_charactorType = type;
 
-	auto charactorData = Application::Instance().GetDataBase().GetCharactorData(_charactorType);
+	auto dataBase = Application::Instance().GetDataBase();
+
+	auto charactorData = dataBase.GetCharactorData(_charactorType);
 	_name = charactorData.name;
-	_animator->SetImageHandle(Application::Instance().GetDataBase().GetCharactorImageHandle(_charactorType, _team));
+	_animator->SetImageHandle(dataBase.GetCharactorImageHandle(_charactorType, _team));
 
 	InitAnim();
 
-
-	_status = _mapCtrl.GetLevelInitStatus(level, type);
+	_status = dataBase.GetLevelInitStatus(level, type);
 	_startStatus = _status;
 
 	_iconPath = charactorData.iconImagePath;

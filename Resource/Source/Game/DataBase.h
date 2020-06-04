@@ -68,9 +68,9 @@ private:
 	struct MapData
 	{
 		std::string name;
-		std::string path;
-		MapData() :name(""), path("") {};
-		MapData(const std::string& na, const std::string& pa) :name(na), path(pa) {};
+		std::string fileName;
+		MapData() :name(""), fileName("") {};
+		MapData(const std::string& na, const std::string& pa) :name(na), fileName(pa) {};
 	};
 
 	std::array<CharactorData, static_cast<size_t>(CharactorType::max)> _charactorDataTable;
@@ -93,6 +93,8 @@ public:
 	int GetCharactorImageHandle(const CharactorType charactorType, const Team team)const;
 	// キャラクターのﾃﾞｰﾀを取得する
 	const CharactorData& GetCharactorData(const CharactorType charactorType)const;
+	// キャラクタータイプとレベルを引数に期待値でStatusを作成する
+	Status GetLevelInitStatus(const uint8_t level, const CharactorType charType)const;
 	// マップチップデータを取得する
 	const MapChipData& GetMapChipData(const Map_Chip mapChip)const;
 	// 経験値データを取得する

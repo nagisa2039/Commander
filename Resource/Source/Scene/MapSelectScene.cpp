@@ -39,7 +39,7 @@ void MapSelectScene::Update(const Input& input)
 {
 	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
 	{
-		_controller.ChangeScene(make_shared<PlayScene>(_controller, Application::Instance().GetDataBase().GetMapData(_selectIdx).path));
+		_controller.ChangeScene(make_shared<PlayScene>(_controller, _selectIdx));
 		return;
 	}
 

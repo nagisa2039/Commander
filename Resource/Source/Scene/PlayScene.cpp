@@ -8,6 +8,7 @@
 #include "../Game/MapCtrl.h"
 #include "MapEditScene.h"
 #include "UI/PreparationUI.h"
+#include "SaveData.h"
 
 #include "Charactor.h"
 
@@ -20,37 +21,29 @@
 
 using namespace std;
 
-PlayScene::PlayScene(SceneController & ctrl, const std::string& mapFile):Scene(ctrl)
+PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctrl)
 {
 	_effects.clear();
 	_charactors.clear();
 	_charactors.reserve(30);
 
 	debug = true;
+	_mapId = mapId;
 
 	_mapCtrl = make_shared<MapCtrl>(_charactors);
 	_camera = make_shared<Camera>(Rect(Vector2Int(), Application::Instance().GetWindowSize()));
 
 	_turnChangeAnim = make_shared<TurnChangeAnim>();
 
-	_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
+	_playerCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
 	_enemyCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy, *_camera);
-
-	list<shared_ptr<PlayerCommander>> testList;
-
-	testList.emplace_back(make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera));
-	PlayerCommander& test2 = **testList.begin();
-	testList.clear();
-
-	test2.CheckEnd();
 
 	_camera->AddTargetActor(&*_playerCommander);
 
 	auto mapSize = _mapCtrl->GetMapSize() * _mapCtrl->GetChipSize();
 	_camera->SetLimitRect(Rect(mapSize.ToVector2Int() * 0.5, mapSize));
 
-	_mapCtrl->LoadMap(mapFile);
-	_mapCtrl->LoadCharactorData();
+	_mapCtrl->LoadMap(Application::Instance().GetDataBase().GetMapData(_mapId).fileName);
 	_mapCtrl->CreateCharactor(ctrl, _effects, *_camera);
 
 	_dyingCharItr = _charactors.end();
@@ -313,7 +306,7 @@ bool PlayScene::CharactorDyingUpdate(const Input& input)
 		else
 		{
 			// ƒQ[ƒ€ƒNƒŠƒA
-			_mapCtrl->SaveCharactorData();
+			Application::Instance().GetSaveData()->Save(_charactors, _mapId);
 			_uniqueUpdater = &PlayScene::GameClearUpdate;
 			_uniqueDrawer = &PlayScene::GameClearDraw;
 			return true;

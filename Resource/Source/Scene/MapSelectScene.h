@@ -20,6 +20,8 @@ private:
 
 	std::unique_ptr<Track<int>> _moveStartTrack;
 	std::vector<std::unique_ptr<MapSelectCharactor>>::iterator _moveStartItr;
+	
+	bool _debug;
 
 public:
 	MapSelectScene(SceneController& controller);

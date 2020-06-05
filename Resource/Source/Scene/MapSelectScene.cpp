@@ -48,6 +48,8 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller)
 
 
 	_moveStartItr = _mapSelectCharactors.end();
+
+	_debug = true;
 }
 
 MapSelectScene::~MapSelectScene()
@@ -97,7 +99,7 @@ void MapSelectScene::CursorMove(const Input& input)
 
 	if (input.GetButton(0, "right") || input.GetButton(1, "right"))
 	{
-		if (_selectIdx < _contentPosVec.size() - 1 && _selectIdx + 1 <= /*Application::Instance().GetSaveData()->GetMapNum()*/5)
+		if (_selectIdx < _contentPosVec.size() - 1 && _selectIdx + 1 <= (_debug ? _contentPosVec.size() : Application::Instance().GetSaveData()->GetMapNum()))
 		{
 			_selectIdx++;
 			_moveStartTrack->Reset();
@@ -128,7 +130,7 @@ void MapSelectScene::Draw()
 	Size contentSize = Size(300, 200);
 	auto mapDataVec = Application::Instance().GetDataBase().GetMapDataTable();
 	int fontH = Application::Instance().GetFileSystem()->GetFontHandle("choplin40");
-	auto mapNum = /*Application::Instance().GetSaveData()->GetMapNum()*/5;
+	auto mapNum = _debug ? _contentPosVec.size() : Application::Instance().GetSaveData()->GetMapNum();
 	for (size_t idx = 0; idx < mapDataVec.size(); idx++)
 	{
 		auto contentRect = Rect(_contentPosVec[idx], contentSize);

@@ -7,6 +7,7 @@
 #include "../Game/Team.h"
 #include <list>
 #include <string>
+#include "TimeLine.h"
 
 class Charactor;
 class MapCtrl;
@@ -22,7 +23,6 @@ class PlayScene :
 {
 private:
 	bool debug;
-	int _gameH;	// ゲーム画面のハンドル
 	
 	std::shared_ptr<MapCtrl> _mapCtrl;
 	std::shared_ptr<Camera> _camera;
@@ -39,6 +39,11 @@ private:
 
 	std::deque<std::shared_ptr<UI>> _preparationDeque;
 	std::shared_ptr<PreparationUI> _preparationUI;
+
+	std::unique_ptr<Track<float>> _clearAnimTrack;
+	std::unique_ptr<Track<float>> _fadeTrack;
+	unsigned int _fadeColor;
+	void(PlayScene::* _fadeEndFunc)();
 
 	// 場面ごとの更新を行う関数ポインタ playSceneを継続するかを返す
 	bool(PlayScene::*_uniqueUpdater)(const Input& input);
@@ -62,14 +67,23 @@ private:
 	bool GameClearUpdate(const Input& input);
 	bool GameOverUpdate(const Input& input);
 
+	void StartFadeIn(const unsigned int color = 0x000000);
+	void StartFadeOut(const unsigned int color = 0x000000);
+
+	bool FadeUpdate(const Input& input);
+
 	void PreparationDraw(const Camera& camera);
 	void TurnChengeDraw(const Camera& camera);
 	void PlayerTurnDraw(const Camera& camera);
 	void EnemyTurnDraw(const Camera& camera);
 	void GameOverDraw(const Camera& camera);
 	void GameClearDraw(const Camera& camera);
+	void FadeDraw(const Camera& camera);
 
-	Size GetStringSizseToHandle(const std::string& str, const int fontHandle);
+	// Fade終了時に実行する関数
+	void ChnageMapSelect();
+	void ChangePreparation();
+	void ChangeGameOver();
 
 	int pshandle;
 	VERTEX2DSHADER Vert[6];

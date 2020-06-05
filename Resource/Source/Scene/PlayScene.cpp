@@ -30,12 +30,14 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctr
 	debug = true;
 	_mapId = mapId;
 
+	auto wsize = Application::Instance().GetWindowSize();
+
 	_mapCtrl = make_shared<MapCtrl>(_charactors);
-	_camera = make_shared<Camera>(Rect(Vector2Int(), Application::Instance().GetWindowSize()));
+	_camera = make_shared<Camera>(Rect(Vector2Int(), wsize));
 
 	_turnChangeAnim = make_shared<TurnChangeAnim>();
 
-	_playerCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
+	_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
 	_enemyCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy, *_camera);
 
 	_camera->AddTargetActor(&*_playerCommander);
@@ -70,10 +72,23 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctr
 	_preparationDeque.emplace_back(_preparationUI);
 
 	_preparationUI->Open(true);
-	_uniqueUpdater = &PlayScene::PreparationUpdate;
-	_uniqueDrawer = &PlayScene::PreparationDraw;
 	Vector2 cameraPos2D = (cursorMapPos * _mapCtrl->GetChipSize()).ToVector2();
 	_camera->SetPos(Vector3(cameraPos2D.x, cameraPos2D.y, 0));
+
+	_clearAnimTrack = make_unique<Track<float>>();
+	_clearAnimTrack->AddKey(0, 0.0f);
+	_clearAnimTrack->AddKey(30, 1.0f);
+
+	_uniqueUpdater = &PlayScene::PreparationUpdate;
+	_uniqueDrawer = &PlayScene::PreparationDraw;
+
+	_fadeTrack = make_unique<Track<float>>();
+	_fadeTrack->AddKey(0, 1.0f);
+	_fadeTrack->AddKey(60, 0.0f);
+	_fadeColor = 0x000000;
+
+	StartFadeIn();
+	_fadeEndFunc = &PlayScene::ChangePreparation;
 
 	// ピクセルシェーダーバイナリコードの読み込み
 	pshandle = LoadPixelShader("Resource/Source/Shader/HPBer.cso");
@@ -127,12 +142,12 @@ void PlayScene::Update(const Input & input)
 	}
 
 
+	_camera->Update();
 	if (!(this->*_uniqueUpdater)(input))
 	{
 		return;
 	}
 
-	_camera->Update();
 	for (auto& effect : _effects)
 	{
 		effect->Update(input);
@@ -148,7 +163,7 @@ bool PlayScene::PreparationUpdate(const Input& input)
 	(*_preparationDeque.begin())->Update(input);
 	if (_preparationUI->GetBackMapSelect())
 	{
-		_controller.ChangeScene(make_shared<MapSelectScene>(_controller));
+		StartFadeOut();
 		return false;
 	}
 	if (_preparationUI->GetDelete())
@@ -185,7 +200,7 @@ bool PlayScene::PlayerTurnUpdate(const Input& input)
 	CharactorUpdate(input);
 	if (_playerCommander->GetBackMapSelect())
 	{
-		_controller.ChangeScene(make_shared<MapSelectScene>(_controller));
+		StartFadeOut();
 		return false;
 	}
 
@@ -299,8 +314,8 @@ bool PlayScene::CharactorDyingUpdate(const Input& input)
 		if (static_cast<Team>(i) == Team::player)
 		{
 			// ゲームオーバー
-			_uniqueUpdater = &PlayScene::GameOverUpdate;
-			_uniqueDrawer = &PlayScene::GameOverDraw;
+			_fadeEndFunc = &PlayScene::ChangeGameOver;
+			StartFadeOut();
 			return true;
 		}
 		else
@@ -319,11 +334,62 @@ bool PlayScene::CharactorDyingUpdate(const Input& input)
 
 bool PlayScene::GameClearUpdate(const Input& input)
 {
+	_clearAnimTrack->Update();
+	if (!_clearAnimTrack->GetEnd())return true;
+
+	if(input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
+	{
+		_fadeEndFunc = &PlayScene::ChnageMapSelect;
+		StartFadeOut();
+		return false;
+	}
+
 	return true;
 }
 
 bool PlayScene::GameOverUpdate(const Input& input)
 {
+	_fadeTrack->Update();
+	if (!_fadeTrack->GetEnd())return true;
+
+	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
+	{
+		_fadeEndFunc = &PlayScene::ChnageMapSelect;
+		StartFadeOut();
+		return false;
+	}
+	return true;
+}
+
+void PlayScene::StartFadeIn(const unsigned int color)
+{
+	_fadeColor = color;
+	_fadeTrack->SetReverse(false);
+	_fadeTrack->Reset();
+	_uniqueUpdater = &PlayScene::FadeUpdate;
+	_uniqueDrawer = &PlayScene::FadeDraw;
+}
+
+void PlayScene::StartFadeOut(const unsigned int color)
+{
+	_fadeColor = color;
+	_fadeTrack->SetReverse(true);
+	_fadeTrack->Reset();
+	_uniqueUpdater = &PlayScene::FadeUpdate;
+	_uniqueDrawer = &PlayScene::FadeDraw;
+}
+
+bool PlayScene::FadeUpdate(const Input& input)
+{
+	_fadeTrack->Update();
+	if (_fadeTrack->GetEnd())
+	{
+		if (_fadeEndFunc != nullptr)
+		{
+			(this->*_fadeEndFunc)();
+		}
+		return false;
+	}
 	return true;
 }
 
@@ -393,6 +459,7 @@ void PlayScene::EnemyTurnDraw(const Camera& camera)
 
 void PlayScene::GameOverDraw(const Camera& camera)
 {
+	auto wsize = Application::Instance().GetWindowSize();
 	_mapCtrl->Draw(*_camera);
 
 	for (auto& charactor : _charactors)
@@ -404,15 +471,20 @@ void PlayScene::GameOverDraw(const Camera& camera)
 		effect->Draw();
 	}
 
-	auto str = "GAME OVER";
 	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin200");
-	auto wsize = Application::Instance().GetWindowSize();
-	auto drawPos = GetDrawPos(wsize.ToVector2Int() * 0.5f, GetStringSizseToHandle(str, fontHandle), Anker::center);
-	DrawFormatStringToHandle(drawPos.x, drawPos.y, 0x4000ff, fontHandle, str);
+	DrawStringToHandle(wsize.ToVector2Int() * 0.5f, Anker::center, 0x000088, fontHandle, "GAME OVER");
+
+	if (_fadeTrack->GetEnd())return;
+
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, _fadeTrack->GetValue() * 255);
+	DrawBox(Vector2Int(0, 0), Application::Instance().GetWindowSize().ToVector2Int(), _fadeColor);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }
 
 void PlayScene::GameClearDraw(const Camera& camera)
 {
+	auto wsize = Application::Instance().GetWindowSize();
+
 	_mapCtrl->Draw(*_camera);
 
 	for (auto& charactor : _charactors)
@@ -424,19 +496,53 @@ void PlayScene::GameClearDraw(const Camera& camera)
 		effect->Draw();
 	}
 
-	auto str = "GAME CLER";
+	auto animValue = _clearAnimTrack->GetValue();
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, animValue * 255);
+	DrawRotaGraph(wsize.ToVector2Int() * 0.5f, 1.0f, 0.0f, 
+		Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/Battle/light.png"), true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+
 	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin200");
-	auto wsize = Application::Instance().GetWindowSize();
-	auto drawPos = GetDrawPos(wsize.ToVector2Int() * 0.5f, GetStringSizseToHandle(str, fontHandle), Anker::center);
-	DrawFormatStringToHandle(drawPos.x, drawPos.y, 0xffff00, fontHandle, str);
+	DrawStringToHandle(wsize.ToVector2Int() * 0.5f, Anker::center, 0xffff00, fontHandle, "GAME CLEAR");
+
+	SetDrawScreen(DX_SCREEN_BACK);
 }
 
-Size PlayScene::GetStringSizseToHandle(const std::string& str, const int fontHandle)
+void PlayScene::FadeDraw(const Camera& camera)
 {
-	Size strSize;
-	int lineCnt;
-	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, fontHandle, str.c_str());
-	return strSize;
+	_mapCtrl->Draw(*_camera);
+	for (auto& charactor : _charactors)
+	{
+		charactor->Draw();
+	}
+	for (auto& effect : _effects)
+	{
+		effect->Draw();
+	}
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, _fadeTrack->GetValue() * 255);
+	DrawBox(Vector2Int(0, 0), Application::Instance().GetWindowSize().ToVector2Int(), _fadeColor);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+}
+
+void PlayScene::ChnageMapSelect()
+{
+	_controller.ChangeScene(make_shared<MapSelectScene>(_controller));
+}
+
+void PlayScene::ChangePreparation()
+{
+	_uniqueUpdater = &PlayScene::PreparationUpdate;
+	_uniqueDrawer = &PlayScene::PreparationDraw;
+}
+
+void PlayScene::ChangeGameOver()
+{
+	_uniqueUpdater = &PlayScene::GameOverUpdate;
+	_uniqueDrawer = &PlayScene::GameOverDraw;
+	_fadeEndFunc = nullptr;
+	_fadeTrack->Reset();
+	_fadeTrack->SetReverse(false);
+	_fadeColor = 0x000000;
 }
 
 void PlayScene::Draw(void)

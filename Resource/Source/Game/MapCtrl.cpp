@@ -31,6 +31,7 @@ constexpr unsigned int WAR_SITUATION_CHIP_SIZE = 20;
 
 void MapCtrl::DrawToMapChipScreen()
 {
+	int currentScreen = GetDrawScreen();
 	SetDrawScreen(_mapChipH);
 	ClsDrawScreen();
 
@@ -45,11 +46,12 @@ void MapCtrl::DrawToMapChipScreen()
 		}
 	}
 
-	SetDrawScreen(DX_SCREEN_BACK);
+	SetDrawScreen(currentScreen);
 }
 
 void MapCtrl::DrawToMapFloorScreen()
 {
+	int currentScreen = GetDrawScreen();
 	SetDrawScreen(_mapFloorH);
 	ClsDrawScreen();
 
@@ -61,7 +63,7 @@ void MapCtrl::DrawToMapFloorScreen()
 		}
 	}
 
-	SetDrawScreen(DX_SCREEN_BACK);
+	SetDrawScreen(currentScreen);
 }
 
 MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charactors(charactors), imageFolderPath("Resource/Image/MapChip/")
@@ -514,6 +516,7 @@ DataBase::MapChipData MapCtrl::GetMapChipData(const Vector2Int& mapPos) const
 
 void MapCtrl::CreateWarSituation()const
 {
+	int currentScreen = GetDrawScreen();
 	SetDrawScreen(_warSituationH);
 	ClsDrawScreen();
 
@@ -549,7 +552,7 @@ void MapCtrl::CreateWarSituation()const
 	DrawLine(MAP_CHIP_CNT_W * WAR_SITUATION_CHIP_SIZE-1, 0, MAP_CHIP_CNT_W * WAR_SITUATION_CHIP_SIZE-1, MAP_CHIP_CNT_H* WAR_SITUATION_CHIP_SIZE, 0xffffff);
 	DrawLine(0, MAP_CHIP_CNT_H * WAR_SITUATION_CHIP_SIZE-1, MAP_CHIP_CNT_W * WAR_SITUATION_CHIP_SIZE, MAP_CHIP_CNT_H * WAR_SITUATION_CHIP_SIZE-1, 0xffffff);
 
-	SetDrawScreen(DX_SCREEN_BACK);
+	SetDrawScreen(currentScreen);
 }
 
 void MapCtrl::DrawWarSituatin(const Vector2Int center)const

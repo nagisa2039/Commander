@@ -252,6 +252,7 @@ void BattleScene::StartExpUpdate()
 
 void BattleScene::Draw(void)
 {
+	int currentScreen = GetDrawScreen();
 	SetDrawScreen(_screenH);
 	ClsDrawScreen();
 
@@ -293,7 +294,7 @@ void BattleScene::Draw(void)
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 	}
 
-	SetDrawScreen(DX_SCREEN_BACK);
+	SetDrawScreen(currentScreen);
 
 	auto wsize = Application::Instance().GetWindowSize();
 

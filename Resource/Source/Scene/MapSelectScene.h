@@ -7,6 +7,7 @@
 
 class Camera;
 class MapSelectCharactor;
+class Fade;
 
 class MapSelectScene :
     public Scene
@@ -20,6 +21,9 @@ private:
 
 	std::unique_ptr<Track<int>> _moveStartTrack;
 	std::vector<std::unique_ptr<MapSelectCharactor>>::iterator _moveStartItr;
+
+	std::unique_ptr<Fade> _fade;
+	bool _goPlayScene;
 	
 	bool _debug;
 

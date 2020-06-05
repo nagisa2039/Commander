@@ -9,8 +9,11 @@
 #include "../BattlePreparationCursor.h"
 #include "WarSituation.h"
 #include "CheckWindow.h"
+#include "DxLib.h"
 
 using namespace std;
+
+int PreparationUI::_itemScreenH = -1;
 
 void PreparationUI::CloseUpdate(const Input& input)
 {
@@ -42,11 +45,14 @@ void PreparationUI::OpenUpdate(const Input& input)
 		_execution = true;
 		return;
 	}
+
+	_selectExRateTrack->Update();
 	if (input.GetButtonDown(0, "up") || input.GetButtonDown(1, "up"))
 	{
 		if (_selectItem > static_cast<Item>(0))
 		{
 			_selectItem = static_cast<Item>(static_cast<int>(_selectItem) - 1);
+			_selectExRateTrack->Reset();
 		}
 	}
 	if (input.GetButtonDown(0, "down") || input.GetButtonDown(1, "down"))
@@ -54,6 +60,7 @@ void PreparationUI::OpenUpdate(const Input& input)
 		if (_selectItem < static_cast<Item>(static_cast<int>(Item::max) - 1))
 		{
 			_selectItem = static_cast<Item>(static_cast<int>(_selectItem) + 1);
+			_selectExRateTrack->Reset();
 		}
 	}
 	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
@@ -132,6 +139,19 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>& uiDeque, Camera& c
 	_selectItem = Item::start;
 	_execution = false;
 	_backMapSelect = false;
+
+	_selectExRateTrack = make_unique<Track<float>>(true);
+	_selectExRateTrack->AddKey(0, 1.0f);
+	_selectExRateTrack->AddKey(30, 1.2f);
+	_selectExRateTrack->AddKey(60, 1.0f);
+
+	if (_itemScreenH == -1)
+	{
+		int windowH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/window0.png");
+		Size windowSize;
+		GetGraphSize(windowH, windowSize);
+		_itemScreenH = MakeScreen(windowSize.w, windowSize.h, true);
+	}
 }
 
 PreparationUI::~PreparationUI()
@@ -157,9 +177,15 @@ void PreparationUI::Draw()
 	GetGraphSize(windowH, graphSize);
 	for (int idx = 0; idx < _itemInfTable.size(); idx++)
 	{
+		int currentDrawScreen = GetDrawScreen();
+		SetDrawScreen(_itemScreenH);
+		ClsDrawScreen();
+		DrawGraph(0,0, windowH, true);
+		DrawStringToHandle(graphSize.ToVector2Int() * 0.5f, Anker::center, 0xffffff, fontH, _itemInfTable[idx].name.c_str());
+
 		auto centerPos = Lerp(Vector2Int(wsize.w + graphSize.w / 2, _itemInfTable[idx].pos.y), _itemInfTable[idx].pos, _animTrack->GetValue());
-		DrawRotaGraph(centerPos, static_cast<Item>(idx) == _selectItem ? 1.1f : 1.0f , 0.0f, windowH, true);
-		DrawStringToHandle(centerPos, Anker::center, 0xffffff, fontH, _itemInfTable[idx].name.c_str());
+		SetDrawScreen(currentDrawScreen);
+		DrawRotaGraph(centerPos, idx == static_cast<int>(_selectItem) ? _selectExRateTrack->GetValue() : 1.0f, 0.0f, _itemScreenH, true);
 	}
 }
 

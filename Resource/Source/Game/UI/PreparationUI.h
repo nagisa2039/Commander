@@ -35,12 +35,14 @@ private:
 
 	bool _execution;
 	bool _backMapSelect;
+	static int _itemScreenH;
 
 	void (PreparationUI::* _updater)(const Input& input);
 
 	std::array<ItemInf, static_cast<size_t>(Item::max)> _itemInfTable;
 
 	std::unique_ptr<Track<float>> _animTrack;
+	std::unique_ptr<Track<float>> _selectExRateTrack;
 	std::unique_ptr<BattlePreparationCursor> _battlePreparationCursor;
 
 	void CloseUpdate(const Input& input);

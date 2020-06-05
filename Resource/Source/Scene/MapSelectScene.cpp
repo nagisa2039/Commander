@@ -9,6 +9,7 @@
 #include "PlayScene.h"
 #include "SaveData.h"
 #include "MapSelectCharactor.h"
+#include "Fade.h"
 
 using namespace std;
 
@@ -21,6 +22,10 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller)
 	_moveStartTrack = make_unique<Track<int>>();
 	_moveStartTrack->AddKey(0, 0);
 	_moveStartTrack->AddKey(10, 0);
+
+	_fade = make_unique<Fade>();
+	_fade->StartFadeIn();
+	_goPlayScene = false;
 
 	_selectIdx = 0;
 
@@ -58,9 +63,19 @@ MapSelectScene::~MapSelectScene()
 
 void MapSelectScene::Update(const Input& input)
 {
-	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
+	_fade->Update();
+	if (!_fade->GetEnd())return;
+
+	if (_goPlayScene)
 	{
 		_controller.ChangeScene(make_shared<PlayScene>(_controller, _selectIdx));
+		return;
+	}
+
+	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
+	{
+		_fade->StartFadeOut();
+		_goPlayScene = true;
 		return;
 	}
 
@@ -152,4 +167,6 @@ void MapSelectScene::Draw()
 	{
 		(*rItr)->Draw();
 	}
+
+	_fade->Draw();
 }

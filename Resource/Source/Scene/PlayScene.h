@@ -17,12 +17,14 @@ class Effect;
 class TurnChangeAnim;
 class PreparationUI;
 class UI;
+class Fade;
 
 class PlayScene :
 	public Scene
 {
 private:
 	bool debug;
+	int _gameH;
 	
 	std::shared_ptr<MapCtrl> _mapCtrl;
 	std::shared_ptr<Camera> _camera;
@@ -41,8 +43,8 @@ private:
 	std::shared_ptr<PreparationUI> _preparationUI;
 
 	std::unique_ptr<Track<float>> _clearAnimTrack;
-	std::unique_ptr<Track<float>> _fadeTrack;
-	unsigned int _fadeColor;
+
+	std::unique_ptr<Fade> _fade;
 	void(PlayScene::* _fadeEndFunc)();
 
 	// 場面ごとの更新を行う関数ポインタ playSceneを継続するかを返す
@@ -67,8 +69,8 @@ private:
 	bool GameClearUpdate(const Input& input);
 	bool GameOverUpdate(const Input& input);
 
-	void StartFadeIn(const unsigned int color = 0x000000);
-	void StartFadeOut(const unsigned int color = 0x000000);
+	void StartFadeIn( void (PlayScene::*funcP)(), const unsigned int color = 0x000000);
+	void StartFadeOut(void (PlayScene::* funcP)(), const unsigned int color = 0x000000);
 
 	bool FadeUpdate(const Input& input);
 

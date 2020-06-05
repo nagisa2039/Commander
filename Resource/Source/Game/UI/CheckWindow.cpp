@@ -9,6 +9,7 @@
 using namespace std;
 
 int CheckWindow::_windowImageH = -1;
+int CheckWindow::_selectImageH = -1;
 
 CheckWindow::CheckWindow(const std::string& messageStr, std::deque<std::shared_ptr<UI>>& uiDeque, const std::function<void()>& func)
 	:_messageStr(messageStr), _func(func), UI(uiDeque)
@@ -17,10 +18,10 @@ CheckWindow::CheckWindow(const std::string& messageStr, std::deque<std::shared_p
 	_exRateTrack->AddKey(0, 0.0f);
 	_exRateTrack->AddKey(15, 1.0f);
 
-	_selectEcRateTrack = make_unique<Track<float>>(true);
-	_selectEcRateTrack->AddKey(0, 1.0f);
-	_selectEcRateTrack->AddKey(30, 1.2f);
-	_selectEcRateTrack->AddKey(60, 1.0f);
+	_selectExRateTrack = make_unique<Track<float>>(true);
+	_selectExRateTrack->AddKey(0, 1.0f);
+	_selectExRateTrack->AddKey(30, 1.2f);
+	_selectExRateTrack->AddKey(60, 1.0f);
 
 	_select = Select::yes;
 
@@ -30,6 +31,13 @@ CheckWindow::CheckWindow(const std::string& messageStr, std::deque<std::shared_p
 	{
 		auto wsize = Application::Instance().GetWindowSize();
 		_windowImageH = MakeScreen(wsize.w, wsize.h, true);
+	}
+	if (_selectImageH == -1)
+	{
+		int selectH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/checkWindowSelect.png");
+		Size selectSize;
+		GetGraphSize(selectH, selectSize);
+		_selectImageH = MakeScreen(selectSize.w, selectSize.h, true);
 	}
 }
 
@@ -52,13 +60,22 @@ void CheckWindow::NormalUpdate(const Input& input)
 		return;
 	}
 
-	_selectEcRateTrack->Update();
+	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
+	{
+		_exRateTrack->Reset();
+		_exRateTrack->SetReverse(true);
+		_updater = &CheckWindow::ScalingUpdate;
+		_select = Select::no;
+		return;
+	}
+
+	_selectExRateTrack->Update();
 	if (input.GetButtonDown(0, "left") || input.GetButtonDown(1, "left"))
 	{
 		if (_select > Select::yes)
 		{
 			_select = static_cast<Select>(static_cast<int>(_select) - 1);
-			_selectEcRateTrack->Reset();
+			_selectExRateTrack->Reset();
 		}
 	}
 
@@ -67,7 +84,7 @@ void CheckWindow::NormalUpdate(const Input& input)
 		if (_select < Select::no)
 		{
 			_select = static_cast<Select>(static_cast<int>(_select) + 1);
-			_selectEcRateTrack->Reset();
+			_selectExRateTrack->Reset();
 		}
 	}
 }
@@ -98,6 +115,7 @@ void CheckWindow::ScalingUpdate(const Input& input)
 
 void CheckWindow::Draw()
 {
+	int currentScreen = GetDrawScreen();
 	SetDrawScreen(_windowImageH);
 	ClsDrawScreen();
 
@@ -111,33 +129,31 @@ void CheckWindow::Draw()
 	Size selectSize;
 	GetGraphSize(selectH, selectSize);
 
+	int choplin30 = Application::Instance().GetFileSystem()->GetFontHandle("choplin30");
+
 	Rect totalRect = Rect(Application::Instance().GetWindowSize().ToVector2Int() * 0.5f, Size(messageSize.w, messageSize.h + selectSize.h + space.h));
 	auto massageWindowLeftup = Vector2Int(totalRect.Left(), totalRect.Top());
 	DrawGraph(massageWindowLeftup, messageH, true);
+	DrawStringToHandle(massageWindowLeftup + messageSize*0.5f, Anker::center, 0xffffff, choplin30, _messageStr.c_str());
 
-	int choplin30 = Application::Instance().GetFileSystem()->GetFontHandle("choplin30");
 
-	auto CenterDrawFormatString = [](const Vector2Int& center, const char* str, const int fontHandle)
-	{
-		Size strSize;
-		int lineCnt;
-		Vector2Int namePos = Vector2Int();
-		GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, fontHandle, str);
-		auto drawPos = GetDrawPos(center, strSize, Anker::center);
-		DrawFormatStringToHandle(drawPos.x, drawPos.y, 0xffffff, fontHandle, str);
-	};
+	SetDrawScreen(_selectImageH);
+	DrawGraph(0, 0, selectH, true);
+	DrawStringToHandle(selectSize.ToVector2Int()*0.5f, Anker::center, 0xffffff, choplin30, "‚Í‚¢");
 
-	CenterDrawFormatString(massageWindowLeftup + messageSize * 0.5f, _messageStr.c_str(), choplin30);
-	
+	SetDrawScreen(_windowImageH);
 	auto yseSelectCenter = Vector2Int(totalRect.center.x - (space.w + selectSize.w) / 2, totalRect.Botton() - selectSize.h / 2);
-	DrawRotaGraph(yseSelectCenter, _select == Select::yes ? _selectEcRateTrack->GetValue() : 1.0f, 0.0f, selectH, true);
-	CenterDrawFormatString(yseSelectCenter, "‚Í‚¢", choplin30);
+	DrawRotaGraph(yseSelectCenter, _select == Select::yes ? _selectExRateTrack->GetValue() : 1.0f, 0.0f, _selectImageH, true);
 
+	SetDrawScreen(_selectImageH);
+	DrawGraph(0, 0, selectH, true);
+	DrawStringToHandle(selectSize.ToVector2Int() * 0.5f, Anker::center, 0xffffff, choplin30, "‚¢‚¢‚¦");
+
+	SetDrawScreen(_windowImageH);
 	auto noSelectCenter = Vector2Int(totalRect.center.x + (space.w + selectSize.w) / 2, totalRect.Botton() - selectSize.h / 2);
-	DrawRotaGraph(noSelectCenter, _select == Select::no ? _selectEcRateTrack->GetValue() : 1.0f, 0.0f, selectH, true);
-	CenterDrawFormatString(noSelectCenter, "‚¢‚¢‚¦", choplin30);
+	DrawRotaGraph(noSelectCenter, _select == Select::no ? _selectExRateTrack->GetValue() : 1.0f, 0.0f, _selectImageH, true);
 
-	SetDrawScreen(DX_SCREEN_BACK);
+	SetDrawScreen(currentScreen);
 
 	DrawRotaGraph(totalRect.center.x, totalRect.center.y, _exRateTrack->GetValue(), 0.0f, _windowImageH, true);
 }

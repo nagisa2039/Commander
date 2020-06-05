@@ -13,7 +13,7 @@ class CheckWindow :
 private:
 	std::string _messageStr;
 	std::unique_ptr<Track<float>> _exRateTrack;
-	std::unique_ptr<Track<float>> _selectEcRateTrack;
+	std::unique_ptr<Track<float>> _selectExRateTrack;
 	std::function<void()> _func;
 
 	void (CheckWindow::* _updater)(const Input& input);
@@ -21,6 +21,7 @@ private:
 	void ScalingUpdate(const Input& input);
 
 	static int _windowImageH;
+	static int _selectImageH;
 
 	enum class Select
 	{

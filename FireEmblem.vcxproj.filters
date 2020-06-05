@@ -258,6 +258,9 @@
     <ClCompile Include="Resource\Source\Game\SaveData.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Game\MapSelectCharactor.cpp">
+      <Filter>ソース ファイル\Game\Actor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -448,6 +451,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\SaveData.h">
       <Filter>ヘッダー ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\MapSelectCharactor.h">
+      <Filter>ヘッダー ファイル\Game\Actor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

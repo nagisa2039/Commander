@@ -306,13 +306,13 @@ void PlayerCommander::DrawMovableMass()
 		auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
 		if (charactor == nullptr || !charactor->GetCanMove()) return;
 
-		charactor->DrawMovableMass(92);
+		charactor->DrawMovableMass(100);
 	}
 	else
 	{
 		if (_selectChar->GetIsMoveAnim())return;
 
-		_selectChar->DrawMovableMass(128);
+		_selectChar->DrawMovableMass(150);
 		_selectChar->DrawRoute(_mapPos);
 	}
 }

@@ -39,6 +39,8 @@
     <ClCompile Include="Resource\Source\Game\Effect\Effect.cpp" />
     <ClCompile Include="Resource\Source\Game\Effect\FlyText.cpp" />
     <ClCompile Include="Resource\Source\Game\Effect\MissEffect.cpp" />
+    <ClCompile Include="Resource\Source\Game\Effect\TerrainDamageEffect.cpp" />
+    <ClCompile Include="Resource\Source\Game\Effect\TerrainRecoverEffect.cpp" />
     <ClCompile Include="Resource\Source\Game\EnemyCommander.cpp" />
     <ClCompile Include="Resource\Source\Game\Fade.cpp" />
     <ClCompile Include="Resource\Source\Game\Mage.cpp" />
@@ -105,6 +107,8 @@
     <ClInclude Include="Resource\Source\Game\Effect\Effect.h" />
     <ClInclude Include="Resource\Source\Game\Effect\FlyText.h" />
     <ClInclude Include="Resource\Source\Game\Effect\MissEffect.h" />
+    <ClInclude Include="Resource\Source\Game\Effect\TerrainDamageEffect.h" />
+    <ClInclude Include="Resource\Source\Game\Effect\TerrainRecoverEffect.h" />
     <ClInclude Include="Resource\Source\Game\EnemyCommander.h" />
     <ClInclude Include="Resource\Source\Game\Fade.h" />
     <ClInclude Include="Resource\Source\Game\Mage.h" />

@@ -15,7 +15,6 @@ class MapCtrl;
 class SceneController;
 class Effect; 
 class BattleCharactor;
-class FlyText;
 
 class Charactor :
 	public Actor
@@ -88,7 +87,7 @@ protected:
 	std::shared_ptr<Effect> _battleStartEffect;
 
 	// 地形効果エフェクト
-	std::shared_ptr<FlyText> _terrainEffect;
+	std::shared_ptr<Effect> _terrainEffect;
 
 	// 硬直ｶｳﾝﾄ
 	int _rigid;

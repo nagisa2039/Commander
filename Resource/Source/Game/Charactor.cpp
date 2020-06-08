@@ -6,6 +6,8 @@
 #include "../Scene/SceneController.h"
 #include "../Scene/BattleScene.h"
 #include "Effect/Effect.h"
+#include "Effect/TerrainDamageEffect.h"
+#include "Effect/TerrainRecoverEffect.h"
 #include <DxLib.h>
 #include "Application.h"
 #include "Effect/FlyText.h"
@@ -443,20 +445,27 @@ void Charactor::DrawRoute(const Vector2Int& targetPos)
 bool Charactor::StartTerrainEffect()
 {
 	auto mapChipData = _mapCtrl.GetMapChipData(GetMapPos());
-	if (mapChipData.recovery != 0)
+
+	// Œø‰Ê‚È‚µ
+	if (mapChipData.recovery == 0)return false;
+
+	if (mapChipData.recovery > 0)
 	{
-		_terrainEffect->Reset();
-		_terrainEffect->SetStartPos(GetCenterPos());
-		_effects.emplace_back(_terrainEffect);
-		_status.health = min(_startStatus.health, max(1, _status.health + _startStatus.health * mapChipData.recovery / 100.0f));
+		_terrainEffect = make_shared<TerrainRecoverEffect>(GetCenterPos().ToVector2Int(), _camera);
 	}
+	else if(mapChipData.recovery < 0)
+	{
+		_terrainEffect = make_shared<TerrainDamageEffect>(GetCenterPos().ToVector2Int(), _camera);
+	}
+	_status.health = min(_startStatus.health, max(1, _status.health + _startStatus.health * mapChipData.recovery / 100.0f));
+	_effects.emplace_back(_terrainEffect);
 
 	return true;
 }
 
 bool Charactor::GetTerrainEffectEnd()
 {
-	return _terrainEffect->GetDelete();
+	return _terrainEffect == nullptr || _terrainEffect->GetDelete();
 }
 
 std::list<Vector2Int> Charactor::GetAttackPosList() const

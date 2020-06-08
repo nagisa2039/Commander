@@ -60,6 +60,8 @@ void EnemyCommander::TerrainEffectUpdate(const Input& input)
 
 	if (end)
 	{
+		_camera.ClearTargetActor();
+		_camera.AddTargetActor(this);
 		_uniqueUpdater = &EnemyCommander::NormalUpdate;
 	}
 }
@@ -81,4 +83,15 @@ void EnemyCommander::Update(const Input& input)
 
 void EnemyCommander::Draw()
 {
+}
+
+void EnemyCommander::StartTerrainEffectUpdate()
+{
+	StartTerrainEffect();
+	_uniqueUpdater = &EnemyCommander::TerrainEffectUpdate;
+}
+
+void EnemyCommander::StartNormalUpdate()
+{
+	_uniqueUpdater = &EnemyCommander::NormalUpdate;
 }

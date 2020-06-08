@@ -231,9 +231,9 @@ Status Charactor::GetStatus() const
 {
 	Status status = _status;
 
-	DataBase::MapChipData mapchipData = _mapCtrl.GetMapChipData(GetMapPos());
-	status.avoidanceCorrection = mapchipData.avoidance;
-	status.defenseCorrection = mapchipData.defense;
+	auto mapChipData = Application::Instance().GetDataBase().GetMapChipData(_mapCtrl.GetMapData(GetMapPos()).mapChip);
+	status.avoidanceCorrection = mapChipData.avoidance;
+	status.defenseCorrection = mapChipData.defense;
 
 	return status;
 }
@@ -444,7 +444,7 @@ void Charactor::DrawRoute(const Vector2Int& targetPos)
 
 bool Charactor::StartTerrainEffect()
 {
-	auto mapChipData = _mapCtrl.GetMapChipData(GetMapPos());
+	auto mapChipData = Application::Instance().GetDataBase().GetMapChipData(_mapCtrl.GetMapData(GetMapPos()).mapChip);
 
 	// Œø‰Ê‚È‚µ
 	if (mapChipData.recovery == 0)return false;

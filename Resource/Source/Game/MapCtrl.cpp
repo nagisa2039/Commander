@@ -509,9 +509,9 @@ void MapCtrl::CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, co
 	}
 }
 
-DataBase::MapChipData MapCtrl::GetMapChipData(const Vector2Int& mapPos) const
+MapCtrl::MapData MapCtrl::GetMapData(const Vector2Int& mapPos) const
 {
-	return Application::Instance().GetDataBase().GetMapChipData(_mapDataVec2[mapPos.y][mapPos.x].mapChip);
+	return _mapDataVec2.at(mapPos.y).at(mapPos.x);
 }
 
 void MapCtrl::CreateWarSituation()const
@@ -521,6 +521,8 @@ void MapCtrl::CreateWarSituation()const
 	ClsDrawScreen();
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 230);
+
+	auto dataBase = Application::Instance().GetDataBase();
 	// マップチップの描画
 	for (int y = 0; y < MAP_CHIP_CNT_H; y++)
 	{
@@ -528,7 +530,7 @@ void MapCtrl::CreateWarSituation()const
 		{
 			DrawBox(x * WAR_SITUATION_CHIP_SIZE, y * WAR_SITUATION_CHIP_SIZE,
 				(x+1) * WAR_SITUATION_CHIP_SIZE, (y+1) * WAR_SITUATION_CHIP_SIZE, 
-				GetMapChipData(Vector2Int(x,y)).simpleColor, true);
+				dataBase.GetMapChipData(_mapDataVec2[y][x].mapChip).simpleColor, true);
 		}
 	}
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);

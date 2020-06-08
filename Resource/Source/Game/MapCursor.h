@@ -32,7 +32,7 @@ public:
 	virtual void Update(const Input& input)override = 0;
 	virtual void Draw()override = 0;
 
-	Vector2Int GetMapPos()const;
+	const Vector2Int& GetMapPos()const;
 	void SetMapPos(const Vector2Int& mapPos);
 
 	Vector2 GetCenterPos()const override;

@@ -18,5 +18,8 @@ public:
 
 	void Update(const Input& input)override final;
 	void Draw()override final;
+
+	void StartTerrainEffectUpdate()override;
+	void StartNormalUpdate()override;
 };
 

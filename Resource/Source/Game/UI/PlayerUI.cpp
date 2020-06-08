@@ -13,6 +13,7 @@
 #include "StatusInfomation.h"
 #include "BattlePrediction.h"
 #include "Charactor.h"
+#include "TerrainInf.h"
 
 using namespace std;
 
@@ -22,6 +23,8 @@ PlayerUI::PlayerUI(PlayerCommander& playerCommander, const MapCtrl& mapCtrl): _p
 	_moveMenuDeque.clear();
 	_statusDeque.clear();
 	_battlePreDeque.clear();
+	_terrainInfDeque.clear();
+	_statusInfDeque.clear();
 
 	_playerMenu = make_shared<PlayerMenu>(_playerMenuDeque, playerCommander, _mapCtrl);
 	_playerMenuDeque.emplace_front(_playerMenu);
@@ -29,12 +32,10 @@ PlayerUI::PlayerUI(PlayerCommander& playerCommander, const MapCtrl& mapCtrl): _p
 	_moveMenu = make_shared<MoveMenu>(_playerMenuDeque, playerCommander, _mapCtrl);
 	_moveMenuDeque.emplace_back(_moveMenu);
 
-	_statusInfDeque.clear();
-	_statusInfDeque.emplace_back(make_shared<StatusInfomation>(_statusInfDeque, _mapCtrl, _playerCommander, *this));
+	_terrainInf = make_shared<TerrainInf>(_terrainInfDeque, _mapCtrl, playerCommander.GetMapPos());
+	_terrainInfDeque.emplace_back(_terrainInf);
 
-	_terrainInfTrack = make_unique<Track<float>>();
-	_terrainInfTrack->AddKey(0, 0.0f);
-	_terrainInfTrack->AddKey(15, 1.0f);
+	_statusInfDeque.emplace_back(make_shared<StatusInfomation>(_statusInfDeque, _mapCtrl, _playerCommander, *this));
 }
 
 PlayerUI::~PlayerUI()
@@ -54,22 +55,13 @@ void PlayerUI::Update(const Input& input)
 		}
 	}
 
-	_terrainInfTrack->Update();
 	if (GetUIIsOpen())
 	{
-		if (!_terrainInfTrack->GetReverse())
-		{
-			_terrainInfTrack->SetReverse(true);
-			_terrainInfTrack->Reset();
-		}
+		_terrainInf->Close();
 	}
 	else
 	{
-		if (_terrainInfTrack->GetReverse())
-		{
-			_terrainInfTrack->SetReverse(false);
-			_terrainInfTrack->Reset();
-		}
+		_terrainInf->Open();
 	}
 
 	auto UpdateDeque = [](auto deque, const Input& input)
@@ -79,6 +71,8 @@ void PlayerUI::Update(const Input& input)
 			(*deque.begin())->Update(input);
 		}
 	};
+
+	UpdateDeque(_terrainInfDeque, input);
 	UpdateDeque(_playerMenuDeque, input);
 	UpdateDeque(_moveMenuDeque, input);
 	UpdateDeque(_statusDeque, input);
@@ -92,7 +86,6 @@ void PlayerUI::Update(const Input& input)
 			_playerMenuDeque.pop_front();
 		}
 	}
-
 }
 
 void PlayerUI::AddBattlePre()
@@ -140,7 +133,6 @@ void PlayerUI::ClearBattlePre()
 
 void PlayerUI::Draw()
 {
-	DrawTerrainInf();
 	auto DequeDraw = [](auto deque)
 	{
 		for (auto ritr = deque.rbegin(); ritr != deque.rend(); ritr++)
@@ -149,6 +141,7 @@ void PlayerUI::Draw()
 		}
 	};
 
+	DequeDraw(_terrainInfDeque);
 	DequeDraw(_statusInfDeque);
 	DequeDraw(_statusDeque);
 	DequeDraw(_playerMenuDeque);
@@ -179,46 +172,4 @@ void PlayerUI::ClosePlayerMenu(bool animation)
 std::shared_ptr<MoveMenu> PlayerUI::GetMoveMenu()
 {
 	return _moveMenu;
-}
-
-void PlayerUI::DrawTerrainInf()
-{
-	// ’nŒ`î•ñ‚Ì•`‰æ
-
-	// “y‘ä‚Ì•`‰æ
-	Rect terrainInfRect = Rect(Lerp(Vector2Int(-80, 65), Vector2Int(100, 65), _terrainInfTrack->GetValue()), Size(160, 90));
-	DrawGraph(terrainInfRect.Left(), terrainInfRect.Top(), Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/terrainInf.png"), true);
-
-	int drawY = terrainInfRect.Top();
-	auto mapChipData = _mapCtrl.GetMapChipData(_playerCommander.GetMapPos());
-
-	int choplin40 = Application::Instance().GetFileSystem()->GetFontHandle("choplin40");
-	Size strSize;
-	int lineCnt;
-	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, choplin40, mapChipData.name.c_str());
-	auto namePos = GetDrawPos(Vector2Int(terrainInfRect.center.x, drawY), strSize, Anker::centerup);
-	DrawFormatStringToHandle(namePos.x, namePos.y, 0xffffff, choplin40, mapChipData.name.c_str());
-	drawY += strSize.h;
-
-	int choplin20 = Application::Instance().GetFileSystem()->GetFontHandle("choplin20");
-
-	auto drawNum = [](const int num, const Vector2Int rightup, const int fontHandle, const unsigned int color = 0xffffff)
-	{
-		char str[20];
-		sprintf_s(str, 20, "%d", num);
-		Size strSize;
-		int lineCnt;
-		GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, fontHandle, str);
-		auto drawPos = GetDrawPos(rightup, strSize, Anker::rightup);
-		DrawFormatStringToHandle(drawPos.x, drawPos.y, color, fontHandle, str);
-	};
-
-	int offsetX = 15;
-	DrawFormatStringToHandle(terrainInfRect.Left() + offsetX, drawY, 0xffffff, choplin20, "DFE.");
-	drawNum(mapChipData.defense, Vector2Int(terrainInfRect.Right() - offsetX, drawY), choplin20);
-	drawY += 20;
-
-	DrawFormatStringToHandle(terrainInfRect.Left() + offsetX, drawY, 0xffffff, choplin20, "AVD.");
-	drawNum(mapChipData.avoidance, Vector2Int(terrainInfRect.Right() - offsetX, drawY), choplin20);
-	drawY += 20;
 }

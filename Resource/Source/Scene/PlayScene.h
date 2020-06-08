@@ -30,6 +30,8 @@ private:
 	std::shared_ptr<Camera> _camera;
 
 	unsigned int _mapId;
+	unsigned char _turnCnt;
+	const unsigned char _lastTurnCnt;
 
 	std::shared_ptr<TurnChangeAnim> _turnChangeAnim;
 

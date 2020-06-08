@@ -90,8 +90,8 @@ public:
 
 	void CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, const Team team);
 
-	// 指定した座標のMapChipDataを取得する
-	DataBase::MapChipData GetMapChipData(const Vector2Int& mapPos)const;
+	// 指定した座標のMapDataを取得する
+	MapData GetMapData(const Vector2Int& mapPos)const;
 
 	// 戦況確認用の画像を生成する(更新する)
 	void CreateWarSituation()const;

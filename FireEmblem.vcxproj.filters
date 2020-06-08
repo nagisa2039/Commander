@@ -270,6 +270,9 @@
     <ClCompile Include="Resource\Source\Game\Effect\TerrainRecoverEffect.cpp">
       <Filter>ソース ファイル\Game\Actor\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\TerrainInf.cpp">
+      <Filter>ソース ファイル\Game\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -472,6 +475,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\Effect\TerrainDamageEffect.h">
       <Filter>ヘッダー ファイル\Game\Actor\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\TerrainInf.h">
+      <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

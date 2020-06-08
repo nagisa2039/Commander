@@ -135,6 +135,8 @@ void PlayerCommander::TerrainEffectUpdate(const Input& input)
 
 	if (end)
 	{
+		_camera.ClearTargetActor();
+		_camera.AddTargetActor(this);
 		_uniqueUpdater = &PlayerCommander::NormalUpdate;
 	}
 }
@@ -315,6 +317,17 @@ void PlayerCommander::DrawMovableMass()
 		_selectChar->DrawMovableMass(150);
 		_selectChar->DrawRoute(_mapPos);
 	}
+}
+
+void PlayerCommander::StartTerrainEffectUpdate()
+{
+	StartTerrainEffect();
+	_uniqueUpdater = &PlayerCommander::TerrainEffectUpdate;
+}
+
+void PlayerCommander::StartNormalUpdate()
+{
+	_uniqueUpdater = &PlayerCommander::NormalUpdate;
 }
 
 void PlayerCommander::End()

@@ -22,7 +22,7 @@
 
 using namespace std;
 
-PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctrl)
+PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctrl), _lastTurnCnt(100)
 {
 	_effects.clear();
 	_charactors.clear();
@@ -33,6 +33,7 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctr
 
 	debug = true;
 	_mapId = mapId;
+	_turnCnt = 0;
 
 	_mapCtrl = make_shared<MapCtrl>(_charactors);
 	_camera = make_shared<Camera>(Rect(Vector2Int(), wsize));
@@ -179,13 +180,27 @@ bool PlayScene::TurnChengeUpdate(const Input& input)
 		{
 			_uniqueUpdater = &PlayScene::PlayerTurnUpdate;
 			_uniqueDrawer = &PlayScene::PlayerTurnDraw;
-			_playerCommander->StartTerrainEffect();
+			if (_turnCnt == 1)
+			{
+				_playerCommander->StartNormalUpdate();
+			}
+			else
+			{
+				_playerCommander->StartTerrainEffectUpdate();
+			}
 		}
 		else
 		{
 			_uniqueUpdater = &PlayScene::EnemyTurnUpdate;
 			_uniqueDrawer = &PlayScene::EnemyTurnDraw;
-			_enemyCommander->StartTerrainEffect();
+			if (_turnCnt == 1)
+			{
+				_enemyCommander->StartNormalUpdate();
+			}
+			else
+			{
+				_enemyCommander->StartTerrainEffectUpdate();
+			}
 		}
 	}
 	return true;
@@ -226,6 +241,13 @@ bool PlayScene::CharactorUpdate(const Input& input)
 
 void PlayScene::StartPlayerTurn()
 {
+	if (++_turnCnt >= _lastTurnCnt)
+	{
+		// ゲームオーバー
+		StartFadeOut(&PlayScene::ChangeGameOver);
+		return;
+	}
+
 	_uniqueUpdater = &PlayScene::TurnChengeUpdate;
 	_uniqueDrawer = &PlayScene::TurnChengeDraw;
 	_turnChangeAnim->TurnStart(Team::player);

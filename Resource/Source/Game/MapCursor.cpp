@@ -95,7 +95,7 @@ MapCursor::~MapCursor()
 {
 }
 
-Vector2Int MapCursor::GetMapPos() const
+const Vector2Int& MapCursor::GetMapPos() const
 {
 	return _mapPos;
 }

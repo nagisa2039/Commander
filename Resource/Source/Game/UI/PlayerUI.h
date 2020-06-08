@@ -13,6 +13,7 @@ class UI;
 class PlayerMenu;
 class MoveMenu;
 class StatusInfomation;
+class TerrainInf;
 
 class PlayerUI
 {
@@ -26,13 +27,12 @@ private:
 	std::deque<std::shared_ptr<UI>> _moveMenuDeque;
 	std::shared_ptr<MoveMenu> _moveMenu;
 
+	std::deque<std::shared_ptr<UI>> _terrainInfDeque;
+	std::shared_ptr<TerrainInf> _terrainInf;
+
 	std::deque<std::shared_ptr<UI>> _statusDeque;
 	std::deque<std::shared_ptr<UI>> _statusInfDeque;
 	std::deque<std::shared_ptr<UI>> _battlePreDeque;
-
-	std::unique_ptr<Track<float>> _terrainInfTrack;
-
-	void DrawTerrainInf();
 
 public:
 	PlayerUI(PlayerCommander& playerCommander, const MapCtrl& mapCtrl);

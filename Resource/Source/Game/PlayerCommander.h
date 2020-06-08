@@ -37,6 +37,9 @@ public:
 
 	void DrawMovableMass()override;
 
+	void StartTerrainEffectUpdate()override;
+	void StartNormalUpdate()override;
+
 	void End()override;
 
 	void SelectCharactor(Charactor* charactor, const bool nextTarget);

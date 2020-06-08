@@ -21,6 +21,7 @@ protected:
 	bool _end;
 
 	bool ChaeckCharactor();
+	void StartTerrainEffect();
 
 public:
 	Commander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera);
@@ -40,6 +41,10 @@ public:
 	// 選択中のキャラクターのポインターを返す
 	Charactor* GetSelectCharactor()const;
 
-	void StartTerrainEffect();
+	// 地形効果を受けてターンを開始する
+	virtual void StartTerrainEffectUpdate() = 0;
+
+	// 地形効果を受けないでターンを開始する	1ターン目に使用
+	virtual void StartNormalUpdate() = 0;
 };
 

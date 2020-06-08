@@ -90,5 +90,11 @@ void Commander::StartTerrainEffect()
 		if (charactor->GetTeam() != _ctrlTeam)continue;
 
 		charactor->StartTerrainEffect();
+
+		if (addCamera)
+		{
+			_camera.AddTargetActor(&*charactor);
+			addCamera = false;
+		}
 	}
 }

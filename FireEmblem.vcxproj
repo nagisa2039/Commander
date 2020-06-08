@@ -65,6 +65,7 @@
     <ClCompile Include="Resource\Source\Game\UI\PreparationUI.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\StatusInfomation.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\StatusWindow.cpp" />
+    <ClCompile Include="Resource\Source\Game\UI\TerrainInf.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\UI.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\WarSituation.cpp" />
     <ClCompile Include="Resource\Source\Game\Warrior.cpp" />
@@ -134,6 +135,7 @@
     <ClInclude Include="Resource\Source\Game\UI\PreparationUI.h" />
     <ClInclude Include="Resource\Source\Game\UI\StatusInfomation.h" />
     <ClInclude Include="Resource\Source\Game\UI\StatusWindow.h" />
+    <ClInclude Include="Resource\Source\Game\UI\TerrainInf.h" />
     <ClInclude Include="Resource\Source\Game\UI\UI.h" />
     <ClInclude Include="Resource\Source\Game\UI\WarSituation.h" />
     <ClInclude Include="Resource\Source\Game\Warrior.h" />

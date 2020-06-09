@@ -94,6 +94,11 @@ protected:
 	// 硬直が無くなったら移動を開始する
 	bool _moveStandby;
 
+	// デバッグ用
+	// 範囲内の敵と範囲外の敵のカウント
+	Vector2Int _targetCnt;
+	int _onelineListCnt;
+
 	// 場面後のの更新を行う
 	void(Charactor::* _updater)(const Input& input);
 	// 場面後のの描画を行う

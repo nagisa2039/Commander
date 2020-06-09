@@ -40,7 +40,7 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctr
 	_fade = make_unique<Fade>();
 	_turnChangeAnim = make_shared<TurnChangeAnim>();
 
-	_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
+	_playerCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
 	_enemyCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy, *_camera);
 
 	_camera->AddTargetActor(&*_playerCommander);

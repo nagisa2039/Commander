@@ -83,10 +83,10 @@ public:
 	void RouteSearch(Charactor& charactor);
 
 	// 指定した移動力で行ける場所を探す
-	bool MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, std::vector<std::vector<std::list<Astar::ResultPos>>>& resultPosListVec2, const Team team);
+	bool MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, std::list<Astar::ResultPos>& resultPosList, const Team team, const std::list<Astar::ResultPos>& excludeList);
 
 	// 指定キャラから視野範囲にいるキャラクターを返す
-	Vector2Int SearchMovePos(Charactor& charactor);
+	Vector2Int SearchMovePos(Charactor& charactor, Vector2Int& targetCnt);
 
 	void CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, const Team team);
 

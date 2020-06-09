@@ -96,11 +96,19 @@ void Charactor::NormalDraw()
 	float berLength = max(min(static_cast<float>(_status.health) / static_cast<float>(_startStatus.health), 1.0f), 0.0f);
 	DrawBox(hpLeftup, hpLeftup + hpberSize.ToVector2Int() * Vector2(berLength, 1.0f), GetTeamColor());
 
-	// レベルの描画
-	DrawFormatString(drawPos.x, drawPos.y, 0x000000, "Level.%d", _status.level);
-	// canMoveの描画
+	//// レベルの描画
+	//DrawFormatString(drawPos.x, drawPos.y, 0x000000, "Level.%d", _status.level);
+	//// canMoveの描画
+	//drawPos.y += 16;
+	//DrawFormatString(drawPos.x, drawPos.y, 0x000000, "CanMove "+ _canMove ? "true" : "false");
+
+	// targetCntの描画
 	drawPos.y += 16;
-	DrawFormatString(drawPos.x, drawPos.y, 0x000000, "CanMove "+ _canMove ? "true" : "false");
+	DrawFormatString(drawPos.x, drawPos.y, 0x000000, "InT%d", _targetCnt.x);
+	drawPos.y += 16;
+	DrawFormatString(drawPos.x, drawPos.y, 0x000000, "OutT%d",_targetCnt.y);
+	drawPos.y += 16;
+	DrawFormatString(drawPos.x, drawPos.y, 0x000000, "ollc%d", _onelineListCnt);
 }
 
 void Charactor::DyingDraw()
@@ -386,7 +394,7 @@ void Charactor::MoveCancel()
 
 void Charactor::SearchAndMove()
 {
-	MoveMapPos(_mapCtrl.SearchMovePos(*this));
+	MoveMapPos(_mapCtrl.SearchMovePos(*this, _targetCnt));
 }
 
 std::vector<std::vector<std::list<Astar::ResultPos>>>& Charactor::GetResutlPosListVec2()
@@ -621,13 +629,15 @@ void Charactor::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosLi
 	bool coverCheck = true;
 	for (auto itr = resultPosList.begin(); itr != resultPosList.end(); itr++)
 	{
-		auto charactor = _mapCtrl.GetMapPosChar(itr->mapPos);
-
 		// 移動力を超えるマスは無視する
 		if (itr->moveCnt > _status.move) continue;
 
-		if (itr->attack && (itr->prev->mapPos == GetMapPos() || _mapCtrl.GetMapPosChar(itr->prev->mapPos) == nullptr))
+		if (itr->attack)
 		{
+			// 現在いるマスでもなければ攻撃開始地点にキャラクターがいる
+			if (itr->prev->mapPos != GetMapPos() && _mapCtrl.GetMapPosChar(itr->prev->mapPos) != nullptr) continue;
+
+			coverCheck = false;
 			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
 			continue;
 		}
@@ -638,47 +648,39 @@ void Charactor::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosLi
 			continue;
 		}
 
-		// 攻撃開始地点にキャラクターがいないか
-		if (charactor == nullptr)
+		// 攻撃開始地点にほかのキャラクターがいるのでルートの再検索を行う
+		Size mapSize = _mapCtrl.GetMapSize();
+		list<Astar::ResultPos> addResultPosList;
+		addResultPosList.clear();
+
+		list<Astar::ResultPos> excludeList;
+		excludeList.clear();
+		for (auto exAddItr = itr; exAddItr != resultPosList.end(); exAddItr++)
 		{
-			coverCheck = false;
-			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
+			excludeList.emplace_back(*itr);
 		}
-		else
+
+		if (_mapCtrl.MoveRouteSearch(itr->prev->mapPos, max(0, _status.move - itr->prev->moveCnt), addResultPosList, _team, excludeList))
 		{
-			// 攻撃開始地点にほかのキャラクターがいるのでルートの再建策を行う
-			Size mapSize = _mapCtrl.GetMapSize();
-			vector<vector<list<Astar::ResultPos>>> addResultPosListVec2;
-			addResultPosListVec2.resize(mapSize.h);
-			for (auto& addResultPosListVec : addResultPosListVec2)
+			for (const auto& addResultPos : addResultPosList)
 			{
-				addResultPosListVec.resize(mapSize.w);
-			}
+				if (_mapCtrl.GetMapPosChar(addResultPos.mapPos) != nullptr) continue;
 
-			if (_mapCtrl.MoveRouteSearch(itr->mapPos, max(0, _status.move - itr->moveCnt - 1), addResultPosListVec2, _team))
-			{
-				// 移動可能な場所がなければ
-				if (addResultPosListVec2[itr->mapPos.y][itr->mapPos.x].size() <= 0)
+				for (auto add = addResultPos; add.prev != nullptr; add = *add.prev)
 				{
-					_moveDirList.clear();
-					continue;
-				}
-				coverCheck = false;
-				_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
-				auto addResultPos = *addResultPosListVec2[itr->mapPos.y][itr->mapPos.x].begin();
-				_moveDirList.emplace_back(MoveInf(addResultPos.dir, addResultPos.attack, addResultPos.mapPos));
-
-				for (auto resutlPos = itr->prev; resutlPos->prev != nullptr; resutlPos = resutlPos->prev)
-				{
-					_moveDirList.emplace_front(MoveInf(resutlPos->dir, resutlPos->attack, resutlPos->mapPos));
+					_moveDirList.emplace_front(MoveInf(addResultPos.dir, addResultPos.attack, addResultPos.mapPos));
 				}
 				break;
 			}
+
+			coverCheck = false;
+			continue;
 		}
 	}
 
 	if (_moveDirList.size() <= 0) return;
-	bool onTargetCharactor = _mapCtrl.GetMapPosChar(_moveDirList.rbegin()->mapPos) == nullptr;
+
+	// 最後の要素以外のattackをfalseにする
 	auto rItr = _moveDirList.rbegin();
 	rItr++;
 	for (; rItr != _moveDirList.rend(); rItr++)
@@ -727,6 +729,9 @@ Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team t
 	{
 		resultPosListVec.resize(mapSize.w);
 	}
+
+	_targetCnt = Vector2Int(0, 0);
+	_onelineListCnt = 0;
 }
 
 Charactor::~Charactor()
@@ -807,6 +812,7 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 
 
 	auto oneLineResutlList = CreateResultPosList(mapPos);
+	_onelineListCnt = oneLineResutlList.size();
 	if (oneLineResutlList.size() <= 0)return false;
 
 	CreateMoveDirList(oneLineResutlList);

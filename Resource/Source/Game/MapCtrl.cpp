@@ -384,15 +384,15 @@ void MapCtrl::RouteSearch(Charactor& charactor)
 		mapVec2, charactor.GetResutlPosListVec2(), charactor.GetTeam(), charactor.GetStatus().heal);
 }
 
-bool MapCtrl::MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, std::vector<std::vector<std::list<Astar::ResultPos>>>& resutlPosListVec2, const Team team)
+bool MapCtrl::MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, std::list<Astar::ResultPos>& resutlPosList, const Team team, const std::list<Astar::ResultPos>& excludeList)
 {
 	std::vector<std::vector<Astar::MapData>> mapVec2;
 	CreateMapVec(mapVec2, team);
 
-	return _astar->MoveRouteSerch(startPos, move, mapVec2, resutlPosListVec2, team);
+	return _astar->MoveRouteSerch(startPos, move, mapVec2, resutlPosList, team, excludeList);
 }
 
-Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
+Vector2Int MapCtrl::SearchMovePos(Charactor& charactor, Vector2Int& targetCnt)
 {
 	std::vector<std::vector<Astar::MapData>> mapVec2;
 	CreateMapVec(mapVec2, charactor.GetTeam());
@@ -451,6 +451,9 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
 			}
 		}
 	}
+
+	targetCnt.x = targetCharactorList.size();
+	targetCnt.y = outRangeCharactorList.size();
 	
 	// 選別
 	for (const auto& targetCharactor : targetCharactorList)
@@ -469,20 +472,18 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
 		{
 			// 最もダメージを受けているキャラクターを探す
 			targetCharactorList.sort([](const TargetCharactor& left, const TargetCharactor& right)
-			{
-				return left.charactor->GetHurtPoint() > right.charactor->GetHurtPoint();
-			});
+				{
+					return left.charactor->GetHurtPoint() > right.charactor->GetHurtPoint();
+				});
 			return targetCharactorList.begin()->charactor->GetMapPos();
 		}
-		else
+
+		// 最もダメージを与えられるキャラクターを探す
+		targetCharactorList.sort([&](const TargetCharactor& left, const TargetCharactor& right)
 		{
-			// 最もダメージを与えられるキャラクターを探す
-			targetCharactorList.sort([&](const TargetCharactor& left, const TargetCharactor& right)
-			{
-				return status.GetDamage(left.charactor->GetStatus()) > status.GetDamage(right.charactor->GetStatus());
-			});
-			return targetCharactorList.begin()->charactor->GetMapPos();
-		}
+			return status.GetDamage(left.charactor->GetStatus()) > status.GetDamage(right.charactor->GetStatus());
+		});
+		return targetCharactorList.begin()->charactor->GetMapPos();
 	}
 
 	if (outRangeCharactorList.size() > 0)

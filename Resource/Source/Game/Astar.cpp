@@ -164,14 +164,19 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 	return;
 }
 
-bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const std::vector<std::vector<MapData>>& mapData, std::vector<std::vector<std::list<Astar::ResultPos>>>& resutlPosListVec2, const Team team)
+bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const std::vector<std::vector<MapData>>& mapData, std::list<Astar::ResultPos>& resutlPosList, const Team team, const std::list<Astar::ResultPos>& excludeList)
 {
 	ResetSerchPosVec2D(mapData);
 	_searchPosVec2Move[startMapPos.y][startMapPos.x].moveCost = 0;
 	_searchPosVec2Move[startMapPos.y][startMapPos.x].state = Astar::SearchState::search;
 
-	auto tmpResutlPosList = list<ResultPos>();
-	tmpResutlPosList.emplace_back(ResultPos(false, startMapPos, nullptr, Dir::max, 0));
+	for (const auto& exclude : excludeList)
+	{
+		_searchPosVec2Move[exclude.mapPos.y][exclude.mapPos.x].state = Astar::SearchState::search;
+	}
+
+	resutlPosList.clear();
+	resutlPosList.emplace_back(ResultPos(false, startMapPos, nullptr, Dir::max, 0));
 
 	auto seachIdxList = list<Vector2Int>();
 	seachIdxList.clear();
@@ -198,8 +203,8 @@ bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const 
 				continue;
 			}
 
-			auto parentIt = tmpResutlPosList.begin();
-			for (; parentIt != tmpResutlPosList.end(); parentIt++)
+			auto parentIt = resutlPosList.begin();
+			for (; parentIt != resutlPosList.end(); parentIt++)
 			{
 				if (parentIt->mapPos == nowPos)
 				{
@@ -219,15 +224,10 @@ bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const 
 			// 移動可能な距離か
 			if (moveCnt <= move)
 			{
-				tmpResutlPosList.emplace_back(ResultPos(false, checkPos, &(*parentIt), static_cast<Dir>(i), moveCnt));
+				resutlPosList.emplace_back(ResultPos(false, checkPos, &(*parentIt), static_cast<Dir>(i), moveCnt));
 				// キャラクターがいない
 				if (checkPosTeam == Team::max)
 				{
-					resutlPosListVec2[checkPos.y][checkPos.x].emplace_front(ResultPos(false, checkPos, &(*parentIt), static_cast<Dir>(i), moveCnt));
-					for (auto parent = &*parentIt; parent->prev != nullptr; parent = parent->prev)
-					{
-						resutlPosListVec2[checkPos.y][checkPos.x].emplace_front(*parent);
-					}
 					return true;
 				}
 				_searchPosVec2Move[checkPos.y][checkPos.x] = SearchPos(checkPos, nowPos, Astar::SearchState::search, moveCnt);

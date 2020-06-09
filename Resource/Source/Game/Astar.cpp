@@ -39,7 +39,7 @@ Astar::~Astar()
 }
 
 void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Range& attackRange, const std::vector<std::vector<MapData>>& mapData, 
-	std::vector<std::vector<std::list<Astar::ResultPos>>>& resutlPosListVec2, const Team team, const bool heal)
+	std::vector<std::vector<std::list<Astar::ResultPos>>>& resutlPosListVec2, const Team team, const bool heal, const bool searchEnemy)
 {
 	ResetSerchPosVec2D(mapData);
 	_searchPosVec2Move[startMapPos.y][startMapPos.x].moveCost = 0;
@@ -54,7 +54,7 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 	}
 
 	// ˆÚ“®”ÍˆÍ‚ÌŒŸõ
-	AllMoveRouteSerch(startMapPos, move, mapData, resutlPosListVec2, team, true, heal);
+	AllMoveRouteSerch(startMapPos, move, mapData, resutlPosListVec2, team, true, heal, searchEnemy);
 	
 	// UŒ‚”ÍˆÍ‚ÌƒT[ƒ`
 	std::list<Astar::ResultPos> attackResultPosList;
@@ -72,8 +72,8 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 		{
 			for (auto& resutlPos : resutlPosList)
 			{
-				// –¡•û‚ÌêŠ‚©‚ç‚ÍUŒ‚”ÍˆÍ‚ğŒŸõ‚µ‚È‚¢
-				if(startMapPos != resutlPos.mapPos && team == mapData[resutlPos.mapPos.y][resutlPos.mapPos.x].team)continue;
+				// ˆÚ“®”ÍˆÍ“à‚Å–¡•û‚ÌêŠ‚©‚ç‚ÍUŒ‚”ÍˆÍ‚ğŒŸõ‚µ‚È‚¢
+				if(!searchEnemy && startMapPos != resutlPos.mapPos && team == mapData[resutlPos.mapPos.y][resutlPos.mapPos.x].team)continue;
 
 				// ‰Šú‰»
 				seachIdxList.clear();
@@ -142,33 +142,6 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 			}
 		}
 	}
-
-	//if (heal)
-	//{
-	//	for (auto& resutlPosListVec : resutlPosListVec2)
-	//	{
-	//		for (auto& resutlPosList : resutlPosListVec)
-	//		{
-	//			for (auto& resutlPos : resutlPosList)
-	//			{
-	//				// ‚»‚ÌêŠ‚É“G‚ª‚¢‚é‚©‰ŠúÀ•W‚È‚çcontinue
-	//				if (mapData[resutlPos.mapPos.y][resutlPos.mapPos.x].team != team || resutlPos.mapPos == startMapPos)
-	//				{
-	//					continue;
-	//				}
-
-	//				for (const auto& attack : attackResultPosList)
-	//				{
-	//					if (resutlPos.mapPos == attack.mapPos)
-	//					{
-	//						resutlPos.attack = true;
-	//						continue;
-	//					}
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
 
 	// UŒ‚”ÍˆÍ•ª‚ğ_resutlPosList‚ÉŒ‹‡
 	for (const auto& attackResultPos : attackResultPosList)
@@ -268,16 +241,8 @@ bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const 
 }
 
 void Astar::AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, const std::vector<std::vector<MapData>>& mapData, 
-	std::vector<std::vector<std::list<Astar::ResultPos>>>& resutlPosListVec2, const Team team, const bool addThrough, const bool heal)
+	std::vector<std::vector<std::list<Astar::ResultPos>>>& resutlPosListVec2, const Team team, const bool addThrough, const bool heal, const bool searchEnemy)
 {
-	for (auto& resutlPosListVec : resutlPosListVec2)
-	{
-		for (auto& resutlPosList : resutlPosListVec)
-		{
-			resutlPosList.clear();
-		}
-	}
-
 	resutlPosListVec2[startMapPos.y][startMapPos.x].emplace_back(ResultPos(false, startMapPos, nullptr, Dir::max, 0));
 
 	auto seachIdxList = list<Vector2Int>();
@@ -315,7 +280,7 @@ void Astar::AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, con
 			auto moveCnt = _searchPosVec2Move[nowPos.y][nowPos.x].moveCost + mapData[checkPos.y][checkPos.x].moveCost;
 
 			// ˆÚ“®‰Â”\‚È‹——£‚©
-			if (moveCnt <= move)
+			if (moveCnt <= (searchEnemy ? 100 : move))
 			{
 				_searchPosVec2Move[checkPos.y][checkPos.x] = SearchPos(checkPos, nowPos, Astar::SearchState::search, moveCnt);
 				seachIdxList.emplace_back(checkPos);

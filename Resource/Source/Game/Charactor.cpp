@@ -621,10 +621,12 @@ void Charactor::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosLi
 	bool coverCheck = true;
 	for (auto itr = resultPosList.begin(); itr != resultPosList.end(); itr++)
 	{
+		auto charactor = _mapCtrl.GetMapPosChar(itr->mapPos);
+
 		// 移動力を超えるマスは無視する
 		if (itr->moveCnt > _status.move) continue;
 
-		if (itr->attack)
+		if (itr->attack && (itr->prev->mapPos == GetMapPos() || _mapCtrl.GetMapPosChar(itr->prev->mapPos) == nullptr))
 		{
 			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
 			continue;
@@ -637,7 +639,7 @@ void Charactor::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosLi
 		}
 
 		// 攻撃開始地点にキャラクターがいないか
-		if (_mapCtrl.GetMapPosChar(itr->mapPos) == nullptr)
+		if (charactor == nullptr)
 		{
 			coverCheck = false;
 			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
@@ -809,7 +811,7 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 
 	CreateMoveDirList(oneLineResutlList);
 
-	_isMoveAnim = true;
+	_isMoveAnim = _moveDirList.size() > 0;
 
 	_status.move = /*max(_status.move - oneLineResutlList.begin()->moveCnt, 0);*/0;
 

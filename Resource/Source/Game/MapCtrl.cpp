@@ -400,13 +400,14 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
 
 	bool heal = charactor.GetStatus().heal;
 	auto& resultPosListVec2 = charactor.GetResutlPosListVec2();
-	_astar->RouteSearch(charactor.GetMapPos(), charactor.GetMoveActive() ? 100 : status.move, charactor.GetAttackRange(), 
-		mapVec2, resultPosListVec2, charactor.GetTeam(), heal);
+	_astar->RouteSearch(charactor.GetMapPos(), status.move, charactor.GetAttackRange(), 
+		mapVec2, resultPosListVec2, charactor.GetTeam(), heal, charactor.GetMoveActive());
 
 	struct TargetCharactor
 	{
 		Charactor* charactor;
 		int distance;
+		Astar::ResultPos resultPos;
 
 		TargetCharactor():charactor(nullptr), distance(1){};
 		TargetCharactor(Charactor* ch, const int di) :charactor(ch), distance(di) {};
@@ -435,8 +436,10 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor)
 				// 探しているチームがいるか
 				if (heal != (charactor.GetTeam() == mapCharactor->GetTeam()))continue;
 
-				// 攻撃範囲外
-				if (resultPos.moveCnt > status.move)
+				// 攻撃開始地点にいるキャラクター
+				auto prevChar = GetMapPosChar(resultPos.prev->mapPos);
+				// 攻撃範囲外か
+				if (resultPos.moveCnt > status.move || (prevChar != nullptr && prevChar != &charactor))
 				{
 					outRangeCharactorList.emplace_back(mapCharactor);
 					continue;

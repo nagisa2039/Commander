@@ -55,6 +55,7 @@ void StatusInf::Close()
 
 void StatusInf::Draw()
 {
+	if (_targetPosList.size() <= 0)return;
 	auto charactor = _mapCtrl.GetMapPosChar(*_targetPosList.begin());
 	if (charactor == nullptr)return;
 

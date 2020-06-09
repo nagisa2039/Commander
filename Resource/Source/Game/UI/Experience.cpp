@@ -84,8 +84,11 @@ Experience::Experience(BattleCharactor& battleChar, std::deque<std::shared_ptr<U
 {
 	auto status = _battleChar.GetCharacotr().GetStatus();
 	auto targetStatus = _battleChar.GetTargetBattleCharactor()->GetCharacotr().GetStartStatus();
-	auto expData = Application::Instance().GetDataBase().GetExpData(status.level);
-	_addExp = expData.getPoint * (battleChar.GetGivenDamage() / static_cast<float>(targetStatus.health));
+	auto dataBase = Application::Instance().GetDataBase();
+	auto expData = dataBase.GetExpData(status.level);
+	auto targetExpData = dataBase.GetExpData(targetStatus.level);
+	// 回復なら固定値で10point, レベルごとの基本値 * 攻撃なら与えたダメージ割合で算出
+	_addExp = status.heal ? 10 : targetExpData.getPoint * (battleChar.GetGivenDamage() / static_cast<float>(targetStatus.health));
 	_currentExp = status.exp;
 	_currentAddExp = _addExp;
 	_maxExp = expData.maxPoint;

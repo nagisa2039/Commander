@@ -35,7 +35,8 @@ PlayerUI::PlayerUI(PlayerCommander& playerCommander, const MapCtrl& mapCtrl): _p
 	_terrainInf = make_shared<TerrainInf>(_terrainInfDeque, _mapCtrl, playerCommander.GetMapPos());
 	_terrainInfDeque.emplace_back(_terrainInf);
 
-	_statusInfDeque.emplace_back(make_shared<StatusInfomation>(_statusInfDeque, _mapCtrl, _playerCommander, *this));
+	_statusInf = make_shared<StatusInf>(_statusInfDeque, _mapCtrl, playerCommander.GetMapPos());
+	_statusInfDeque.emplace_back(_statusInf);
 }
 
 PlayerUI::~PlayerUI()
@@ -58,10 +59,12 @@ void PlayerUI::Update(const Input& input)
 	if (GetUIIsOpen())
 	{
 		_terrainInf->Close();
+		_statusInf->Close();
 	}
 	else
 	{
 		_terrainInf->Open();
+		_statusInf->Open();
 	}
 
 	auto UpdateDeque = [](auto deque, const Input& input)

@@ -7,6 +7,11 @@
 #include "FileSystem.h"
 #include "DxLibUtility.h"
 #include "UI/PreparationUI.h"
+#include "UI/TerrainInf.h"
+#include "UI/StatusInfomation.h"
+#include "UI/StatusWindow.h"
+
+using namespace std;
 
 BattlePreparationCursor::BattlePreparationCursor(MapCtrl& mapCtrl, Camera& camera):MapCursor(mapCtrl, camera)
 {
@@ -17,6 +22,16 @@ BattlePreparationCursor::BattlePreparationCursor(MapCtrl& mapCtrl, Camera& camer
 	_exRateTrack->AddKey(0, 0.8f);
 	_exRateTrack->AddKey(30, 1.0f);
 	_exRateTrack->AddKey(60, 0.8f);
+
+	_terrainInfDeque.clear();
+	_statusInfDeque.clear();
+	_statusWindowDeque.clear();
+
+	_terrainInf = make_shared<TerrainInf>(_terrainInfDeque, _mapCtrl, _mapPos);
+	_terrainInfDeque.emplace_back(_terrainInf);
+
+	_statusInf = make_shared<StatusInf>(_statusInfDeque, _mapCtrl, _mapPos);
+	_statusInfDeque.emplace_back(_statusInf);
 }
 
 BattlePreparationCursor::~BattlePreparationCursor()
@@ -25,17 +40,49 @@ BattlePreparationCursor::~BattlePreparationCursor()
 
 void BattlePreparationCursor::Update(const Input& input)
 {
-	CursorMove(input);
+	bool open = _statusWindowDeque.size() > 0;
+	if (!open)
+	{
+		CursorMove(input);
+	}
 	_exRateTrack->Update();
 
-	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
+	if (open)
 	{
-		Select();
+		_terrainInf->Close();
+		_statusInf->Close();
 	}
 
-	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
+	auto dequeUpdate = [&](std::deque<std::shared_ptr<UI>>& uiDeque)
 	{
-		_end = true;
+		if (uiDeque.size() <= 0)return;
+		(*uiDeque.begin())->Update(input);
+	};
+	dequeUpdate(_statusWindowDeque);
+	dequeUpdate(_terrainInfDeque);
+	dequeUpdate(_statusInfDeque);
+
+	if (!open)
+	{
+		if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
+		{
+			Select();
+		}
+
+		if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
+		{
+			_end = true;
+		}
+
+		if (input.GetButtonDown(0, "status") || input.GetButtonDown(1, "status"))
+		{
+			auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
+			if (charactor == nullptr)return;
+			_statusWindowDeque.emplace_back(make_shared<StatusWindow>(_statusWindowDeque, *charactor));
+		}
+
+		_terrainInf->Open();
+		_statusInf->Open();
 	}
 }
 
@@ -46,6 +93,7 @@ void BattlePreparationCursor::Select()
 
 	if(charactorChips.team != Team::player || charactorChips.type == CharactorType::max)return;
 
+	// キャラクターの選択
 	if (_selectChar == nullptr)
 	{
 		if (charactor == nullptr)return;
@@ -54,22 +102,32 @@ void BattlePreparationCursor::Select()
 		return;
 	}
 
+	// 選択解除
 	if (_selectChar == charactor)
 	{
 		_selectChar = nullptr;
 		return;
 	}
 
+	// 空きマスなら
 	if (charactor == nullptr)
 	{
 		if (charactorChips.team != Team::player)return;
 
+		// 選択キャラをセット
 		_selectChar->InitmapPos(charactorChips.mapPos);
 	}
 	else
 	{
+		// 選択キャラをそのマスにいるキャラと入れ替える
 		charactor->InitmapPos(_selectChar->GetMapPos());
 		_selectChar->InitmapPos(_mapPos);
+	}
+
+	// 移動したのでルートの再検索
+	for (auto& charactor : _mapCtrl.GetCharacots())
+	{
+		charactor->RouteSearch();
 	}
 	_selectChar = nullptr;
 }
@@ -85,9 +143,21 @@ void BattlePreparationCursor::Draw()
 
 	DrawRectRotaGraph(offset + _mapPos * chipSize + chipSize * 0.5, Vector2Int(0, 0), graphSize,
 		_exRateTrack->GetValue() * (chipSize.w / static_cast<float>(graphSize.w)), 0.0f, handle);
+
+	auto dequeDraw = [&](std::deque<std::shared_ptr<UI>>& uiDeque)
+	{
+		for (auto rItr = uiDeque.rbegin(); rItr != uiDeque.rend(); rItr++)
+		{
+			(*rItr)->Draw();
+		}
+	};
+
+	dequeDraw(_terrainInfDeque);
+	dequeDraw(_statusInfDeque);
+	dequeDraw(_statusWindowDeque);
 }
 
-void BattlePreparationCursor::DrawsSortieMass()
+void BattlePreparationCursor::DrawSortieMass()
 {
 	auto offset = _camera.GetCameraOffset();
 	for (const auto& mapDataVec : _mapCtrl.GetMapData())
@@ -106,6 +176,14 @@ void BattlePreparationCursor::DrawsSortieMass()
 			}
 		}
 	}
+}
+
+void BattlePreparationCursor::DrawMovableMass()
+{
+	auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
+	if (charactor == nullptr) return;
+
+	charactor->DrawMovableMass(64);
 }
 
 bool BattlePreparationCursor::GetEnd() const

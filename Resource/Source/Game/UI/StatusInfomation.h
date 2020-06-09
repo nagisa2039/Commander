@@ -8,22 +8,23 @@ class MapCtrl;
 class MapCursor;
 class PlayerUI;
 
-class StatusInfomation
+class StatusInf
 	: public UI
 {
 private:
 	const MapCtrl& _mapCtrl;
-	const MapCursor& _cursor;
-	const PlayerUI& _playerUI;
+	const Vector2Int& _mapPos;
 
-	std::unique_ptr<Track<float>> _moveAnimTrack;
 	std::list<Vector2Int> _targetPosList;
+	std::unique_ptr<Track<float>> _moveAnimTrack;
 
 public:
-	StatusInfomation(std::deque<std::shared_ptr<UI>>& uiDeque, const MapCtrl& mapCtrl, const MapCursor& cursor, const PlayerUI& playerUI);
-	~StatusInfomation();
+	StatusInf(std::deque<std::shared_ptr<UI>>& uiDeque, const MapCtrl& mapCtrl, const Vector2Int& mapPos);
+	~StatusInf();
 
 	void Update(const Input& input)override;
 	void Draw()override;
+	void Open();
+	void Close();
 };
 

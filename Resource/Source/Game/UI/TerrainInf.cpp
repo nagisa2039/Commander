@@ -31,41 +31,55 @@ void TerrainInf::Draw()
 	// ínå`èÓïÒÇÃï`âÊ
 
 	// ìyë‰ÇÃï`âÊ
-	Rect terrainInfRect = Rect(Lerp(Vector2Int(-80, 65), Vector2Int(100, 65), _animTrack->GetValue()), Size(160, 90));
-	DrawGraph(terrainInfRect.Left(), terrainInfRect.Top(), Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/terrainInf.png"), true);
+	Vector2Int space(0, 20);
+	auto graphH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/terrainNameFrame.png");
+	Size graphSize;
+	GetGraphSize(graphH, graphSize);
+	Rect terrainInfRect = Rect(Lerp(Vector2Int(-graphSize.w*0.5f, space.y + graphSize.h * 0.5f), space + graphSize * 0.5f, _animTrack->GetValue()), graphSize);
+	DrawGraph(terrainInfRect.Left(), terrainInfRect.Top(), graphH, true);
 
-	int drawY = terrainInfRect.Top();
 	auto mapChipData = Application::Instance().GetDataBase().GetMapChipData( _mapCtrl.GetMapData(_mapPos).mapChip);
 
 	int choplin40 = Application::Instance().GetFileSystem()->GetFontHandle("choplin40");
-	Size strSize;
-	int lineCnt;
-	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, choplin40, mapChipData.name.c_str());
-	auto namePos = GetDrawPos(Vector2Int(terrainInfRect.center.x, drawY), strSize, Anker::centerup);
-	DrawFormatStringToHandle(namePos.x, namePos.y, 0xffffff, choplin40, mapChipData.name.c_str());
-	drawY += strSize.h;
+	DrawStringToHandle(terrainInfRect.center, Anker::center, 0xffffff, choplin40, mapChipData.name.c_str());
 
-	int choplin20 = Application::Instance().GetFileSystem()->GetFontHandle("choplin20");
+	if (_animTrack->GetReverse())return;
 
-	auto drawNum = [](const int num, const Vector2Int rightup, const int fontHandle, const unsigned int color = 0xffffff)
+	int choplin20No = Application::Instance().GetFileSystem()->GetFontHandle("choplin20No");
+	Vector2Int leftup = Vector2Int(terrainInfRect.Right(), terrainInfRect.Top());
+	int efcSpaceX = 5;
+	const unsigned normalColor = 0x000000;
+	const unsigned badColor = 0xff0000;
+
+	auto drawEffect = [&](const char* graphPath, const char* drawString, const bool badEffect)
 	{
-		char str[20];
-		sprintf_s(str, 20, "%d", num);
-		Size strSize;
-		int lineCnt;
-		GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, fontHandle, str);
-		auto drawPos = GetDrawPos(rightup, strSize, Anker::rightup);
-		DrawFormatStringToHandle(drawPos.x, drawPos.y, color, fontHandle, str);
+		auto graphH = Application::Instance().GetFileSystem()->GetImageHandle(graphPath);
+		Size graphSize;
+		GetGraphSize(graphH, graphSize);
+		DrawGraph(leftup, graphH);
+		DrawStringToHandle(leftup + (graphSize.ToVector2() * Vector2(0.5f, 0.75f)).ToVector2Int(), Anker::center, 
+			badEffect ? badColor : normalColor, choplin20No, drawString);
+		leftup.x += (graphSize.w + efcSpaceX);
 	};
 
-	int offsetX = 15;
-	DrawFormatStringToHandle(terrainInfRect.Left() + offsetX, drawY, 0xffffff, choplin20, "DFE.");
-	drawNum(mapChipData.defense, Vector2Int(terrainInfRect.Right() - offsetX, drawY), choplin20);
-	drawY += 20;
-
-	DrawFormatStringToHandle(terrainInfRect.Left() + offsetX, drawY, 0xffffff, choplin20, "AVD.");
-	drawNum(mapChipData.avoidance, Vector2Int(terrainInfRect.Right() - offsetX, drawY), choplin20);
-	drawY += 20;
+	if (abs(mapChipData.avoidance) > 0)
+	{
+		char buf[10];
+		sprintf_s(buf, 10, "%dÅì", mapChipData.avoidance);
+		drawEffect("Resource/Image/UI/terrainAvoid.png", buf, mapChipData.avoidance < 0);
+	}
+	if (abs(mapChipData.defense) > 0)
+	{
+		char buf[10];
+		sprintf_s(buf, 10, "%d", mapChipData.defense);
+		drawEffect("Resource/Image/UI/terrainDef.png", buf, mapChipData.defense < 0);
+	}
+	if (abs(mapChipData.recovery) > 0)
+	{
+		char buf[10];
+		sprintf_s(buf, 10, "%dÅì", mapChipData.recovery);
+		drawEffect("Resource/Image/UI/terrainRecover.png", buf, mapChipData.recovery < 0);
+	}
 }
 
 void TerrainInf::Close()

@@ -12,8 +12,9 @@ class Input;
 class UI;
 class PlayerMenu;
 class MoveMenu;
-class StatusInfomation;
+class StatusInf;
 class TerrainInf;
+class StatusInf;
 
 class PlayerUI
 {
@@ -31,6 +32,8 @@ private:
 	std::shared_ptr<TerrainInf> _terrainInf;
 
 	std::deque<std::shared_ptr<UI>> _statusDeque;
+	std::shared_ptr<StatusInf> _statusInf;
+
 	std::deque<std::shared_ptr<UI>> _statusInfDeque;
 	std::deque<std::shared_ptr<UI>> _battlePreDeque;
 

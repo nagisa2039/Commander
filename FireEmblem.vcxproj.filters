@@ -480,4 +480,9 @@
       <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="test.hlsl">
+      <Filter>ソース ファイル</Filter>
+    </FxCompile>
+  </ItemGroup>
 </Project>

@@ -9,8 +9,8 @@
 #include "Charactor.h"
 #include "PlayerUI.h"
 
-StatusInfomation::StatusInfomation(std::deque<std::shared_ptr<UI>>& uiDeque, const MapCtrl& mapCtrl, const MapCursor& cursor, const PlayerUI& playerUI)
-	:UI(uiDeque), _mapCtrl(mapCtrl), _cursor(cursor), _playerUI(playerUI)
+StatusInf::StatusInf(std::deque<std::shared_ptr<UI>>& uiDeque, const MapCtrl& mapCtrl, const Vector2Int& mapPos)
+	:UI(uiDeque), _mapCtrl(mapCtrl), _mapPos(mapPos)
 {
 	_moveAnimTrack = std::make_unique<Track<float>>();
 	_moveAnimTrack->AddKey(0, 0.0f);
@@ -19,43 +19,42 @@ StatusInfomation::StatusInfomation(std::deque<std::shared_ptr<UI>>& uiDeque, con
 	_targetPosList.clear();
 }
 
-StatusInfomation::~StatusInfomation()
+StatusInf::~StatusInf()
 {
 }
 
-void StatusInfomation::Update(const Input& input)
+void StatusInf::Update(const Input& input)
 {
-	if (_playerUI.GetUIIsOpen())
-	{
-		if (!_moveAnimTrack->GetReverse())
-		{
-			_moveAnimTrack->SetReverse(true);
-			_moveAnimTrack->Reset();
-		}
-	}
-	else
-	{
-		if (_moveAnimTrack->GetReverse())
-		{
-			_moveAnimTrack->SetReverse(false);
-			_moveAnimTrack->Reset();
-		}
-
-		auto currentMapPos = _cursor.GetMapPos();
-		if (_targetPosList.size() <= 0 || *_targetPosList.begin() != currentMapPos)
-		{
-			_targetPosList.emplace_front(currentMapPos);
-			_moveAnimTrack->SetReverse(false);
-			_moveAnimTrack->Reset();
-		}
-	}
-
 	_moveAnimTrack->Update();
 }
 
-void StatusInfomation::Draw()
+void StatusInf::Open()
 {
-	if (_targetPosList.size() <= 0) return;
+	if (_moveAnimTrack->GetReverse())
+	{
+		_moveAnimTrack->SetReverse(false);
+		_moveAnimTrack->Reset();
+	}
+
+	if (_targetPosList.size() <= 0 || *_targetPosList.begin() != _mapPos)
+	{
+		_targetPosList.emplace_front(_mapPos);
+		_moveAnimTrack->SetReverse(false);
+		_moveAnimTrack->Reset();
+	}
+}
+
+void StatusInf::Close()
+{
+	if (!_moveAnimTrack->GetReverse())
+	{
+		_moveAnimTrack->SetReverse(true);
+		_moveAnimTrack->Reset();
+	}
+}
+
+void StatusInf::Draw()
+{
 	auto charactor = _mapCtrl.GetMapPosChar(*_targetPosList.begin());
 	if (charactor == nullptr)return;
 

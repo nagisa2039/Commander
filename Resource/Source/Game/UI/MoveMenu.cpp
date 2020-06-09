@@ -9,6 +9,7 @@ void MoveMenu::Decision()
 {
 	if (_isBattle)
 	{
+		_isBattle = false;
 		_playerCommander.BattleStart();
 		Close(false);
 		return;

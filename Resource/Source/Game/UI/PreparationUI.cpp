@@ -191,8 +191,8 @@ void PreparationUI::Draw()
 
 void PreparationUI::BeginDraw()
 {
-	_battlePreparationCursor->DrawSortieMass();
 	_battlePreparationCursor->DrawMovableMass();
+	_battlePreparationCursor->DrawSortieMass();
 }
 
 void PreparationUI::Open(const bool animation)

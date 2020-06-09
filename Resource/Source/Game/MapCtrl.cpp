@@ -171,7 +171,7 @@ void MapCtrl::Draw(const Camera& camera, const bool edit)
 bool MapCtrl::DrawSortieMass(const Vector2Int& offset, const CharactorChipInf& charactorChipInf, const unsigned int color, const unsigned int frameColor)
 {
 	if (charactorChipInf.team != Team::player || charactorChipInf.type == CharactorType::max)return false;
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 192);
 	auto chipSize = GetChipSize();
 	Vector2Int leftup = offset + charactorChipInf.mapPos * chipSize;
 	DrawBox(leftup, leftup + chipSize, color);

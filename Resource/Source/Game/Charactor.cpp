@@ -570,7 +570,9 @@ std::list<Astar::ResultPos> Charactor::CreateResultPosList(const Vector2Int mapP
 		{
 			for (const auto& targetPos : _resultPosListVec2[mapPos.y][mapPos.x])
 			{
-				if (targetPos.prev->prev == nullptr || _mapCtrl.GetMapPosChar(targetPos.prev->mapPos) == nullptr)
+				// ひとつ前のマスが自分か、空きスペースなら
+				auto prevCharactor = _mapCtrl.GetMapPosChar(targetPos.prev->mapPos);
+				if (prevCharactor == this || prevCharactor == nullptr)
 				{
 					startResultPos = targetPos;
 					break;
@@ -588,10 +590,28 @@ std::list<Astar::ResultPos> Charactor::CreateResultPosList(const Vector2Int mapP
 			{
 				for (const auto& targetPos : _resultPosListVec2[mapPos.y][mapPos.x])
 				{
-					Vector2Int startPos = targetPos.prev == nullptr ? GetMapPos() : targetPos.prev->mapPos;
-					Vector2Int disVec = targetPos.mapPos - startPos;
-					unsigned int distance = abs(disVec.x) + abs(disVec.y);
-					if (criticalRange.Hit(distance))
+					// ひとつ前のマスが自分か、空きスペースなら
+					auto prevCharactor = _mapCtrl.GetMapPosChar(targetPos.prev->mapPos);
+					if (prevCharactor == this || prevCharactor == nullptr)
+					{
+						Vector2Int startPos = targetPos.prev == nullptr ? GetMapPos() : targetPos.prev->mapPos;
+						Vector2Int disVec = targetPos.mapPos - startPos;
+						unsigned int distance = abs(disVec.x) + abs(disVec.y);
+						if (criticalRange.Hit(distance))
+						{
+							startResultPos = targetPos;
+							break;
+						}
+					}
+				}
+			}
+			else
+			{
+				for (const auto& targetPos : _resultPosListVec2[mapPos.y][mapPos.x])
+				{
+					// ひとつ前のマスが自分か、空きスペースなら
+					auto prevCharactor = _mapCtrl.GetMapPosChar(targetPos.prev->mapPos);
+					if (prevCharactor == this || prevCharactor == nullptr)
 					{
 						startResultPos = targetPos;
 						break;
@@ -627,10 +647,17 @@ void Charactor::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosLi
 
 	// 攻撃開始地点に敵が居ないかを確認するためのフラグ
 	bool coverCheck = true;
+	bool reSearch = false;
 	for (auto itr = resultPosList.begin(); itr != resultPosList.end(); itr++)
 	{
 		// 移動力を超えるマスは無視する
 		if (itr->moveCnt > _status.move) continue;
+
+		if (!coverCheck)
+		{
+			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
+			continue;
+		}
 
 		if (itr->attack)
 		{
@@ -642,36 +669,45 @@ void Charactor::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosLi
 			continue;
 		}
 
-		if (!coverCheck)
+		// 移動先にキャラクターがいないなら
+		if (_mapCtrl.GetMapPosChar(itr->mapPos) == nullptr)
 		{
+			coverCheck = false;
 			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
 			continue;
 		}
 
-		// 攻撃開始地点にほかのキャラクターがいるのでルートの再検索を行う
+		// ひとつ前に空きがあるなら採用する
+		if (itr->prev != nullptr && _mapCtrl.GetMapPosChar(itr->prev->mapPos) == nullptr)
+		{
+			coverCheck = false;
+			continue;
+		}
+
+		// 移動先にほかのキャラクターがいるのでルートの再検索を行う
 		Size mapSize = _mapCtrl.GetMapSize();
 		list<Astar::ResultPos> addResultPosList;
 		addResultPosList.clear();
 
 		list<Astar::ResultPos> excludeList;
-		excludeList.clear();
-		for (auto exAddItr = itr; exAddItr != resultPosList.end(); exAddItr++)
+		excludeList.clear(); 
+		auto exAddItr = itr;
+		exAddItr++;
+		for (; exAddItr != resultPosList.end(); exAddItr++)
 		{
-			excludeList.emplace_back(*itr);
+			excludeList.emplace_back(*exAddItr);
 		}
 
-		if (_mapCtrl.MoveRouteSearch(itr->prev->mapPos, max(0, _status.move - itr->prev->moveCnt), addResultPosList, _team, excludeList))
+		if (reSearch) continue;
+
+		reSearch = true;
+		if (_mapCtrl.MoveRouteSearch(itr->mapPos, max(0, min(itr->moveCnt - 1, _status.move - itr->moveCnt - 1)), addResultPosList, _team, excludeList))
 		{
 			for (const auto& addResultPos : addResultPosList)
 			{
-				if (_mapCtrl.GetMapPosChar(addResultPos.mapPos) != nullptr) continue;
-
-				for (auto add = addResultPos; add.prev != nullptr; add = *add.prev)
-				{
-					_moveDirList.emplace_front(MoveInf(addResultPos.dir, addResultPos.attack, addResultPos.mapPos));
-				}
-				break;
+				_moveDirList.emplace_front(MoveInf(addResultPos.dir, addResultPos.attack, addResultPos.mapPos));
 			}
+			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
 
 			coverCheck = false;
 			continue;

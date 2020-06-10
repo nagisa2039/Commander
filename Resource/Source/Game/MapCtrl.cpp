@@ -386,6 +386,8 @@ void MapCtrl::RouteSearch(Charactor& charactor)
 
 bool MapCtrl::MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, std::list<Astar::ResultPos>& resutlPosList, const Team team, const std::list<Astar::ResultPos>& excludeList)
 {
+	if (move <= 0)return false;
+
 	std::vector<std::vector<Astar::MapData>> mapVec2;
 	CreateMapVec(mapVec2, team);
 
@@ -409,14 +411,14 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor, Vector2Int& targetCnt)
 		int distance;
 		Astar::ResultPos resultPos;
 
-		TargetCharactor():charactor(nullptr), distance(1){};
-		TargetCharactor(Charactor* ch, const int di) :charactor(ch), distance(di) {};
+		TargetCharactor():charactor(nullptr), distance(1), resultPos(Astar::ResultPos()){};
+		TargetCharactor(Charactor* ch, const int di, const Astar::ResultPos& rp) :charactor(ch), distance(di), resultPos(rp){};
 	};
 
 	// 範囲内の敵を格納するリスト
 	list<TargetCharactor> targetCharactorList;
 	// 派以外の敵を格納するリスト
-	list<Charactor*> outRangeCharactorList;
+	list<TargetCharactor> outRangeCharactorList;
 	for (size_t y = 0; y < resultPosListVec2.size(); y++)
 	{
 		for (size_t x = 0; x < resultPosListVec2[y].size(); x++)
@@ -436,18 +438,19 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor, Vector2Int& targetCnt)
 				// 探しているチームがいるか
 				if (heal != (charactor.GetTeam() == mapCharactor->GetTeam()))continue;
 
+				auto mapPosSub = mapCharactor->GetMapPos() - (resultPos.prev == nullptr ? charactor.GetMapPos() : resultPos.prev->mapPos);
+				int distance = abs(mapPosSub.x) + abs(mapPosSub.y);
+
 				// 攻撃開始地点にいるキャラクター
 				auto prevChar = GetMapPosChar(resultPos.prev->mapPos);
 				// 攻撃範囲外か
 				if (resultPos.moveCnt > status.move || (prevChar != nullptr && prevChar != &charactor))
 				{
-					outRangeCharactorList.emplace_back(mapCharactor);
+					outRangeCharactorList.emplace_back(TargetCharactor(mapCharactor, distance, resultPos));
 					continue;
 				}
 
-				auto mapPosSub = mapCharactor->GetMapPos() - (resultPos.prev == nullptr ? charactor.GetMapPos() : resultPos.prev->mapPos);
-				int distance = abs(mapPosSub.x) + abs(mapPosSub.y);
-				targetCharactorList.emplace_back(TargetCharactor(mapCharactor, distance));
+				targetCharactorList.emplace_back(TargetCharactor(mapCharactor, distance, resultPos));
 			}
 		}
 	}
@@ -472,9 +475,9 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor, Vector2Int& targetCnt)
 		{
 			// 最もダメージを受けているキャラクターを探す
 			targetCharactorList.sort([](const TargetCharactor& left, const TargetCharactor& right)
-				{
-					return left.charactor->GetHurtPoint() > right.charactor->GetHurtPoint();
-				});
+			{
+				return left.charactor->GetHurtPoint() > right.charactor->GetHurtPoint();
+			});
 			return targetCharactorList.begin()->charactor->GetMapPos();
 		}
 
@@ -488,8 +491,13 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor, Vector2Int& targetCnt)
 
 	if (outRangeCharactorList.size() > 0)
 	{
-		auto charactor = *outRangeCharactorList.begin();
-		return charactor->GetMapPos();
+		// 一番近いキャラクターを採用する
+		outRangeCharactorList.sort([](const TargetCharactor& lval, const TargetCharactor& rval) 
+		{
+				return lval.resultPos.moveCnt < rval.resultPos.moveCnt;
+		});
+		auto targetCharactor = *outRangeCharactorList.begin();
+		return targetCharactor.charactor->GetMapPos();
 	}
 	return Vector2Int(-1,-1);
 }

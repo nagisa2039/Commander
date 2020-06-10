@@ -176,7 +176,11 @@ bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const 
 	}
 
 	resutlPosList.clear();
-	resutlPosList.emplace_back(ResultPos(false, startMapPos, nullptr, Dir::max, 0));
+
+	list<Astar::ResultPos> tmpList;
+	tmpList.clear();
+	tmpList.emplace_back(ResultPos(false, startMapPos, nullptr, Dir::max, 0));
+
 
 	auto seachIdxList = list<Vector2Int>();
 	seachIdxList.clear();
@@ -203,8 +207,8 @@ bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const 
 				continue;
 			}
 
-			auto parentIt = resutlPosList.begin();
-			for (; parentIt != resutlPosList.end(); parentIt++)
+			auto parentIt = tmpList.begin();
+			for (; parentIt != tmpList.end(); parentIt++)
 			{
 				if (parentIt->mapPos == nowPos)
 				{
@@ -224,10 +228,14 @@ bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const 
 			// 移動可能な距離か
 			if (moveCnt <= move)
 			{
-				resutlPosList.emplace_back(ResultPos(false, checkPos, &(*parentIt), static_cast<Dir>(i), moveCnt));
+				tmpList.emplace_back(ResultPos(false, checkPos, &(*parentIt), static_cast<Dir>(i), moveCnt));
 				// キャラクターがいない
 				if (checkPosTeam == Team::max)
 				{
+					for (auto tmpResult = *tmpList.rbegin(); tmpResult.mapPos != startMapPos; tmpResult = *tmpResult.prev)
+					{
+						resutlPosList.emplace_back(tmpResult);
+					}
 					return true;
 				}
 				_searchPosVec2Move[checkPos.y][checkPos.x] = SearchPos(checkPos, nowPos, Astar::SearchState::search, moveCnt);

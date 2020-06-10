@@ -4,6 +4,7 @@
 #include "Team.h"
 #include "DataBase.h"
 #include "Application.h"
+#include "Input.h"
 
 using namespace std;
 
@@ -36,7 +37,7 @@ MapSelectCharactor::MapSelectCharactor(Camera& camera, const CharactorType& char
 
 	_animator->ChangeAnim("DownWalk");
 
-	_speed = 8;
+	_speed = 10;
 	_isMove = false;
 }
 
@@ -50,14 +51,19 @@ void MapSelectCharactor::Update(const Input& input)
 	if (vec.Length() <= _speed)
 	{
 		_pos = _targetPos.ToVector2();
-		_animator->ChangeAnim("DownWalk");
-		_animator->AnimRestart();
+		if (!input.GetButton(0, "left")  && !input.GetButton(1, "left")
+		 && !input.GetButton(0, "right") && !input.GetButton(1, "right"))
+		{
+			_animator->ChangeAnim("DownWalk");
+			_animator->AnimRestart();
+		}
+
 		_isMove = false;
 		return;
 	}
 
 	_isMove = true;
-	if (vec.Normalized().x > 0)
+	if (vec.x > 0)
 	{
 		_animator->ChangeAnim("RightWalk");
 	}

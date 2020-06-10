@@ -51,8 +51,8 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller)
 
 	_camera->AddTargetActor(&**_mapSelectCharactors.begin());
 
-
-	_moveStartItr = _mapSelectCharactors.end();
+	_dir = 1;
+	_charactorIdx = 0;
 
 	_debug = true;
 }
@@ -97,13 +97,14 @@ void MapSelectScene::MoveUpdate(const Input& input)
 
 void MapSelectScene::MapSelectCharactorUpdate()
 {
-	if (_moveStartItr == _mapSelectCharactors.end()) return;
+	if (_charactorIdx >= _mapSelectCharactors.size()) return;
 
 	_moveStartTrack->Update();
 	if (_moveStartTrack->GetEnd())
 	{
-		(*_moveStartItr)->SetTargetPos(_contentPosVec.at(_selectIdx));
-		_moveStartItr++;
+		int charactorSpace = 50;
+		_mapSelectCharactors[_charactorIdx]->SetTargetPos(_contentPosVec.at(_selectIdx) + Vector2Int(charactorSpace * _charactorIdx, 0) * _dir);
+		_charactorIdx++;
 		_moveStartTrack->Reset();
 	}
 }
@@ -112,26 +113,46 @@ void MapSelectScene::CursorMove(const Input& input)
 {
 	if ((*_mapSelectCharactors.begin())->GetIsMove())return;
 
+	// 後続のキャラクターを今までの目的地に移動させる
+	auto successorMove = [&]()
+	{
+		for (unsigned int idx = 1; idx < _mapSelectCharactors.size(); idx++)
+		{
+			_mapSelectCharactors[idx]->SetTargetPos(_contentPosVec.at(_selectIdx));
+		}
+	};
+
 	if (input.GetButton(0, "right") || input.GetButton(1, "right"))
 	{
 		if (_selectIdx < _contentPosVec.size() - 1 && _selectIdx + 1 <= (_debug ? _contentPosVec.size() : Application::Instance().GetSaveData()->GetMapNum()))
 		{
+			_dir = -1;
+			successorMove();
 			_selectIdx++;
-			_moveStartTrack->Reset();
-			_moveStartItr = _mapSelectCharactors.begin();
-			(*_moveStartItr)->SetTargetPos(_contentPosVec.at(_selectIdx));
-			_moveStartItr++;
+			_charactorIdx = 0;
+			_mapSelectCharactors[_charactorIdx]->SetTargetPos(_contentPosVec.at(_selectIdx));
+
+			if (_mapSelectCharactors.size() > 1)
+			{
+				_charactorIdx++;
+				_moveStartTrack->Reset();
+			}
 		}
 	}
 	if (input.GetButton(0, "left") || input.GetButton(1, "left"))
 	{
+		_dir = 1;
 		if (_selectIdx > 0)
 		{
+			successorMove();
 			_selectIdx--;
-			_moveStartTrack->Reset();
-			_moveStartItr = _mapSelectCharactors.begin();
-			(*_moveStartItr)->SetTargetPos(_contentPosVec.at(_selectIdx));
-			_moveStartItr++;
+			_charactorIdx = 0;
+			_mapSelectCharactors[_charactorIdx]->SetTargetPos(_contentPosVec.at(_selectIdx));
+			if (_mapSelectCharactors.size() > 1)
+			{
+				_moveStartTrack->Reset();
+				_charactorIdx++;
+			}
 		}
 	}
 }

@@ -17,11 +17,12 @@ private:
 	std::unique_ptr<Camera> _camera;
 	std::vector<std::unique_ptr<MapSelectCharactor>> _mapSelectCharactors;
 
-	int _selectIdx;
+	unsigned int _selectIdx;
 
 	std::unique_ptr<Track<int>> _moveStartTrack;
-	std::vector<std::unique_ptr<MapSelectCharactor>>::iterator _moveStartItr;
+	unsigned int _charactorIdx;
 
+	int _dir;
 	std::unique_ptr<Fade> _fade;
 	bool _goPlayScene;
 	

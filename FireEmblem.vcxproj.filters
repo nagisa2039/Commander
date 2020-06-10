@@ -481,7 +481,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="test.hlsl">
+    <FxCompile Include="testVS.hlsl">
+      <Filter>ソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="testPS.hlsl">
       <Filter>ソース ファイル</Filter>
     </FxCompile>
   </ItemGroup>

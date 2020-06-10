@@ -35,6 +35,8 @@ protected:
 
 	unsigned int _givenDamage;	// —^‚¦‚½ƒ_ƒ[ƒW
 
+	static int _hpDotMaskH;
+
 public:
 	BattleCharactor(Charactor& charactor, const int imageHandle, Camera& camera);
 	~BattleCharactor();

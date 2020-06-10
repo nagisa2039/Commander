@@ -12,6 +12,8 @@
 
 using namespace std;
 
+int BattleCharactor::_hpDotMaskH = -1;
+
 BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Camera& camera)
 	: _selfChar(charactor), _size(128, 128), _camera(camera)
 {
@@ -30,6 +32,11 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 	_attackEffect = nullptr;
 
 	_givenDamage = 0;
+
+	if (_hpDotMaskH == -1)
+	{
+		_hpDotMaskH = LoadMask("Resource/Image/Battle/hpDotMask.png");
+	}
 }
 
 BattleCharactor::~BattleCharactor()
@@ -185,9 +192,10 @@ void BattleCharactor::UIDraw()
 	auto hpDrawPos = dirDownPos + Vector2Int(20, 20) + Vector2Int(0, _uiSize.h / 2);
 	DrawFormatStringToHandle(hpDrawPos.x, hpDrawPos.y, 0xaaaaaa, fontHandle, "%d", health);
 
-	Size hpPerDot(5, 30);
+	Size hpPerDot(10, 30);
 	int linePerHp = 40;
 	int berCnt = ceil(startHealth / 40.0f);
+
 	auto hpBerDrawPos = GetDrawPos(hpDrawPos + Vector2Int(100, 30), Size(0, berCnt * hpPerDot.h), Anker::leftcenter);
 	for (int idx = 0; idx < berCnt; idx++)
 	{
@@ -196,7 +204,11 @@ void BattleCharactor::UIDraw()
 		DrawBox(hpBerDrawPos, hpBerDrawPos + startSize, 0xaaaaaa, true);
 		if (currentSize.w > 0)
 		{
+			DrawBox(hpBerDrawPos, hpBerDrawPos + currentSize, 0x000000, true);
+			CreateMaskScreen();
+			DrawFillMask(hpBerDrawPos.x, hpBerDrawPos.y, hpBerDrawPos.x + currentSize.w, hpBerDrawPos.y + currentSize.h, _hpDotMaskH);
 			DrawBox(hpBerDrawPos, hpBerDrawPos + currentSize, 0x4eb79c, true);
+			DeleteMaskScreen();
 		}
 		DrawBox(hpBerDrawPos, hpBerDrawPos + startSize, 0x000000, false);
 		hpBerDrawPos.y += hpPerDot.h;

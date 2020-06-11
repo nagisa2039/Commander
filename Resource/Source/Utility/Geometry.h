@@ -208,6 +208,9 @@ struct Rect
 	void Draw(const unsigned int color = 0xffffff, const bool fill = true)const;
 	void Draw(const Vector2Int&  offset, const int color = 0xffffff, const bool fill = true);
 	void Draw(const Vector2& offset, const int color = 0xffffff, const bool fill = true);
+	void DrawGraph(const int graphH, const Vector2& offset = Vector2(0,0));
+	void DrawRectGraph(const Vector2Int& leftup, const Size& rectSize, const int graphH, const Vector2& offset = Vector2(0, 0));
+	void DrawExtendGraph(const Vector2Int& leftup, const Vector2Int& rightdown, const int graphH, const Vector2& offset = Vector2(0, 0));
 
 	bool IsHit(const Rect& rect);
 	static const bool IsHit(const Rect& aRect, const Rect& bRect);

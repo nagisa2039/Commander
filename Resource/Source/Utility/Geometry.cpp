@@ -253,19 +253,36 @@ const int Rect::Botton() const
 
 void Rect::Draw(unsigned int color, const bool fill)const
 {
-	DrawBox(this->Left(),this->Top(),this->Right(),this->Botton(),color, fill);
+	DxLib::DrawBox(this->Left(),this->Top(),this->Right(),this->Botton(),color, fill);
 }
 
 void Rect::Draw(const Vector2Int& offset, int color, const bool fill)
 {
-	DrawBox(offset.x + this->Left(), offset.y + this->Top(), offset.x + this->Right(), offset.y + this->Botton(), color, fill);
+	DxLib::DrawBox(offset.x + this->Left(), offset.y + this->Top(), offset.x + this->Right(), offset.y + this->Botton(), color, fill);
 }
 
 void Rect::Draw(const Vector2& offset, int color, const bool fill)
 {
-	DrawBox(static_cast<int>(offset.x + this->Left()), static_cast<int>(offset.y + this->Top()), 
+	DxLib::DrawBox(static_cast<int>(offset.x + this->Left()), static_cast<int>(offset.y + this->Top()),
 		static_cast<int>(offset.x + this->Right()), static_cast<int>(offset.y + this->Botton()), 
 		color, fill);
+}
+
+void Rect::DrawGraph(const int graphH, const Vector2& offset)
+{
+	DxLib::DrawExtendGraph(offset.x + Left(), offset.y + Top(), offset.x + Right(), offset.y + Botton(), graphH, true);
+}
+
+void Rect::DrawRectGraph(const Vector2Int& leftup, const Size& rectSize, const int graphH, const Vector2& offset)
+{
+	DxLib::DrawRectExtendGraph(offset.x + Left(), offset.y + Top(), offset.x + Right(), offset.y + Botton(),
+		leftup.x, leftup.y, rectSize.w, rectSize.h, graphH, true);
+}
+
+void Rect::DrawExtendGraph(const Vector2Int& leftup, const Vector2Int& rightdown, const int graphH, const Vector2& offset)
+{
+	DxLib::DrawRectExtendGraph(offset.x + leftup.x, offset.y + leftup.y, offset.x + rightdown.x, offset.y + rightdown.y,
+		Left(), Top(), Width(), Height(), graphH, true);
 }
 
 bool Rect::IsHit(const Rect& rect)

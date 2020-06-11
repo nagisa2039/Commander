@@ -25,8 +25,6 @@ protected:
 	Size _size;
 	std::shared_ptr<Animator> _animator;
 
-	Size _uiSize;
-
 	std::unique_ptr<Track<int>> _attackAnimX;
 	std::shared_ptr<Effect> _attackEffect;
 

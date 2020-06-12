@@ -29,7 +29,7 @@ private:
 	void CursorMoveMoment()override;
 
 public:
-	PlayerCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera);
+	PlayerCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera, const unsigned char & turnCnt);
 	~PlayerCommander();
 
 	void Update(const Input& input)override final;

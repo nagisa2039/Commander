@@ -252,10 +252,10 @@ void PlayerCommander::CursorMoveMoment()
 {
 }
 
-PlayerCommander::PlayerCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera):
+PlayerCommander::PlayerCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera, const unsigned char& turnCnt):
 	Commander(charactors, mapCtrl, ctrlTeam, camera)
 {
-	_playerUI = make_unique<PlayerUI>(*this, mapCtrl);
+	_playerUI = make_unique<PlayerUI>(*this, mapCtrl, turnCnt);
 
 	_uniqueUpdater = &PlayerCommander::TerrainEffectUpdate;
 

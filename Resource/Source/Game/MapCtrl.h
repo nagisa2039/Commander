@@ -38,6 +38,8 @@ private:
 	int _mapChipH;
 	int _warSituationH;
 
+	int _mapId;
+
 	const std::string imageFolderPath;
 
 	void DrawToMapFloorScreen();
@@ -76,7 +78,7 @@ public:
 	void CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
 
 	bool SaveMap();
-	bool LoadMap(const std::string fileName);
+	bool LoadMap(const int mapId);
 	bool LoadMap();
 
 	// 移動可能なマスを探す
@@ -116,4 +118,7 @@ public:
 
 	// キャラクターの配列を取得
 	const std::vector<std::shared_ptr<Charactor>>& GetCharacots()const;
+
+	// 現在のマップIDを返す
+	const int GetMapID()const;
 };

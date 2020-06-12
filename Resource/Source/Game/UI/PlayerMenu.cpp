@@ -4,8 +4,9 @@
 #include "CheckWindow.h"
 #include "PlayerCommander.h"
 #include "WarSituation.h"
+#include "MenuTopInf.h"
 
-PlayerMenu::PlayerMenu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl)
+PlayerMenu::PlayerMenu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl, const unsigned char& turnCnt)
 	:Menu(uiDeque, playerCom, mapCtrl)
 {
 	auto menuFrameH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/menuFrame.png");
@@ -32,8 +33,38 @@ PlayerMenu::PlayerMenu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander
 	{
 		_contentList.emplace_back(idx);
 	}
+
+	_menuTopDeque.clear();
+	_menuTop = make_shared<MenuTopInf>(_mapCtrl, turnCnt, _menuTopDeque);
+	_menuTopDeque.emplace_back(_menuTop);
 }
 
 PlayerMenu::~PlayerMenu()
 {
+}
+
+void PlayerMenu::Update(const Input& input)
+{
+	Menu::Update(input);
+	if (_isOpen)
+	{
+		_menuTop->Open();
+	}
+	else
+	{
+		_menuTop->Close();
+	}
+	if (_menuTopDeque.size() > 0)
+	{
+		(*_menuTopDeque.begin())->Update(input);
+	}
+}
+
+void PlayerMenu::Draw()
+{
+	Menu::Draw();
+	for (auto rItr = _menuTopDeque.rbegin(); rItr != _menuTopDeque.rend(); rItr++)
+	{
+		(*rItr)->Draw();
+	}
 }

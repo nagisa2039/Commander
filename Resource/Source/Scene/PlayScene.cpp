@@ -32,7 +32,6 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctr
 	_gameH = MakeScreen(wsize.w, wsize.h, true);
 
 	debug = true;
-	_mapId = mapId;
 	_turnCnt = 0;
 
 	_mapCtrl = make_shared<MapCtrl>(_charactors);
@@ -40,7 +39,14 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctr
 	_fade = make_unique<Fade>();
 	_turnChangeAnim = make_shared<TurnChangeAnim>();
 
-	_playerCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
+	if (true)
+	{
+		_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera, _turnCnt);
+	}
+	else
+	{
+		_playerCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
+	}
 	_enemyCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy, *_camera);
 
 	_camera->AddTargetActor(&*_playerCommander);
@@ -48,7 +54,7 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctr
 	auto mapSize = _mapCtrl->GetMapSize() * _mapCtrl->GetChipSize();
 	_camera->SetLimitRect(Rect(mapSize.ToVector2Int() * 0.5, mapSize));
 
-	_mapCtrl->LoadMap(Application::Instance().GetDataBase().GetMapData(_mapId).fileName);
+	_mapCtrl->LoadMap(mapId);
 	_mapCtrl->CreateCharactor(ctrl, _effects, *_camera);
 
 	_dyingCharItr = _charactors.end();
@@ -335,7 +341,7 @@ bool PlayScene::CharactorDyingUpdate(const Input& input)
 		else
 		{
 			// ƒQ[ƒ€ƒNƒŠƒA
-			Application::Instance().GetSaveData()->Save(_charactors, _mapId);
+			Application::Instance().GetSaveData()->Save(_charactors, _mapCtrl->GetMapID());
 			_uniqueUpdater = &PlayScene::GameClearUpdate;
 			_uniqueDrawer = &PlayScene::GameClearDraw;
 			return true;

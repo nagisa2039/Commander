@@ -59,6 +59,7 @@
     <ClCompile Include="Resource\Source\Game\UI\CheckWindow.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\Experience.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\Menu.cpp" />
+    <ClCompile Include="Resource\Source\Game\UI\MenuTopInf.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\MoveMenu.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\PlayerMenu.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\PlayerUI.cpp" />
@@ -129,6 +130,7 @@
     <ClInclude Include="Resource\Source\Game\UI\CheckWindow.h" />
     <ClInclude Include="Resource\Source\Game\UI\Experience.h" />
     <ClInclude Include="Resource\Source\Game\UI\Menu.h" />
+    <ClInclude Include="Resource\Source\Game\UI\MenuTopInf.h" />
     <ClInclude Include="Resource\Source\Game\UI\MoveMenu.h" />
     <ClInclude Include="Resource\Source\Game\UI\PlayerMenu.h" />
     <ClInclude Include="Resource\Source\Game\UI\PlayerUI.h" />
@@ -155,16 +157,6 @@
     <ClInclude Include="Resource\Source\Utility\Geometry.h" />
     <ClInclude Include="Resource\Source\Utility\Input.h" />
     <ClInclude Include="Resource\Source\Utility\TimeLine.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="testPS.hlsl">
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="testVS.hlsl">
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-    </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

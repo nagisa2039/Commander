@@ -273,6 +273,9 @@
     <ClCompile Include="Resource\Source\Game\UI\TerrainInf.cpp">
       <Filter>ソース ファイル\Game\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\MenuTopInf.cpp">
+      <Filter>ソース ファイル\Game\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -479,13 +482,8 @@
     <ClInclude Include="Resource\Source\Game\UI\TerrainInf.h">
       <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="testVS.hlsl">
-      <Filter>ソース ファイル</Filter>
-    </FxCompile>
-    <FxCompile Include="testPS.hlsl">
-      <Filter>ソース ファイル</Filter>
-    </FxCompile>
+    <ClInclude Include="Resource\Source\Game\UI\MenuTopInf.h">
+      <Filter>ヘッダー ファイル\Game\UI</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

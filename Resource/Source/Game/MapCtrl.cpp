@@ -73,6 +73,8 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 	_mapFloorH = MakeScreen(100 * CHIP_SIZE_W, 100 * CHIP_SIZE_H, true);
 	_warSituationH = MakeScreen(WAR_SITUATION_CHIP_SIZE * MAP_CHIP_CNT_W, WAR_SITUATION_CHIP_SIZE * MAP_CHIP_CNT_H, true);
 
+	_mapId = -1;
+
 	int frameNum = 2;
 
 	_mapDataVec2.resize(MAP_CHIP_CNT_H);
@@ -312,10 +314,12 @@ bool MapCtrl::SaveMap()
 }
 
 
-bool MapCtrl::LoadMap(const std::string fileName)
+bool MapCtrl::LoadMap(const int mapId)
 {
+	_mapId = mapId;
+	auto mapData = Application::Instance().GetDataBase().GetMapData(mapId);
 	char filePath[MAX_PATH];
-	sprintf_s(filePath, MAX_PATH, "Resource/Map/%s", fileName.c_str());
+	sprintf_s(filePath, MAX_PATH, "Resource/Map/%s", mapData.fileName.c_str());
 	return LoadMapData(filePath);
 }
 
@@ -634,6 +638,11 @@ bool MapCtrl::CheckMapDataRange(const Vector2Int& mapPos)
 const std::vector<std::shared_ptr<Charactor>>& MapCtrl::GetCharacots() const
 {
 	return _charactors;
+}
+
+const int MapCtrl::GetMapID() const
+{
+	return _mapId;
 }
 
 bool MapCtrl::FileSave(const HWND hWnd, const char* ext, const char* filter, const char* title, std::string& filePath)

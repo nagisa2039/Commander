@@ -38,7 +38,7 @@ private:
 	std::deque<std::shared_ptr<UI>> _battlePreDeque;
 
 public:
-	PlayerUI(PlayerCommander& playerCommander, const MapCtrl& mapCtrl);
+	PlayerUI(PlayerCommander& playerCommander, const MapCtrl& mapCtrl, const unsigned char& turnCnt);
 	~PlayerUI();
 
 	void Update(const Input& input);

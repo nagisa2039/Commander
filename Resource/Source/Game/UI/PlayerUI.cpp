@@ -14,10 +14,12 @@
 #include "BattlePrediction.h"
 #include "Charactor.h"
 #include "TerrainInf.h"
+#include "MenuTopInf.h"
 
 using namespace std;
 
-PlayerUI::PlayerUI(PlayerCommander& playerCommander, const MapCtrl& mapCtrl): _playerCommander(playerCommander), _mapCtrl(mapCtrl)
+PlayerUI::PlayerUI(PlayerCommander& playerCommander, const MapCtrl& mapCtrl, const unsigned char& turnCnt)
+	: _playerCommander(playerCommander), _mapCtrl(mapCtrl)
 {
 	_playerMenuDeque.clear();
 	_moveMenuDeque.clear();
@@ -26,7 +28,7 @@ PlayerUI::PlayerUI(PlayerCommander& playerCommander, const MapCtrl& mapCtrl): _p
 	_terrainInfDeque.clear();
 	_statusInfDeque.clear();
 
-	_playerMenu = make_shared<PlayerMenu>(_playerMenuDeque, playerCommander, _mapCtrl);
+	_playerMenu = make_shared<PlayerMenu>(_playerMenuDeque, playerCommander, _mapCtrl, turnCnt);
 	_playerMenuDeque.emplace_front(_playerMenu);
 
 	_moveMenu = make_shared<MoveMenu>(_playerMenuDeque, playerCommander, _mapCtrl);

@@ -62,7 +62,7 @@ void BattlePrediction::Draw()
 
 	Size iconSize(200, 200);
 	int drawY = windowRect.Top() + iconSize.h/2 + 50;
-	int fontH = Application::Instance().GetFileSystem()->GetFontHandle("choplin20");
+	int fontH = Application::Instance().GetFileSystem()->GetFontHandle("choplin20edge");
 	_selfCharactor.DrawCharactorIcon(	Rect(Vector2Int(windowRect.center.x - iconSize.w / 2, drawY), iconSize));
 	_targetCharactor.DrawCharactorIcon(	Rect(Vector2Int(windowRect.center.x + iconSize.w / 2, drawY), iconSize));
 	drawY += iconSize.h / 2 + 50;

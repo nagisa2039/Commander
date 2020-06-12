@@ -170,7 +170,7 @@ void PreparationUI::Draw()
 		_battlePreparationCursor->Draw();
 		return;
 	}
-	int fontH = Application::Instance().GetFileSystem()->GetFontHandle("choplin30");
+	int fontH = Application::Instance().GetFileSystem()->GetFontHandle("choplin30edge");
 	int windowH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/window0.png");
 	Size graphSize;
 	auto wsize = Application::Instance().GetWindowSize();

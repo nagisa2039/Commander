@@ -129,7 +129,7 @@ void CheckWindow::Draw()
 	Size selectSize;
 	GetGraphSize(selectH, selectSize);
 
-	int choplin30 = Application::Instance().GetFileSystem()->GetFontHandle("choplin30");
+	int choplin30 = Application::Instance().GetFileSystem()->GetFontHandle("choplin30edge");
 
 	Rect totalRect = Rect(Application::Instance().GetWindowSize().ToVector2Int() * 0.5f, Size(messageSize.w, messageSize.h + selectSize.h + space.h));
 	auto massageWindowLeftup = Vector2Int(totalRect.Left(), totalRect.Top());

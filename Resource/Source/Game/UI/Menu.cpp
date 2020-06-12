@@ -225,7 +225,7 @@ void Menu::DrawPen()
 
 void Menu::DrawContent(const Vector2Int& drawCenterPos, const unsigned int idx)
 {
-	int choplin30 = Application::Instance().GetFileSystem()->GetFontHandle("choplin30");
+	int choplin30 = Application::Instance().GetFileSystem()->GetFontHandle("choplin30edge");
 	auto menuFrameH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/menuFrame.png");
 	Size menuFrameSize;
 	GetGraphSize(menuFrameH, menuFrameSize);

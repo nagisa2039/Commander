@@ -80,7 +80,7 @@ void WarSituation::Draw()
 	{
 		DrawGraph(GetDrawPos(center, window0Size, Anker::center), window0H);
 
-		int choplin30 = Application::Instance().GetFileSystem()->GetFontHandle("choplin30");
+		int choplin30 = Application::Instance().GetFileSystem()->GetFontHandle("choplin30edge");
 		Size strSize;
 		int lineCnt;
 		GetDrawFormatStringSize(&strSize.w, &strSize.h, &lineCnt,text);
@@ -90,7 +90,7 @@ void WarSituation::Draw()
 		auto headerCenterPos = center - Vector2Int(0, (window1Size.h + window0Size.h) / 2);
 		DrawGraph(GetDrawPos(headerCenterPos, window1Size, Anker::center), window1H);
 
-		int choplin20 = Application::Instance().GetFileSystem()->GetFontHandle("choplin20");
+		int choplin20 = Application::Instance().GetFileSystem()->GetFontHandle("choplin20edge");
 		GetDrawFormatStringSize(&strSize.w, &strSize.h, &lineCnt, header);
 		auto str2DrawPos = GetDrawPos(headerCenterPos, strSize, Anker::center);
 		DrawFormatString(str2DrawPos.x, str2DrawPos.y, 0xffffff, header);
@@ -101,7 +101,7 @@ void WarSituation::Draw()
 		DrawGraph(GetDrawPos(center, window1Size, Anker::center), window1H);
 
 		int distance = 100;
-		int choplin20 = Application::Instance().GetFileSystem()->GetFontHandle("choplin20");
+		int choplin20 = Application::Instance().GetFileSystem()->GetFontHandle("choplin20edge");
 		DrawStringToHandle(center - Vector2Int(distance / 2, 0), Anker::leftcenter, 0xffffff, choplin20, str);
 
 		char numStr[10];
@@ -125,7 +125,7 @@ void WarSituation::Draw()
 		const char* str = "s“®‰Â”\";
 		Size strSize;
 		int lineCnt;
-		int choplin20 = Application::Instance().GetFileSystem()->GetFontHandle("choplin20");
+		int choplin20 = Application::Instance().GetFileSystem()->GetFontHandle("choplin20edge");
 		GetDrawFormatStringSize(&strSize.w, &strSize.h, &lineCnt, str);
 		auto str0DrawPos = GetDrawPos(canMoveWindwoRect.center, strSize, Anker::centerdown);
 		DrawFormatString(str0DrawPos.x, str0DrawPos.y, 0x000000, str);

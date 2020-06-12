@@ -40,12 +40,12 @@ void TerrainInf::Draw()
 
 	auto mapChipData = Application::Instance().GetDataBase().GetMapChipData( _mapCtrl.GetMapData(_mapPos).mapChip);
 
-	int choplin40 = Application::Instance().GetFileSystem()->GetFontHandle("choplin40");
+	int choplin40 = Application::Instance().GetFileSystem()->GetFontHandle("choplin40edge");
 	DrawStringToHandle(terrainInfRect.center, Anker::center, 0xffffff, choplin40, mapChipData.name.c_str());
 
 	if (_animTrack->GetReverse())return;
 
-	int choplin20No = Application::Instance().GetFileSystem()->GetFontHandle("choplin20No");
+	int choplin20No = Application::Instance().GetFileSystem()->GetFontHandle("choplin20");
 	Vector2Int leftup = Vector2Int(terrainInfRect.Right(), terrainInfRect.Top());
 	int efcSpaceX = 5;
 	const unsigned normalColor = 0x000000;

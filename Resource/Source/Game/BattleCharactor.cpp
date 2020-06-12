@@ -115,7 +115,7 @@ void BattleCharactor::UIDraw()
 	auto status = _selfChar.GetStatus();
 	auto targetStatus = _targetChar->GetCharacotr().GetStatus();
 	auto teamColor = GetTeamColorBattle(_selfChar.GetTeam());
-	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin40");
+	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin40edge");
 
 	Vector2Int mapPosSub(_targetChar->GetCharacotr().GetMapPos() - _selfChar.GetMapPos());
 	unsigned int distance = abs(mapPosSub.x) + abs(mapPosSub.y);
@@ -182,7 +182,7 @@ void BattleCharactor::UIDraw()
 			name = "ATK";
 			num = status.GetDamage(targetStatus);
 		}
-		auto paramH = Application::Instance().GetFileSystem()->GetFontHandle("choplin30");
+		auto paramH = Application::Instance().GetFileSystem()->GetFontHandle("choplin30edge");
 		drawParam(itemNum++, paramH, 0xffffff, name, num);
 		// –½’†
 		drawParam(itemNum++, paramH, 0xffffff, "HIT", status.GetHit(targetStatus));

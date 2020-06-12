@@ -1,5 +1,6 @@
 #include "DxLibUtility.h"
 #include <DxLib.h>
+#include <stdarg.h>
 
 void GetGraphSize(const int handle, Size& size)
 {
@@ -63,11 +64,17 @@ Vector2Int GetDrawPos(const Vector2Int& drawPos, const Size& size, const Anker a
 	}
 }
 
-void DrawStringToHandle(const Vector2Int& drawPos, const Anker anker, const unsigned color, const int fontHandle, const char* string)
+void DrawStringToHandle(const Vector2Int& drawPos, const Anker anker, const unsigned color, const int fontHandle, const char* format, ...)
 {
+	va_list list;
+	va_start(list, format);
+	char str[256];
+	_vstprintf_s(str, 256, format, list);
+	va_end(list);
+
 	Size strSize;
 	int lineCnt;
-	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, fontHandle, string);
+	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, fontHandle, str);
 	auto calPos = GetDrawPos(drawPos, strSize, anker);
-	DrawFormatStringToHandle(calPos.x, calPos.y, color, fontHandle, string);
+	DrawFormatStringToHandle(calPos.x, calPos.y, color, fontHandle, str);
 }

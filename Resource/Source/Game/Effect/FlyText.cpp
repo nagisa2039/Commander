@@ -13,12 +13,12 @@ FlyText::FlyText(const string& str, const Vector2Int& pos, const int lifeCnt, Ca
 {
 	if (critical)
 	{
-		_fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin80");
+		_fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin80edge");
 		_color = 0xdddd00;
 	}
 	else
 	{
-		_fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin60");
+		_fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin60edge");
 		_color = 0xffffff;
 	}
 }

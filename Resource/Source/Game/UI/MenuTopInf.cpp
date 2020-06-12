@@ -42,8 +42,8 @@ void MenuTopInf::Draw()
 	auto fileSystem = Application::Instance().GetFileSystem();
 	int nameFrameH = fileSystem->GetImageHandle("Resource/Image/UI/mapNameFrame.png");
 	int turnCntFrameH = fileSystem->GetImageHandle("Resource/Image/UI/turnCntFrame.png");
-	int choplin20 = fileSystem->GetFontHandle("choplin20");
-	int choplin30 = fileSystem->GetFontHandle("choplin30");
+	int choplin20 = fileSystem->GetFontHandle("choplin20edge");
+	int choplin30 = fileSystem->GetFontHandle("choplin30edge");
 
 	Size nameFrameSize;
 	GetGraphSize(nameFrameH, nameFrameSize);
@@ -62,9 +62,7 @@ void MenuTopInf::Draw()
 
 	// åoâﬂÉ^Å[ÉìêîÇÃï`âÊ
 	DrawStringToHandle(turnCntFrameRect.center - Vector2Int(0, 15), Anker::center, 0xffffff, choplin20, "TURN");
-	char str[10];
-	sprintf_s(str, 10, "%d", _turnCnt);
-	DrawStringToHandle(turnCntFrameRect.center + Vector2Int(0, 15), Anker::center, 0xffffff, choplin20, str);
+	DrawStringToHandle(turnCntFrameRect.center + Vector2Int(0, 15), Anker::center, 0xffffff, choplin20, "%d", _turnCnt);
 }
 
 void MenuTopInf::Open()

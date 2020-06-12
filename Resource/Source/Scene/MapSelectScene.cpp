@@ -165,7 +165,7 @@ void MapSelectScene::Draw()
 
 	Size contentSize = Size(300, 200);
 	auto mapDataVec = Application::Instance().GetDataBase().GetMapDataTable();
-	int fontH = Application::Instance().GetFileSystem()->GetFontHandle("choplin40");
+	int fontH = Application::Instance().GetFileSystem()->GetFontHandle("choplin40edge");
 	auto mapNum = _debug ? _contentPosVec.size() : Application::Instance().GetSaveData()->GetMapNum();
 	for (size_t idx = 0; idx < mapDataVec.size(); idx++)
 	{

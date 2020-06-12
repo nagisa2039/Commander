@@ -28,7 +28,7 @@ void MissEffect::Update(const Input& input)
 void MissEffect::Draw()
 {
 	const char* str = "MISSI";
-	auto fontH = Application::Instance().GetFileSystem()->GetFontHandle("choplin30");
+	auto fontH = Application::Instance().GetFileSystem()->GetFontHandle("choplin30edge");
 	Size strSize;
 	int line;
 	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &line, fontH, str);

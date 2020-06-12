@@ -484,7 +484,7 @@ void PlayScene::GameOverDraw(const Camera& camera)
 		effect->Draw();
 	}
 
-	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin200");
+	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin200edge");
 	DrawStringToHandle(wsize.ToVector2Int() * 0.5f, Anker::center, 0x000088, fontHandle, "GAME OVER");
 }
 
@@ -509,7 +509,7 @@ void PlayScene::GameClearDraw(const Camera& camera)
 		Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/Battle/light.png"), true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
-	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin200");
+	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin200edge");
 	DrawStringToHandle(wsize.ToVector2Int() * 0.5f, Anker::center, 0xffff00, fontHandle, "GAME CLEAR");
 }
 

@@ -19,4 +19,4 @@ void DrawCircle(const Vector2Int& center, const int radius, const unsigned int c
 
 Vector2Int GetDrawPos(const Vector2Int& drawPos, const Size& size, const Anker anker);
 
-void DrawStringToHandle(const Vector2Int& drawPos, const Anker anker, const unsigned color, const int fontHandle, const char* string);
+void DrawStringToHandle(const Vector2Int& drawPos, const Anker anker, const unsigned color, const int fontHandle, const char* format, ...);

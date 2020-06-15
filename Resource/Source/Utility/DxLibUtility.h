@@ -1,7 +1,6 @@
 #pragma once
-#include <array>
-#include <functional>
 #include "Geometry.h"
+#include "AnkerCalculation.h"
 
 void GetGraphSize(const int handle, Size& size);
 

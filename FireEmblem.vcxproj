@@ -82,6 +82,7 @@
     <ClCompile Include="Resource\Source\System\ImageLoader.cpp" />
     <ClCompile Include="Resource\Source\System\Loader.cpp" />
     <ClCompile Include="Resource\Source\System\main.cpp" />
+    <ClCompile Include="Resource\Source\Utility\AnkerCalculation.cpp" />
     <ClCompile Include="Resource\Source\Utility\DxLibUtility.cpp" />
     <ClCompile Include="Resource\Source\Utility\Geometry.cpp" />
     <ClCompile Include="Resource\Source\Utility\Input.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="Resource\Source\System\FontLoader.h" />
     <ClInclude Include="Resource\Source\System\ImageLoader.h" />
     <ClInclude Include="Resource\Source\System\Loader.h" />
+    <ClInclude Include="Resource\Source\Utility\AnkerCalculation.h" />
     <ClInclude Include="Resource\Source\Utility\Dir.h" />
     <ClInclude Include="Resource\Source\Utility\DxLibUtility.h" />
     <ClInclude Include="Resource\Source\Utility\Geometry.h" />

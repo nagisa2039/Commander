@@ -276,6 +276,9 @@
     <ClCompile Include="Resource\Source\Game\UI\MenuTopInf.cpp">
       <Filter>ソース ファイル\Game\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Utility\AnkerCalculation.cpp">
+      <Filter>ソース ファイル\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -484,6 +487,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\UI\MenuTopInf.h">
       <Filter>ヘッダー ファイル\Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Utility\AnkerCalculation.h">
+      <Filter>ヘッダー ファイル\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

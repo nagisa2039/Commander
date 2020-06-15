@@ -1,8 +1,6 @@
 #pragma once
 #include "Geometry.h"
-#include<array>
 #include <memory>
-#include <functional>
 #include <deque>
 #include "TimeLine.h"
 

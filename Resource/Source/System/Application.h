@@ -9,6 +9,7 @@ class SceneController;
 class FileSystem;
 class DataBase;
 class SaveData;
+class AnkerCalculation;
 
 // アプリケーション全体を
 // 制御するシングルトンクラス
@@ -58,7 +59,9 @@ public:
 
 	SaveData& GetSaveData();
 
-	FileSystem& const GetFileSystem()const;
+	FileSystem& GetFileSystem()const;
+	const AnkerCalculation& GetAnkerCalculation()const;
+	
 
 private:
 	Application();
@@ -74,5 +77,7 @@ private:
 	std::unique_ptr<Configure> _configure;
 	std::unique_ptr<DataBase> _dataBase;
 	std::unique_ptr<SaveData> _saveData;
+
+	std::unique_ptr<AnkerCalculation> _ankerCalculation;
 };
 

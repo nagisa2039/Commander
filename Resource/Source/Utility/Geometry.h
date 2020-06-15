@@ -176,20 +176,6 @@ Size operator*(const Size& lval, const float& rval);
 
 bool operator==(const Size & lval, const Size& rval);
 
-enum class Anker
-{
-	leftup,
-	leftcenter,
-	leftdown,
-	centerup,
-	center,
-	centerdown,
-	rightup,
-	rightcenter,
-	rightdown,
-	max,
-};
-
 struct Rect 
 {
 	Vector2Int center;

@@ -1,6 +1,7 @@
 #include "DxLibUtility.h"
 #include <DxLib.h>
 #include <stdarg.h>
+#include "Application.h"
 
 void GetGraphSize(const int handle, Size& size)
 {
@@ -39,29 +40,7 @@ void DrawCircle(const Vector2Int& center, const int radius, const unsigned int c
 
 Vector2Int GetDrawPos(const Vector2Int& drawPos, const Size& size, const Anker anker)
 {
-	switch (anker)
-	{
-	case Anker::leftup:
-		return drawPos;
-	case Anker::leftcenter:
-		return drawPos + Vector2Int(0, -size.h / 2);
-	case Anker::leftdown:
-		return drawPos + Vector2Int(0, -size.h);
-	case Anker::centerup:
-		return drawPos + Vector2Int(-size.w / 2, 0);
-	case Anker::center:
-		return drawPos + Vector2Int(-size.w / 2, -size.h / 2);
-	case Anker::centerdown:
-		return drawPos + Vector2Int(-size.w / 2, -size.h);
-	case Anker::rightup:
-		return drawPos + Vector2Int(-size.w, 0);
-	case Anker::rightcenter:
-		return drawPos + Vector2Int(-size.w, -size.h / 2);
-	case Anker::rightdown:
-		return drawPos + Vector2Int(-size.w, -size.h);
-	default:
-		return Vector2Int();
-	}
+	return Application::Instance().GetAnkerCalculation().GetDrawPos(drawPos, size, anker);
 }
 
 void DrawStringToHandle(const Vector2Int& drawPos, const Anker anker, const unsigned color, const int fontHandle, const char* format, ...)

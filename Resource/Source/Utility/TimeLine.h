@@ -135,12 +135,18 @@ public:
 	}
 };
 
+using Track_f		= Track<float>;
+using Track_i		= Track<int>;
+using Track_vec2	= Track<Vector2>;
+using Track_vec2Int = Track<Vector2Int>;
+using Track_vec3	= Track<Vector3>;
+
 class TimeLine
 {
 private:
-	std::map < std::string, std::unique_ptr<Track<float>>>	_floatTrackMap;
-	std::map < std::string, std::unique_ptr<Track<Vector2> >> _vector2TrackMap;
-	std::map < std::string, std::unique_ptr<Track<Vector3> >> _vector3TrackMap;
+	std::map < std::string, std::unique_ptr<Track_f>>	_floatTrackMap;
+	std::map < std::string, std::unique_ptr<Track_vec2>> _vector2TrackMap;
+	std::map < std::string, std::unique_ptr<Track_vec3>> _vector3TrackMap;
 
 	bool _loop;
 	bool _end;

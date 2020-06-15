@@ -12,6 +12,7 @@
 #include "../Scene/MapSelectScene.h"
 #include "DataBase.h"
 #include "SaveData.h"
+#include "AnkerCalculation.h"
 
 using namespace std;
 
@@ -55,11 +56,17 @@ FileSystem& const Application::GetFileSystem() const
 	return *_fileSystem;
 }
 
+const AnkerCalculation& Application::GetAnkerCalculation() const
+{
+	return *_ankerCalculation;
+}
+
 bool Application::Initialize()
 {
 	_configure = make_unique<Configure>();
 	_dataBase = make_unique<DataBase>();
 	_saveData = make_unique<SaveData>();
+	_ankerCalculation = make_unique<AnkerCalculation>();
 
 	// DxlibÇÃèâä˙âª
 	ChangeWindowMode(TRUE);

@@ -262,12 +262,12 @@ void BattleScene::Draw(void)
 	auto mapPosSub = _leftBC.GetCharacotr().GetMapPos() - _rightBC.GetCharacotr().GetMapPos();
 	if (abs(mapPosSub.x) + abs(mapPosSub.y) <= 1)
 	{
-		int floorH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/Battle/floor_big.png");
+		int floorH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/Battle/floor_big.png");
 		DrawRotaGraph(screenCenter.x, _floatY, 1.0, 0.0, floorH, true);
 	}
 	else
 	{
-		int floorH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/Battle/floor_small.png");
+		int floorH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/Battle/floor_small.png");
 		DrawRotaGraph(_leftBC.GetStartPos(), 1.0, 0.0, floorH, true);
 		DrawRotaGraph(_rightBC.GetStartPos(), 1.0, 0.0, floorH, true);
 	}

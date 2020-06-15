@@ -39,7 +39,7 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller)
 	}
 	assert(_contentPosVec.size() > 0);
 
-	auto charactorDataVec = Application::Instance().GetSaveData()->GetCharactorDataVec();
+	auto charactorDataVec = Application::Instance().GetSaveData().GetCharactorDataVec();
 	assert(charactorDataVec.size() > 0);
 	for (const auto& charactorData : charactorDataVec)
 	{
@@ -124,7 +124,7 @@ void MapSelectScene::CursorMove(const Input& input)
 
 	if (input.GetButton(0, "right") || input.GetButton(1, "right"))
 	{
-		if (_selectIdx < _contentPosVec.size() - 1 && _selectIdx + 1 <= (_debug ? _contentPosVec.size() : Application::Instance().GetSaveData()->GetMapNum()))
+		if (_selectIdx < _contentPosVec.size() - 1 && _selectIdx + 1 <= (_debug ? _contentPosVec.size() : Application::Instance().GetSaveData().GetMapNum()))
 		{
 			_dir = -1;
 			successorMove();
@@ -165,8 +165,8 @@ void MapSelectScene::Draw()
 
 	Size contentSize = Size(300, 200);
 	auto mapDataVec = Application::Instance().GetDataBase().GetMapDataTable();
-	int fontH = Application::Instance().GetFileSystem()->GetFontHandle("choplin40edge");
-	auto mapNum = _debug ? _contentPosVec.size() : Application::Instance().GetSaveData()->GetMapNum();
+	int fontH = Application::Instance().GetFileSystem().GetFontHandle("choplin40edge");
+	auto mapNum = _debug ? _contentPosVec.size() : Application::Instance().GetSaveData().GetMapNum();
 	for (size_t idx = 0; idx < mapDataVec.size(); idx++)
 	{
 		auto contentRect = Rect(_contentPosVec[idx], contentSize);

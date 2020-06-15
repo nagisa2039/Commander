@@ -341,7 +341,7 @@ bool PlayScene::CharactorDyingUpdate(const Input& input)
 		else
 		{
 			// ƒQ[ƒ€ƒNƒŠƒA
-			Application::Instance().GetSaveData()->Save(_charactors, _mapCtrl->GetMapID());
+			Application::Instance().GetSaveData().Save(_charactors, _mapCtrl->GetMapID());
 			_uniqueUpdater = &PlayScene::GameClearUpdate;
 			_uniqueDrawer = &PlayScene::GameClearDraw;
 			return true;
@@ -484,7 +484,7 @@ void PlayScene::GameOverDraw(const Camera& camera)
 		effect->Draw();
 	}
 
-	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin200edge");
+	auto fontHandle = Application::Instance().GetFileSystem().GetFontHandle("choplin200edge");
 	DrawStringToHandle(wsize.ToVector2Int() * 0.5f, Anker::center, 0x000088, fontHandle, "GAME OVER");
 }
 
@@ -503,13 +503,13 @@ void PlayScene::GameClearDraw(const Camera& camera)
 		effect->Draw();
 	}
 
+	auto fileSystem = Application::Instance().GetFileSystem();
 	auto animValue = _clearAnimTrack->GetValue();
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, animValue * 255);
-	DrawRotaGraph(wsize.ToVector2Int() * 0.5f, 1.0f, 0.0f, 
-		Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/Battle/light.png"), true);
+	DrawRotaGraph(wsize.ToVector2Int() * 0.5f, 1.0f, 0.0f, fileSystem.GetImageHandle("Resource/Image/Battle/light.png"), true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
-	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin200edge");
+	auto fontHandle = fileSystem.GetFontHandle("choplin200edge");
 	DrawStringToHandle(wsize.ToVector2Int() * 0.5f, Anker::center, 0xffff00, fontHandle, "GAME CLEAR");
 }
 

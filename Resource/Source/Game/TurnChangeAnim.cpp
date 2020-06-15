@@ -59,8 +59,9 @@ void TurnChangeAnim::Draw()
 	if (_animEnd) return;
 
 	auto wsize = Application::Instance().GetWindowSize();
-	auto gHangle = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/Battle/magicCircle.png");
-	auto blurHandle = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/Battle/magicCircleBlur.png");
+	auto fileSystem = Application::Instance().GetFileSystem();
+	auto gHangle = fileSystem.GetImageHandle("Resource/Image/Battle/magicCircle.png");
+	auto blurHandle = fileSystem.GetImageHandle("Resource/Image/Battle/magicCircleBlur.png");
 
 	auto teamInf = teamInfs[static_cast<size_t>(_currentTeam)];
 
@@ -83,7 +84,7 @@ void TurnChangeAnim::Draw()
 	sprintf_s(str, 20, "%s%s", teamInf.name, " TURN");
 	Size strSize;
 	int lineCnt;
-	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin100edge");
+	auto fontHandle = Application::Instance().GetFileSystem().GetFontHandle("choplin100edge");
 	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, fontHandle, str);
 	auto nameDrawPos = GetDrawPos(wsize.ToVector2Int() * 0.5f, strSize, Anker::center);
 	DrawFormatStringToHandle(nameDrawPos.x, nameDrawPos.y, teamColor, fontHandle, str);

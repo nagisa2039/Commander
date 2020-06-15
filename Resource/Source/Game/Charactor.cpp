@@ -82,7 +82,7 @@ void Charactor::NormalDraw()
 	float sizeRate = 0.3f;
 	auto iconRect= Rect(_camera.GetCameraOffset() + _pos.ToVector2Int() + chipSize * Vector2(sizeRate / 2.0f, sizeRate / 2.0f), 
 		(chipSize * sizeRate).ToSize());
-	int handle = Application::Instance().GetFileSystem()->GetImageHandle(_iconPath.c_str());
+	int handle = Application::Instance().GetFileSystem().GetImageHandle(_iconPath.c_str());
 	iconRect.Draw(0x000000);
 	auto attributeData = Application::Instance().GetDataBase().GetAttributeData(_status.attributeId);
 	Rect(iconRect.center, iconRect.size * 0.8f).Draw(attributeData.color);
@@ -440,7 +440,7 @@ void Charactor::DrawRoute(const Vector2Int& targetPos)
 		DrawLine(startPos, endPos, 0xffff00, 10);
 		if (begin)
 		{
-			auto arrowH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/arrow.png");
+			auto arrowH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/arrow.png");
 			Size arrowSize;
 			GetGraphSize(arrowH, arrowSize);
 			DrawRotaGraph(startPos, chipSize.w / static_cast<float>(arrowSize.w), _dirTable[dir_idx].angle, arrowH, true);

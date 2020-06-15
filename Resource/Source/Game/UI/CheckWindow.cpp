@@ -34,7 +34,7 @@ CheckWindow::CheckWindow(const std::string& messageStr, std::deque<std::shared_p
 	}
 	if (_selectImageH == -1)
 	{
-		int selectH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/checkWindowSelect.png");
+		int selectH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/checkWindowSelect.png");
 		Size selectSize;
 		GetGraphSize(selectH, selectSize);
 		_selectImageH = MakeScreen(selectSize.w, selectSize.h, true);
@@ -121,15 +121,16 @@ void CheckWindow::Draw()
 
 	Size space(50, 10);
 
-	int messageH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/checkWindow.png");
+	auto fileSystem = Application::Instance().GetFileSystem();
+	int messageH = fileSystem.GetImageHandle("Resource/Image/UI/checkWindow.png");
 	Size messageSize;
 	GetGraphSize(messageH, messageSize);
 
-	int selectH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/checkWindowSelect.png");
+	int selectH = fileSystem.GetImageHandle("Resource/Image/UI/checkWindowSelect.png");
 	Size selectSize;
 	GetGraphSize(selectH, selectSize);
 
-	int choplin30 = Application::Instance().GetFileSystem()->GetFontHandle("choplin30edge");
+	int choplin30 = fileSystem.GetFontHandle("choplin30edge");
 
 	Rect totalRect = Rect(Application::Instance().GetWindowSize().ToVector2Int() * 0.5f, Size(messageSize.w, messageSize.h + selectSize.h + space.h));
 	auto massageWindowLeftup = Vector2Int(totalRect.Left(), totalRect.Top());

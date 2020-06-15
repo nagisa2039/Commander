@@ -62,7 +62,8 @@ void BattlePrediction::Draw()
 
 	Size iconSize(200, 200);
 	int drawY = windowRect.Top() + iconSize.h/2 + 50;
-	int fontH = Application::Instance().GetFileSystem()->GetFontHandle("choplin20edge");
+	auto fileSystem = Application::Instance().GetFileSystem();
+	int fontH = fileSystem.GetFontHandle("choplin20edge");
 	_selfCharactor.DrawCharactorIcon(	Rect(Vector2Int(windowRect.center.x - iconSize.w / 2, drawY), iconSize));
 	_targetCharactor.DrawCharactorIcon(	Rect(Vector2Int(windowRect.center.x + iconSize.w / 2, drawY), iconSize));
 	drawY += iconSize.h / 2 + 50;
@@ -71,7 +72,7 @@ void BattlePrediction::Draw()
 	auto selfStatus = _selfCharactor.GetStatus();
 	auto targetStatus = _targetCharactor.GetStatus();
 
-	auto window1Handle = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/window1.png");
+	auto window1Handle = fileSystem.GetImageHandle("Resource/Image/UI/window1.png");
 
 	// UŒ‚‚³‚ê‚½‘¤‚ª”½Œ‚‚Å‚«‚é‚©
 	bool rightAttack = _targetCharactor.GetAttackRange().Hit(_distance) && !targetStatus.heal;
@@ -140,8 +141,9 @@ void BattlePrediction::Draw()
 			DrawContent("ˆÐ—Í", selfStatus.GetDamage(targetStatus), 
 				targetStatus.GetDamage(selfStatus), selfColor, targetColor);
 		}
-		int tag_playerHandle = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/tag_player.png");
-		int tag_enemyHandle = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/tag_enemy.png");
+		auto fileSystem = Application::Instance().GetFileSystem();
+		int tag_playerHandle = fileSystem.GetImageHandle("Resource/Image/UI/tag_player.png");
+		int tag_enemyHandle = fileSystem.GetImageHandle("Resource/Image/UI/tag_enemy.png");
 		Size graphSize;
 		GetGraphSize(tag_playerHandle, graphSize);
 		auto leftCenter = Vector2Int(windowRect.center.x - (distance/2 - 50), drawY);
@@ -218,7 +220,7 @@ void BattlePrediction::DrawHPBer(int& drawY, const Rect& windowRect, bool rightA
 	
 	// €–Ú–¼•\Ž¦
 	auto center = Vector2Int(windowRect.center.x, drawY);
-	DrawRotaGraph(center, 1.1, 0.0f, Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/window3.png"), true);
+	DrawRotaGraph(center, 1.1, 0.0f, Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/window3.png"), true);
 	DrawStringToHandle(center, Anker::center, 0xffffff, fontH, "HP");
 	drawY += hpOutSize.h / 2;
 }

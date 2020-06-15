@@ -219,7 +219,7 @@ bool MapCtrl::DrawMapChip(const Vector2Int& mapPos, const Map_Chip mapChip, cons
 {
 	auto drawData = Application::Instance().GetDataBase().GetMapChipData(mapChip).drawData;
 
-	auto graphH = Application::Instance().GetFileSystem()->GetImageHandle((imageFolderPath + drawData.path).c_str());
+	auto graphH = Application::Instance().GetFileSystem().GetImageHandle((imageFolderPath + drawData.path).c_str());
 	DrawRectExtendGraph(offset.x + CHIP_SIZE_W * mapPos.x, offset.y + CHIP_SIZE_H * mapPos.y,
 		offset.x + CHIP_SIZE_W * mapPos.x + CHIP_SIZE_W, offset.y + CHIP_SIZE_H * mapPos.y + CHIP_SIZE_H,
 		drawData.leftup.x, drawData.leftup.y, drawData.size.w, drawData.size.h,
@@ -273,7 +273,7 @@ bool MapCtrl::DrawCharactorChip(const CharactorChipInf& charactorChipInf, const 
 void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 {
 	auto dataBase = Application::Instance().GetDataBase();
-	auto charactorDataVec = Application::Instance().GetSaveData()->GetCharactorDataVec();
+	auto charactorDataVec = Application::Instance().GetSaveData().GetCharactorDataVec();
 	auto itr = charactorDataVec.begin();
 
 	for (const auto& mapDataVec : _mapDataVec2)

@@ -11,8 +11,8 @@ MenuTopInf::MenuTopInf(const MapCtrl& mapCtrl, const unsigned char& turnCnt, std
 	: UI(uiDeque), _mapCtrl(mapCtrl), _turnCnt(turnCnt)
 {
 	auto fileSystem = Application::Instance().GetFileSystem();
-	int nameFrameH = fileSystem->GetImageHandle("Resource/Image/UI/mapNameFrame.png");
-	int turnCntFrameH = fileSystem->GetImageHandle("Resource/Image/UI/turnCntFrame.png");
+	int nameFrameH = fileSystem.GetImageHandle("Resource/Image/UI/mapNameFrame.png");
+	int turnCntFrameH = fileSystem.GetImageHandle("Resource/Image/UI/turnCntFrame.png");
 
 	int spaceY = 20;
 	Size nameFrameSize;
@@ -40,10 +40,10 @@ void MenuTopInf::Update(const Input& input)
 void MenuTopInf::Draw()
 {
 	auto fileSystem = Application::Instance().GetFileSystem();
-	int nameFrameH = fileSystem->GetImageHandle("Resource/Image/UI/mapNameFrame.png");
-	int turnCntFrameH = fileSystem->GetImageHandle("Resource/Image/UI/turnCntFrame.png");
-	int choplin20 = fileSystem->GetFontHandle("choplin20edge");
-	int choplin30 = fileSystem->GetFontHandle("choplin30edge");
+	int nameFrameH = fileSystem.GetImageHandle("Resource/Image/UI/mapNameFrame.png");
+	int turnCntFrameH = fileSystem.GetImageHandle("Resource/Image/UI/turnCntFrame.png");
+	int choplin20 = fileSystem.GetFontHandle("choplin20edge");
+	int choplin30 = fileSystem.GetFontHandle("choplin30edge");
 
 	Size nameFrameSize;
 	GetGraphSize(nameFrameH, nameFrameSize);

@@ -175,7 +175,7 @@ void Menu::CloseDraw()
 
 void Menu::OpenAnimDraw()
 {
-	auto menuFrameH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/menuFrame.png");
+	auto menuFrameH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/menuFrame.png");
 	Size menuFrameSize;
 	GetGraphSize(menuFrameH, menuFrameSize);
 
@@ -193,7 +193,7 @@ void Menu::OpenAnimDraw()
 void Menu::CloseAnimDraw()
 {
 	auto wsize = Application::Instance().GetWindowSize();
-	auto menuFrameH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/menuFrame.png");
+	auto menuFrameH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/menuFrame.png");
 	Size menuFrameSize;
 	GetGraphSize(menuFrameH, menuFrameSize);
 
@@ -210,12 +210,13 @@ void Menu::CloseAnimDraw()
 
 void Menu::DrawPen()
 {
-	auto penH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/quillPen.png");
+	auto fileSystem = Application::Instance().GetFileSystem();
+	auto penH = fileSystem.GetImageHandle("Resource/Image/UI/quillPen.png");
 	Size penSize;
 	GetGraphSize(penH, penSize);
 	Vector2Int penMove = penSize.ToVector2Int() * -0.2f;
 
-	auto menuFrameH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/menuFrame.png");
+	auto menuFrameH = fileSystem.GetImageHandle("Resource/Image/UI/menuFrame.png");
 	Size menuFrameSize;
 	GetGraphSize(menuFrameH, menuFrameSize);
 
@@ -225,8 +226,9 @@ void Menu::DrawPen()
 
 void Menu::DrawContent(const Vector2Int& drawCenterPos, const unsigned int idx)
 {
-	int choplin30 = Application::Instance().GetFileSystem()->GetFontHandle("choplin30edge");
-	auto menuFrameH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/menuFrame.png");
+	auto fileSystem = Application::Instance().GetFileSystem();
+	int choplin30 = fileSystem.GetFontHandle("choplin30edge");
+	auto menuFrameH = fileSystem.GetImageHandle("Resource/Image/UI/menuFrame.png");
 	Size menuFrameSize;
 	GetGraphSize(menuFrameH, menuFrameSize);
 	DrawGraph(GetDrawPos(drawCenterPos, menuFrameSize, Anker::center), menuFrameH, true);

@@ -9,7 +9,7 @@
 PlayerMenu::PlayerMenu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl, const unsigned char& turnCnt)
 	:Menu(uiDeque, playerCom, mapCtrl)
 {
-	auto menuFrameH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/menuFrame.png");
+	auto menuFrameH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/menuFrame.png");
 	Init(static_cast<size_t>(Content::max), menuFrameH);
 
 	_contentInfs[static_cast<size_t>(Content::situation)].name = "êÌãµ";

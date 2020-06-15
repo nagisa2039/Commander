@@ -135,7 +135,7 @@ void Experience::Draw()
 		auto status = _battleChar.GetCharacotr().GetStatus();
 		auto levelUpCenter = Vector2Int(screenCenter.x, 100);
 		DrawCircle(levelUpCenter, 30, 0x0000ff);
-		auto fontH = Application::Instance().GetFileSystem()->GetFontHandle("choplin40edge");
+		auto fontH = Application::Instance().GetFileSystem().GetFontHandle("choplin40edge");
 		char str[10];
 		sprintf_s(str, 10, "%d", static_cast<int>(status.level + _addStatus.level));
 		DrawStringToHandle(levelUpCenter, Anker::center, 0xffffff, fontH, str);

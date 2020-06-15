@@ -32,7 +32,8 @@ void TerrainInf::Draw()
 
 	// “y‘ä‚Ì•`‰æ
 	Vector2Int space(0, 20);
-	auto graphH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/terrainNameFrame.png");
+	auto fileSystem = Application::Instance().GetFileSystem();
+	auto graphH = fileSystem.GetImageHandle("Resource/Image/UI/terrainNameFrame.png");
 	Size graphSize;
 	GetGraphSize(graphH, graphSize);
 	Rect terrainInfRect = Rect(Lerp(Vector2Int(-graphSize.w*0.5f, space.y + graphSize.h * 0.5f), space + graphSize * 0.5f, _animTrack->GetValue()), graphSize);
@@ -40,12 +41,12 @@ void TerrainInf::Draw()
 
 	auto mapChipData = Application::Instance().GetDataBase().GetMapChipData( _mapCtrl.GetMapData(_mapPos).mapChip);
 
-	int choplin40 = Application::Instance().GetFileSystem()->GetFontHandle("choplin40edge");
+	int choplin40 = fileSystem.GetFontHandle("choplin40edge");
 	DrawStringToHandle(terrainInfRect.center, Anker::center, 0xffffff, choplin40, mapChipData.name.c_str());
 
 	if (_animTrack->GetReverse())return;
 
-	int choplin20No = Application::Instance().GetFileSystem()->GetFontHandle("choplin20");
+	int choplin20No = fileSystem.GetFontHandle("choplin20");
 	Vector2Int leftup = Vector2Int(terrainInfRect.Right(), terrainInfRect.Top());
 	int efcSpaceX = 5;
 	const unsigned normalColor = 0x000000;
@@ -53,7 +54,7 @@ void TerrainInf::Draw()
 
 	auto drawEffect = [&](const char* graphPath, const char* drawString, const bool badEffect)
 	{
-		auto graphH = Application::Instance().GetFileSystem()->GetImageHandle(graphPath);
+		auto graphH = fileSystem.GetImageHandle(graphPath);
 		Size graphSize;
 		GetGraphSize(graphH, graphSize);
 		DrawGraph(leftup, graphH);

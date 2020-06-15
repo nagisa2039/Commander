@@ -104,14 +104,14 @@ void StatusWindow::DrawToWindowScreen()
 
 void StatusWindow::DrawIcon(Rect& iconRect)
 {
-	iconRect.DrawGraph(Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/statusWindow1.png"));
+	iconRect.DrawGraph(Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/statusWindow1.png"));
 	_charactor.DrawCharactorIcon(iconRect);
 }
 
 void StatusWindow::DrawBaseInf(Rect& statusRect0)
 {
 	auto fileSystem = Application::Instance().GetFileSystem();
-	statusRect0.DrawGraph(fileSystem->GetImageHandle("Resource/Image/UI/statusWindow1.png"));
+	statusRect0.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/statusWindow1.png"));
 
 	Size contentSize(250, 250 / 4);
 	Vector2Int center(statusRect0.Left() + contentSize.w / 2, statusRect0.Top() + contentSize.h / 2);
@@ -119,7 +119,7 @@ void StatusWindow::DrawBaseInf(Rect& statusRect0)
 	Size strSize;
 	int line;
 
-	auto choplin40 = fileSystem->GetFontHandle("choplin40edge");
+	auto choplin40 = fileSystem.GetFontHandle("choplin40edge");
 
 	// –¼‘O
 	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &line, choplin40, _charactor.GetName().c_str());
@@ -164,9 +164,9 @@ void StatusWindow::DrawBaseInf(Rect& statusRect0)
 void StatusWindow::DrawBattleStatus(Rect& statusRect1)
 {
 	auto fileSystem = Application::Instance().GetFileSystem();
-	statusRect1.DrawGraph(fileSystem->GetImageHandle("Resource/Image/UI/statusWindow2.png"));
+	statusRect1.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/statusWindow2.png"));
 
-	auto choplin30 = fileSystem->GetFontHandle("choplin30edge");
+	auto choplin30 = fileSystem.GetFontHandle("choplin30edge");
 
 	// 150, 125
 	Rect contentRect = Rect(Vector2Int(0, 0), Size(_rightWindowSize.w / 3, _rightWindowSize.h / 2));
@@ -175,14 +175,14 @@ void StatusWindow::DrawBattleStatus(Rect& statusRect1)
 
 	auto DrawContentVertical = [&](const string& name, const int num)
 	{
-		contentRect.DrawGraph(fileSystem->GetImageHandle("Resource/Image/UI/verticalWindow.png"));
+		contentRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/verticalWindow.png"));
 		DrawStringToHandle(Vector2Int(contentRect.center.x, contentRect.center.y - contentRect.size.h * 0.25f), Anker::center, 0xffffff, choplin30, name.c_str());
 		DrawStringToHandle(Vector2Int(contentRect.center.x, contentRect.center.y + contentRect.size.h * 0.25f), Anker::center, 0xffffff, choplin30, "%d", num);
 	};
 
 	auto DrawContentHorizontal = [&](const string& name, const int num)
 	{
-		contentRect.DrawGraph(fileSystem->GetImageHandle("Resource/Image/UI/horizontalWindow.png"));
+		contentRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/horizontalWindow.png"));
 		DrawStringToHandle(Vector2Int(contentRect.center.x - contentRect.size.w * 0.25f, contentRect.center.y), Anker::center, 0xffffff, choplin30, name.c_str());
 		DrawStringToHandle(Vector2Int(contentRect.center.x + contentRect.size.w * 0.25f, contentRect.center.y), Anker::center, 0xffffff, choplin30, "%d", num);
 	};
@@ -227,7 +227,7 @@ void StatusWindow::DrawBattleStatus(Rect& statusRect1)
 		sprintf_s(str, 256, "%d ` %d", attackRange.min, attackRange.max);
 	}
 
-	contentRect.DrawGraph(fileSystem->GetImageHandle("Resource/Image/UI/horizontalWindow.png"));
+	contentRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/horizontalWindow.png"));
 	DrawStringToHandle(Vector2Int(contentRect.center.x - contentRect.size.w * 0.25f, contentRect.center.y), Anker::center, 0xffffff, choplin30, "ŽË’ö");
 	DrawStringToHandle(Vector2Int(contentRect.center.x + contentRect.size.w * 0.25f, contentRect.center.y), Anker::center, 0xffffff, choplin30, str);
 }
@@ -235,9 +235,9 @@ void StatusWindow::DrawBattleStatus(Rect& statusRect1)
 void StatusWindow::DrawStatus(Rect& statusRect2)
 {
 	auto fileSystem = Application::Instance().GetFileSystem();
-	statusRect2.DrawGraph(fileSystem->GetImageHandle("Resource/Image/UI/statusWindow2.png"));
+	statusRect2.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/statusWindow2.png"));
 
-	auto choplin30 = fileSystem->GetFontHandle("choplin30edge");
+	auto choplin30 = fileSystem.GetFontHandle("choplin30edge");
 
 	Size contentSize(_rightWindowSize.w / 2, _rightWindowSize.h / 3);
 	Rect contentRect(Vector2Int(statusRect2.Left(), statusRect2.Top()) + contentSize * 0.5f, contentSize);

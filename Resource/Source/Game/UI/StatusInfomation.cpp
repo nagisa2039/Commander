@@ -59,7 +59,7 @@ void StatusInf::Draw()
 	auto charactor = _mapCtrl.GetMapPosChar(*_targetPosList.begin());
 	if (charactor == nullptr)return;
 
-	auto fontH = Application::Instance().GetFileSystem()->GetFontHandle("choplin20edge");
+	auto fontH = Application::Instance().GetFileSystem().GetFontHandle("choplin20edge");
 	auto wsize = Application::Instance().GetWindowSize();
 	auto space = Vector2Int(20, -20);
 	Size windowSize(400, 100);

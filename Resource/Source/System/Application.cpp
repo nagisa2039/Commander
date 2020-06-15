@@ -45,21 +45,21 @@ const DataBase& Application::GetDataBase() const
 	return *_dataBase;
 }
 
-shared_ptr<SaveData> Application::GetSaveData()
+SaveData& Application::GetSaveData()
 {
-	return _saveData;
+	return *_saveData;
 }
 
-std::shared_ptr<FileSystem> const Application::GetFileSystem() const
+FileSystem& const Application::GetFileSystem() const
 {
-	return _fileSystem;
+	return *_fileSystem;
 }
 
 bool Application::Initialize()
 {
-	_configure = make_shared<Configure>();
-	_dataBase = make_shared<DataBase>();
-	_saveData = make_shared<SaveData>();
+	_configure = make_unique<Configure>();
+	_dataBase = make_unique<DataBase>();
+	_saveData = make_unique<SaveData>();
 
 	// DxlibÇÃèâä˙âª
 	ChangeWindowMode(TRUE);
@@ -70,7 +70,7 @@ bool Application::Initialize()
 	SetDrawScreen(DX_SCREEN_BACK);
 	SetWindowText("Commander");
 
-	_fileSystem = make_shared<FileSystem>();
+	_fileSystem = make_unique<FileSystem>();
 	_sceneController = make_unique<SceneController>();
 	//_sceneController->ChangeScene(make_unique<PlayScene>(*_sceneController));
 	//_sceneController->ChangeScene(make_unique<MapEditScene>(*_sceneController));
@@ -84,31 +84,31 @@ bool Application::Initialize()
 	KeySetUp();
 
 	// ÉtÉHÉìÉgì«çû
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin20", 20, 1, false, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin30", 30, 1, false, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin40", 40, 1, false, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin50", 50, 1, false, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin60", 60, 1, false, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin70", 70, 1, false, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin80", 80, 1, false, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin100", 100, 1, false, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin200", 200, 1, false, false);
+	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin20", 20, 1, false, false);
+	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin30", 30, 1, false, false);
+	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin40", 40, 1, false, false);
+	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin50", 50, 1, false, false);
+	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin60", 60, 1, false, false);
+	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin70", 70, 1, false, false);
+	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin80", 80, 1, false, false);
+	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin100", 100, 1, false, false);
+	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin200", 200, 1, false, false);
 
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin20edge", 20, 1, true, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin30edge", 30, 1, true, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin40edge", 40, 1, true, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin50edge", 50, 1, true, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin60edge", 60, 1, true, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin70edge", 70, 1, true, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin80edge", 80, 1, true, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin100edge", 100, 1, true, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin200edge", 200, 1, true, false);
+	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin20edge", 20, 1, true, false);
+	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin30edge", 30, 1, true, false);
+	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin40edge", 40, 1, true, false);
+	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin50edge", 50, 1, true, false);
+	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin60edge", 60, 1, true, false);
+	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin70edge", 70, 1, true, false);
+	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin80edge", 80, 1, true, false);
+	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin100edge", 100, 1, true, false);
+	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin200edge", 200, 1, true, false);
 
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori20", 20, 1, false, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori30", 30, 1, false, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori40", 40, 1, false, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori200", 200, 1, false, false);
-	Application::Instance().GetFileSystem()->FontInit("Resource/Font/Oshidashi - M - Gothic - TT.ttf", "Oshidasi", "oshidashi200", 200, 1, false, false);
+	_fileSystem->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori20", 20, 1, false, false);
+	_fileSystem->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori30", 30, 1, false, false);
+	_fileSystem->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori40", 40, 1, false, false);
+	_fileSystem->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori200", 200, 1, false, false);
+	_fileSystem->FontInit("Resource/Font/Oshidashi - M - Gothic - TT.ttf", "Oshidasi", "oshidashi200", 200, 1, false, false);
 
 	return true;
 }

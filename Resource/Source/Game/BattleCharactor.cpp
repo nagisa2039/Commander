@@ -115,7 +115,9 @@ void BattleCharactor::UIDraw()
 	auto status = _selfChar.GetStatus();
 	auto targetStatus = _targetChar->GetCharacotr().GetStatus();
 	auto teamColor = GetTeamColorBattle(_selfChar.GetTeam());
-	auto fontHandle = Application::Instance().GetFileSystem()->GetFontHandle("choplin40edge");
+	auto fileSystem = Application::Instance().GetFileSystem();
+
+	auto fontHandle = fileSystem.GetFontHandle("choplin40edge");
 
 	Vector2Int mapPosSub(_targetChar->GetCharacotr().GetMapPos() - _selfChar.GetMapPos());
 	unsigned int distance = abs(mapPosSub.x) + abs(mapPosSub.y);
@@ -143,12 +145,12 @@ void BattleCharactor::UIDraw()
 	// ‰æ–Ê‰ºUI‚Ì—Ìˆæ•`‰æ
 	char path[_MAX_PATH];
 	sprintf_s(path, _MAX_PATH, "Resource/Image/Battle/battleWindow_%s.png", teamString);
-	windowRect.DrawGraph(Application::Instance().GetFileSystem()->GetImageHandle(path));
+	windowRect.DrawGraph(fileSystem.GetImageHandle(path));
 
 	{
 		// UŒ‚—Í, –½’†—¦, •KŽE, ‚Ì•`‰æ
 		sprintf_s(path, _MAX_PATH, "Resource/Image/Battle/battleParamWindow_%s.png", teamString);
-		paramWindowRect.DrawGraph(Application::Instance().GetFileSystem()->GetImageHandle(path));
+		paramWindowRect.DrawGraph(fileSystem.GetImageHandle(path));
 
 		const int ITEM_MAX = 3;
 		auto drawParam = [&](const int itemNum, const int fontH, const unsigned int color, const char* string, const int num)
@@ -182,7 +184,7 @@ void BattleCharactor::UIDraw()
 			name = "ATK";
 			num = status.GetDamage(targetStatus);
 		}
-		auto paramH = Application::Instance().GetFileSystem()->GetFontHandle("choplin30edge");
+		auto paramH = fileSystem.GetFontHandle("choplin30edge");
 		drawParam(itemNum++, paramH, 0xffffff, name, num);
 		// –½’†
 		drawParam(itemNum++, paramH, 0xffffff, "HIT", status.GetHit(targetStatus));
@@ -223,7 +225,7 @@ void BattleCharactor::UIDraw()
 	{
 		// –¼‘O•\Ž¦
 		sprintf_s(path, _MAX_PATH, "Resource/Image/Battle/battleNameWindow_%s.png", teamString);
-		nameWindowRect.DrawGraph(Application::Instance().GetFileSystem()->GetImageHandle(path));
+		nameWindowRect.DrawGraph(fileSystem.GetImageHandle(path));
 		DrawStringToHandle(nameWindowRect.center, Anker::center, 0xffffff, fontHandle, _selfChar.GetName().c_str());
 	}
 }

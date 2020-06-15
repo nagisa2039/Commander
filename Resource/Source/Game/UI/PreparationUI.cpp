@@ -147,7 +147,7 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>& uiDeque, Camera& c
 
 	if (_itemScreenH == -1)
 	{
-		int windowH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/window0.png");
+		int windowH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/window0.png");
 		Size windowSize;
 		GetGraphSize(windowH, windowSize);
 		_itemScreenH = MakeScreen(windowSize.w, windowSize.h, true);
@@ -170,8 +170,9 @@ void PreparationUI::Draw()
 		_battlePreparationCursor->Draw();
 		return;
 	}
-	int fontH = Application::Instance().GetFileSystem()->GetFontHandle("choplin30edge");
-	int windowH = Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/window0.png");
+	auto fileSystem = Application::Instance().GetFileSystem();
+	int fontH = fileSystem.GetFontHandle("choplin30edge");
+	int windowH = fileSystem.GetImageHandle("Resource/Image/UI/window0.png");
 	Size graphSize;
 	auto wsize = Application::Instance().GetWindowSize();
 	GetGraphSize(windowH, graphSize);

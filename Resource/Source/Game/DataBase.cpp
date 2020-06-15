@@ -185,7 +185,7 @@ int DataBase::GetCharactorImageHandle(const CharactorType charactorType, const T
 {
 	char str[256];
 	sprintf_s(str, 256, "%s%s", GetCharactorData(charactorType).ImagePath.c_str(), team == Team::player ? "_player.png" : "_enemy.png");
-	return Application::Instance().GetFileSystem()->GetImageHandle(str);
+	return Application::Instance().GetFileSystem().GetImageHandle(str);
 }
 
 const DataBase::CharactorData& DataBase::GetCharactorData(const CharactorType charactorType) const

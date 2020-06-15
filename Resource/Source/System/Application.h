@@ -29,18 +29,6 @@ public:
 
 	~Application();
 
-	// Configureを参照で返す
-	Configure& GetConfigure (void);
-
-	// 画面サイズを参照で返す
-	const Size& GetWindowSize(void);
-
-	const DataBase& GetDataBase()const;
-
-	std::shared_ptr<SaveData> GetSaveData();
-
-	std::shared_ptr<FileSystem> const GetFileSystem()const;
-
 	// シングルトン実体を返す
 	static Application& Instance()
 	{
@@ -59,19 +47,32 @@ public:
 	// 終了処理
 	void Terminate();
 
+
+	// Configureを参照で返す
+	Configure& GetConfigure (void);
+
+	// 画面サイズを参照で返す
+	const Size& GetWindowSize(void);
+
+	const DataBase& GetDataBase()const;
+
+	SaveData& GetSaveData();
+
+	FileSystem& const GetFileSystem()const;
+
 private:
 	Application();
 	Application(const Application&);
 	Application& operator=(const Application&);
 
-	std::shared_ptr<Input> _input;
-	std::shared_ptr<SceneController> _sceneController;
-	std::shared_ptr<FileSystem> _fileSystem;
+	std::unique_ptr<Input> _input;
+	std::unique_ptr<SceneController> _sceneController;
+	std::unique_ptr<FileSystem> _fileSystem;
 
 	std::vector<Vector2Int> _poss;
 
-	std::shared_ptr<Configure> _configure;
-	std::shared_ptr<DataBase> _dataBase;
-	std::shared_ptr<SaveData> _saveData;
+	std::unique_ptr<Configure> _configure;
+	std::unique_ptr<DataBase> _dataBase;
+	std::unique_ptr<SaveData> _saveData;
 };
 

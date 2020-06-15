@@ -8,9 +8,54 @@
 
 using namespace std;
 
+int StatusWindow::_windowH = -1;
+
+void StatusWindow::NormalUpdate(const Input& input)
+{
+	if (input.GetButtonDown(0, "status") || input.GetButtonDown(0, "back")
+		|| input.GetButtonDown(1, "status") || input.GetButtonDown(1, "back"))
+	{
+		_updater = &StatusWindow::ScaleUpdate;
+		_animTrack->SetReverse(true);
+		_animTrack->Reset();
+		return;
+	}
+}
+
+void StatusWindow::ScaleUpdate(const Input& input)
+{
+	_animTrack->Update();
+	if (_animTrack->GetEnd())
+	{
+		// •Â‚¶‚é‚È‚ç
+		if (_animTrack->GetReverse())
+		{
+			_uiDeque.pop_front();
+			_isOpen = false;
+		}
+		else
+		{
+			_updater = &StatusWindow::NormalUpdate;
+		}
+	}
+}
+
 StatusWindow::StatusWindow(std::deque<std::shared_ptr<UI>>& uiDeque, const Charactor& charactor):UI(uiDeque), _charactor (charactor)
 {
 	_isOpen = true;
+	_animTrack = make_unique<Track<float>>();
+	_animTrack->AddKey(0, 0.0f);
+	_animTrack->AddKey(15, 1.0f);
+
+	_leftWindowSize = Size(250, 250);
+	_rightWindowSize = Size(450, 250);
+
+	_updater = &StatusWindow::ScaleUpdate;
+
+	if (_windowH == -1)
+	{
+		_windowH = MakeScreen(_leftWindowSize.w + _rightWindowSize.w, _leftWindowSize.h + _rightWindowSize.h, true);
+	}
 }
 
 StatusWindow::~StatusWindow()
@@ -19,197 +64,209 @@ StatusWindow::~StatusWindow()
 
 void StatusWindow::Update(const Input& input)
 {
-	if (input.GetButtonDown(0, "status") || input.GetButtonDown(0, "back")
-	 || input.GetButtonDown(1, "status") || input.GetButtonDown(1, "back"))
-	{
-		_uiDeque.pop_front();
-		_isOpen = false;
-		return;
-	}
+	(this->*_updater)(input);
 }
 
 void StatusWindow::Draw()
 {
+	DrawToWindowScreen();
+
+	auto screenCenter = Application::Instance().GetWindowSize() * 0.5f;
+	DrawRotaGraph(screenCenter.w, screenCenter.h, _animTrack->GetValue(), 0.0f, _windowH, true);
+
+}
+
+void StatusWindow::DrawToWindowScreen()
+{
+	int currentScreen = GetDrawScreen();
+	SetDrawScreen(_windowH);
+	ClsDrawScreen();
+
 	auto wsize = Application::Instance().GetWindowSize();
 
-	Size leftWindowSize(250, 250);
-	Size rightWindowSize(450, 250);
 	Size space(0, 0);
-
-	Rect windowRect(wsize.ToVector2Int() * 0.5f, leftWindowSize + rightWindowSize + space*4);
 
 	auto fileSystem = Application::Instance().GetFileSystem();
 
 
-	Rect iconRect(Vector2Int(windowRect.Left(), windowRect.Top()) + leftWindowSize * 0.5f + space, leftWindowSize);
-	Rect statusRect0(iconRect.center + Vector2Int(0, leftWindowSize.h + space.h * 2), leftWindowSize);
-	Rect statusRect1(Vector2Int(iconRect.Right() + space.w * 2 + rightWindowSize.w * 0.5f, iconRect.center.y),		rightWindowSize);
-	Rect statusRect2(Vector2Int(statusRect1.center.x, statusRect1.Botton() + space.h * 2 + rightWindowSize.h * 0.5f),	rightWindowSize);
+	Rect iconRect(Vector2Int(0,0) + _leftWindowSize * 0.5f + space, _leftWindowSize);
+	Rect statusRect0(iconRect.center + Vector2Int(0, _leftWindowSize.h + space.h * 2), _leftWindowSize);
+	Rect statusRect1(Vector2Int(iconRect.Right() + space.w * 2 + _rightWindowSize.w * 0.5f, iconRect.center.y), _rightWindowSize);
+	Rect statusRect2(Vector2Int(statusRect1.center.x, statusRect1.Botton() + space.h * 2 + _rightWindowSize.h * 0.5f), _rightWindowSize);
 
-	// ƒLƒƒƒ‰ƒNƒ^[ƒAƒCƒRƒ“
+	DrawIcon(iconRect);
+	DrawBaseInf(statusRect0);
+	DrawBattleStatus(statusRect1);
+	DrawStatus(statusRect2);
+
+	SetDrawScreen(currentScreen);
+}
+
+void StatusWindow::DrawIcon(Rect& iconRect)
+{
+	iconRect.DrawGraph(Application::Instance().GetFileSystem()->GetImageHandle("Resource/Image/UI/statusWindow1.png"));
+	_charactor.DrawCharactorIcon(iconRect);
+}
+
+void StatusWindow::DrawBaseInf(Rect& statusRect0)
+{
+	auto fileSystem = Application::Instance().GetFileSystem();
+	statusRect0.DrawGraph(fileSystem->GetImageHandle("Resource/Image/UI/statusWindow1.png"));
+
+	Size contentSize(250, 250 / 4);
+	Vector2Int center(statusRect0.Left() + contentSize.w / 2, statusRect0.Top() + contentSize.h / 2);
+
+	Size strSize;
+	int line;
+
+	auto choplin40 = fileSystem->GetFontHandle("choplin40edge");
+
+	// –¼‘O
+	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &line, choplin40, _charactor.GetName().c_str());
+	auto drawPos = GetDrawPos(center, strSize, Anker::center);
+	DrawFormatStringToHandle(drawPos.x, drawPos.y, 0xffffff, choplin40, _charactor.GetName().c_str());
+	center.y += contentSize.h;
+
+	auto DrawNumContent = [&](const string& leftStr, const string& rightStr)
 	{
-		iconRect.DrawGraph(fileSystem->GetImageHandle("Resource/Image/UI/statusWindow1.png"));
-		_charactor.DrawCharactorIcon(iconRect);
-	}
+		Size strSize;
+		int line;
+		GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &line, choplin40, leftStr.c_str());
+		auto drawPos = GetDrawPos(Vector2Int(statusRect0.Left(), center.y), strSize, Anker::leftcenter);
+		DrawFormatStringToHandle(drawPos.x + 10, drawPos.y, 0xffffff, choplin40, leftStr.c_str());
 
-
-	auto choplin40 = Application::Instance().GetFileSystem()->GetFontHandle("choplin40edge");
-	auto choplin30 = Application::Instance().GetFileSystem()->GetFontHandle("choplin30edge");
+		GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &line, choplin40, rightStr.c_str());
+		drawPos = GetDrawPos(Vector2Int(statusRect0.Right(), center.y), strSize, Anker::rightcenter);
+		DrawFormatStringToHandle(drawPos.x - 10, drawPos.y, 0xffffff, choplin40, rightStr.c_str());
+		center.y += contentSize.h;
+	};
 
 	auto startStatus = _charactor.GetStartStatus();
 	auto currentStatus = _charactor.GetStatus();
 
-	// Window0
+	// ƒŒƒxƒ‹
+	string rightStr;
+	rightStr.resize(256);
+	sprintf_s(rightStr.data(), 255, "%d", currentStatus.level);
+	DrawNumContent("Lv.", rightStr);
+
+	// ‘Ì—Í
+	rightStr.resize(256);
+	sprintf_s(rightStr.data(), 255, "%d/%d", currentStatus.health, startStatus.health);
+	DrawNumContent("HP", rightStr);
+
+	// s“®—Í
+	rightStr.resize(256);
+	sprintf_s(rightStr.data(), 255, "%d", startStatus.move);
+	DrawNumContent("MOV", rightStr);
+}
+
+void StatusWindow::DrawBattleStatus(Rect& statusRect1)
+{
+	auto fileSystem = Application::Instance().GetFileSystem();
+	statusRect1.DrawGraph(fileSystem->GetImageHandle("Resource/Image/UI/statusWindow2.png"));
+
+	auto choplin30 = fileSystem->GetFontHandle("choplin30edge");
+
+	// 150, 125
+	Rect contentRect = Rect(Vector2Int(0, 0), Size(_rightWindowSize.w / 3, _rightWindowSize.h / 2));
+	contentRect.center = Vector2Int(statusRect1.Left(), statusRect1.Top()) + contentRect.size * 0.5f;
+	int spaceX = 10;
+
+	auto DrawContentVertical = [&](const string& name, const int num)
 	{
-		statusRect0.DrawGraph(fileSystem->GetImageHandle("Resource/Image/UI/statusWindow1.png"));
+		contentRect.DrawGraph(fileSystem->GetImageHandle("Resource/Image/UI/verticalWindow.png"));
+		DrawStringToHandle(Vector2Int(contentRect.center.x, contentRect.center.y - contentRect.size.h * 0.25f), Anker::center, 0xffffff, choplin30, name.c_str());
+		DrawStringToHandle(Vector2Int(contentRect.center.x, contentRect.center.y + contentRect.size.h * 0.25f), Anker::center, 0xffffff, choplin30, "%d", num);
+	};
 
-		Size contentSize(250, 250 / 4);
-		Vector2Int center(statusRect0.Left() + contentSize.w / 2, statusRect0.Top() + contentSize.h/2);
-
-		Size strSize;
-		int line;
-
-		// –¼‘O
-		GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &line, choplin40, _charactor.GetName().c_str());
-		auto drawPos = GetDrawPos(center, strSize, Anker::center);
-		DrawFormatStringToHandle(drawPos.x, drawPos.y, 0xffffff, choplin40, _charactor.GetName().c_str());
-		center.y += contentSize.h;
-
-		auto DrawNumContent = [&](const string& leftStr, const string& rightStr)
-		{
-			Size strSize;
-			int line;
-			GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &line, choplin40, leftStr.c_str());
-			auto drawPos = GetDrawPos(Vector2Int(statusRect0.Left(), center.y), strSize, Anker::leftcenter);
-			DrawFormatStringToHandle(drawPos.x + 10, drawPos.y, 0xffffff, choplin40, leftStr.c_str());
-
-			GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &line, choplin40, rightStr.c_str());
-			drawPos = GetDrawPos(Vector2Int(statusRect0.Right(), center.y), strSize, Anker::rightcenter);
-			DrawFormatStringToHandle(drawPos.x - 10, drawPos.y, 0xffffff, choplin40, rightStr.c_str());
-			center.y += contentSize.h;
-		};
-
-		// ƒŒƒxƒ‹
-		string rightStr;
-		rightStr.resize(256);
-		sprintf_s(rightStr.data(), 255, "%d", currentStatus.level);
-		DrawNumContent("Lv.", rightStr);
-
-		// ‘Ì—Í
-		rightStr.resize(256);
-		sprintf_s(rightStr.data(), 255, "%d/%d", currentStatus.health, startStatus.health);
-		DrawNumContent("HP", rightStr);
-
-		// s“®—Í
-		rightStr.resize(256);
-		sprintf_s(rightStr.data(), 255, "%d", startStatus.move);
-		DrawNumContent("MOV", rightStr);
-	}
-
-	// Window1
+	auto DrawContentHorizontal = [&](const string& name, const int num)
 	{
-		statusRect1.DrawGraph(fileSystem->GetImageHandle("Resource/Image/UI/statusWindow2.png"));
-
-		// 150, 125
-		Rect contentRect = Rect(Vector2Int(0,0), Size(rightWindowSize.w / 3, rightWindowSize.h / 2));
-		contentRect.center = Vector2Int(statusRect1.Left(), statusRect1.Top()) + contentRect.size * 0.5f;
-		int spaceX = 10;
-
-		auto DrawContentVertical = [&](const string& name, const int num)
-		{
-			contentRect.DrawGraph(fileSystem->GetImageHandle("Resource/Image/UI/verticalWindow.png"));
-			DrawStringToHandle(Vector2Int(contentRect.center.x, contentRect.center.y - contentRect.size.h * 0.25f), Anker::center, 0xffffff, choplin30, name.c_str());
-			DrawStringToHandle(Vector2Int(contentRect.center.x, contentRect.center.y + contentRect.size.h * 0.25f), Anker::center, 0xffffff, choplin30, "%d", num);
-		};
-
-		auto DrawContentHorizontal = [&](const string& name, const int num)
-		{
-			contentRect.DrawGraph(fileSystem->GetImageHandle("Resource/Image/UI/horizontalWindow.png"));
-			DrawStringToHandle(Vector2Int(contentRect.center.x - contentRect.size.w * 0.25f, contentRect.center.y), Anker::center, 0xffffff, choplin30, name.c_str());
-			DrawStringToHandle(Vector2Int(contentRect.center.x + contentRect.size.w * 0.25f, contentRect.center.y), Anker::center, 0xffffff, choplin30, "%d", num);
-		};
-
-		// UŒ‚
-		DrawContentVertical("UŒ‚", currentStatus.power);
-		contentRect.center.x += contentRect.size.w;
-		// –½’†
-		DrawContentVertical("–½’†", currentStatus.GetHitRate());
-		contentRect.center.x += contentRect.size.w;
-		// •KŽE
-		DrawContentVertical("•KŽE", currentStatus.GetCriticalRate());
-		contentRect.center.x += contentRect.size.w;
-
-		//150, 62
-		contentRect.size = Size(rightWindowSize.w / 3, rightWindowSize.h / 4);
-		contentRect.center = Vector2Int(statusRect1.Left(), statusRect1.center.y) + contentRect.size * 0.5f;
-
-		DrawContentHorizontal("U‘¬", currentStatus.GetAttackSpeed());
-		contentRect.center.x += contentRect.size.w;
-		DrawContentHorizontal("–hŒä", currentStatus.GetDifense());
-		contentRect.center.x += contentRect.size.w;
-		DrawContentHorizontal("‘Ï–‚", currentStatus.GetMagicDifense());
-
-		contentRect.center.x = statusRect1.Left() + contentRect.size.w*0.5f;
-		contentRect.center.y += contentRect.size.h;
-		DrawContentHorizontal("‰ñ”ð", currentStatus.GetAvoidance());
-
-		// 300, 62
-		contentRect.center.x += contentRect.size.w *1.5;
-		contentRect.size.w *= 2;
-		auto attackRange = _charactor.GetAttackRange();
-
-		char str[256];
-		if (attackRange.min == attackRange.max)
-		{
-			sprintf_s(str, 256, "%d", attackRange.max);
-		}
-		else
-		{
-			sprintf_s(str, 256, "%d ` %d", attackRange.min, attackRange.max);
-		}
-
 		contentRect.DrawGraph(fileSystem->GetImageHandle("Resource/Image/UI/horizontalWindow.png"));
-		DrawStringToHandle(Vector2Int(contentRect.center.x - contentRect.size.w * 0.25f, contentRect.center.y), Anker::center, 0xffffff, choplin30, "ŽË’ö");
-		DrawStringToHandle(Vector2Int(contentRect.center.x + contentRect.size.w * 0.25f, contentRect.center.y), Anker::center, 0xffffff, choplin30, str);
-	}
+		DrawStringToHandle(Vector2Int(contentRect.center.x - contentRect.size.w * 0.25f, contentRect.center.y), Anker::center, 0xffffff, choplin30, name.c_str());
+		DrawStringToHandle(Vector2Int(contentRect.center.x + contentRect.size.w * 0.25f, contentRect.center.y), Anker::center, 0xffffff, choplin30, "%d", num);
+	};
 
-	// Window2
+	auto currentStatus = _charactor.GetStatus();
+	// UŒ‚
+	DrawContentVertical("UŒ‚", currentStatus.power);
+	contentRect.center.x += contentRect.size.w;
+	// –½’†
+	DrawContentVertical("–½’†", currentStatus.GetHitRate());
+	contentRect.center.x += contentRect.size.w;
+	// •KŽE
+	DrawContentVertical("•KŽE", currentStatus.GetCriticalRate());
+	contentRect.center.x += contentRect.size.w;
+
+	//150, 62
+	contentRect.size = Size(_rightWindowSize.w / 3, _rightWindowSize.h / 4);
+	contentRect.center = Vector2Int(statusRect1.Left(), statusRect1.center.y) + contentRect.size * 0.5f;
+
+	DrawContentHorizontal("U‘¬", currentStatus.GetAttackSpeed());
+	contentRect.center.x += contentRect.size.w;
+	DrawContentHorizontal("–hŒä", currentStatus.GetDifense());
+	contentRect.center.x += contentRect.size.w;
+	DrawContentHorizontal("‘Ï–‚", currentStatus.GetMagicDifense());
+
+	contentRect.center.x = statusRect1.Left() + contentRect.size.w * 0.5f;
+	contentRect.center.y += contentRect.size.h;
+	DrawContentHorizontal("‰ñ”ð", currentStatus.GetAvoidance());
+
+	// 300, 62
+	contentRect.center.x += contentRect.size.w * 1.5;
+	contentRect.size.w *= 2;
+	auto attackRange = _charactor.GetAttackRange();
+
+	char str[256];
+	if (attackRange.min == attackRange.max)
 	{
-		statusRect2.DrawGraph(fileSystem->GetImageHandle("Resource/Image/UI/statusWindow2.png"));
-
-		Size contentSize(rightWindowSize.w / 2, rightWindowSize.h / 3);
-		Rect contentRect(Vector2Int(statusRect2.Left(), statusRect2.Top()) + contentSize * 0.5f, contentSize);
-
-		auto DrawNumContent = [&](const Rect& contentRect, const string& leftStr, const string& rightStr)
-		{
-			Size strSize;
-			int line;
-			GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &line, choplin30, leftStr.c_str());
-			auto drawPos = GetDrawPos(Vector2Int(contentRect.Left(), contentRect.center.y), strSize, Anker::leftcenter);
-			DrawFormatStringToHandle(drawPos.x + 10, drawPos.y, 0xffffff, choplin30, leftStr.c_str());
-
-			GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &line, choplin30, rightStr.c_str());
-			drawPos = GetDrawPos(Vector2Int(contentRect.Right(), contentRect.center.y), strSize, Anker::rightcenter);
-			DrawFormatStringToHandle(drawPos.x - 10, drawPos.y, 0xffffff, choplin30, rightStr.c_str());
-		};
-
-		string num;
-		num.resize(256);
-		sprintf_s(num.data(), 255, "%d", currentStatus.power);
-		DrawNumContent(contentRect, "—Í", num);
-		contentRect.center.y += contentRect.Height();
-		sprintf_s(num.data(), 255, "%d", currentStatus.skill);
-		DrawNumContent(contentRect, "‹Z", num);
-		contentRect.center.y += contentRect.Height();
-		sprintf_s(num.data(), 255, "%d", currentStatus.speed);
-		DrawNumContent(contentRect, "‘¬‚³", num);
-		contentRect.center = Vector2Int(statusRect2.Left(), statusRect2.Top()) + contentSize * 0.5f;
-		contentRect.center.x += contentRect.Width();
-		sprintf_s(num.data(), 255, "%d", currentStatus.defense);
-		DrawNumContent(contentRect, "Žç”õ", num);
-		contentRect.center.y += contentRect.Height();
-		sprintf_s(num.data(), 255, "%d", currentStatus.magic_defense);
-		DrawNumContent(contentRect, "–‚–h", num);
+		sprintf_s(str, 256, "%d", attackRange.max);
+	}
+	else
+	{
+		sprintf_s(str, 256, "%d ` %d", attackRange.min, attackRange.max);
 	}
 
+	contentRect.DrawGraph(fileSystem->GetImageHandle("Resource/Image/UI/horizontalWindow.png"));
+	DrawStringToHandle(Vector2Int(contentRect.center.x - contentRect.size.w * 0.25f, contentRect.center.y), Anker::center, 0xffffff, choplin30, "ŽË’ö");
+	DrawStringToHandle(Vector2Int(contentRect.center.x + contentRect.size.w * 0.25f, contentRect.center.y), Anker::center, 0xffffff, choplin30, str);
+}
+
+void StatusWindow::DrawStatus(Rect& statusRect2)
+{
+	auto fileSystem = Application::Instance().GetFileSystem();
+	statusRect2.DrawGraph(fileSystem->GetImageHandle("Resource/Image/UI/statusWindow2.png"));
+
+	auto choplin30 = fileSystem->GetFontHandle("choplin30edge");
+
+	Size contentSize(_rightWindowSize.w / 2, _rightWindowSize.h / 3);
+	Rect contentRect(Vector2Int(statusRect2.Left(), statusRect2.Top()) + contentSize * 0.5f, contentSize);
+
+	auto DrawNumContent = [&](const Rect& contentRect, const string& leftStr, const int num)
+	{
+		Rect box(Vector2Int(contentRect.center), Size(0, 15));
+		box.size.w = 2 * num;
+		box.center.x += box.size.w / 2 - 30;
+		box.Draw(0x482464);
+
+		int spaceX = 10;
+		DrawStringToHandle(Vector2Int(contentRect.Left() + spaceX, contentRect.center.y), Anker::leftcenter, 0xffffff, choplin30, leftStr.c_str());
+		DrawStringToHandle(Vector2Int(contentRect.Right() - spaceX, contentRect.center.y), Anker::rightcenter, 0xffffff, choplin30, "%d", num);
+	};
+
+	auto currentStatus = _charactor.GetStatus();
+	DrawNumContent(contentRect, "—Í", currentStatus.power);
+	contentRect.center.y += contentRect.Height();
+
+	DrawNumContent(contentRect, "‹Z", currentStatus.skill);
+	contentRect.center.y += contentRect.Height();
+
+	DrawNumContent(contentRect, "‘¬‚³", currentStatus.speed);
+	contentRect.center = Vector2Int(statusRect2.Left(), statusRect2.Top()) + contentSize * 0.5f;
+	contentRect.center.x += contentRect.Width();
+
+	DrawNumContent(contentRect, "Žç”õ", currentStatus.defense);
+	contentRect.center.y += contentRect.Height();
+
+	DrawNumContent(contentRect, "–‚–h", currentStatus.magic_defense);
 }

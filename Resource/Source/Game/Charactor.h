@@ -78,9 +78,6 @@ protected:
 	Status _status; 
 	Status _startStatus;
 
-	// 攻撃範囲
-	Range _attackRange;
-
 	std::string _iconPath;	// アイコンの画像パス
 
 	// 攻撃開始エフェクト

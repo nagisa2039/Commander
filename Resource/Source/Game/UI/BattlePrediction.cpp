@@ -12,7 +12,7 @@ int BattlePrediction::GetChengePoint(const Dir& dir, bool rightAttack, Status& s
 	int chengePoint = 0;
 	if (dir == Dir::left)
 	{
-		if (!selfStatus.heal && rightAttack)
+		if (!selfStatus.CheckHeal() && rightAttack)
 		{
 			chengePoint = (targetStatus.CheckPursuit(selfStatus) ? 2 : 1) * targetStatus.GetDamage(selfStatus);
 		}
@@ -20,7 +20,7 @@ int BattlePrediction::GetChengePoint(const Dir& dir, bool rightAttack, Status& s
 	}
 	else
 	{
-		if (targetStatus.heal)
+		if (targetStatus.CheckHeal())
 		{
 			chengePoint = -targetStatus.GetRecover();
 		}
@@ -75,7 +75,7 @@ void BattlePrediction::Draw()
 	auto window1Handle = fileSystem.GetImageHandle("Resource/Image/UI/window1.png");
 
 	// çUåÇÇ≥ÇÍÇΩë§Ç™îΩåÇÇ≈Ç´ÇÈÇ©
-	bool rightAttack = _targetCharactor.GetAttackRange().Hit(_distance) && !targetStatus.heal;
+	bool rightAttack = _targetCharactor.GetAttackRange().Hit(_distance) && !targetStatus.CheckHeal();
 
 	// Ç†Ç∆Y300
 	// HP 100
@@ -86,7 +86,7 @@ void BattlePrediction::Draw()
 		const unsigned int leftColor = 0xffffff, const unsigned int rightColor = 0xffffff)
 	{
 		char str[256];
-		if (selfStatus.heal)
+		if (selfStatus.CheckHeal())
 		{
 			sprintf_s(str, 256, "%d", leftValue);
 			DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, leftColor, fontH, str);
@@ -114,7 +114,7 @@ void BattlePrediction::Draw()
 
 	auto DrawContentForPower = [&]()
 	{
-		if (selfStatus.heal)
+		if (selfStatus.CheckHeal())
 		{
 			DrawContent("âÒïú", selfStatus.GetRecover(), targetStatus.GetDamage(selfStatus));
 			return;
@@ -135,8 +135,11 @@ void BattlePrediction::Draw()
 				return color;
 			};
 
-			unsigned int selfColor		= GetAttackColor(Application::Instance().GetDataBase().GetAttributeRate(selfStatus.attributeId, targetStatus.attributeId));
-			unsigned int targetColor	= GetAttackColor(Application::Instance().GetDataBase().GetAttributeRate(targetStatus.attributeId, selfStatus.attributeId));
+			auto dataBase = Application::Instance().GetDataBase();
+			auto selfAttribute = dataBase.GetWeaponData(selfStatus.weaponId).atribute;
+			auto tagetAttribute = dataBase.GetWeaponData(targetStatus.weaponId).atribute;
+			unsigned int selfColor		= GetAttackColor(Application::Instance().GetDataBase().GetAttributeRate(selfAttribute, tagetAttribute));
+			unsigned int targetColor	= GetAttackColor(Application::Instance().GetDataBase().GetAttributeRate(tagetAttribute, selfAttribute));
 
 			DrawContent("à–óÕ", selfStatus.GetDamage(targetStatus), 
 				targetStatus.GetDamage(selfStatus), selfColor, targetColor);
@@ -206,7 +209,7 @@ void BattlePrediction::DrawHPBer(int& drawY, const Rect& windowRect, bool rightA
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
 		// HPÇÃécó 
-		Size currentSize(hpSize.w * (targetStatus.heal ? before : affter), hpSize.h);
+		Size currentSize(hpSize.w * (targetStatus.CheckHeal() ? before : affter), hpSize.h);
 		drawPos = GetDrawPos(Vector2Int(windowRect.center.x, drawY), currentSize, anker);
 		DrawBox(drawPos, drawPos + currentSize, teamColor);
 

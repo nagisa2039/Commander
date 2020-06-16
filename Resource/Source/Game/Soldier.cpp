@@ -17,6 +17,7 @@ Soldier::Soldier(const uint8_t level, const Vector2Int& mapPos, const Team team,
 {
 	CharactorDataInit(CharactorType::soldier, level);
 	_battleC = make_shared<SoldierBC>(*this, _animator->GetImageH(), _camera);
+	_startStatus.weaponId = 1;
 }
 
 Soldier::~Soldier()

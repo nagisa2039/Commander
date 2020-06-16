@@ -385,7 +385,7 @@ void MapCtrl::RouteSearch(Charactor& charactor)
 	CreateMapVec(mapVec2, charactor.GetTeam());
 
 	return _astar->RouteSearch(charactor.GetMapPos(), charactor.GetStatus().move, charactor.GetAttackRange(), 
-		mapVec2, charactor.GetResutlPosListVec2(), charactor.GetTeam(), charactor.GetStatus().heal);
+		mapVec2, charactor.GetResutlPosListVec2(), charactor.GetTeam(), Application::Instance().GetDataBase().GetWeaponData(charactor.GetStatus().weaponId).heal);
 }
 
 bool MapCtrl::MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, std::list<Astar::ResultPos>& resutlPosList, const Team team, const std::list<Astar::ResultPos>& excludeList)
@@ -404,7 +404,7 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor, Vector2Int& targetCnt)
 	CreateMapVec(mapVec2, charactor.GetTeam());
 	auto status = charactor.GetStatus();
 
-	bool heal = charactor.GetStatus().heal;
+	bool heal = Application::Instance().GetDataBase().GetWeaponData(charactor.GetStatus().weaponId).heal;
 	auto& resultPosListVec2 = charactor.GetResutlPosListVec2();
 	_astar->RouteSearch(charactor.GetMapPos(), status.move, charactor.GetAttackRange(), 
 		mapVec2, resultPosListVec2, charactor.GetTeam(), heal, charactor.GetMoveActive());
@@ -475,7 +475,7 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor, Vector2Int& targetCnt)
 	// “G‚ÌUŒ‚”ÍˆÍŠO‚©‚çUŒ‚‚Å‚«‚È‚¢‚Ì‚ÅÅ‰‚ÉŒ©‚Â‚¯‚½“G‚ÌêŠ‚ÉŒü‚©‚¤
 	if (targetCharactorList.size() > 0)
 	{
-		if (status.heal)
+		if (heal)
 		{
 			// Å‚àƒ_ƒ[ƒW‚ğó‚¯‚Ä‚¢‚éƒLƒƒƒ‰ƒNƒ^[‚ğ’T‚·
 			targetCharactorList.sort([](const TargetCharactor& left, const TargetCharactor& right)

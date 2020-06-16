@@ -16,15 +16,16 @@ PlayerMenu::PlayerMenu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander
 	_contentInfs[static_cast<size_t>(Content::retreat)].name = "退却";
 	_contentInfs[static_cast<size_t>(Content::turnEnd)].name = "ターン終了";
 
-	_contentInfs[static_cast<size_t>(Content::situation)].func = [&]()
+	
+	_contentInfs[static_cast<size_t>(Content::situation)].func = [this] ()
 	{
 		_uiDeque.emplace_front(make_shared<WarSituation>(_uiDeque, _mapCtrl));
 	};
-	_contentInfs[static_cast<size_t>(Content::retreat)].func = [&]()
+	_contentInfs[static_cast<size_t>(Content::retreat)].func = [this]()
 	{
 		_uiDeque.emplace_front(make_shared<CheckWindow>("退却しますか？", _uiDeque, [&]() {_playerCommander.SetBackMapSelect(true); }));
 	};
-	_contentInfs[static_cast<size_t>(Content::turnEnd)].func = [&]()
+	_contentInfs[static_cast<size_t>(Content::turnEnd)].func = [this]()
 	{
 		_uiDeque.emplace_front(make_shared<CheckWindow>("ターンを終了しますか？", _uiDeque, [&]() {_playerCommander.End(); }));
 	};

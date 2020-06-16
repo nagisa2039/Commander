@@ -83,7 +83,7 @@ void BattleScene::RightHPAnim(const Input& input)
 	_rightBC.UIAnimUpdate();
 	if (_rightBC.GetHPAnimEnd())
 	{
-		if (_leftBC.GetCharacotr().GetStatus().heal)
+		if (_leftBC.GetCharacotr().GetStatus().CheckHeal())
 		{
 			StartExpUpdate();
 			return;
@@ -105,7 +105,7 @@ void BattleScene::RightHPAnim(const Input& input)
 
 		// çUåÇîÕàÕì‡Ç©ämîF
 		auto mapPosSub = _leftBC.GetCharacotr().GetMapPos() - _rightBC.GetCharacotr().GetMapPos();
-		if (_rightBC.GetCharacotr().GetAttackRange().Hit(abs(mapPosSub.x) + abs(mapPosSub.y)) && !_rightBC.GetCharacotr().GetStartStatus().heal)
+		if (_rightBC.GetCharacotr().GetAttackRange().Hit(abs(mapPosSub.x) + abs(mapPosSub.y)) && !_rightBC.GetCharacotr().GetStartStatus().CheckHeal())
 		{
 			_rightBC.StartAttackAnim();
 			_updater = &BattleScene::RightTurn;

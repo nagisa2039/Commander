@@ -84,7 +84,8 @@ void Charactor::NormalDraw()
 		(chipSize * sizeRate).ToSize());
 	int handle = Application::Instance().GetFileSystem().GetImageHandle(_iconPath.c_str());
 	iconRect.Draw(0x000000);
-	auto attributeData = Application::Instance().GetDataBase().GetAttributeData(_status.attributeId);
+	auto attributeData = Application::Instance().GetDataBase().GetAttributeData(
+		Application::Instance().GetDataBase().GetWeaponData(_status.weaponId).atribute);
 	Rect(iconRect.center, iconRect.size * 0.8f).Draw(attributeData.color);
 
 	// HPBerÇÃï`âÊ
@@ -194,7 +195,7 @@ void Charactor::DrawMovableMass(const uint8_t alpha) const
 			Rect box(offset + (mapPos * chipSize.ToVector2Int() + chipSize * 0.5) + -1, chipSize);
 
 			unsigned int color = CheckMoveMapPos(mapPos) ? 0x000ff : 0xff0000;
-			if (_status.heal)
+			if (_status.CheckHeal())
 			{
 				color = CheckAttackMapPos(mapPos) ? 0x00ff00 : 0x0000ff;
 			}
@@ -273,7 +274,7 @@ bool Charactor::GetIsMoveAnim() const
 
 Range Charactor::GetAttackRange() const
 {
-	return _attackRange;
+	return Application::Instance().GetDataBase().GetWeaponData(_startStatus.weaponId).range;
 }
 
 const std::string& Charactor::GetName() const
@@ -337,8 +338,12 @@ void Charactor::SetStatus(const Status& status)
 
 void Charactor::InitStatus(const Status& status)
 {
+	auto weaponId = _startStatus.weaponId;
 	_status = status;
 	_startStatus = status;
+
+	_status.weaponId = weaponId;
+	_startStatus.weaponId = weaponId;
 }
 
 void Charactor::SetMoveActive(const bool active)
@@ -566,7 +571,7 @@ std::list<Astar::ResultPos> Charactor::CreateResultPosList(const Vector2Int mapP
 	auto targetCharactor = _mapCtrl.GetMapPosChar(mapPos);
 	if (targetCharactor != nullptr)
 	{
-		if (_status.heal)
+		if (_status.CheckHeal())
 		{
 			for (const auto& targetPos : _resultPosListVec2[mapPos.y][mapPos.x])
 			{
@@ -584,7 +589,7 @@ std::list<Astar::ResultPos> Charactor::CreateResultPosList(const Vector2Int mapP
 			// ëäéËÇÃçUåÇîÕàÕ
 			auto targetRange = targetCharactor->GetAttackRange();
 			// àÍï˚ìIÇ…çUåÇÇ≈Ç´ÇÈãóó£
-			Range criticalRange = _attackRange.GetCriticalRange(targetRange);
+			Range criticalRange = GetAttackRange().GetCriticalRange(targetRange);
 			// àÍï˚ìIÇ…çUåÇÇ≈Ç´ÇÈãóó£Ç™Ç†ÇÈÇ©
 			if (criticalRange != Range(0, 0))
 			{
@@ -749,7 +754,6 @@ Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team t
 	_updater = &Charactor::NormalUpdate;
 	_drawer = &Charactor::NormalDraw;
 
-	_attackRange = Range(2,2);
 	_dir = Dir::down;
 
 	_battleStartEffect = make_shared<CorsorTarget>(Vector2Int(), _camera, true, _mapCtrl.GetChipSize());
@@ -876,5 +880,4 @@ void Charactor::CharactorDataInit(const CharactorType& type, const uint8_t& leve
 	_startStatus = _status;
 
 	_iconPath = charactorData.iconImagePath;
-	_attackRange = charactorData.range;
 }

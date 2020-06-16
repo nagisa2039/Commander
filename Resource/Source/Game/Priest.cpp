@@ -17,6 +17,7 @@ Priest::Priest(const uint8_t level, const Vector2Int& mapPos, const Team team, c
 {
 	CharactorDataInit(CharactorType::priest, level);
 	_battleC = make_shared<PriestBC>(*this, _animator->GetImageH(), _camera);
+	_startStatus.weaponId = 5;
 }
 
 Priest::~Priest()

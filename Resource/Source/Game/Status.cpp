@@ -7,8 +7,10 @@ using namespace std;
 
 int Status::GetDamage(const Status& target)const
 {
-	auto rate = Application::Instance().GetDataBase().GetAttributeRate(attributeId, target.attributeId);
-	return max( static_cast<int>((power - (magicAttack ? target.magic_defense : target.defense)) * rate) - target.defenseCorrection, 0);
+	auto dataBase = Application::Instance().GetDataBase();
+	auto weaponData = dataBase.GetWeaponData(weaponId);
+	auto rate = dataBase.GetAttributeRate(weaponData.atribute, dataBase.GetWeaponData(target.weaponId).atribute);
+	return max( static_cast<int>((power - (weaponData.magicAttack ? target.magic_defense : target.defense))  * rate) - target.defenseCorrection, 0);
 }
 
 int Status::GetRecover()
@@ -49,6 +51,16 @@ int Status::GetMagicDifense() const
 int Status::GetAvoidance() const
 {
 	return GetAttackSpeed() * 2 + this->avoidanceCorrection;
+}
+
+bool Status::CheckHeal() const
+{
+	return Application::Instance().GetDataBase().GetWeaponData(weaponId).heal;
+}
+
+bool Status::CheckMagicAttack() const
+{
+	return Application::Instance().GetDataBase().GetWeaponData(weaponId).magicAttack;
 }
 
 bool Status::CheckPursuit(const Status& target) const

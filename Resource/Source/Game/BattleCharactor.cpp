@@ -76,7 +76,8 @@ void BattleCharactor::AttackUpdate(BattleScene& battleScene)
 			auto targetCenterPos = _targetChar->GetCenterPos();
 
 			// –½’†”»’è
-			if (!selfStatus.heal && selfStatus.GetHit(targetStatus) <= rand() % 100)
+			if (! Application::Instance().GetDataBase().GetWeaponData(selfStatus.weaponId).heal
+				&& selfStatus.GetHit(targetStatus) <= rand() % 100)
 			{
 				// ŠO‚ê
 				battleScene.GetEffectVec().emplace_back(CreateMissEffect(targetCenterPos));
@@ -158,7 +159,7 @@ void BattleCharactor::UIDraw()
 			int drawY = paramWindowRect.center.y + (itemNum - (ITEM_MAX - 2)) * 40;
 			DrawStringToHandle(Vector2Int(paramWindowRect.Left() + 10, drawY), Anker::leftcenter, color, fontH, string);
 			// UŒ‚‚Å‚«‚é‚©
-			if (_selfChar.GetAttackRange().Hit(distance) && (!status.heal || _dir == Dir::left))
+			if (_selfChar.GetAttackRange().Hit(distance) && (!status.CheckHeal() || _dir == Dir::left))
 			{
 				char numStr[10];
 				sprintf_s(numStr, 10, "%d", num);
@@ -174,7 +175,8 @@ void BattleCharactor::UIDraw()
 		// UŒ‚—Í
 		const char* name = "";
 		int num = 0;
-		if (status.heal)
+
+		if (status.CheckHeal())
 		{
 			name = "RCV";
 			num = status.GetRecover();

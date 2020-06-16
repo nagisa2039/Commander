@@ -402,12 +402,11 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor, Vector2Int& targetCnt)
 {
 	std::vector<std::vector<Astar::MapData>> mapVec2;
 	CreateMapVec(mapVec2, charactor.GetTeam());
-	auto status = charactor.GetStatus();
+	auto battleStatus = charactor.GetBattleStatus();
 
-	bool heal = Application::Instance().GetDataBase().GetWeaponData(charactor.GetStatus().weaponId).heal;
 	auto& resultPosListVec2 = charactor.GetResutlPosListVec2();
-	_astar->RouteSearch(charactor.GetMapPos(), status.move, charactor.GetAttackRange(), 
-		mapVec2, resultPosListVec2, charactor.GetTeam(), heal, charactor.GetMoveActive());
+	_astar->RouteSearch(charactor.GetMapPos(), battleStatus.status.move, battleStatus.weaponData.range,
+		mapVec2, resultPosListVec2, charactor.GetTeam(), battleStatus.CheckHeal(), charactor.GetMoveActive());
 
 	struct TargetCharactor
 	{
@@ -440,7 +439,7 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor, Vector2Int& targetCnt)
 				if (mapCharactor == nullptr)continue;
 
 				// 探しているチームがいるか
-				if (heal != (charactor.GetTeam() == mapCharactor->GetTeam()))continue;
+				if (battleStatus.CheckHeal() != (charactor.GetTeam() == mapCharactor->GetTeam()))continue;
 
 				auto mapPosSub = mapCharactor->GetMapPos() - (resultPos.prev == nullptr ? charactor.GetMapPos() : resultPos.prev->mapPos);
 				int distance = abs(mapPosSub.x) + abs(mapPosSub.y);
@@ -448,7 +447,7 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor, Vector2Int& targetCnt)
 				// 攻撃開始地点にいるキャラクター
 				auto prevChar = GetMapPosChar(resultPos.prev->mapPos);
 				// 攻撃範囲外か
-				if (resultPos.moveCnt > status.move || (prevChar != nullptr && prevChar != &charactor))
+				if (resultPos.moveCnt > battleStatus.status.move || (prevChar != nullptr && prevChar != &charactor))
 				{
 					outRangeCharactorList.emplace_back(TargetCharactor(mapCharactor, distance, resultPos));
 					continue;
@@ -475,7 +474,7 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor, Vector2Int& targetCnt)
 	// 敵の攻撃範囲外から攻撃できないので最初に見つけた敵の場所に向かう
 	if (targetCharactorList.size() > 0)
 	{
-		if (heal)
+		if (battleStatus.CheckHeal())
 		{
 			// 最もダメージを受けているキャラクターを探す
 			targetCharactorList.sort([](const TargetCharactor& left, const TargetCharactor& right)
@@ -486,9 +485,9 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor, Vector2Int& targetCnt)
 		}
 
 		// 最もダメージを与えられるキャラクターを探す
-		targetCharactorList.sort([&](const TargetCharactor& left, const TargetCharactor& right)
+		targetCharactorList.sort([&battleStatus](const TargetCharactor& left, const TargetCharactor& right)
 		{
-			return status.GetDamage(left.charactor->GetStatus()) > status.GetDamage(right.charactor->GetStatus());
+			return battleStatus.GetDamage(left.charactor->GetBattleStatus()) > battleStatus.GetDamage(right.charactor->GetBattleStatus());
 		});
 		return targetCharactorList.begin()->charactor->GetMapPos();
 	}

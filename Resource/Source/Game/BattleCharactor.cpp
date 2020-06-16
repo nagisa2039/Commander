@@ -70,14 +70,13 @@ void BattleCharactor::AttackUpdate(BattleScene& battleScene)
 		if (_targetChar != nullptr)
 		{
 			// çUåÇ
-			auto selfStatus = _selfChar.GetStatus();
-			auto targetStatus = _targetChar->GetCharacotr().GetStatus();
+			auto selfBattleStatus = _selfChar.GetBattleStatus();
+			auto targetBattleStatus = _targetChar->GetCharacotr().GetBattleStatus();
 
 			auto targetCenterPos = _targetChar->GetCenterPos();
 
 			// ñΩíÜîªíË
-			if (! Application::Instance().GetDataBase().GetWeaponData(selfStatus.weaponId).heal
-				&& selfStatus.GetHit(targetStatus) <= rand() % 100)
+			if (!selfBattleStatus.CheckHeal() && selfBattleStatus.GetHit(targetBattleStatus) <= rand() % 100)
 			{
 				// äOÇÍ
 				battleScene.GetEffectVec().emplace_back(CreateMissEffect(targetCenterPos));
@@ -113,9 +112,9 @@ void BattleCharactor::UIAnimUpdate()
 void BattleCharactor::UIDraw()
 {
 	auto wsize = Application::Instance().GetWindowSize();
-	auto status = _selfChar.GetStatus();
-	auto targetStatus = _targetChar->GetCharacotr().GetStatus();
-	auto teamColor = GetTeamColorBattle(_selfChar.GetTeam());
+	auto battleSelfStatus   = _selfChar.GetBattleStatus();
+	auto targetBattleStatus = _targetChar->GetCharacotr().GetBattleStatus();
+	auto teamColor  = GetTeamColorBattle(_selfChar.GetTeam());
 	auto fileSystem = Application::Instance().GetFileSystem();
 
 	auto fontHandle = fileSystem.GetFontHandle("choplin40edge");
@@ -159,7 +158,7 @@ void BattleCharactor::UIDraw()
 			int drawY = paramWindowRect.center.y + (itemNum - (ITEM_MAX - 2)) * 40;
 			DrawStringToHandle(Vector2Int(paramWindowRect.Left() + 10, drawY), Anker::leftcenter, color, fontH, string);
 			// çUåÇÇ≈Ç´ÇÈÇ©
-			if (_selfChar.GetAttackRange().Hit(distance) && (!status.CheckHeal() || _dir == Dir::left))
+			if (_selfChar.GetAttackRange().Hit(distance) && (!battleSelfStatus.CheckHeal() || _dir == Dir::left))
 			{
 				char numStr[10];
 				sprintf_s(numStr, 10, "%d", num);
@@ -176,22 +175,22 @@ void BattleCharactor::UIDraw()
 		const char* name = "";
 		int num = 0;
 
-		if (status.CheckHeal())
+		if (battleSelfStatus.CheckHeal())
 		{
 			name = "RCV";
-			num = status.GetRecover();
+			num = battleSelfStatus.GetRecover();
 		}
 		else
 		{
 			name = "ATK";
-			num = status.GetDamage(targetStatus);
+			num = battleSelfStatus.GetDamage(targetBattleStatus);
 		}
 		auto paramH = fileSystem.GetFontHandle("choplin30edge");
 		drawParam(itemNum++, paramH, 0xffffff, name, num);
 		// ñΩíÜ
-		drawParam(itemNum++, paramH, 0xffffff, "HIT", status.GetHit(targetStatus));
+		drawParam(itemNum++, paramH, 0xffffff, "HIT", battleSelfStatus.GetHit(targetBattleStatus));
 		// ïKéE
-		drawParam(itemNum++, paramH, 0xffffff, "CRT", status.GetCritical(targetStatus));
+		drawParam(itemNum++, paramH, 0xffffff, "CRT", battleSelfStatus.GetCritical(targetBattleStatus));
 	}
 
 	{

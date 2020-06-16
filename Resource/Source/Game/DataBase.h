@@ -1,5 +1,4 @@
 #pragma once
-
 #include <array>
 #include <string>
 #include "Geometry.h"
@@ -9,6 +8,7 @@
 #include "MapChip.h"
 #include <vector>
 #include <unordered_map>
+#include "WeaponData.h"
 
 class DataBase
 {
@@ -35,27 +35,6 @@ public:
 		int recovery;
 		std::string name;
 		unsigned int simpleColor;
-	};
-
-	struct WeaponData
-	{
-		std::string name;
-		unsigned int power;
-		unsigned int hit;
-		unsigned int critical;
-		unsigned int weight;
-		Range range;
-		bool magicAttack;
-		bool heal;
-		std::string atribute;
-		std::string iconPath;
-
-		//WeaponData& operator=(const WeaponData&) = default;
-
-		WeaponData() : name(""), power(0), hit(0), critical(0), weight(0), range(0, 0), magicAttack(false), heal(false), atribute(""), iconPath("") {};
-		WeaponData(const std::string na, const unsigned int pw, const unsigned int ht, const unsigned int ct, const unsigned int we,
-			const Range& ra, const bool ma, const bool he, const std::string& atribute, const std::string& icon)
-			: name(na), power(pw), hit(ht), critical(ct), weight(we), range(ra), magicAttack(ma), heal(he), atribute(atribute), iconPath(icon) {};
 	};
 
 private:

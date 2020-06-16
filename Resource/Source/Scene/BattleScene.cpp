@@ -83,7 +83,7 @@ void BattleScene::RightHPAnim(const Input& input)
 	_rightBC.UIAnimUpdate();
 	if (_rightBC.GetHPAnimEnd())
 	{
-		if (_leftBC.GetCharacotr().GetStatus().CheckHeal())
+		if (_leftBC.GetCharacotr().GetBattleStatus().CheckHeal())
 		{
 			StartExpUpdate();
 			return;
@@ -105,7 +105,7 @@ void BattleScene::RightHPAnim(const Input& input)
 
 		// çUåÇîÕàÕì‡Ç©ämîF
 		auto mapPosSub = _leftBC.GetCharacotr().GetMapPos() - _rightBC.GetCharacotr().GetMapPos();
-		if (_rightBC.GetCharacotr().GetAttackRange().Hit(abs(mapPosSub.x) + abs(mapPosSub.y)) && !_rightBC.GetCharacotr().GetStartStatus().CheckHeal())
+		if (_rightBC.GetCharacotr().GetAttackRange().Hit(abs(mapPosSub.x) + abs(mapPosSub.y)) && !_rightBC.GetCharacotr().GetBattleStatus().CheckHeal())
 		{
 			_rightBC.StartAttackAnim();
 			_updater = &BattleScene::RightTurn;
@@ -134,9 +134,9 @@ void BattleScene::ExpUpdate(const Input& input)
 
 bool BattleScene::PursuitAttack(const bool rightAttack)
 {
-	auto leftStatus = _leftBC.GetCharacotr().GetStatus();
-	auto rightStatus = _rightBC.GetCharacotr().GetStatus();
-	if (leftStatus.CheckPursuit(rightStatus))
+	auto leftBattleStatus = _leftBC.GetCharacotr().GetBattleStatus();
+	auto rightBattleStatus = _rightBC.GetCharacotr().GetBattleStatus();
+	if (leftBattleStatus.CheckPursuit(rightBattleStatus))
 	{
 		_leftBC.StartAttackAnim();
 		_updater = &BattleScene::LeftTurn;
@@ -145,7 +145,7 @@ bool BattleScene::PursuitAttack(const bool rightAttack)
 	}
 	else
 	{
-		if (rightAttack && rightStatus.CheckPursuit(leftStatus))
+		if (rightAttack && rightBattleStatus.CheckPursuit(leftBattleStatus))
 		{
 			_leftBC.StartAttackAnim();
 			_updater = &BattleScene::RightTurn;

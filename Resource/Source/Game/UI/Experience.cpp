@@ -82,14 +82,14 @@ void Experience::LevelUpUpdate(const Input& input)
 Experience::Experience(BattleCharactor& battleChar, std::deque<std::shared_ptr<UI>>& uiDeque)
 	: _battleChar(battleChar), UI(uiDeque)
 {
-	auto status = _battleChar.GetCharacotr().GetStatus();
+	auto battleStatus = _battleChar.GetCharacotr().GetBattleStatus();
 	auto targetStatus = _battleChar.GetTargetBattleCharactor()->GetCharacotr().GetStartStatus();
 	auto dataBase = Application::Instance().GetDataBase();
-	auto expData = dataBase.GetExpData(status.level);
+	auto expData = dataBase.GetExpData(battleStatus.status.level);
 	auto targetExpData = dataBase.GetExpData(targetStatus.level);
 	// 回復なら固定値で10point, レベルごとの基本値 * 攻撃なら与えたダメージ割合で算出
-	_addExp = status.CheckHeal() ? 10 : targetExpData.getPoint * (battleChar.GetGivenDamage() / static_cast<float>(targetStatus.health));
-	_currentExp = status.exp;
+	_addExp = battleStatus.CheckHeal() ? 10 : targetExpData.getPoint * (battleChar.GetGivenDamage() / static_cast<float>(targetStatus.health));
+	_currentExp = battleStatus.status.exp;
 	_currentAddExp = _addExp;
 	_maxExp = expData.maxPoint;
 

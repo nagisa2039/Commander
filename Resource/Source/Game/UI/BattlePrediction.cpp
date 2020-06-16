@@ -7,7 +7,7 @@
 #include "DxLibUtility.h"
 #include "DataBase.h"
 
-int BattlePrediction::GetChengePoint(const Dir& dir, bool rightAttack, Status& selfStatus, Status& targetStatus)
+int BattlePrediction::GetChengePoint(const Dir& dir, bool rightAttack, BattleStatus& selfStatus, BattleStatus& targetStatus)
 {
 	int chengePoint = 0;
 	if (dir == Dir::left)
@@ -69,13 +69,13 @@ void BattlePrediction::Draw()
 	drawY += iconSize.h / 2 + 50;
 
 
-	auto selfStatus = _selfCharactor.GetStatus();
-	auto targetStatus = _targetCharactor.GetStatus();
+	auto selfBattleStatus = _selfCharactor.GetBattleStatus();
+	auto targetBattleStatus = _targetCharactor.GetBattleStatus();
 
 	auto window1Handle = fileSystem.GetImageHandle("Resource/Image/UI/window1.png");
 
 	// çUåÇÇ≥ÇÍÇΩë§Ç™îΩåÇÇ≈Ç´ÇÈÇ©
-	bool rightAttack = _targetCharactor.GetAttackRange().Hit(_distance) && !targetStatus.CheckHeal();
+	bool rightAttack = _targetCharactor.GetAttackRange().Hit(_distance) && !targetBattleStatus.CheckHeal();
 
 	// Ç†Ç∆Y300
 	// HP 100
@@ -86,7 +86,7 @@ void BattlePrediction::Draw()
 		const unsigned int leftColor = 0xffffff, const unsigned int rightColor = 0xffffff)
 	{
 		char str[256];
-		if (selfStatus.CheckHeal())
+		if (selfBattleStatus.CheckHeal())
 		{
 			sprintf_s(str, 256, "%d", leftValue);
 			DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, leftColor, fontH, str);
@@ -114,9 +114,9 @@ void BattlePrediction::Draw()
 
 	auto DrawContentForPower = [&]()
 	{
-		if (selfStatus.CheckHeal())
+		if (selfBattleStatus.CheckHeal())
 		{
-			DrawContent("âÒïú", selfStatus.GetRecover(), targetStatus.GetDamage(selfStatus));
+			DrawContent("âÒïú", selfBattleStatus.GetRecover(), targetBattleStatus.GetDamage(selfBattleStatus));
 			return;
 		}
 		else
@@ -136,13 +136,13 @@ void BattlePrediction::Draw()
 			};
 
 			auto dataBase = Application::Instance().GetDataBase();
-			auto selfAttribute = dataBase.GetWeaponData(selfStatus.weaponId).atribute;
-			auto tagetAttribute = dataBase.GetWeaponData(targetStatus.weaponId).atribute;
-			unsigned int selfColor		= GetAttackColor(Application::Instance().GetDataBase().GetAttributeRate(selfAttribute, tagetAttribute));
-			unsigned int targetColor	= GetAttackColor(Application::Instance().GetDataBase().GetAttributeRate(tagetAttribute, selfAttribute));
+			unsigned int selfColor		= GetAttackColor(Application::Instance().GetDataBase().
+				GetAttributeRate(selfBattleStatus.weaponData.attribute, targetBattleStatus.weaponData.attribute));
+			unsigned int targetColor	= GetAttackColor(Application::Instance().GetDataBase().
+				GetAttributeRate(targetBattleStatus.weaponData.attribute, selfBattleStatus.weaponData.attribute));
 
-			DrawContent("à–óÕ", selfStatus.GetDamage(targetStatus), 
-				targetStatus.GetDamage(selfStatus), selfColor, targetColor);
+			DrawContent("à–óÕ", selfBattleStatus.GetDamage(targetBattleStatus), 
+				targetBattleStatus.GetDamage(selfBattleStatus), selfColor, targetColor);
 		}
 		auto fileSystem = Application::Instance().GetFileSystem();
 		int tag_playerHandle = fileSystem.GetImageHandle("Resource/Image/UI/tag_player.png");
@@ -151,12 +151,12 @@ void BattlePrediction::Draw()
 		GetGraphSize(tag_playerHandle, graphSize);
 		auto leftCenter = Vector2Int(windowRect.center.x - (distance/2 - 50), drawY);
 		auto rightCenter = Vector2Int(windowRect.center.x + (distance/2 - 50), drawY);
-		if (selfStatus.CheckPursuit(targetStatus))
+		if (selfBattleStatus.CheckPursuit(targetBattleStatus))
 		{
 			DrawGraph(GetDrawPos(leftCenter, graphSize, Anker::center), tag_playerHandle);
 			DrawStringToHandle(leftCenter, Anker::center, 0xffffff, fontH, "Å~2");
 		}
-		if (rightAttack && targetStatus.CheckPursuit(selfStatus))
+		if (rightAttack && targetBattleStatus.CheckPursuit(selfBattleStatus))
 		{
 			DrawGraph(GetDrawPos(rightCenter, graphSize, Anker::center), tag_enemyHandle);
 			DrawStringToHandle(rightCenter, Anker::center, 0xffffff, fontH, "Å~2");
@@ -169,10 +169,10 @@ void BattlePrediction::Draw()
 	DrawContentForPower();
 	// ñΩíÜ
 	drawY += 40;
-	DrawContent("ñΩíÜ", selfStatus.GetHit(targetStatus), targetStatus.GetHit(selfStatus));
+	DrawContent("ñΩíÜ", selfBattleStatus.GetHit(targetBattleStatus), targetBattleStatus.GetHit(selfBattleStatus));
 	// ïKéE
 	drawY += 40;
-	DrawContent("ïKéE", selfStatus.GetCritical(targetStatus), targetStatus.GetCritical(selfStatus));
+	DrawContent("ïKéE", selfBattleStatus.GetCritical(targetBattleStatus), targetBattleStatus.GetCritical(selfBattleStatus));
 }
 
 void BattlePrediction::DrawHPBer(int& drawY, const Rect& windowRect, bool rightAttack, int fontH)
@@ -186,8 +186,8 @@ void BattlePrediction::DrawHPBer(int& drawY, const Rect& windowRect, bool rightA
 		Anker anker = dir == Dir::left ? Anker::rightcenter : Anker::leftcenter;
 		auto teamColor = GetTeamColor(self.GetTeam());
 
-		auto selfStatus = self.GetStatus();
-		auto targetStatus = target.GetStatus();
+		auto selfBattleStatus = self.GetBattleStatus();
+		auto targetBattleStatus = target.GetBattleStatus();
 
 		// HPë‰éÜ
 		auto drawPos = GetDrawPos(Vector2Int(windowRect.center.x, drawY), hpOutSize, anker);
@@ -196,7 +196,7 @@ void BattlePrediction::DrawHPBer(int& drawY, const Rect& windowRect, bool rightA
 		drawPos = GetDrawPos(Vector2Int(windowRect.center.x, drawY), hpSize, anker);
 		DrawBox(drawPos, drawPos + hpSize, 0x888888);
 		// HPÇÃïœìÆï™
-		int chengePoint = GetChengePoint(dir, rightAttack, selfStatus, targetStatus);
+		int chengePoint = GetChengePoint(dir, rightAttack, selfBattleStatus, targetBattleStatus);
 		float before = static_cast<float>(self.GetStatus().health) / static_cast<float>(self.GetStartStatus().health);
 		int affterHealth = min(max(self.GetStatus().health - chengePoint, 0.0f), self.GetStartStatus().health);
 		float affter = affterHealth / static_cast<float>(self.GetStartStatus().health);
@@ -209,7 +209,7 @@ void BattlePrediction::DrawHPBer(int& drawY, const Rect& windowRect, bool rightA
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
 		// HPÇÃécó 
-		Size currentSize(hpSize.w * (targetStatus.CheckHeal() ? before : affter), hpSize.h);
+		Size currentSize(hpSize.w * (targetBattleStatus.CheckHeal() ? before : affter), hpSize.h);
 		drawPos = GetDrawPos(Vector2Int(windowRect.center.x, drawY), currentSize, anker);
 		DrawBox(drawPos, drawPos + currentSize, teamColor);
 

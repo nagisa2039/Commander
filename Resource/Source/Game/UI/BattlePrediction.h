@@ -15,7 +15,7 @@ private:
 	const Charactor& _targetCharactor; 
 	const unsigned int _distance;
 	std::unique_ptr<Track<float>> _hpAnimAlpha; 
-	int GetChengePoint(const Dir& dir, bool rightAttack, Status& selfStatus, Status& targetStatus);
+	int GetChengePoint(const Dir& dir, bool rightAttack, BattleStatus& selfStatus, BattleStatus& targetStatus);
 
 public:
 	BattlePrediction(const Charactor& self, const Charactor& target, std::deque<std::shared_ptr<UI>> uiDeque, const unsigned int distance);

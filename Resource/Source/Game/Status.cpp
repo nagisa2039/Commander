@@ -5,81 +5,85 @@
 
 using namespace std;
 
-int Status::GetDamage(const Status& target)const
+int BattleStatus::GetPower() const
 {
-	auto dataBase = Application::Instance().GetDataBase();
-	auto weaponData = dataBase.GetWeaponData(weaponId);
-	auto rate = dataBase.GetAttributeRate(weaponData.atribute, dataBase.GetWeaponData(target.weaponId).atribute);
-	return max( static_cast<int>((power - (weaponData.magicAttack ? target.magic_defense : target.defense))  * rate) - target.defenseCorrection, 0);
+	return status.power;
 }
 
-int Status::GetRecover()
+int BattleStatus::GetDamage(const BattleStatus& target)const
 {
-	return power;
+	const auto& dataBase = Application::Instance().GetDataBase();
+	auto rate = dataBase.GetAttributeRate(weaponData.attribute, dataBase.GetWeaponData(target.status.weaponId).attribute);
+	return max( static_cast<int>((status.power - (weaponData.magicAttack ? target.status.magic_defense : target.status.defense))  * rate) - target.defenseCorrection, 0);
 }
 
-int Status::GetHitRate() const
+int BattleStatus::GetRecover()
 {
-	return 100 + skill * 2;
+	return status.power + weaponData.power;
 }
 
-int Status::GetHit(const Status& target) const
+int BattleStatus::GetHitRate() const
+{
+	return status.skill + weaponData.hit;
+}
+
+int BattleStatus::GetHit(const BattleStatus& target) const
 {
 	return min(100, max(0, GetHitRate() - target.GetAvoidance()));
 }
 
-int Status::GetCriticalRate() const
+int BattleStatus::GetCriticalRate() const
 {
-	return min(100, max(0, skill / 5));
+	return status.skill + weaponData.critical;
 }
 
-int Status::GetCritical(const Status& target) const
+int BattleStatus::GetCritical(const BattleStatus& target) const
 {
-	return min(100, max(0, skill / 5));
+	return min(100, max(0, GetCriticalRate()));
 }
 
-int Status::GetDifense() const
+int BattleStatus::GetDifense() const
 {
-	return this->defense + this->defenseCorrection;
+	return status.defense + this->defenseCorrection;
 }
 
-int Status::GetMagicDifense() const
+int BattleStatus::GetMagicDifense() const
 {
-	return this->magic_defense + this->defenseCorrection;
+	return status.magic_defense + this->defenseCorrection;
 }
 
-int Status::GetAvoidance() const
+int BattleStatus::GetAvoidance() const
 {
-	return GetAttackSpeed() * 2 + this->avoidanceCorrection;
+	return GetAttackSpeed() + this->avoidanceCorrection;
 }
 
-bool Status::CheckHeal() const
+bool BattleStatus::CheckHeal() const
 {
-	return Application::Instance().GetDataBase().GetWeaponData(weaponId).heal;
+	return weaponData.heal;
 }
 
-bool Status::CheckMagicAttack() const
+bool BattleStatus::CheckMagicAttack() const
 {
-	return Application::Instance().GetDataBase().GetWeaponData(weaponId).magicAttack;
+	return weaponData.magicAttack;
 }
 
-bool Status::CheckPursuit(const Status& target) const
+bool BattleStatus::CheckPursuit(const BattleStatus& target) const
 {
 	return GetAttackSpeed() - target.GetAttackSpeed() >= 4;
 }
 
-void Status::AddStatus(Status addStatus)
+int BattleStatus::GetAttackSpeed()const
 {
-	level += addStatus.level;
-	health += addStatus.health;
-	power += addStatus.power;
-	defense += addStatus.defense;
-	magic_defense += addStatus.magic_defense;
-	skill += addStatus.skill;
-	speed += addStatus.speed;
+	return status.speed - (weaponData.weight - status.power / 5);
 }
 
-int Status::GetAttackSpeed()const
+void Status::AddStatus(const Status& addStatus)
 {
-	return this->speed;
+	level			+= addStatus.level;
+	health			+= addStatus.health;
+	power			+= addStatus.power;
+	defense			+= addStatus.defense;
+	magic_defense	+= addStatus.magic_defense;
+	skill			+= addStatus.skill;
+	speed			+= addStatus.speed;
 }

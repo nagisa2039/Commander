@@ -85,7 +85,7 @@ void Charactor::NormalDraw()
 	int handle = Application::Instance().GetFileSystem().GetImageHandle(_iconPath.c_str());
 	iconRect.Draw(0x000000);
 	auto attributeData = Application::Instance().GetDataBase().GetAttributeData(
-		Application::Instance().GetDataBase().GetWeaponData(_status.weaponId).atribute);
+		Application::Instance().GetDataBase().GetWeaponData(_status.weaponId).attribute);
 	Rect(iconRect.center, iconRect.size * 0.8f).Draw(attributeData.color);
 
 	// HPBer‚Ì•`‰æ
@@ -195,7 +195,7 @@ void Charactor::DrawMovableMass(const uint8_t alpha) const
 			Rect box(offset + (mapPos * chipSize.ToVector2Int() + chipSize * 0.5) + -1, chipSize);
 
 			unsigned int color = CheckMoveMapPos(mapPos) ? 0x000ff : 0xff0000;
-			if (_status.CheckHeal())
+			if (GetBattleStatus().CheckHeal())
 			{
 				color = CheckAttackMapPos(mapPos) ? 0x00ff00 : 0x0000ff;
 			}
@@ -231,20 +231,29 @@ bool Charactor::GetMoveStandby() const
 	return _moveStandby;
 }
 
-Status Charactor::GetStartStatus() const
+const Status& Charactor::GetStartStatus() const
 {
 	return _startStatus;
 }
 
-Status Charactor::GetStatus() const
+const Status& Charactor::GetStatus() const
 {
-	Status status = _status;
+	/*Status status = _status;
 
 	auto mapChipData = Application::Instance().GetDataBase().GetMapChipData(_mapCtrl.GetMapData(GetMapPos()).mapChip);
 	status.avoidanceCorrection = mapChipData.avoidance;
-	status.defenseCorrection = mapChipData.defense;
+	status.defenseCorrection = mapChipData.defense;*/
 
-	return status;
+	return _status;
+}
+
+BattleStatus Charactor::GetBattleStatus() const
+{
+	const auto& dataBase = Application::Instance().GetDataBase();
+	const auto& mapChipData = dataBase.GetMapChipData(_mapCtrl.GetMapData(GetMapPos()).mapChip);
+	const auto& weaponData = dataBase.GetWeaponData(_status.weaponId);
+
+	return BattleStatus(_status, weaponData, mapChipData.avoidance, mapChipData.defense);
 }
 
 bool Charactor::GetIsDying() const
@@ -272,7 +281,7 @@ bool Charactor::GetIsMoveAnim() const
 	return _isMoveAnim;
 }
 
-Range Charactor::GetAttackRange() const
+const Range& Charactor::GetAttackRange() const
 {
 	return Application::Instance().GetDataBase().GetWeaponData(_startStatus.weaponId).range;
 }
@@ -511,7 +520,7 @@ bool Charactor::AddExp(unsigned int exp)
 	return false;
 }
 
-void Charactor::AddStatus(Status status)
+void Charactor::AddStatus(const Status& status)
 {
 	auto health = _status.health;
 	auto move = _status.move;
@@ -571,7 +580,7 @@ std::list<Astar::ResultPos> Charactor::CreateResultPosList(const Vector2Int mapP
 	auto targetCharactor = _mapCtrl.GetMapPosChar(mapPos);
 	if (targetCharactor != nullptr)
 	{
-		if (_status.CheckHeal())
+		if (GetBattleStatus().CheckHeal())
 		{
 			for (const auto& targetPos : _resultPosListVec2[mapPos.y][mapPos.x])
 			{

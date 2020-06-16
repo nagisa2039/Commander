@@ -114,7 +114,7 @@ void MoveMenu::SetContent(const std::list<Vector2Int>& attackPosList)
 
 	auto selectChar = _playerCommander.GetSelectCharactor();
 	if (selectChar == nullptr)return;
-	_contentInfs[static_cast<size_t>(Content::battle)].name = selectChar->GetStatus().CheckHeal() ? "‰ñ•œ" : "í“¬";
+	_contentInfs[static_cast<size_t>(Content::battle)].name = selectChar->GetBattleStatus().CheckHeal() ? "‰ñ•œ" : "í“¬";
 }
 
 void MoveMenu::Draw()

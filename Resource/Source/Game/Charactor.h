@@ -151,14 +151,17 @@ public:
 	bool GetCanMove()const;
 	bool GetMoveActive()const;
 	bool GetMoveStandby()const;
-	Status GetStartStatus()const;
-	Status GetStatus()const;
+
+	const Status& GetStartStatus()const;
+	const Status& GetStatus()const;
+	BattleStatus GetBattleStatus()const;
+
 	bool GetIsDying()const;
 	Dir GetDir()const;
 	Vector2 GetCenterPos()const override;
 	BattleCharactor& GetBattleC()const;
 	bool GetIsMoveAnim()const;
-	Range GetAttackRange()const;
+	const Range& GetAttackRange()const;
 	const std::string& GetName()const;
 	const std::list<Astar::ResultPos>& GetResutlPosList(const Vector2Int& mapPos);
 	unsigned int GetGroupNum()const;
@@ -202,7 +205,7 @@ public:
 
 	// 経験値取得	レベルアップするならtrueを返す
 	bool AddExp(unsigned int exp);
-	void AddStatus(Status status);
+	void AddStatus(const Status& status);
 
 	Status GetLevelUpStatus();
 };

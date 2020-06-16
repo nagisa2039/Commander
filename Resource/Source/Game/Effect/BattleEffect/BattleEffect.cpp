@@ -7,17 +7,17 @@
 
 unsigned int  BattleEffect::AddDamage()
 {
-	auto selfStatus = _self.GetCharacotr().GetStatus();
-	auto targetStatus = _target.GetCharacotr().GetStatus();
-	bool critical = selfStatus.GetCritical(targetStatus) > rand() % 100;
+	auto selfBattleStatus = _self.GetCharacotr().GetBattleStatus();
+	auto targetBattleStatus = _target.GetCharacotr().GetBattleStatus();
+	bool critical = selfBattleStatus.GetCritical(targetBattleStatus) > rand() % 100;
 	int damage = 0;
-	if (selfStatus.CheckHeal())
+	if (selfBattleStatus.CheckHeal())
 	{
-		damage = -selfStatus.GetRecover();
+		damage = -selfBattleStatus.GetRecover();
 	}
 	else
 	{
-		damage = selfStatus.GetDamage(targetStatus) * (critical ? 3 : 1);
+		damage = selfBattleStatus.GetDamage(targetBattleStatus) * (critical ? 3 : 1);
 	}
 
 	char damageText[10];
@@ -25,11 +25,11 @@ unsigned int  BattleEffect::AddDamage()
 	auto flyText = std::make_shared<FlyText>(damageText, _target.GetCenterPos(), 120, _camera, false, critical);
 	_effects.emplace_back(flyText);
 	_target.GetCharacotr().AddDamage(damage);
-	if (selfStatus.CheckHeal())
+	if (selfBattleStatus.CheckHeal())
 	{
 		flyText->SetColor(0x80ff00);
 	}
-	return selfStatus.CheckHeal() ? 0 : damage;
+	return selfBattleStatus.CheckHeal() ? 0 : damage;
 }
 
 BattleEffect::BattleEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera, bool cameraActive)

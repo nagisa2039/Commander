@@ -491,5 +491,8 @@
     <ClInclude Include="Resource\Source\Utility\AnkerCalculation.h">
       <Filter>ヘッダー ファイル\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Source\Game\WeaponData.h">
+      <Filter>ヘッダー ファイル\Game</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -38,10 +38,10 @@ DataBase::DataBase()
 			charactorData.name = outputVec[1];
 			// 初期ステータス
 			charactorData.initialStatus = Status(1, atoi(outputVec[2].c_str()), atoi(outputVec[3].c_str()), atoi(outputVec[4].c_str()),
-				atoi(outputVec[5].c_str()), atoi(outputVec[6].c_str()), atoi(outputVec[7].c_str()), atoi(outputVec[8].c_str()), 0, false, false);
+				atoi(outputVec[5].c_str()), atoi(outputVec[6].c_str()), atoi(outputVec[7].c_str()), atoi(outputVec[8].c_str()));
 			// ステータス成長率
 			charactorData.statusGrowRate = Status(1, atoi(outputVec[9].c_str()), atoi(outputVec[10].c_str()), atoi(outputVec[11].c_str()),
-				atoi(outputVec[12].c_str()), atoi(outputVec[13].c_str()), atoi(outputVec[14].c_str()), atoi(outputVec[8].c_str()), 0, false, false);
+				atoi(outputVec[12].c_str()), atoi(outputVec[13].c_str()), atoi(outputVec[14].c_str()), atoi(outputVec[8].c_str()));
 			// キャラクター画像パス
 			charactorData.ImagePath = outputVec[15];
 			// 職業アイコンパス
@@ -176,7 +176,7 @@ DataBase::DataBase()
 		{
 			split(line, ',', outputVec);
 			if (outputVec[0] == "")break;
-			_weaponDataTable.emplace_back(DataBase::WeaponData(outputVec[1], atoi(outputVec[2].c_str()), atoi(outputVec[3].c_str()), atoi(outputVec[4].c_str()), atoi(outputVec[5].c_str()), 
+			_weaponDataTable.emplace_back(WeaponData(outputVec[1], atoi(outputVec[2].c_str()), atoi(outputVec[3].c_str()), atoi(outputVec[4].c_str()), atoi(outputVec[5].c_str()), 
 				Range(atoi(outputVec[6].c_str()), atoi(outputVec[7].c_str())), outputVec[8] != "", outputVec[9] != "", outputVec[10], outputVec[11]) );
 		}
 	}
@@ -243,7 +243,7 @@ const DataBase::MapData& DataBase::GetMapData(const unsigned int mapDataId) cons
 	return _mapDataTable.at(mapDataId);
 }
 
-const DataBase::WeaponData& DataBase::GetWeaponData(const unsigned int weaponId) const
+const WeaponData& DataBase::GetWeaponData(const unsigned int weaponId) const
 {
 	return _weaponDataTable.at(weaponId);
 }

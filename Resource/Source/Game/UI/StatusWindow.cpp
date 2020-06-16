@@ -187,30 +187,30 @@ void StatusWindow::DrawBattleStatus(Rect& statusRect1)
 		DrawStringToHandle(Vector2Int(contentRect.center.x + contentRect.size.w * 0.25f, contentRect.center.y), Anker::center, 0xffffff, choplin30, "%d", num);
 	};
 
-	auto currentStatus = _charactor.GetStatus();
+	auto currentBattleStatus = _charactor.GetBattleStatus();
 	// UŒ‚
-	DrawContentVertical("UŒ‚", currentStatus.power);
+	DrawContentVertical("UŒ‚", currentBattleStatus.GetPower());
 	contentRect.center.x += contentRect.size.w;
 	// –½’†
-	DrawContentVertical("–½’†", currentStatus.GetHitRate());
+	DrawContentVertical("–½’†", currentBattleStatus.GetHitRate());
 	contentRect.center.x += contentRect.size.w;
 	// •KE
-	DrawContentVertical("•KE", currentStatus.GetCriticalRate());
+	DrawContentVertical("•KE", currentBattleStatus.GetCriticalRate());
 	contentRect.center.x += contentRect.size.w;
 
 	//150, 62
 	contentRect.size = Size(_rightWindowSize.w / 3, _rightWindowSize.h / 4);
 	contentRect.center = Vector2Int(statusRect1.Left(), statusRect1.center.y) + contentRect.size * 0.5f;
 
-	DrawContentHorizontal("U‘¬", currentStatus.GetAttackSpeed());
+	DrawContentHorizontal("U‘¬", currentBattleStatus.GetAttackSpeed());
 	contentRect.center.x += contentRect.size.w;
-	DrawContentHorizontal("–hŒä", currentStatus.GetDifense());
+	DrawContentHorizontal("–hŒä", currentBattleStatus.GetDifense());
 	contentRect.center.x += contentRect.size.w;
-	DrawContentHorizontal("‘Ï–‚", currentStatus.GetMagicDifense());
+	DrawContentHorizontal("‘Ï–‚", currentBattleStatus.GetMagicDifense());
 
 	contentRect.center.x = statusRect1.Left() + contentRect.size.w * 0.5f;
 	contentRect.center.y += contentRect.size.h;
-	DrawContentHorizontal("‰ñ”ğ", currentStatus.GetAvoidance());
+	DrawContentHorizontal("‰ñ”ğ", currentBattleStatus.GetAvoidance());
 
 	// 300, 62
 	contentRect.center.x += contentRect.size.w * 1.5;

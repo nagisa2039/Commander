@@ -97,6 +97,7 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 	{
 		auto charactor = make_shared<Swordsman>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
 		charactor->SetMoveActive(characotChipInf.active);
+		charactor->InitStatus(initStatus);
 		_charactors.emplace_back(charactor);
 	};
 
@@ -105,6 +106,7 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 	{
 		auto charactor = make_shared<Soldier>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
 		charactor->SetMoveActive(characotChipInf.active);
+		charactor->InitStatus(initStatus);
 		_charactors.emplace_back(charactor);
 	};
 
@@ -113,6 +115,7 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 	{
 		auto charactor = make_shared<Warrior>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
 		charactor->SetMoveActive(characotChipInf.active);
+		charactor->InitStatus(initStatus);
 		_charactors.emplace_back(charactor);
 	};
 
@@ -121,6 +124,7 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 	{
 		auto charactor = make_shared<Mage>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
 		charactor->SetMoveActive(characotChipInf.active);
+		charactor->InitStatus(initStatus);
 		_charactors.emplace_back(charactor);
 	};
 
@@ -129,6 +133,7 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 	{
 		auto charactor = make_shared<Archer>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
 		charactor->SetMoveActive(characotChipInf.active);
+		charactor->InitStatus(initStatus);
 		_charactors.emplace_back(charactor);
 	};
 
@@ -137,6 +142,7 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 	{
 		auto charactor = make_shared<Priest>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
 		charactor->SetMoveActive(characotChipInf.active);
+		charactor->InitStatus(initStatus);
 		_charactors.emplace_back(charactor);
 	};
 }
@@ -286,18 +292,17 @@ void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr
 	{
 		for (const auto& mapData : mapDataVec)
 		{
-			if (mapData.charactorChip.type == CharactorType::max || mapData.charactorChip.team == Team::max)continue;
+			if (mapData.charactorChip.type == CharactorType::max || mapData.charactorChip.team == Team::max) continue;
 
 			if (mapData.charactorChip.team == Team::player)
 			{
-				if (itr != charactorDataVec.end())
-				{
-					auto saveData = *itr;
-					auto charactorChip = mapData.charactorChip;
-					_charactorCreateFuncs[static_cast<size_t>(saveData.charType)](mapData.charactorChip, 
-						saveData.status, ctrl, effects, camera);
-					itr++;
-				}
+				if (itr == charactorDataVec.end()) continue;
+
+				auto saveData = *itr;
+				auto charactorChip = mapData.charactorChip;
+				_charactorCreateFuncs[static_cast<size_t>(saveData.charType)](mapData.charactorChip,
+					saveData.status, ctrl, effects, camera);
+				itr++;
 			}
 			else
 			{

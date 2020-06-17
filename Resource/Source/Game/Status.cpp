@@ -7,19 +7,19 @@ using namespace std;
 
 int BattleStatus::GetPower() const
 {
-	return status.power;
+	return (weaponData.magicAttack ? status.magic_power : status.power) + weaponData.power;
 }
 
 int BattleStatus::GetDamage(const BattleStatus& target)const
 {
 	const auto& dataBase = Application::Instance().GetDataBase();
 	auto rate = dataBase.GetAttributeRate(weaponData.attribute, dataBase.GetWeaponData(target.status.weaponId).attribute);
-	return max( static_cast<int>((status.power - (weaponData.magicAttack ? target.status.magic_defense : target.status.defense))  * rate) - target.defenseCorrection, 0);
+	return max( static_cast<int>((GetPower() - (weaponData.magicAttack ? target.status.magic_defense : target.status.defense))  * rate) - target.defenseCorrection, 0);
 }
 
 int BattleStatus::GetRecover()
 {
-	return status.power + weaponData.power;
+	return status.magic_power/2 + weaponData.power;
 }
 
 int BattleStatus::GetHitRate() const
@@ -34,12 +34,12 @@ int BattleStatus::GetHit(const BattleStatus& target) const
 
 int BattleStatus::GetCriticalRate() const
 {
-	return status.skill + weaponData.critical;
+	return (status.skill + status.luck)/2 + weaponData.critical;
 }
 
 int BattleStatus::GetCritical(const BattleStatus& target) const
 {
-	return min(100, max(0, GetCriticalRate()));
+	return min(100, max(0, GetCriticalRate() - target.status.luck));
 }
 
 int BattleStatus::GetDifense() const

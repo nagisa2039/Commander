@@ -238,12 +238,6 @@ const Status& Charactor::GetStartStatus() const
 
 const Status& Charactor::GetStatus() const
 {
-	/*Status status = _status;
-
-	auto mapChipData = Application::Instance().GetDataBase().GetMapChipData(_mapCtrl.GetMapData(GetMapPos()).mapChip);
-	status.avoidanceCorrection = mapChipData.avoidance;
-	status.defenseCorrection = mapChipData.defense;*/
-
 	return _status;
 }
 
@@ -253,7 +247,7 @@ BattleStatus Charactor::GetBattleStatus() const
 	const auto& mapChipData = dataBase.GetMapChipData(_mapCtrl.GetMapData(GetMapPos()).mapChip);
 	const auto& weaponData = dataBase.GetWeaponData(_status.weaponId);
 
-	return BattleStatus(_status, weaponData, mapChipData.avoidance, mapChipData.defense);
+	return BattleStatus(_status, weaponData, mapChipData.defense, mapChipData.avoidance);
 }
 
 bool Charactor::GetIsDying() const

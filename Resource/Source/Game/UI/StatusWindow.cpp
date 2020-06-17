@@ -239,10 +239,10 @@ void StatusWindow::DrawStatus(Rect& statusRect2)
 
 	auto choplin30 = fileSystem.GetFontHandle("choplin30edge");
 
-	Size contentSize(_rightWindowSize.w / 2, _rightWindowSize.h / 3);
+	Size contentSize(_rightWindowSize.w / 2, _rightWindowSize.h / 4);
 	Rect contentRect(Vector2Int(statusRect2.Left(), statusRect2.Top()) + contentSize * 0.5f, contentSize);
 
-	auto DrawNumContent = [&](const Rect& contentRect, const string& leftStr, const int num)
+	auto DrawNumContent = [&](const Rect& contentRect, const string& leftStr, const uint8_t num)
 	{
 		Rect box(Vector2Int(contentRect.center), Size(0, 15));
 		box.size.w = 2 * num;
@@ -258,12 +258,18 @@ void StatusWindow::DrawStatus(Rect& statusRect2)
 	DrawNumContent(contentRect, "óÕ", currentStatus.power);
 	contentRect.center.y += contentRect.Height();
 
+	DrawNumContent(contentRect, "ñÇóÕ", currentStatus.magic_power);
+	contentRect.center.y += contentRect.Height();
+
 	DrawNumContent(contentRect, "ãZ", currentStatus.skill);
 	contentRect.center.y += contentRect.Height();
 
 	DrawNumContent(contentRect, "ë¨Ç≥", currentStatus.speed);
 	contentRect.center = Vector2Int(statusRect2.Left(), statusRect2.Top()) + contentSize * 0.5f;
 	contentRect.center.x += contentRect.Width();
+
+	DrawNumContent(contentRect, "çKâ^", currentStatus.luck);
+	contentRect.center.y += contentRect.Height();
 
 	DrawNumContent(contentRect, "éÁîı", currentStatus.defense);
 	contentRect.center.y += contentRect.Height();

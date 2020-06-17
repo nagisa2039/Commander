@@ -33,9 +33,11 @@ int BattlePrediction::GetChengePoint(const Dir& dir, bool rightAttack, BattleSta
 	return chengePoint;
 }
 
-BattlePrediction::BattlePrediction(const Charactor& self, const Charactor& target, std::deque<std::shared_ptr<UI>> uiDeque, const unsigned int distance)
-	: _selfCharactor(self), _targetCharactor(target), UI(uiDeque), _distance(distance)
+BattlePrediction::BattlePrediction(const Charactor& self, const Charactor& target, std::deque<std::shared_ptr<UI>> uiDeque, const Vector2Int& attackStartPos, const Map_Chip mapChip)
+	: _selfCharactor(self), _targetCharactor(target), _mapChip(mapChip), UI(uiDeque)
 {
+	auto sub = _targetCharactor.GetMapPos() - attackStartPos;
+	_distance = abs(sub.x) + abs(sub.y);
 	_hpAnimAlpha = std::make_unique<Track<float>>(true);
 	_hpAnimAlpha->AddKey(0,0.0f);
 	_hpAnimAlpha->AddKey(60, 1.0f);
@@ -68,8 +70,11 @@ void BattlePrediction::Draw()
 	_targetCharactor.DrawCharactorIcon(	Rect(Vector2Int(windowRect.center.x + iconSize.w / 2, drawY), iconSize));
 	drawY += iconSize.h / 2 + 50;
 
+	auto mapChipData		= Application::Instance().GetDataBase().GetMapChipData(_mapChip);
+	auto selfBattleStatus	= _selfCharactor.GetBattleStatus();
+	selfBattleStatus.defenseCorrection	 = mapChipData.defense;
+	selfBattleStatus.avoidanceCorrection = mapChipData.avoidance;
 
-	auto selfBattleStatus = _selfCharactor.GetBattleStatus();
 	auto targetBattleStatus = _targetCharactor.GetBattleStatus();
 
 	auto window1Handle = fileSystem.GetImageHandle("Resource/Image/UI/window1.png");

@@ -103,13 +103,13 @@ void Charactor::NormalDraw()
 	//drawPos.y += 16;
 	//DrawFormatString(drawPos.x, drawPos.y, 0x000000, "CanMove "+ _canMove ? "true" : "false");
 
-	// targetCnt‚Ì•`‰æ
-	drawPos.y += 16;
-	DrawFormatString(drawPos.x, drawPos.y, 0x000000, "InT%d", _targetCnt.x);
-	drawPos.y += 16;
-	DrawFormatString(drawPos.x, drawPos.y, 0x000000, "OutT%d",_targetCnt.y);
-	drawPos.y += 16;
-	DrawFormatString(drawPos.x, drawPos.y, 0x000000, "ollc%d", _onelineListCnt);
+	//// targetCnt‚Ì•`‰æ
+	//drawPos.y += 16;
+	//DrawFormatString(drawPos.x, drawPos.y, 0x000000, "InT%d", _targetCnt.x);
+	//drawPos.y += 16;
+	//DrawFormatString(drawPos.x, drawPos.y, 0x000000, "OutT%d",_targetCnt.y);
+	//drawPos.y += 16;
+	//DrawFormatString(drawPos.x, drawPos.y, 0x000000, "ollc%d", _onelineListCnt);
 }
 
 void Charactor::DyingDraw()

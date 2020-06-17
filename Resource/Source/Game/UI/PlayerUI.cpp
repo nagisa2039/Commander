@@ -127,8 +127,8 @@ void PlayerUI::AddBattlePre()
 		return;
 	}
 
-	auto sub = (itr->prev == nullptr ? self->GetMapPos() : itr->prev->mapPos) - charactor->GetMapPos();
-	_battlePreDeque.emplace_front(make_shared<BattlePrediction>(*self, *charactor, _battlePreDeque, abs(sub.x) + abs(sub.y)));
+	auto attackStartPos = itr->prev == nullptr ? self->GetMapPos() : itr->prev->mapPos;
+	_battlePreDeque.emplace_front(make_shared<BattlePrediction>(*self, *charactor, _battlePreDeque, attackStartPos, _mapCtrl.GetMapData(attackStartPos).mapChip));
 }
 
 void PlayerUI::ClearBattlePre()

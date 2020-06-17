@@ -237,13 +237,13 @@ void BattleScene::StartExpUpdate()
 {
 	if (_leftBC.GetCharacotr().GetTeam() == Team::player)
 	{
-		_expUIDeque.emplace_front(make_shared<Experience>(_leftBC, _expUIDeque));
+		_expUIDeque.emplace_front(make_shared<Experience>(_leftBC, _rightBC.GetCharacotr().GetIsDying(), _expUIDeque));
 		_updater = &BattleScene::ExpUpdate;
 		return;
 	}
 	if (_rightBC.GetCharacotr().GetTeam() == Team::player && _rightBC.GetGivenDamage() > 0)
 	{
-		_expUIDeque.emplace_front(make_shared<Experience>(_rightBC, _expUIDeque));
+		_expUIDeque.emplace_front(make_shared<Experience>(_rightBC, _leftBC.GetCharacotr().GetIsDying(), _expUIDeque));
 		_updater = &BattleScene::ExpUpdate;
 		return;
 	}

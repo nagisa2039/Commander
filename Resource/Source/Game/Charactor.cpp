@@ -509,38 +509,36 @@ std::list<Vector2Int> Charactor::GetAttackPosList() const
 	return attackPosList;
 }
 
-bool Charactor::AddExp(unsigned int exp)
+bool Charactor::AddExp(uint8_t exp, const uint8_t expMax)
 {
-	_status.exp += exp;
-	if (_status.exp >= Application::Instance().GetDataBase().GetExpData(_status.level).maxPoint)
+	if (_status.exp + exp >= expMax)
 	{
-		_status.exp = 0;
+		_status.exp = (_status.exp + exp) % expMax;
 		return true;
 	}
+	_status.exp = (_status.exp + exp) % expMax;
 	return false;
-}
-
-void Charactor::AddStatus(const Status& status)
-{
-	auto health = _status.health;
-	auto move = _status.move;
-	_startStatus.AddStatus(status);
-	_status = _startStatus;
-	_status.health = health;
-	_status.move = move;
 }
 
 Status Charactor::GetLevelUpStatus()
 {
+	// grawRateの格率でステータス上昇が起こるか計算
+	auto calPin = [](const uint8_t grawRate)
+	{
+		return grawRate > (rand() % 100) ? 1 : 0;
+	};
+
 	Status status;
 	auto growRate = Application::Instance().GetDataBase().GetCharactorData(_charactorType).statusGrowRate;
-	status.level = 1;
-	status.health = growRate.health > (rand() % 100);
-	status.power = growRate.power > (rand() % 100);
-	status.defense = growRate.defense > (rand() % 100);
-	status.magic_defense = growRate.magic_defense > (rand() % 100);
-	status.skill = growRate.skill > (rand() % 100);
-	status.speed = growRate.speed > (rand() % 100);
+	status.level			= 1;
+	status.health			= calPin(growRate.health);
+	status.power			= calPin(growRate.power);
+	status.magic_power		= calPin(growRate.magic_power);
+	status.defense			= calPin(growRate.defense);
+	status.magic_defense	= calPin(growRate.magic_defense);
+	status.skill			= calPin(growRate.skill);
+	status.speed			= calPin(growRate.speed);
+	status.luck				= calPin(growRate.luck);
 
 	return status;
 }

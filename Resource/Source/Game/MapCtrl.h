@@ -31,7 +31,7 @@ private:
 	std::vector<std::shared_ptr<Charactor>>& _charactors;
 
 	// CharactorType‚É‘Î‰ž‚µ‚½CharactorƒNƒ‰ƒX‚ð_charactors‚É’Ç‰Á‚·‚é
-	std::array<std::function<void(const CharactorChipInf&, SceneController&, std::vector<std::shared_ptr<Effect>>&, Camera& camera)>,
+	std::array<std::function<void(const CharactorChipInf&, const Status&, SceneController&, std::vector<std::shared_ptr<Effect>>&, Camera&)>,
 		static_cast<size_t>(CharactorType::max)> _charactorCreateFuncs;
 
 	int _mapFloorH;

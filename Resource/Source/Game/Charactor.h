@@ -204,8 +204,7 @@ public:
 	std::list<Vector2Int> GetAttackPosList()const;
 
 	// 経験値取得	レベルアップするならtrueを返す
-	bool AddExp(unsigned int exp);
-	void AddStatus(const Status& status);
+	bool AddExp(uint8_t exp, const uint8_t expMax);
 
 	Status GetLevelUpStatus();
 };

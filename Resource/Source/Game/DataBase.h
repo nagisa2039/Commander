@@ -50,13 +50,13 @@ private:
 		CharactorData() {};
 	};
 
-	struct ExpData
-	{
-		unsigned int maxPoint;	// 必要量
-		unsigned int getPoint;	// 取得量
-		ExpData() :maxPoint(0), getPoint(0) {};
-		ExpData(unsigned int m, unsigned int g) :maxPoint(m), getPoint(g) {};
-	};
+	//struct ExpData
+	//{
+	//	unsigned int maxPoint;	// 必要量
+	//	unsigned int getPoint;	// 取得量
+	//	ExpData() :maxPoint(0), getPoint(0) {};
+	//	ExpData(unsigned int m, unsigned int g) :maxPoint(m), getPoint(g) {};
+	//};
 
 	struct AttributeData
 	{
@@ -78,7 +78,7 @@ private:
 
 	std::array<MapChipData, static_cast<size_t>(Map_Chip::max)> _mapChipDataTable;
 
-	std::vector<ExpData> _expDataTable;
+	//std::vector<ExpData> _expDataTable;
 
 	std::unordered_map<std::string, AttributeData> _attributeDataTable;
 	std::unordered_map<std::string, std::unordered_map<std::string, float>> _attributeRateTable;
@@ -93,18 +93,25 @@ public:
 
 	// 属性ごとの威力倍率を取得する		GetAttributeRate(攻撃する側,	攻撃される側)
 	float GetAttributeRate(const std::string& atributeName, const std::string& targetAtributeName)const;
+
 	// キャラクターの画像を取得する
 	int GetCharactorImageHandle(const CharactorType charactorType, const Team team)const;
+
 	// キャラクターのﾃﾞｰﾀを取得する
 	const CharactorData& GetCharactorData(const CharactorType charactorType)const;
+
 	// キャラクタータイプとレベルを引数に期待値でStatusを作成する
 	Status GetLevelInitStatus(const uint8_t level, const CharactorType charType)const;
+
 	// マップチップデータを取得する
 	const MapChipData& GetMapChipData(const Map_Chip mapChip)const;
+
 	// 経験値データを取得する
-	const ExpData& GetExpData(const uint8_t level)const;
+	//const ExpData& GetExpData(const uint8_t level)const;
+
 	// 属性データを取得する
 	const AttributeData& GetAttributeData(const std::string& atributeName)const;
+
 	// マップデータを取得する
 	const std::vector<MapData>& GetMapDataTable()const;
 	const MapData& GetMapData(const unsigned int mapDataId)const;

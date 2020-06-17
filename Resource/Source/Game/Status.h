@@ -8,19 +8,23 @@ struct Status
 	uint8_t level;
 	uint8_t health;
 	uint8_t power;
+	uint8_t magic_power;
+
 	uint8_t defense;
 	uint8_t magic_defense;
 	uint8_t speed;
 	uint8_t skill;
+
+	uint8_t luck;
 	uint8_t move;
 
-	unsigned int exp;		// 経験値
-	unsigned int weaponId;	// 武器
+	uint8_t exp;		// 経験値
+	uint8_t weaponId;	// 武器
 
-	Status() : level(1), health(1), power(1), defense(1), magic_defense(1), speed(1), skill(1), move(1), exp(0), weaponId(0) {};
+	Status() : level(1), health(1), power(1), magic_power(1), defense(1), magic_defense(1), speed(1), skill(1), luck(1), move(1), exp(0), weaponId(0) {};
 
-	Status(const uint8_t lv, const uint8_t he, const uint8_t pw, const uint8_t df, const uint8_t md, const uint8_t sp, const uint8_t sk, const uint8_t mv)
-		: level(lv), health(he), power(pw), defense(df), magic_defense(md), speed(sp), skill(sk), move(mv), exp(0), weaponId(0) {};
+	Status(const uint8_t lv, const uint8_t he, const uint8_t pw, const uint8_t mp, const uint8_t df, const uint8_t md, const uint8_t sp, const uint8_t sk, const uint8_t lc, const uint8_t mv)
+		: level(lv), health(he), power(pw), magic_power(mp), defense(df), magic_defense(md), speed(sp), skill(sk), luck(lc), move(mv), exp(0), weaponId(0) {};
 
 	void AddStatus(const Status& addStatus);
 };

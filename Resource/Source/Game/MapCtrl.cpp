@@ -93,45 +93,51 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 	DrawToMapChipScreen();
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::swordman)] = 
-		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
+		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		_charactors.emplace_back(make_shared<Swordsman>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera));
-		(*_charactors.rbegin())->SetMoveActive(characotChipInf.active);
+		auto charactor = make_shared<Swordsman>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
+		charactor->SetMoveActive(characotChipInf.active);
+		_charactors.emplace_back(charactor);
 	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::soldier)] =
-		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
+		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		_charactors.emplace_back(make_shared<Soldier>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera));
-		(*_charactors.rbegin())->SetMoveActive(characotChipInf.active);
+		auto charactor = make_shared<Soldier>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
+		charactor->SetMoveActive(characotChipInf.active);
+		_charactors.emplace_back(charactor);
 	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::warrior)] =
-		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
+		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		_charactors.emplace_back(make_shared<Warrior>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera));
-		(*_charactors.rbegin())->SetMoveActive(characotChipInf.active);
+		auto charactor = make_shared<Warrior>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
+		charactor->SetMoveActive(characotChipInf.active);
+		_charactors.emplace_back(charactor);
 	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::mage)] =
-		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
+		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		_charactors.emplace_back(make_shared<Mage>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera));
-		(*_charactors.rbegin())->SetMoveActive(characotChipInf.active);
+		auto charactor = make_shared<Mage>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
+		charactor->SetMoveActive(characotChipInf.active);
+		_charactors.emplace_back(charactor);
 	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::archer)] =
-		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
+		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		_charactors.emplace_back(make_shared<Archer>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera));
-		(*_charactors.rbegin())->SetMoveActive(characotChipInf.active);
+		auto charactor = make_shared<Archer>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
+		charactor->SetMoveActive(characotChipInf.active);
+		_charactors.emplace_back(charactor);
 	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::priest)] =
-		[&](const CharactorChipInf& characotChipInf, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
+		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		_charactors.emplace_back(make_shared<Priest>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera));
-		(*_charactors.rbegin())->SetMoveActive(characotChipInf.active);
+		auto charactor = make_shared<Priest>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
+		charactor->SetMoveActive(characotChipInf.active);
+		_charactors.emplace_back(charactor);
 	};
 }
 
@@ -288,15 +294,15 @@ void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr
 				{
 					auto saveData = *itr;
 					auto charactorChip = mapData.charactorChip;
-					_charactorCreateFuncs[static_cast<size_t>(saveData.charType)](mapData.charactorChip, ctrl, effects, camera);
-					(*_charactors.rbegin())->InitStatus(saveData.status);
+					_charactorCreateFuncs[static_cast<size_t>(saveData.charType)](mapData.charactorChip, 
+						saveData.status, ctrl, effects, camera);
 					itr++;
 				}
 			}
 			else
 			{
-				_charactorCreateFuncs[static_cast<size_t>(mapData.charactorChip.type)](mapData.charactorChip, ctrl, effects, camera);
-				(*_charactors.rbegin())->InitStatus(dataBase.GetLevelInitStatus(mapData.charactorChip.level, mapData.charactorChip.type));
+				_charactorCreateFuncs[static_cast<size_t>(mapData.charactorChip.type)](mapData.charactorChip, 
+					dataBase.GetLevelInitStatus(mapData.charactorChip.level, mapData.charactorChip.type), ctrl, effects, camera);
 			}
 		}
 	}

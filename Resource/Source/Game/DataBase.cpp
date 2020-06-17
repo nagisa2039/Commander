@@ -38,14 +38,14 @@ DataBase::DataBase()
 			charactorData.name = outputVec[1];
 			// 初期ステータス
 			charactorData.initialStatus = Status(1, atoi(outputVec[2].c_str()), atoi(outputVec[3].c_str()), atoi(outputVec[4].c_str()),
-				atoi(outputVec[5].c_str()), atoi(outputVec[6].c_str()), atoi(outputVec[7].c_str()), atoi(outputVec[8].c_str()));
+				atoi(outputVec[5].c_str()), atoi(outputVec[6].c_str()), atoi(outputVec[7].c_str()), atoi(outputVec[8].c_str()), atoi(outputVec[9].c_str()), atoi(outputVec[10].c_str()));
 			// ステータス成長率
-			charactorData.statusGrowRate = Status(1, atoi(outputVec[9].c_str()), atoi(outputVec[10].c_str()), atoi(outputVec[11].c_str()),
-				atoi(outputVec[12].c_str()), atoi(outputVec[13].c_str()), atoi(outputVec[14].c_str()), atoi(outputVec[8].c_str()));
+			charactorData.statusGrowRate = Status(1, atoi(outputVec[11].c_str()), atoi(outputVec[12].c_str()), atoi(outputVec[13].c_str()),
+				atoi(outputVec[14].c_str()), atoi(outputVec[15].c_str()), atoi(outputVec[16].c_str()), atoi(outputVec[17].c_str()), atoi(outputVec[18].c_str()), 0);
 			// キャラクター画像パス
-			charactorData.ImagePath = outputVec[15];
+			charactorData.ImagePath = outputVec[19];
 			// 職業アイコンパス
-			charactorData.iconImagePath = outputVec[16];
+			charactorData.iconImagePath = outputVec[20];
 
 			_charactorDataTable[idx++] = charactorData;
 		}
@@ -90,22 +90,22 @@ DataBase::DataBase()
 		}
 	}
 
-	// 経験値テーブルの読み込み
-	{
-		_expDataTable.reserve(50);
-		ifstream ifs("Resource/DataBase/Exp.csv");
-		string line;
-		vector<string> outputVec;
-		outputVec.reserve(3);
-		// 最初の行はスキップ
-		getline(ifs, line);
-		while (getline(ifs, line))
-		{
-			split(line, ',', outputVec);
-			if (outputVec[0] == "")break;
-			_expDataTable.emplace_back(ExpData(atoi(outputVec[1].c_str()), atoi(outputVec[2].c_str())));
-		}
-	}
+	//// 経験値テーブルの読み込み
+	//{
+	//	_expDataTable.reserve(50);
+	//	ifstream ifs("Resource/DataBase/Exp.csv");
+	//	string line;
+	//	vector<string> outputVec;
+	//	outputVec.reserve(3);
+	//	// 最初の行はスキップ
+	//	getline(ifs, line);
+	//	while (getline(ifs, line))
+	//	{
+	//		split(line, ',', outputVec);
+	//		if (outputVec[0] == "")break;
+	//		_expDataTable.emplace_back(ExpData(atoi(outputVec[1].c_str()), atoi(outputVec[2].c_str())));
+	//	}
+	//}
 
 	// 属性テーブルの読み込み
 	{
@@ -208,13 +208,15 @@ Status DataBase::GetLevelInitStatus(const uint8_t level, const CharactorType cha
 	Status status;
 	auto charactorData = Application::Instance().GetDataBase().GetCharactorData(charType);
 	status = charactorData.initialStatus;
-	status.level = level;
-	status.health += level * charactorData.statusGrowRate.health / 100.0f;
-	status.power += level * charactorData.statusGrowRate.power / 100.0f;
-	status.defense += level * charactorData.statusGrowRate.defense / 100.0f;
-	status.magic_defense += level * charactorData.statusGrowRate.magic_defense / 100.0f;
-	status.speed += level * charactorData.statusGrowRate.speed / 100.0f;
-	status.skill += level * charactorData.statusGrowRate.skill / 100.0f;
+	status.level		  = level;
+	status.health		 += level * charactorData.statusGrowRate.health			/ 100.0f;
+	status.power		 += level * charactorData.statusGrowRate.power			/ 100.0f;
+	status.magic_power	 += level * charactorData.statusGrowRate.magic_power	/ 100.0f;
+	status.defense		 += level * charactorData.statusGrowRate.defense		/ 100.0f;
+	status.magic_defense += level * charactorData.statusGrowRate.magic_defense  / 100.0f;
+	status.speed		 += level * charactorData.statusGrowRate.speed			/ 100.0f;
+	status.skill		 += level * charactorData.statusGrowRate.skill			/ 100.0f;
+	status.luck			 += level * charactorData.statusGrowRate.luck			/ 100.0f;
 	return status;
 }
 
@@ -223,10 +225,10 @@ const DataBase::MapChipData& DataBase::GetMapChipData(const Map_Chip mapChip) co
 	return _mapChipDataTable.at(static_cast<size_t>(mapChip));
 }
 
-const DataBase::ExpData& DataBase::GetExpData(const uint8_t level) const
-{
-	return _expDataTable.at(level);
-}
+//const DataBase::ExpData& DataBase::GetExpData(const uint8_t level) const
+//{
+//	return _expDataTable.at(level);
+//}
 
 const DataBase::AttributeData& DataBase::GetAttributeData(const std::string& atributeName) const
 {

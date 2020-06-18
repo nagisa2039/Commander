@@ -81,20 +81,13 @@ void WarSituation::Draw()
 	{
 		DrawGraph(GetDrawPos(center, window0Size, Anker::center), window0H);
 
-		int choplin30 = fileSystem.GetFontHandle("choplin30edge");
-		Size strSize;
-		int lineCnt;
-		GetDrawFormatStringSize(&strSize.w, &strSize.h, &lineCnt,text);
-		auto str1DrawPos = GetDrawPos(center, strSize, Anker::center);
-		DrawFormatString(str1DrawPos.x, str1DrawPos.y, 0x000000, text);
+		int choplin20 = fileSystem.GetFontHandle("choplin20");
+		DrawStringToHandle(center, Anker::center, 0x000000, choplin20, text);
 
 		auto headerCenterPos = center - Vector2Int(0, (window1Size.h + window0Size.h) / 2);
 		DrawGraph(GetDrawPos(headerCenterPos, window1Size, Anker::center), window1H);
 
-		int choplin20 = fileSystem.GetFontHandle("choplin20edge");
-		GetDrawFormatStringSize(&strSize.w, &strSize.h, &lineCnt, header);
-		auto str2DrawPos = GetDrawPos(headerCenterPos, strSize, Anker::center);
-		DrawFormatString(str2DrawPos.x, str2DrawPos.y, 0xffffff, header);
+		DrawStringToHandle(headerCenterPos, Anker::center, 0xffffff, choplin20, header);
 	};
 
 	auto DrawCharactorNum = [&](const Vector2Int& center, const char* str, const int num)
@@ -102,7 +95,7 @@ void WarSituation::Draw()
 		DrawGraph(GetDrawPos(center, window1Size, Anker::center), window1H);
 
 		int distance = 100;
-		int choplin20 = fileSystem.GetFontHandle("choplin20edge");
+		int choplin20 = fileSystem.GetFontHandle("choplin20");
 		DrawStringToHandle(center - Vector2Int(distance / 2, 0), Anker::leftcenter, 0xffffff, choplin20, str);
 
 		char numStr[10];
@@ -123,19 +116,10 @@ void WarSituation::Draw()
 		Rect canMoveWindwoRect((wsize * Vector2(0.45, 0.8)).ToVector2Int(), window2Size);
 		DrawGraph(GetDrawPos(canMoveWindwoRect.center, window2Size, Anker::center), window2H);
 
-		const char* str = "行動可能";
-		Size strSize;
-		int lineCnt;
-		int choplin20 = fileSystem.GetFontHandle("choplin20edge");
-		GetDrawFormatStringSize(&strSize.w, &strSize.h, &lineCnt, str);
-		auto str0DrawPos = GetDrawPos(canMoveWindwoRect.center, strSize, Anker::centerdown);
-		DrawFormatString(str0DrawPos.x, str0DrawPos.y, 0x000000, str);
+		int choplin20 = fileSystem.GetFontHandle("choplin20");
 
-		auto canMoveCnt = _mapCtrl.GetCanMoveCnt();
-		str = "%d";
-		GetDrawFormatStringSize(&strSize.w, &strSize.h, &lineCnt, str, canMoveCnt);
-		auto str1DrawPos = GetDrawPos(canMoveWindwoRect.center, strSize, Anker::centerup);
-		DrawFormatString(str1DrawPos.x, str1DrawPos.y, 0x000000, str, canMoveCnt);
+		DrawStringToHandle(canMoveWindwoRect.center - Vector2Int(0, canMoveWindwoRect.size.h) * 0.25f, Anker::center, 0xffffff, choplin20, "行動可能");
+		DrawStringToHandle(canMoveWindwoRect.center + Vector2Int(0, canMoveWindwoRect.size.h) * 0.25f, Anker::center, 0x000000, choplin20, "%d", _mapCtrl.GetCanMoveCnt());
 	}
 
 	_mapCtrl.DrawWarSituatin((wsize * Vector2(0.75, 0.5)).ToVector2Int());

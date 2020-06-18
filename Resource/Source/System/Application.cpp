@@ -111,12 +111,6 @@ bool Application::Initialize()
 	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin100edge", 100, 1, true, false);
 	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin200edge", 200, 1, true, false);
 
-	_fileSystem->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori20", 20, 1, false, false);
-	_fileSystem->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori30", 30, 1, false, false);
-	_fileSystem->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori40", 40, 1, false, false);
-	_fileSystem->FontInit("Resource/Font/ShipporiMincho-TTF-Regular.ttf", "ShipporiMincho", "shippori200", 200, 1, false, false);
-	_fileSystem->FontInit("Resource/Font/Oshidashi - M - Gothic - TT.ttf", "Oshidasi", "oshidashi200", 200, 1, false, false);
-
 	return true;
 }
 

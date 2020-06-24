@@ -10,6 +10,7 @@
 #include "SaveData.h"
 #include "MapSelectCharactor.h"
 #include "Fade.h"
+#include "SoundLoader.h"
 
 using namespace std;
 

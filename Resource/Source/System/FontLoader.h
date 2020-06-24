@@ -21,5 +21,5 @@ public:
 	// ﾌｫﾝﾄの読み込み、参照で返す
 	bool FontInit(LPCTSTR fontFile, LPCTSTR fontName, std::string useName, int fontSize, int fontThick, bool edgeFlag, bool italic);
 
-	int SetFont(std::string useName);		// 音楽のｾｯﾄ(つけた名前)非ﾙｰﾌﾟ用
+	int GetFont(std::string useName);
 };

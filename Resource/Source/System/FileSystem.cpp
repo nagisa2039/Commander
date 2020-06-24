@@ -1,6 +1,7 @@
 #include "FileSystem.h"
 #include "ImageLoader.h"
 #include "FontLoader.h"
+#include "SoundLoader.h"
 
 using namespace std;
 
@@ -13,10 +14,10 @@ std::string GetExtension(const char* path)
 
 FileSystem::FileSystem()
 {
-	auto imgLoader = make_shared<ImageLoader>();
-	_loaders["bmp"] = _loaders["png"] = _loaders["jpg"] = imgLoader;
+	_loaders["bmp"] = _loaders["png"] = _loaders["jpg"] = make_shared<ImageLoader>();
 
 	_fontLoader = make_shared<FontLoader>();
+	_soundLoder = make_shared<SoundLoader>();
 }
 
 
@@ -45,7 +46,17 @@ bool FileSystem::FontInit(LPCTSTR fontFile, LPCTSTR fontName, std::string useNam
 
 int FileSystem::GetFontHandle(std::string fontUseName)
 {
-	return _fontLoader->SetFont(fontUseName);
+	return _fontLoader->GetFont(fontUseName);
+}
+
+int FileSystem::GetSoundHandle(const char* path)
+{
+	return _soundLoder->GetSoundHandle(path);
+}
+
+SoundLoader& FileSystem::GetSoundLoader()
+{
+	return *_soundLoder;
 }
 
 std::string FileSystem::GetFolderPass(std::string path)

@@ -10,6 +10,7 @@
 #include "Effect/FlyText.h"
 #include "BattleCharactor.h"
 #include "UI/Experience.h"
+#include "SoundLoader.h"
 
 using namespace std;
 
@@ -161,6 +162,9 @@ bool BattleScene::PursuitAttack(const bool rightAttack)
 
 void BattleScene::End()
 {
+	auto& soundLoader = Application::Instance().GetFileSystem().GetSoundLoader();
+	soundLoader.StopSound();
+
 	_leftBC.GetCharacotr().MoveEnd();
 	_controller.PopScene();
 }
@@ -203,6 +207,9 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 	_updater = &BattleScene::SceneStartAnim;
 
 	_expUIDeque.clear();
+
+	auto& soundLoader = Application::Instance().GetFileSystem().GetSoundLoader();
+	soundLoader.PlayBGM("Resource/Sound/BGM/game_maoudamashii_3_theme11b.mp3", true);
 }
 
 BattleScene::~BattleScene()

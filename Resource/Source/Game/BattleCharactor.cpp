@@ -9,6 +9,7 @@
 #include "DataBase.h"
 #include "Effect/MissEffect.h"
 #include "Effect/FlyText.h"
+#include "SoundLoader.h"
 
 using namespace std;
 
@@ -106,6 +107,9 @@ void BattleCharactor::UIAnimUpdate()
 	if (_animHealthCnt++ % 3 == 0)
 	{
 		_animHealth += _animHealth > statusHp ? -1 : 1;
+
+		auto& soundLoader = Application::Instance().GetFileSystem().GetSoundLoader();
+		soundLoader.PlaySE("Resource/Sound/SE/select01.mp3");
 	}
 }
 

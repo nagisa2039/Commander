@@ -44,7 +44,7 @@ bool FontLoader::FontInit(LPCTSTR fontFile, LPCTSTR fontName, std::string useNam
 	return true;
 }
 
-int FontLoader::SetFont(std::string useName)
+int FontLoader::GetFont(std::string useName)
 {
 	return fontNameMap[useName];
 }

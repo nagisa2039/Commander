@@ -151,7 +151,7 @@ float TriangleArea(const Vector3& p0, const Vector3& p1, const Vector3& p2);
 struct Vector4
 {
 	float x, y, z, w;
-	Vector4() {};
+	Vector4() :x(0), y(0), z(0), w(0) {};
 	Vector4(const float x, const float y, const float z, const float w) :x(x), y(y), z(z), w(w){}
 };
 
@@ -171,7 +171,7 @@ Size operator*(const Size& lval, const Size& rval);
 Size operator/(const Size& lval, const Size& rval);
 Size operator/(const Size& lval, const Vector2Int& rval);
 
-Size operator+(const Size& lval, const float& rval);
+Size operator+(const Size& lval, const int& rval);
 Size operator*(const Size& lval, const float& rval);
 
 bool operator==(const Size & lval, const Size& rval);
@@ -192,11 +192,10 @@ struct Rect
 	const int Height()const{ return size.h; }
 
 	void Draw(const unsigned int color = 0xffffff, const bool fill = true)const;
-	void Draw(const Vector2Int&  offset, const int color = 0xffffff, const bool fill = true);
-	void Draw(const Vector2& offset, const int color = 0xffffff, const bool fill = true);
-	void DrawGraph(const int graphH, const Vector2& offset = Vector2(0,0));
-	void DrawRectGraph(const Vector2Int& leftup, const Size& rectSize, const int graphH, const Vector2& offset = Vector2(0, 0));
-	void DrawExtendGraph(const Vector2Int& leftup, const Vector2Int& rightdown, const int graphH, const Vector2& offset = Vector2(0, 0));
+	void Draw(const Vector2Int& offset, const int color = 0xffffff, const bool fill = true)const;
+	void DrawGraph(const int graphH, const Vector2Int& offset = Vector2Int(0,0))const;
+	void DrawRectGraph(const Vector2Int& leftup, const Size& rectSize, const int graphH, const Vector2Int& offset = Vector2Int(0, 0))const;
+	void DrawExtendGraph(const Vector2Int& leftup, const Vector2Int& rightdown, const int graphH, const Vector2Int& offset = Vector2Int(0, 0))const;
 
 	bool IsHit(const Rect& rect);
 	static const bool IsHit(const Rect& aRect, const Rect& bRect);

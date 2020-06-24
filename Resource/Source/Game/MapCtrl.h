@@ -26,7 +26,7 @@ private:
 	};
 
 	std::vector<std::vector<MapData>> _mapDataVec2;			// マップデータ
-	std::shared_ptr<Astar> _astar;
+	std::unique_ptr<Astar> _astar;
 
 	std::vector<std::shared_ptr<Charactor>>& _charactors;
 

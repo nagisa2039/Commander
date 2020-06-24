@@ -89,7 +89,7 @@ void StatusInf::Draw()
 	Size hpSize = Size(250, 20);
 	auto drawPos = GetDrawPos(Vector2Int(textRect.Left() + spaceX, drawY), hpSize, Anker::leftcenter);
 	DrawBox(drawPos, drawPos + hpSize, 0xaaaaaa);
-	DrawBox(drawPos, drawPos + Size(hpSize.w * static_cast<float>(status.health) / static_cast<float>(startStatus.health), hpSize.h), teamColor);
+	DrawBox(drawPos, drawPos + Size(static_cast<int>( hpSize.w * status.health / static_cast<float>(startStatus.health) ), hpSize.h), teamColor);
 
 	Size iconSize(100, 100);
 	charactor->DrawCharactorIcon(Rect(Vector2Int(windowRect.Right() - iconSize.w/2, windowRect.Botton() - iconSize.h/2), iconSize));

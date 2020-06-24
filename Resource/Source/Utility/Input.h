@@ -7,7 +7,7 @@
 
 struct PeripheralInfo
 {
-	PeripheralInfo() {};
+	PeripheralInfo() :periNo(0), code(0) {};
 	PeripheralInfo(int pno, int cd) :periNo(pno), code(cd) {}
 	int periNo;		// ü•Ó‹@Ší”Ô†
 	int code;		// ü•Ó‹@Ší¶“ü—Íî•ñ (—áFPAD_INPUT_1)

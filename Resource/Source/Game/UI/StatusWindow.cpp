@@ -91,8 +91,8 @@ void StatusWindow::DrawToWindowScreen()
 
 	Rect iconRect(Vector2Int(0,0) + _leftWindowSize * 0.5f + space, _leftWindowSize);
 	Rect statusRect0(iconRect.center + Vector2Int(0, _leftWindowSize.h + space.h * 2), _leftWindowSize);
-	Rect statusRect1(Vector2Int(iconRect.Right() + space.w * 2 + _rightWindowSize.w * 0.5f, iconRect.center.y), _rightWindowSize);
-	Rect statusRect2(Vector2Int(statusRect1.center.x, statusRect1.Botton() + space.h * 2 + _rightWindowSize.h * 0.5f), _rightWindowSize);
+	Rect statusRect1(Vector2Int(iconRect.Right() + space.w * 2 + static_cast<int>(_rightWindowSize.w * 0.5f), iconRect.center.y), _rightWindowSize);
+	Rect statusRect2(Vector2Int(statusRect1.center.x, statusRect1.Botton() + space.h * 2 + static_cast<int>(_rightWindowSize.h * 0.5f)), _rightWindowSize);
 
 	DrawIcon(iconRect);
 	DrawBaseInf(statusRect0);
@@ -176,15 +176,19 @@ void StatusWindow::DrawBattleStatus(Rect& statusRect1)
 	auto DrawContentVertical = [&](const string& name, const int num)
 	{
 		contentRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/verticalWindow.png"));
-		DrawStringToHandle(Vector2Int(contentRect.center.x, contentRect.center.y - contentRect.size.h * 0.25f), Anker::center, 0xffffff, choplin30, name.c_str());
-		DrawStringToHandle(Vector2Int(contentRect.center.x, contentRect.center.y + contentRect.size.h * 0.25f), Anker::center, 0xffffff, choplin30, "%d", num);
+		DrawStringToHandle(Vector2Int(contentRect.center.x, contentRect.center.y - static_cast<int>(contentRect.size.h * 0.25f)), 
+			Anker::center, 0xffffff, choplin30, name.c_str());
+		DrawStringToHandle(Vector2Int(contentRect.center.x, contentRect.center.y + static_cast<int>(contentRect.size.h * 0.25f)), 
+			Anker::center, 0xffffff, choplin30, "%d", num);
 	};
 
 	auto DrawContentHorizontal = [&](const string& name, const int num)
 	{
 		contentRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/horizontalWindow.png"));
-		DrawStringToHandle(Vector2Int(contentRect.center.x - contentRect.size.w * 0.25f, contentRect.center.y), Anker::center, 0xffffff, choplin30, name.c_str());
-		DrawStringToHandle(Vector2Int(contentRect.center.x + contentRect.size.w * 0.25f, contentRect.center.y), Anker::center, 0xffffff, choplin30, "%d", num);
+		DrawStringToHandle(Vector2Int(contentRect.center.x - static_cast<int>(contentRect.size.w * 0.25f), contentRect.center.y), 
+			Anker::center, 0xffffff, choplin30, name.c_str());
+		DrawStringToHandle(Vector2Int(contentRect.center.x + static_cast<int>(contentRect.size.w * 0.25f), contentRect.center.y), 
+			Anker::center, 0xffffff, choplin30, "%d", num);
 	};
 
 	auto currentBattleStatus = _charactor.GetBattleStatus();
@@ -208,12 +212,12 @@ void StatusWindow::DrawBattleStatus(Rect& statusRect1)
 	contentRect.center.x += contentRect.size.w;
 	DrawContentHorizontal("‘Ï–‚", currentBattleStatus.GetMagicDifense());
 
-	contentRect.center.x = statusRect1.Left() + contentRect.size.w * 0.5f;
+	contentRect.center.x = statusRect1.Left() + static_cast<int>(contentRect.size.w * 0.5f);
 	contentRect.center.y += contentRect.size.h;
 	DrawContentHorizontal("‰ñ”ð", currentBattleStatus.GetAvoidance());
 
 	// 300, 62
-	contentRect.center.x += contentRect.size.w * 1.5;
+	contentRect.center.x += static_cast<int>(contentRect.size.w * 1.5f);
 	contentRect.size.w *= 2;
 	auto attackRange = _charactor.GetAttackRange();
 
@@ -228,8 +232,10 @@ void StatusWindow::DrawBattleStatus(Rect& statusRect1)
 	}
 
 	contentRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/horizontalWindow.png"));
-	DrawStringToHandle(Vector2Int(contentRect.center.x - contentRect.size.w * 0.25f, contentRect.center.y), Anker::center, 0xffffff, choplin30, "ŽË’ö");
-	DrawStringToHandle(Vector2Int(contentRect.center.x + contentRect.size.w * 0.25f, contentRect.center.y), Anker::center, 0xffffff, choplin30, str);
+	DrawStringToHandle(Vector2Int(contentRect.center.x - static_cast<int>(contentRect.size.w * 0.25f), contentRect.center.y), 
+		Anker::center, 0xffffff, choplin30, "ŽË’ö");
+	DrawStringToHandle(Vector2Int(contentRect.center.x + static_cast<int>(contentRect.size.w * 0.25f), contentRect.center.y),
+		Anker::center, 0xffffff, choplin30, str);
 }
 
 void StatusWindow::DrawStatus(Rect& statusRect2)

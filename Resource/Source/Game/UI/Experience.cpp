@@ -150,7 +150,8 @@ void Experience::Draw()
 	base.Draw(0x000000);
 	expBer.Draw(0x888888);
 	
-	DrawBox(expBer.Left(), expBer.Top(), expBer.Left() + berSize.w * (_currentExp%_maxExp) / static_cast<float>(_maxExp), expBer.Botton(), 0x00ff00, true);
+	int berWidth = static_cast<int>(berSize.w * (_currentExp % _maxExp) / static_cast<float>(_maxExp));
+	DrawBox(expBer.Left(), expBer.Top(), expBer.Left() + berWidth, expBer.Botton(), 0x00ff00, true);
 
 	if (_updater == &Experience::LevelUpUpdate)
 	{
@@ -164,7 +165,7 @@ void Experience::Draw()
 		DrawStringToHandle(levelUpCenter, Anker::center, 0xffffff, fontH, str);
 
 		auto itemSize = Size(400, 50);
-		auto statusDrawRect = Rect(screenCenter, Size(itemSize.w, _drawDatas.size() * itemSize.h));
+		auto statusDrawRect = Rect(screenCenter, Size(itemSize.w, static_cast<int>(_drawDatas.size()) * itemSize.h));
 		statusDrawRect.Draw(0xffffff);
 
 		Rect itemRect(Vector2Int(screenCenter.x, statusDrawRect.Top() + itemSize.h / 2), itemSize);

@@ -128,7 +128,7 @@ void BattlePrediction::Draw()
 		{
 			auto GetAttackColor = [](const float rate)
 			{
-				float color = 0xffffff;
+				unsigned int color = 0xffffff;
 				if (rate > 1.01f)
 				{
 					color = 0x00ff80;
@@ -203,18 +203,19 @@ void BattlePrediction::DrawHPBer(int& drawY, const Rect& windowRect, bool rightA
 		// HP‚Ì•Ï“®•ª
 		int chengePoint = GetChengePoint(dir, rightAttack, selfBattleStatus, targetBattleStatus);
 		float before = static_cast<float>(self.GetStatus().health) / static_cast<float>(self.GetStartStatus().health);
-		int affterHealth = min(max(self.GetStatus().health - chengePoint, 0.0f), self.GetStartStatus().health);
+		int affterHealth = min(max(self.GetStatus().health - chengePoint, 0), self.GetStartStatus().health);
 		float affter = affterHealth / static_cast<float>(self.GetStartStatus().health);
 
-		Size subSize(hpSize.w * (abs(before - affter)) + 2, hpSize.h);
-		drawPos = GetDrawPos(Vector2Int(windowRect.center.x + (before + affter) / 2.0f * (dir == Dir::left ? -1 : 1) * hpSize.w, drawY), subSize, Anker::center);
+		Size subSize(static_cast<int>(hpSize.w * (abs(before - affter)) + 2), hpSize.h);
+		float sizeRate = (before + affter) / 2.0f * (dir == Dir::left ? -1 : 1);
+		drawPos = GetDrawPos(Vector2Int(windowRect.center.x + static_cast<int>(sizeRate * hpSize.w), drawY), subSize, Anker::center);
 
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, _hpAnimAlpha->GetValue() * 128);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(_hpAnimAlpha->GetValue() * 128));
 		DrawBox(drawPos, drawPos + subSize, teamColor);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
 		// HP‚ÌŽc—Ê
-		Size currentSize(hpSize.w * (targetBattleStatus.CheckHeal() ? before : affter), hpSize.h);
+		Size currentSize(static_cast<int>(hpSize.w * (targetBattleStatus.CheckHeal() ? before : affter)), hpSize.h);
 		drawPos = GetDrawPos(Vector2Int(windowRect.center.x, drawY), currentSize, anker);
 		DrawBox(drawPos, drawPos + currentSize, teamColor);
 

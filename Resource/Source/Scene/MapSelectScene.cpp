@@ -103,7 +103,8 @@ void MapSelectScene::MapSelectCharactorUpdate()
 	if (_moveStartTrack->GetEnd())
 	{
 		int charactorSpace = 50;
-		_mapSelectCharactors[_charactorIdx]->SetTargetPos(_contentPosVec.at(_selectIdx) + Vector2Int(charactorSpace * _charactorIdx, 0) * _dir);
+		_mapSelectCharactors[_charactorIdx]->SetTargetPos(
+			_contentPosVec[_selectIdx] + Vector2Int(charactorSpace * _charactorIdx, 0) * static_cast<float>(_dir));
 		_charactorIdx++;
 		_moveStartTrack->Reset();
 	}

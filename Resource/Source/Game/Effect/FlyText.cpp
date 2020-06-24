@@ -40,16 +40,8 @@ void FlyText::Update(const Input& input)
 
 void FlyText::Draw()
 {
-	auto offset = _cameraActive ? _camera.GetCameraOffset() : Vector2Int(0, 0);
-	auto len = strlen(_str.c_str());
-	Size size;
-	int lineCnt = 0;
-	GetDrawStringSizeToHandle(&size.w, &size.h, &lineCnt, _str.c_str(), len, _fontHandle);
-
-	auto drawPos = offset + GetDrawPos(_pos.ToVector2Int(), size, _anker);
-
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, _lifeCnt-- / static_cast<float>(_lifeCntMax) * 255);
-	DrawFormatStringToHandle(drawPos.x, drawPos.y, _color, _fontHandle, _str.c_str());
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(_lifeCnt-- / static_cast<float>(_lifeCntMax) * 255));
+	DrawStringToHandle(_pos.ToVector2Int(), _anker, _color, _fontHandle, _str.c_str());
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }
 

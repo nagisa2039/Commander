@@ -106,14 +106,14 @@ void WarSituation::Draw()
 	DrawWinOrLoseWindow((wsize * Vector2(0.25, 0.25)).ToVector2Int(), "Ÿ—˜ğŒ", "“G‚Ì‘S–Å");
 	DrawWinOrLoseWindow((wsize * Vector2(0.25, 0.5)).ToVector2Int(), "”s–kğŒ", "–¡•û‚Ì‘S–Å");
 
-	auto charactorNumCenter = (wsize * Vector2(0.25, 0.65)).ToVector2Int();
+	auto charactorNumCenter = (wsize * Vector2(0.25f, 0.65f)).ToVector2Int();
 	auto charactorNum = _mapCtrl.GetCharactorCnt();
 	int space = (window0Size.w - window1Size.w * 2) / 2 + window1Size.w / 2;
 	DrawCharactorNum(charactorNumCenter - Vector2Int(space, 0), "©ŒR", charactorNum.x);
 	DrawCharactorNum(charactorNumCenter + Vector2Int(space, 0), "“GŒR", charactorNum.y);
 
 	{
-		Rect canMoveWindwoRect((wsize * Vector2(0.45, 0.8)).ToVector2Int(), window2Size);
+		Rect canMoveWindwoRect((wsize * Vector2(0.45f, 0.8f)).ToVector2Int(), window2Size);
 		DrawGraph(GetDrawPos(canMoveWindwoRect.center, window2Size, Anker::center), window2H);
 
 		int choplin20 = fileSystem.GetFontHandle("choplin20");

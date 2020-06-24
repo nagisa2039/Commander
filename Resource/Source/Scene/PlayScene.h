@@ -26,18 +26,18 @@ private:
 	bool debug;
 	int _gameH;
 	
-	std::shared_ptr<MapCtrl> _mapCtrl;
-	std::shared_ptr<Camera> _camera;
+	std::unique_ptr<MapCtrl> _mapCtrl;
+	std::unique_ptr<Camera> _camera;
 
 	unsigned char _turnCnt;
 	const unsigned char _lastTurnCnt;
 
-	std::shared_ptr<TurnChangeAnim> _turnChangeAnim;
+	std::unique_ptr<TurnChangeAnim> _turnChangeAnim;
 
 	std::vector<std::shared_ptr<Charactor>> _charactors;
 	std::vector<std::shared_ptr<Charactor>>::iterator _dyingCharItr;
-	std::shared_ptr<Commander> _playerCommander;
-	std::shared_ptr<Commander> _enemyCommander;
+	std::unique_ptr<Commander> _playerCommander;
+	std::unique_ptr<Commander> _enemyCommander;
 	std::vector<std::shared_ptr<Effect>> _effects;
 
 	std::deque<std::shared_ptr<UI>> _preparationDeque;
@@ -88,10 +88,10 @@ private:
 	void ChangePreparation();
 	void ChangeGameOver();
 
-	int pshandle;
+	/*int pshandle;
 	VERTEX2DSHADER Vert[6];
 	FLOAT4 _colorC;
-	FLOAT4 _waveC;
+	FLOAT4 _waveC;*/
 
 public:
 	PlayScene(SceneController & ctrl, const unsigned int mapId);

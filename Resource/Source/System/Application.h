@@ -59,14 +59,14 @@ public:
 
 	SaveData& GetSaveData();
 
-	FileSystem& GetFileSystem()const;
+	FileSystem& GetFileSystem();
 	const AnkerCalculation& GetAnkerCalculation()const;
 	
 
 private:
 	Application();
-	Application(const Application&);
-	Application& operator=(const Application&);
+	Application(const Application&) = delete;
+	Application& operator=(const Application&) = delete;
 
 	std::unique_ptr<Input> _input;
 	std::unique_ptr<SceneController> _sceneController;

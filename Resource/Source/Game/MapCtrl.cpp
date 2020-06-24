@@ -21,13 +21,16 @@
 
 using namespace std;
 
-constexpr unsigned int CHIP_SIZE_W = 32*2.5;
-constexpr unsigned int CHIP_SIZE_H = 32*2.5;
+namespace
+{
+	constexpr unsigned int CHIP_SIZE_W = 80;
+	constexpr unsigned int CHIP_SIZE_H = 80;
 
-constexpr unsigned int MAP_CHIP_CNT_W = 20;
-constexpr unsigned int MAP_CHIP_CNT_H = 20;
+	constexpr unsigned int MAP_CHIP_CNT_W = 20;
+	constexpr unsigned int MAP_CHIP_CNT_H = 20;
 
-constexpr unsigned int WAR_SITUATION_CHIP_SIZE = 20;
+	constexpr unsigned int WAR_SITUATION_CHIP_SIZE = 20;
+}
 
 void MapCtrl::DrawToMapChipScreen()
 {
@@ -68,7 +71,7 @@ void MapCtrl::DrawToMapFloorScreen()
 
 MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charactors(charactors), imageFolderPath("Resource/Image/MapChip/")
 {
-	_astar = make_shared<Astar>();
+	_astar = make_unique<Astar>();
 	_mapChipH = MakeScreen(100 * CHIP_SIZE_W, 100 * CHIP_SIZE_H, true);
 	_mapFloorH = MakeScreen(100 * CHIP_SIZE_W, 100 * CHIP_SIZE_H, true);
 	_warSituationH = MakeScreen(WAR_SITUATION_CHIP_SIZE * MAP_CHIP_CNT_W, WAR_SITUATION_CHIP_SIZE * MAP_CHIP_CNT_H, true);
@@ -386,8 +389,8 @@ bool MapCtrl::LoadMapData(const std::string& filePath)
 bool MapCtrl::CheckMapPosPutRange(const Vector2Int& mapPos)
 {
 	int frameNum = 2;
-	return mapPos.y >= frameNum && mapPos.y < MAP_CHIP_CNT_H - frameNum
-		&& mapPos.x >= frameNum && mapPos.x < MAP_CHIP_CNT_W - frameNum;
+	return mapPos.y >= frameNum && mapPos.y < static_cast<int>(MAP_CHIP_CNT_H - frameNum)
+		&& mapPos.x >= frameNum && mapPos.x < static_cast<int>(MAP_CHIP_CNT_W - frameNum);
 }
 
 void MapCtrl::RouteSearch(Charactor& charactor)
@@ -469,8 +472,8 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor, Vector2Int& targetCnt)
 		}
 	}
 
-	targetCnt.x = targetCharactorList.size();
-	targetCnt.y = outRangeCharactorList.size();
+	targetCnt.x = static_cast<int>(targetCharactorList.size());
+	targetCnt.y = static_cast<int>(outRangeCharactorList.size());
 	
 	// 選別
 	for (const auto& targetCharactor : targetCharactorList)
@@ -565,7 +568,7 @@ void MapCtrl::CreateWarSituation()const
 	for (const auto& charactor : _charactors)
 	{
 		DrawCircle(charactor->GetMapPos() * WAR_SITUATION_CHIP_SIZE + Vector2Int(WAR_SITUATION_CHIP_SIZE/2, WAR_SITUATION_CHIP_SIZE / 2),
-			WAR_SITUATION_CHIP_SIZE*0.3, GetTeamColor(charactor->GetTeam()));
+			static_cast<int>(WAR_SITUATION_CHIP_SIZE*0.3f), GetTeamColor(charactor->GetTeam()));
 	}
 
 	// グリット

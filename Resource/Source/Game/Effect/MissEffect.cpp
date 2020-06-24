@@ -32,6 +32,6 @@ void MissEffect::Draw()
 	Size strSize;
 	int line;
 	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &line, fontH, str);
-	auto drawPos = GetDrawPos(_pos.ToVector2Int() + Vector2Int(0, _animPosYTrack->GetValue()), strSize, Anker::center);
+	auto drawPos = GetDrawPos(_pos.ToVector2Int() + Vector2Int(0, static_cast<int>(_animPosYTrack->GetValue())), strSize, Anker::center);
 	DrawFormatStringToHandle(drawPos.x, drawPos.y, 0xffffff, fontH, str);
 }

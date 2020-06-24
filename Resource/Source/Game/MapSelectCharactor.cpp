@@ -32,7 +32,7 @@ MapSelectCharactor::MapSelectCharactor(Camera& camera, const CharactorType& char
 	nextRectCenterOffset(animRectVec);
 	_animator->AddAnim("UpWalk", animRectVec, 30, true);
 	animRectVec.clear();
-	animRectVec.emplace_back(Rect(Vector2Int(divSize.w * 1.5f, divSize.h * 0.5f), divSize));
+	animRectVec.emplace_back(Rect(Vector2Int(static_cast<int>(divSize.w * 1.5f), static_cast<int>(divSize.h * 0.5f)), divSize));
 	_animator->AddAnim("DownWalk", animRectVec, 30, false);
 
 	_animator->ChangeAnim("DownWalk");
@@ -71,7 +71,7 @@ void MapSelectCharactor::Update(const Input& input)
 	{
 		_animator->ChangeAnim("LeftWalk");
 	}
-	_pos += vec.Normalized() * _speed;;
+	_pos += vec.Normalized() * static_cast<float>(_speed);
 
 	_animator->Update();
 }

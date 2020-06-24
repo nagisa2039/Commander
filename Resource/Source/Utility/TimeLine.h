@@ -68,8 +68,8 @@ public:
 			return T();
 		}
 
-		auto lastFrame = _keys.rbegin()->first;
-		int calFrame = _loop ? _frame % lastFrame : _frame;
+		unsigned int lastFrame = _keys.rbegin()->first;
+		unsigned int calFrame = _loop ? _frame % lastFrame : _frame;
 		if (calFrame < 0)
 		{
 			calFrame = 0;
@@ -99,8 +99,8 @@ public:
 			return currnet->second;
 		}
 
-		auto parsent = (calFrame - currnet->first) / (float)(next->first - currnet->first);
-		return currnet->second + (next->second - currnet->second) * parsent;
+		auto parsent = (calFrame - currnet->first) / static_cast<float>(next->first - currnet->first);
+		return static_cast<T>(currnet->second + (next->second - currnet->second) * parsent);
 	}
 
 	inline bool GetEnd()const

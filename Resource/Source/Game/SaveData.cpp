@@ -62,7 +62,7 @@ void SaveData::SaveCharactorData(const int& mapNum)
 	fopen_s(&fp, "Resource/SaveData/savedata", "wb");
 
 	// キャラクター数の書き込み
-	unsigned int cnt = _charactorDataVec.size();
+	unsigned int cnt = static_cast<unsigned int>(_charactorDataVec.size());
 	fwrite(&cnt, sizeof(cnt), 1, fp);
 	// キャラクターデータの書き込み
 	fwrite(_charactorDataVec.data(), sizeof(CharactorData) * cnt, 1, fp);

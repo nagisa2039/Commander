@@ -256,30 +256,25 @@ void Rect::Draw(unsigned int color, const bool fill)const
 	DxLib::DrawBox(this->Left(),this->Top(),this->Right(),this->Botton(),color, fill);
 }
 
-void Rect::Draw(const Vector2Int& offset, int color, const bool fill)
-{
-	DxLib::DrawBox(offset.x + this->Left(), offset.y + this->Top(), offset.x + this->Right(), offset.y + this->Botton(), color, fill);
-}
-
-void Rect::Draw(const Vector2& offset, int color, const bool fill)
+void Rect::Draw(const Vector2Int& offset, int color, const bool fill)const
 {
 	DxLib::DrawBox(static_cast<int>(offset.x + this->Left()), static_cast<int>(offset.y + this->Top()),
 		static_cast<int>(offset.x + this->Right()), static_cast<int>(offset.y + this->Botton()), 
 		color, fill);
 }
 
-void Rect::DrawGraph(const int graphH, const Vector2& offset)
+void Rect::DrawGraph(const int graphH, const Vector2Int& offset)const
 {
 	DxLib::DrawExtendGraph(offset.x + Left(), offset.y + Top(), offset.x + Right(), offset.y + Botton(), graphH, true);
 }
 
-void Rect::DrawRectGraph(const Vector2Int& leftup, const Size& rectSize, const int graphH, const Vector2& offset)
+void Rect::DrawRectGraph(const Vector2Int& leftup, const Size& rectSize, const int graphH, const Vector2Int& offset)const
 {
 	DxLib::DrawRectExtendGraph(offset.x + Left(), offset.y + Top(), offset.x + Right(), offset.y + Botton(),
 		leftup.x, leftup.y, rectSize.w, rectSize.h, graphH, true);
 }
 
-void Rect::DrawExtendGraph(const Vector2Int& leftup, const Vector2Int& rightdown, const int graphH, const Vector2& offset)
+void Rect::DrawExtendGraph(const Vector2Int& leftup, const Vector2Int& rightdown, const int graphH, const Vector2Int& offset)const
 {
 	DxLib::DrawRectExtendGraph(offset.x + leftup.x, offset.y + leftup.y, offset.x + rightdown.x, offset.y + rightdown.y,
 		Left(), Top(), Width(), Height(), graphH, true);
@@ -397,7 +392,7 @@ Vector2Int Size::ToVector2Int() const
 
 Vector2 Size::ToVector2() const
 {
-	return Vector2(this->w, this->h);
+	return Vector2(static_cast<float>(w), static_cast<float>(h));
 }
 
 Size Size::operator-(const Size& size)
@@ -407,8 +402,8 @@ Size Size::operator-(const Size& size)
 
 void Size::operator*=(const float scale)
 {
-	this->w *= scale;
-	this->h *= scale;
+	this->w = static_cast<int>(w * scale);
+	this->h = static_cast<int>(h * scale);
 }
 
 Vector3 Vector3::operator-(void)const
@@ -578,7 +573,7 @@ Vector3 RotateVector(const Vector3& baseVector, const Vector3& rotate)
 	auto DxVECTOR = VGet(baseVector.x, baseVector.y, baseVector.z);
 	auto DxMATRIX = MGetIdent();
 
-	const float deg2rad = DX_PI / 180.0f;
+	const float deg2rad = static_cast<float>(DX_PI / 180.0f);
 	auto rotaX = MGetRotX(rotate.x * deg2rad);
 	auto rotaY = MGetRotY(rotate.y * deg2rad);
 	auto rotaZ = MGetRotZ(rotate.z * deg2rad);
@@ -641,14 +636,14 @@ Size operator/(const Size& lval, const Vector2Int& rval)
 	return Size(lval.w / rval.x, lval.h / rval.y);
 }
 
-Size operator+(const Size& lval, const float& rval)
+Size operator+(const Size& lval, const int& rval)
 {
 	return Size(lval.w + rval, lval.h + rval);
 }
 
 Size operator*(const Size& lval, const float& rval)
 {
-	return Size(lval.w * rval, lval.h * rval);
+	return Size(static_cast<int>(lval.w * rval), static_cast<int>(lval.h * rval));
 }
 
 bool operator==(const Size& lval, const Size& rval)

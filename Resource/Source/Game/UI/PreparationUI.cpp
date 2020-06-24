@@ -28,7 +28,7 @@ void PreparationUI::CloseUpdate(const Input& input)
 		return;
 	}
 
-	if(_execution);
+	if(_execution)
 	{
 		Open(true);
 		_execution = false;
@@ -100,7 +100,7 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>& uiDeque, Camera& c
 	auto screenCenter = Application::Instance().GetWindowSize().ToVector2Int() * 0.5f;
 
 	int spaceY = 150;
-	Vector2Int currentDrawPos = screenCenter - Vector2Int(0, (static_cast<int>(Item::max)-1) / 2.0f * spaceY);
+	Vector2Int currentDrawPos = screenCenter - Vector2Int(0, static_cast<int>((static_cast<int>(Item::max)-1) / 2.0f) * spaceY);
 	_itemInfTable[static_cast<size_t>(Item::start)].name		= "戦闘開始";
 	_itemInfTable[static_cast<size_t>(Item::placement)].name	= "マップ・配置";
 	_itemInfTable[static_cast<size_t>(Item::warsituation)].name = "戦況確認";

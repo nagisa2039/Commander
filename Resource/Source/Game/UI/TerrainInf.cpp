@@ -36,7 +36,9 @@ void TerrainInf::Draw()
 	auto graphH = fileSystem.GetImageHandle("Resource/Image/UI/terrainNameFrame.png");
 	Size graphSize;
 	GetGraphSize(graphH, graphSize);
-	Rect terrainInfRect = Rect(Lerp(Vector2Int(-graphSize.w*0.5f, space.y + graphSize.h * 0.5f), space + graphSize * 0.5f, _animTrack->GetValue()), graphSize);
+	Vector2Int startPos = Vector2Int(static_cast<int>(-graphSize.w*0.5f), space.y + static_cast<int>(graphSize.h * 0.5f));
+	Vector2Int endPos = space + graphSize * 0.5f;
+	Rect terrainInfRect = Rect(Lerp(startPos, endPos, _animTrack->GetValue()), graphSize);
 	DrawGraph(terrainInfRect.Left(), terrainInfRect.Top(), graphH, true);
 
 	auto mapChipData = Application::Instance().GetDataBase().GetMapChipData( _mapCtrl.GetMapData(_mapPos).mapChip);

@@ -63,7 +63,7 @@ void BattleCharactor::AttackUpdate(BattleScene& battleScene)
 {
 	_attackAnimX->Update();
 	auto dir = _dir == Dir::left ? 1 : -1;
-	_pos = _startPos + Vector2(_attackAnimX->GetValue() * dir, 0);
+	_pos = _startPos + Vector2(static_cast<float>(_attackAnimX->GetValue() * dir), 0);
 
 	if (_attackAnimX->GetFrame() == 15)
 	{
@@ -202,7 +202,7 @@ void BattleCharactor::UIDraw()
 
 		Size hpPerDot(10, 30);
 		int linePerHp = 40;
-		int berCnt = ceil(startHealth / 40.0f);
+		int berCnt = static_cast<int>(ceil(startHealth / 40.0f));
 
 		auto hpBerDrawPos = GetDrawPos(hpDrawPos + Vector2Int(100, 30), Size(0, berCnt * hpPerDot.h), Anker::leftcenter);
 		for (int idx = 0; idx < berCnt; idx++)

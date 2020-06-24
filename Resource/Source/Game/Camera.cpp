@@ -44,7 +44,7 @@ void Camera::Update()
 		_pos = Lerp(_pos, Vector3(pos2D.x, pos2D.y, 0), 0.1f);
 	}
 
-	_rect.center = Vector2Int(_pos.x, _pos.y);
+	_rect.center = Vector2Int(static_cast<int>(_pos.x), static_cast<int>(_pos.y));
 
 	// size.w == 0 ÇÕêßå¿Ç»Çµ
 	if (_limitRect.Width() != 0)
@@ -53,22 +53,22 @@ void Camera::Update()
 		if (_rect.Left() < _limitRect.Left())
 		{
 			_rect.center.x = _limitRect.Left() + _rect.Width() / 2;
-			_pos.x = _rect.center.x;
+			_pos.x = static_cast<float>(_rect.center.x);
 		}
 		if (_rect.Right() > _limitRect.Right())
 		{
 			_rect.center.x = _limitRect.Right() - _rect.Width() / 2;
-			_pos.x = _rect.center.x;
+			_pos.x = static_cast<float>(_rect.center.x);
 		}
 		if (_rect.Top() < _limitRect.Top())
 		{
 			_rect.center.y = _limitRect.Top() + _rect.Height() / 2;
-			_pos.y = _rect.center.y;
+			_pos.y = static_cast<float>(_rect.center.y);
 		}
 		if (_rect.Botton() > _limitRect.Botton())
 		{
 			_rect.center.y = _limitRect.Botton() - _rect.Height() / 2;
-			_pos.y = _rect.center.y;
+			_pos.y = static_cast<float>(_rect.center.y);
 		}
 	}
 }

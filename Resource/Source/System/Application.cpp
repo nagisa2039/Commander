@@ -19,9 +19,6 @@ using namespace std;
 constexpr auto default_window_size_wide		= 1280;
 constexpr auto default_window_size_hight	= 720;
 
-constexpr float jumpPower = 2.5f;
-constexpr float gravity = 0.8f;
-
 Application::Application()
 {
 }
@@ -51,7 +48,7 @@ SaveData& Application::GetSaveData()
 	return *_saveData;
 }
 
-FileSystem& const Application::GetFileSystem() const
+FileSystem& Application::GetFileSystem()
 {
 	return *_fileSystem;
 }

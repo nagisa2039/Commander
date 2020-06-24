@@ -30,7 +30,7 @@ TurnChangeAnim::TurnChangeAnim()
 
 	_angleTL = make_unique<Track<float>>(true);
 	_angleTL->AddKey(0, 0);
-	_angleTL->AddKey(59, 59/60.0f * DX_PI*2);
+	_angleTL->AddKey(60, static_cast<float>(2 * DX_PI));
 
 	_alphaTL->Reset();
 	_exrateTL->Reset();
@@ -66,7 +66,7 @@ void TurnChangeAnim::Draw()
 	auto teamInf = teamInfs[static_cast<size_t>(_currentTeam)];
 
 	// ñÇñ@êwÇÃï`âÊ
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(alpha));
 
 	// Ç⁄Ç©Çµ
 	auto angle = _angleTL->GetValue();

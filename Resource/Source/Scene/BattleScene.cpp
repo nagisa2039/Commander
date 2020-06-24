@@ -179,15 +179,15 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 	_effects.clear();
 
 
-	_floatY = _screenSize.h / 2;
+	_floatY = _screenSize.h / 2.0f;
 	auto screenCenter = _screenSize.ToVector2Int() * 0.5f;
 
 	auto distance = 0;
 	auto mapPosSub = _leftBC.GetCharacotr().GetMapPos() - _rightBC.GetCharacotr().GetMapPos();
 	distance = abs(mapPosSub.x) + abs(mapPosSub.y) <= 1 ? 200 : 300;
 
-	_leftBC.Init(Vector2(screenCenter.x - distance, _floatY),  Dir::left,  &rightBC);
-	_rightBC.Init(Vector2(screenCenter.x + distance, _floatY), Dir::right, &leftBC);
+	_leftBC.Init(Vector2(static_cast<float>(screenCenter.x - distance), _floatY),  Dir::left,  &rightBC);
+	_rightBC.Init(Vector2(static_cast<float>(screenCenter.x + distance), _floatY), Dir::right, &leftBC);
 
 	_pursuit = false;
 
@@ -263,7 +263,7 @@ void BattleScene::Draw(void)
 	if (abs(mapPosSub.x) + abs(mapPosSub.y) <= 1)
 	{
 		int floorH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/Battle/floor_big.png");
-		DrawRotaGraph(screenCenter.x, _floatY, 1.0, 0.0, floorH, true);
+		DrawRotaGraph(screenCenter.x, static_cast<int>(_floatY), 1.0, 0.0, floorH, true);
 	}
 	else
 	{
@@ -287,27 +287,18 @@ void BattleScene::Draw(void)
 		(*rItr)->Draw();
 	}
 
-	if (!_exRateTL->GetEnd())
-	{
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - _exRateTL->GetValue() * 255.0f);
-		DrawBox(0, 0, _screenSize.w, _screenSize.h, 0x000000, true);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-	}
+	auto wsize = Application::Instance().GetWindowSize();
+	auto exRateValue = _exRateTL->GetValue();
 
 	SetDrawScreen(currentScreen);
 
-	auto wsize = Application::Instance().GetWindowSize();
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>((exRateValue * 128)));
+	DrawBox(Vector2Int(0, 0), wsize.ToVector2Int(), 0x000000);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
-	if (_exRateTL->GetEnd())
-	{
-		DrawRotaGraph(Vector2Int(wsize.w / 2, wsize.h / 2), 1.0f, 0.0f, _screenH, true);
-	}
-	else
-	{
-		DrawRotaGraph(Lerp(_startPos, Vector2Int(wsize.w / 2, wsize.h / 2), _exRateTL->GetValue()), _exRateTL->GetValue(), _exRateTL->GetValue() * 4.0f * DX_PI, _screenH, true);
-	}
+	DrawRotaGraph(Lerp(_startPos, Vector2Int(wsize.w / 2, wsize.h / 2), exRateValue), exRateValue, exRateValue * 4.0 * DX_PI, _screenH, true);
 
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, (1.0f - _brightTL->GetValue()) * 255);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>((1.0f - _brightTL->GetValue()) * 255));
 	DrawBox(0,0, wsize.w, wsize.h, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }

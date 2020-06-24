@@ -116,7 +116,7 @@ void Charactor::DyingDraw()
 {
 	auto offset = _camera.GetCameraOffset();
 
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 * _dyingAnimAlphaTL->GetValue());
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(255 * _dyingAnimAlphaTL->GetValue()));
 	_animator->Draw(offset + _pos.ToVector2Int(), _mapCtrl.GetChipSize());
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }
@@ -154,7 +154,7 @@ void Charactor::Move()
 		return;
 	}
 
-	_pos += (_dirTable[static_cast<size_t>(it->dir)].moveVec * _moveSpeed).ToVector2();
+	_pos += (_dirTable[static_cast<size_t>(it->dir)].moveVec * static_cast<float>(_moveSpeed)).ToVector2();
 	if (_pos.ToVector2Int() % _mapCtrl.GetChipSize().ToVector2Int() == Vector2Int(0, 0))
 	{
 		_moveDirList.pop_front();
@@ -185,9 +185,9 @@ void Charactor::DrawMovableMass(const uint8_t alpha) const
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 
-	for (size_t y = 0; y < _resultPosListVec2.size(); y++)
+	for (int y = 0; y < _resultPosListVec2.size(); y++)
 	{
-		for (size_t x = 0; x < _resultPosListVec2[y].size(); x++)
+		for (int x = 0; x < _resultPosListVec2[y].size(); x++)
 		{
 			if (_resultPosListVec2[y][x].size() <= 0)continue;
 
@@ -473,7 +473,7 @@ bool Charactor::StartTerrainEffect()
 	{
 		_terrainEffect = make_shared<TerrainDamageEffect>(GetCenterPos().ToVector2Int(), _camera);
 	}
-	_status.health = min(_startStatus.health, max(1, _status.health + _startStatus.health * mapChipData.recovery / 100.0f));
+	_status.health = min(_startStatus.health, max(1, _status.health + _startStatus.health * static_cast<uint8_t>(mapChipData.recovery / 100.0f)));
 	_effects.emplace_back(_terrainEffect);
 
 	return true;
@@ -597,6 +597,8 @@ std::list<Astar::ResultPos> Charactor::CreateResultPosList(const Vector2Int mapP
 				for (const auto& targetPos : _resultPosListVec2[mapPos.y][mapPos.x])
 				{
 					// ひとつ前のマスが自分か、空きスペースなら
+					if (targetPos.prev == nullptr) continue;
+
 					auto prevCharactor = _mapCtrl.GetMapPosChar(targetPos.prev->mapPos);
 					if (prevCharactor == this || prevCharactor == nullptr)
 					{
@@ -816,10 +818,10 @@ void Charactor::InitAnim()
 
 	_animator->ChangeAnim("DownWalk");
 
-	_dirTable[static_cast<size_t>(Dir::left)]	= DirInf(Vector2Int(-1, 0), "LeftWalk", 270.0f * DX_PI / 180.0f);
-	_dirTable[static_cast<size_t>(Dir::right)]	= DirInf(Vector2Int(1, 0), "RightWalk", 90.0f * DX_PI / 180.0f);
-	_dirTable[static_cast<size_t>(Dir::up)]		= DirInf(Vector2Int(0, -1), "UpWalk",	0.0f * DX_PI / 180.0f);
-	_dirTable[static_cast<size_t>(Dir::down)]	= DirInf(Vector2Int(0, 1), "DownWalk",	180.0f *  DX_PI / 180.0f);
+	_dirTable[static_cast<size_t>(Dir::left)]	= DirInf(Vector2Int(-1, 0), "LeftWalk",		static_cast<float>(270.0f * DX_PI / 180.0f));
+	_dirTable[static_cast<size_t>(Dir::right)]	= DirInf(Vector2Int(1, 0),	"RightWalk",	static_cast<float>(90.0f * DX_PI / 180.0f));
+	_dirTable[static_cast<size_t>(Dir::up)]		= DirInf(Vector2Int(0, -1), "UpWalk",		static_cast<float>(0.0f * DX_PI / 180.0f));
+	_dirTable[static_cast<size_t>(Dir::down)]	= DirInf(Vector2Int(0, 1),	"DownWalk",		static_cast<float>(180.0f *  DX_PI / 180.0f));
 
 	_dir = Dir::down;
 }
@@ -853,7 +855,7 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 
 
 	auto oneLineResutlList = CreateResultPosList(mapPos);
-	_onelineListCnt = oneLineResutlList.size();
+	_onelineListCnt = static_cast<int>(oneLineResutlList.size());
 	if (oneLineResutlList.size() <= 0)return false;
 
 	CreateMoveDirList(oneLineResutlList);

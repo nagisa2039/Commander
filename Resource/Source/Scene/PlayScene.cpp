@@ -34,20 +34,20 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctr
 	debug = true;
 	_turnCnt = 0;
 
-	_mapCtrl = make_shared<MapCtrl>(_charactors);
-	_camera = make_shared<Camera>(Rect(Vector2Int(), wsize));
+	_mapCtrl = make_unique<MapCtrl>(_charactors);
+	_camera = make_unique<Camera>(Rect(Vector2Int(), wsize));
 	_fade = make_unique<Fade>();
-	_turnChangeAnim = make_shared<TurnChangeAnim>();
+	_turnChangeAnim = make_unique<TurnChangeAnim>();
 
 	if (true)
 	{
-		_playerCommander = make_shared<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera, _turnCnt);
+		_playerCommander = make_unique<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera, _turnCnt);
 	}
 	else
 	{
-		_playerCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
+		_playerCommander = make_unique<EnemyCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
 	}
-	_enemyCommander = make_shared<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy, *_camera);
+	_enemyCommander = make_unique<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy, *_camera);
 
 	_camera->AddTargetActor(&*_playerCommander);
 
@@ -93,33 +93,33 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctr
 
 	StartFadeIn(&PlayScene::ChangePreparation);
 
-	// ピクセルシェーダーバイナリコードの読み込み
-	pshandle = LoadPixelShader("Resource/Source/Shader/HPBer.cso");
+	//// ピクセルシェーダーバイナリコードの読み込み
+	//pshandle = LoadPixelShader("Resource/Source/Shader/HPBer.cso");
 
-	// 頂点データの準備
-	Vert[0].pos = VGet(0.0f, 0.0f, 0.0f);
-	Vert[1].pos = VGet(512.0f, 0.0f, 0.0f);
-	Vert[2].pos = VGet(0.0f, 512.0f, 0.0f);
-	Vert[3].pos = VGet(512.0f, 512.0f, 0.0f);
-	Vert[0].dif = GetColorU8(255, 255, 255, 255);
-	Vert[0].spc = GetColorU8(0, 0, 0, 0);
-	Vert[0].u = 0.0f; Vert[0].v = 0.0f;
-	Vert[1].u = 1.0f; Vert[1].v = 0.0f;
-	Vert[2].u = 0.0f; Vert[2].v = 1.0f;
-	Vert[3].u = 1.0f; Vert[3].v = 1.0f;
-	Vert[0].su = 0.0f; Vert[0].sv = 0.0f;
-	Vert[1].su = 1.0f; Vert[1].sv = 0.0f;
-	Vert[2].su = 0.0f; Vert[2].sv = 1.0f;
-	Vert[3].su = 1.0f; Vert[3].sv = 1.0f;
-	Vert[0].rhw = 1.0f;
-	Vert[1].rhw = 1.0f;
-	Vert[2].rhw = 1.0f;
-	Vert[3].rhw = 1.0f;
-	Vert[4] = Vert[2];
-	Vert[5] = Vert[1];
+	//// 頂点データの準備
+	//Vert[0].pos = VGet(0.0f, 0.0f, 0.0f);
+	//Vert[1].pos = VGet(512.0f, 0.0f, 0.0f);
+	//Vert[2].pos = VGet(0.0f, 512.0f, 0.0f);
+	//Vert[3].pos = VGet(512.0f, 512.0f, 0.0f);
+	//Vert[0].dif = GetColorU8(255, 255, 255, 255);
+	//Vert[0].spc = GetColorU8(0, 0, 0, 0);
+	//Vert[0].u = 0.0f; Vert[0].v = 0.0f;
+	//Vert[1].u = 1.0f; Vert[1].v = 0.0f;
+	//Vert[2].u = 0.0f; Vert[2].v = 1.0f;
+	//Vert[3].u = 1.0f; Vert[3].v = 1.0f;
+	//Vert[0].su = 0.0f; Vert[0].sv = 0.0f;
+	//Vert[1].su = 1.0f; Vert[1].sv = 0.0f;
+	//Vert[2].su = 0.0f; Vert[2].sv = 1.0f;
+	//Vert[3].su = 1.0f; Vert[3].sv = 1.0f;
+	//Vert[0].rhw = 1.0f;
+	//Vert[1].rhw = 1.0f;
+	//Vert[2].rhw = 1.0f;
+	//Vert[3].rhw = 1.0f;
+	//Vert[4] = Vert[2];
+	//Vert[5] = Vert[1];
 
-	_colorC = { 0.0f,0.0f,1.0f,1.0f };
-	_waveC = { 0.5f, 0.0f, 0.0f, 0.0f };
+	//_colorC = { 0.0f,0.0f,1.0f,1.0f };
+	//_waveC = { 0.5f, 0.0f, 0.0f, 0.0f };
 }
 
 PlayScene::~PlayScene()
@@ -505,7 +505,7 @@ void PlayScene::GameClearDraw(const Camera& camera)
 
 	auto fileSystem = Application::Instance().GetFileSystem();
 	auto animValue = _clearAnimTrack->GetValue();
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, animValue * 255);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(animValue) * 255);
 	DrawRotaGraph(wsize.ToVector2Int() * 0.5f, 1.0f, 0.0f, fileSystem.GetImageHandle("Resource/Image/Battle/light.png"), true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
@@ -557,12 +557,12 @@ void PlayScene::Draw(void)
 
 	DrawGraph(0, 0, _gameH, true);
 
-	// 使用するピクセルシェーダーをセット
-	SetUsePixelShader(pshandle);
+	//// 使用するピクセルシェーダーをセット
+	//SetUsePixelShader(pshandle);
 
-	// 定数の設定
-	SetPSConstF(0, _colorC);
-	SetPSConstF(1, _waveC);
+	//// 定数の設定
+	//SetPSConstF(0, _colorC);
+	//SetPSConstF(1, _waveC);
 
 	// 描画
 	//DrawPrimitive2DToShader(Vert, 6, DX_PRIMTYPE_TRIANGLELIST);

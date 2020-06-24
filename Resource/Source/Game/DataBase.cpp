@@ -141,9 +141,9 @@ DataBase::DataBase()
 		{
 			split(line, ',', outputVec);
 			if (outputVec[0] == "")break;
-			for (int idx = 0; idx < outputVec.size()-1; idx++)
+			for (size_t idx = 0; idx < outputVec.size()-1; idx++)
 			{
-				_attributeRateTable[outputVec[0]][targetNameVec[idx]] = atof(outputVec[idx + 1].c_str());
+				_attributeRateTable[outputVec[0]][targetNameVec[idx]] = static_cast<float>(atof(outputVec[idx + 1].c_str()));
 			}
 		}
 	}
@@ -209,14 +209,14 @@ Status DataBase::GetLevelInitStatus(const uint8_t level, const CharactorType cha
 	auto charactorData = Application::Instance().GetDataBase().GetCharactorData(charType);
 	status = charactorData.initialStatus;
 	status.level		  = level;
-	status.health		 += level * charactorData.statusGrowRate.health			/ 100.0f;
-	status.power		 += level * charactorData.statusGrowRate.power			/ 100.0f;
-	status.magic_power	 += level * charactorData.statusGrowRate.magic_power	/ 100.0f;
-	status.defense		 += level * charactorData.statusGrowRate.defense		/ 100.0f;
-	status.magic_defense += level * charactorData.statusGrowRate.magic_defense  / 100.0f;
-	status.speed		 += level * charactorData.statusGrowRate.speed			/ 100.0f;
-	status.skill		 += level * charactorData.statusGrowRate.skill			/ 100.0f;
-	status.luck			 += level * charactorData.statusGrowRate.luck			/ 100.0f;
+	status.health		 = status.health		+ static_cast<uint8_t>(level * charactorData.statusGrowRate.health			/ 100.0f);
+	status.power		 = status.power			+ static_cast<uint8_t>(level * charactorData.statusGrowRate.power			/ 100.0f);
+	status.magic_power	 = status.magic_power	+ static_cast<uint8_t>(level * charactorData.statusGrowRate.magic_power		/ 100.0f);
+	status.defense		 = status.defense		+ static_cast<uint8_t>(level * charactorData.statusGrowRate.defense			/ 100.0f);
+	status.magic_defense = status.magic_defense + static_cast<uint8_t>(level * charactorData.statusGrowRate.magic_defense	/ 100.0f);
+	status.speed		 = status.speed			+ static_cast<uint8_t>(level * charactorData.statusGrowRate.speed			/ 100.0f);
+	status.skill		 = status.skill			+ static_cast<uint8_t>(level * charactorData.statusGrowRate.skill			/ 100.0f);
+	status.luck			 = status.luck			+ static_cast<uint8_t>(level * charactorData.statusGrowRate.luck			/ 100.0f);
 	return status;
 }
 

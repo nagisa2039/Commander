@@ -30,6 +30,10 @@ private:
 	void EndUpdate(const Input& input);
 	void (Experience::* _updater)(const Input& input);
 
+	void ExpBerDraw();
+	void LevelUpDraw();
+	void (Experience::* _drawer)();
+
 	struct drawData
 	{
 		std::string name;

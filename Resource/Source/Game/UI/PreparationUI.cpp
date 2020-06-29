@@ -100,7 +100,6 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>& uiDeque, Camera& c
 	auto screenCenter = Application::Instance().GetWindowSize().ToVector2Int() * 0.5f;
 
 	int spaceY = 150;
-	Vector2Int currentDrawPos = screenCenter - Vector2Int(0, static_cast<int>((static_cast<int>(Item::max)-1) / 2.0f) * spaceY);
 	_itemInfTable[static_cast<size_t>(Item::start)].name		= "戦闘開始";
 	_itemInfTable[static_cast<size_t>(Item::placement)].name	= "マップ・配置";
 	_itemInfTable[static_cast<size_t>(Item::warsituation)].name = "戦況確認";
@@ -123,6 +122,7 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>& uiDeque, Camera& c
 		_uiDeque.emplace_front(make_shared<CheckWindow>("退却しますか？", _uiDeque, [&](){SetBackMapSelect(true);}));
 	};
 
+	Vector2Int currentDrawPos = screenCenter - Vector2Int(0, static_cast<int>((static_cast<int>(Item::max)-1) / 2.0f * spaceY));
 	for (auto& itemInf : _itemInfTable)
 	{
 		itemInf.pos = currentDrawPos;

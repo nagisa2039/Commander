@@ -1,25 +1,40 @@
+#include <dxlib.h>
+#include <algorithm>
 #include "Experience.h"
 #include "Application.h"
 #include "Geometry.h"
-#include <dxlib.h>
 #include "Charactor.h"
 #include "BattleCharactor.h"
 #include "DataBase.h"
 #include "DxLibUtility.h"
 #include "FileSystem.h"
-#include <algorithm>
+#include "Input.h"
 
 using namespace std;
 
 void Experience::AddExpUpdate(const Input& input)
 {
+	bool skip = false;
+	if (input.GetButtonDown(0, "ok"))
+	{
+		_itemAnimTrack->End();
+		skip = true;
+	}
+
 	_expAnimTrack->Update();
-	if (!_expAnimTrack->GetEnd())return;
+	if (!_expAnimTrack->GetEnd() && !skip)return;
 
-	_expAnimTrack->Reset();
+	if (skip)
+	{
+		_currentExp += _currentAddExp;
+	}
+	else
+	{
+		_expAnimTrack->Reset();
+		_currentAddExp--;
+		_currentExp++;
+	}
 
-	_currentAddExp--;
-	_currentExp++;
 	// レベルアップ
 	if (_currentExp >= _maxExp)
 	{
@@ -47,6 +62,8 @@ void Experience::AddExpUpdate(const Input& input)
 		_drawDatas[static_cast<size_t>(Item::luck)].add = _addStatus.luck;
 
 		_updater = &Experience::LevelUpUpdate;
+		_drawer = &Experience::LevelUpDraw;
+
 		_itemAnimTrack->Reset();
 		return;
 	}
@@ -62,11 +79,17 @@ void Experience::StartEndUpdate()
 {
 	_endCnt = 60;
 	_updater = &Experience::EndUpdate;
+	_drawer = &Experience::ExpBerDraw;
 }
 
 void Experience::LevelUpUpdate(const Input& input)
 {
 	_itemAnimTrack->Update();
+	if (input.GetButtonDown(0, "ok"))
+	{
+		_itemAnimTrack->End();
+	}
+
 	if (_itemAnimTrack->GetEnd())
 	{
 		_drawIdx++;
@@ -90,6 +113,62 @@ void Experience::EndUpdate(const Input& input)
 	_uiDeque.pop_front();
 }
 
+void Experience::ExpBerDraw()
+{
+	auto screenCenter = Application::Instance().GetWindowSize().ToVector2Int() * 0.5f;
+	Vector2Int space(20, 20);
+	Size berSize = Size(300, 50);
+	Rect expBer = Rect(screenCenter, berSize);
+	Rect base = Rect(screenCenter, expBer.size + (space * 2).ToSize());
+
+	base.Draw(0x000000);
+	expBer.Draw(0x888888);
+
+	int berWidth = static_cast<int>(berSize.w * (_currentExp % _maxExp) / static_cast<float>(_maxExp));
+	DrawBox(expBer.Left(), expBer.Top(), expBer.Left() + berWidth, expBer.Botton(), 0x00ff00, true);
+}
+
+void Experience::LevelUpDraw()
+{
+	if (_drawIdx < 0 || _drawIdx >= _drawDatas.size())return;
+
+	auto screenCenter = Application::Instance().GetWindowSize().ToVector2Int() * 0.5f;
+	auto status = _battleChar.GetCharacotr().GetStatus();
+	auto levelUpCenter = Vector2Int(screenCenter.x, 120);
+
+	auto& fileSystem = Application::Instance().GetFileSystem();
+	DrawRotaGraph(levelUpCenter + Vector2Int(0, -45), 1.0f, 0.0f, fileSystem.GetImageHandle("Resource/Image/UI/levelUp.png"), true);
+	auto fontH = Application::Instance().GetFileSystem().GetFontHandle("choplin40edge");
+	char str[10];
+	sprintf_s(str, 10, "%d", static_cast<int>(status.level + _addStatus.level));
+	DrawStringToHandle(levelUpCenter, Anker::center, 0xffffff, fontH, str);
+
+	const int rowCnt = 2;
+	auto itemSize = Size(400, 50);
+	auto statusDrawRect = Rect(screenCenter, Size(itemSize.w* rowCnt, static_cast<int>(_drawDatas.size())* itemSize.h));
+	statusDrawRect.Draw(0xffffff);
+
+	Rect itemRect = Rect(Vector2Int(statusDrawRect.Left() + itemSize.w / 2, statusDrawRect.Top() + itemSize.h / 2), itemSize);
+	for (int idx = 0; idx < _drawDatas.size(); idx++)
+	{
+		if (idx == (_drawDatas.size() + rowCnt - 1) / rowCnt)
+		{
+			itemRect.center = Vector2Int(statusDrawRect.Left() + itemSize.w * (idx / (_drawDatas.size() / rowCnt) + 1.5f),
+				statusDrawRect.Top() + itemSize.h / 2);
+		}
+		int space = 20;
+		DrawStringToHandle(Vector2Int(itemRect.Left() + space, itemRect.center.y), Anker::leftcenter, 0xffffff, fontH, _drawDatas[idx].name.c_str());
+		DrawStringToHandle(itemRect.center, Anker::center, 0xffffff, fontH, "%d", _drawDatas[idx].current);
+		if (_drawIdx >= idx && _drawDatas[idx].add != 0)
+		{
+			DrawStringToHandle(Vector2Int(itemRect.Right() - space, itemRect.center.y), Anker::rightcenter, 0x88ff00, fontH, "+%d", _drawDatas[idx].add);
+		}
+		itemRect.center.y += itemSize.h;
+	}
+
+	statusDrawRect.Draw(0x0000ff, false);
+}
+
 Experience::Experience(BattleCharactor& battleChar, const bool kill, std::deque<std::shared_ptr<UI>>& uiDeque)
 	: _battleChar(battleChar), UI(uiDeque), _maxExp(100)
 {
@@ -106,10 +185,16 @@ Experience::Experience(BattleCharactor& battleChar, const bool kill, std::deque<
 	{
 		_addExp *= 2;
 	}
+
+	// DEBUG-------------------------------------------------
+	_addExp = 100;
+	//--------------------------------------------------------------
+
 	_currentExp = battleStatus.status.exp;
 	_currentAddExp = _addExp;
 
 	_updater = &Experience::AddExpUpdate;
+	_drawer = &Experience::ExpBerDraw;
 
 	_expAnimTrack = make_unique<Track<int>>();
 	_expAnimTrack->AddKey(0, 0);
@@ -141,46 +226,5 @@ void Experience::Update(const Input& input)
 
 void Experience::Draw()
 {
-	Vector2Int space(20,20);
-	auto screenCenter = Application::Instance().GetWindowSize().ToVector2Int() * 0.5f;
-	Size berSize = Size(300, 50);
-	Rect expBer = Rect(screenCenter, berSize);
-	Rect base = Rect(screenCenter, expBer.size + (space*2).ToSize());
-
-	base.Draw(0x000000);
-	expBer.Draw(0x888888);
-	
-	int berWidth = static_cast<int>(berSize.w * (_currentExp % _maxExp) / static_cast<float>(_maxExp));
-	DrawBox(expBer.Left(), expBer.Top(), expBer.Left() + berWidth, expBer.Botton(), 0x00ff00, true);
-
-	if (_updater == &Experience::LevelUpUpdate)
-	{
-		if (_drawIdx < 0 || _drawIdx >= _drawDatas.size())return;
-		auto status = _battleChar.GetCharacotr().GetStatus();
-		auto levelUpCenter = Vector2Int(screenCenter.x, 100);
-		DrawCircle(levelUpCenter, 30, 0x0000ff);
-		auto fontH = Application::Instance().GetFileSystem().GetFontHandle("choplin40edge");
-		char str[10];
-		sprintf_s(str, 10, "%d", static_cast<int>(status.level + _addStatus.level));
-		DrawStringToHandle(levelUpCenter, Anker::center, 0xffffff, fontH, str);
-
-		auto itemSize = Size(400, 50);
-		auto statusDrawRect = Rect(screenCenter, Size(itemSize.w, static_cast<int>(_drawDatas.size()) * itemSize.h));
-		statusDrawRect.Draw(0xffffff);
-
-		Rect itemRect(Vector2Int(screenCenter.x, statusDrawRect.Top() + itemSize.h / 2), itemSize);
-		for (int idx = 0; idx < _drawDatas.size(); idx++)
-		{
-			int space = 20;
-			DrawStringToHandle(Vector2Int(itemRect.Left() + space, itemRect.center.y), Anker::leftcenter, 0xffffff, fontH, _drawDatas[idx].name.c_str());
-			DrawStringToHandle(itemRect.center, Anker::center, 0xffffff, fontH, "%d", _drawDatas[idx].current);
-			if (_drawIdx >= idx && _drawDatas[idx].add != 0)
-			{
-				DrawStringToHandle(Vector2Int(itemRect.Right() - space, itemRect.center.y), Anker::rightcenter, 0x88ff00, fontH, "+%d", _drawDatas[idx].add);
-			}
-			itemRect.center.y += itemSize.h;
-		}
-
-		statusDrawRect.Draw(0x0000ff, false);
-	}
+	(this->*_drawer)();
 }

@@ -569,7 +569,6 @@ void PlayScene::Draw(void)
 
 	if (debug)
 	{
-		DrawFormatString(0, 0, 0x000000, "%d", _effects.size());
 	}
 
 	//DrawPSTBuffer();

@@ -1,6 +1,7 @@
 #pragma once
 #include<memory>
 #include<vector>
+#include <windows.h>
 #include "../Utility/Geometry.h"
 
 class Input;
@@ -39,6 +40,8 @@ public:
 	// アプリケーションを初期化する
 	bool Initialize();
 
+	void FontSetUp();
+
 	void KeySetUp();
 
 	// アプリケーションを実行する
@@ -62,6 +65,8 @@ public:
 	FileSystem& GetFileSystem();
 	const AnkerCalculation& GetAnkerCalculation()const;
 	
+	double GetDeltaTime()const;
+	unsigned int GetFPS()const;
 
 private:
 	Application();
@@ -79,5 +84,10 @@ private:
 	std::unique_ptr<SaveData> _saveData;
 
 	std::unique_ptr<AnkerCalculation> _ankerCalculation;
+
+	LARGE_INTEGER _freq;
+	LARGE_INTEGER _start;
+	LARGE_INTEGER _end;
+
 };
 

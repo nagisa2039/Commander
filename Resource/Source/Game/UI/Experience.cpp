@@ -13,13 +13,35 @@
 namespace
 {
 	constexpr unsigned int EXP_ANIM_MAX = 5;
-	constexpr unsigned int ITEM_ANIM_MAX = 20;
+	constexpr unsigned int ITEM_ANIM_MAX = 60;
 	constexpr unsigned int WAIT_MAX = 60;
+
+	constexpr unsigned int STATUS_ITEM_SIZE_W = 300;
+	constexpr unsigned int STATUS_ITEM_SIZE_H = 60;
+	constexpr unsigned int STATUS_ROW_CNT = 2;
 }
+
+int  Experience::_windowStatusH = -1;
 
 using namespace std;
 
-void Experience::AddExpUpdate(const Input& input)
+void Experience::WaitUpdate(const Input& input)
+{
+	_waitCnt++;
+	if (_waitCnt > WAIT_MAX)
+	{
+		if (_nextUpdater == nullptr)
+		{
+			End();
+		}
+		else
+		{
+			_updater = _nextUpdater;
+		}
+	}
+}
+
+void Experience::ExpBerUpdate(const Input& input)
 {
 	bool skip = false;
 	if (input.GetButtonDown(0, "ok"))
@@ -45,6 +67,11 @@ void Experience::AddExpUpdate(const Input& input)
 	// レベルアップ
 	if (_currentExp >= _maxExp)
 	{
+		if (_windowStatusH == -1)
+		{
+			_windowStatusH = MakeScreen(STATUS_ITEM_SIZE_W * STATUS_ROW_CNT, _drawDatas.size() / STATUS_ROW_CNT * STATUS_ITEM_SIZE_H, true);
+		}
+
 		auto& charactor = _battleChar.GetCharacotr();
 		charactor.AddExp(_addExp, _maxExp);
 		_addStatus = charactor.GetLevelUpStatus();
@@ -68,12 +95,13 @@ void Experience::AddExpUpdate(const Input& input)
 		_drawDatas[static_cast<size_t>(Item::magic_defence)].add = _addStatus.magic_defense;
 		_drawDatas[static_cast<size_t>(Item::luck)].add = _addStatus.luck;
 
-		_updater = &Experience::LevelUpUpdate;
+		_scaleTrack->Reset();
+		_updater = &Experience::ScaleUpdate;
 		_drawer = &Experience::LevelUpDraw;
 
 		_itemAnimCnt = 0;
 
-		_drawIdx = 0;
+		_drawIdx = -1;
 		_drawIdx = GetNextDrawIdx();
 
 		return;
@@ -81,16 +109,25 @@ void Experience::AddExpUpdate(const Input& input)
 	// 終了
 	if (_currentAddExp <= 0)
 	{
-		StartEndUpdate();
+		Wait(nullptr);
 		return;
 	}
 }
 
-void Experience::StartEndUpdate()
+void Experience::ScaleUpdate(const Input& input)
 {
-	_waitCnt = WAIT_MAX;
-	_updater = &Experience::EndUpdate;
-	_drawer = &Experience::ExpBerDraw;
+	_scaleTrack->Update();
+	if (_scaleTrack->GetEnd())
+	{
+		if (_scaleTrack->GetReverse())
+		{
+			End();
+		}
+		else
+		{
+			_updater = &Experience::LevelUpUpdate;
+		}
+	}
 }
 
 void Experience::LevelUpUpdate(const Input& input)
@@ -106,6 +143,9 @@ void Experience::LevelUpUpdate(const Input& input)
 		// 終了
 		if (NextDrawItem())
 		{
+			_updater = &Experience::ScaleUpdate;
+			_scaleTrack->Reset();
+			_scaleTrack->SetReverse(true);
 			return;
 		}
 	}
@@ -117,7 +157,6 @@ bool Experience::NextDrawItem()
 
 	if (_drawIdx >= _drawDatas.size())
 	{
-		StartEndUpdate();
 		return true;
 	}
 	else
@@ -138,12 +177,18 @@ int Experience::GetNextDrawIdx()
 	}
 }
 
-void Experience::EndUpdate(const Input& input)
+void Experience::End()
 {
-	if (--_waitCnt > 0) return;
-
 	_battleChar.GetCharacotr().AddExp(_addExp, _maxExp);
 	_uiDeque.pop_front();
+}
+
+void Experience::Wait(void(Experience::* nextUpdate)(const Input&))
+{
+	_waitCnt = 0;
+	_nextUpdater = nextUpdate;
+
+	_updater = &Experience::WaitUpdate;
 }
 
 void Experience::ExpBerDraw()
@@ -164,7 +209,7 @@ void Experience::ExpBerDraw()
 void Experience::LevelUpDraw()
 {
 	int drawDataCnt = static_cast<int>(_drawDatas.size());
-	if (_drawIdx < 0 || _drawIdx >= drawDataCnt)return;
+	if (_drawIdx < 0)return;
 
 	auto screenCenter = Application::Instance().GetWindowSize().ToVector2Int() * 0.5f;
 	auto status = _battleChar.GetCharacotr().GetStatus();
@@ -177,28 +222,41 @@ void Experience::LevelUpDraw()
 	sprintf_s(str, 10, "%d", static_cast<int>(status.level + _addStatus.level));
 	DrawStringToHandle(levelUpCenter, Anker::center, 0xffffff, fontH, str);
 
-	const int rowCnt = 2;
-	auto itemSize = Size(300, 40);
-	auto statusDrawRect = Rect(screenCenter, Size(itemSize.w* rowCnt, (drawDataCnt + 1) / 2 * itemSize.h));
+	DrawToStatusWindow();
+
+	DrawRotaGraph(screenCenter, _scaleTrack->GetValue(), 0.0f, _windowStatusH, false);
+}
+
+void Experience::DrawToStatusWindow()
+{
+	int drawDataCnt = static_cast<int>(_drawDatas.size());
+	auto fontH = Application::Instance().GetFileSystem().GetFontHandle("choplin30edge");
+
+	int currentScreen = GetDrawScreen();
+	SetDrawScreen(_windowStatusH);
+	auto itemSize = Size(STATUS_ITEM_SIZE_W, STATUS_ITEM_SIZE_H);
+	auto statusDrawRectSize = Size(itemSize.w * STATUS_ROW_CNT, (drawDataCnt + 1) / STATUS_ROW_CNT * itemSize.h);
+	auto statusDrawRect = Rect(statusDrawRectSize.ToVector2Int() * 0.5f, statusDrawRectSize);
 	statusDrawRect.DrawGraph(Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/statusWindow2.png"));
 
-	Rect itemRect = Rect(Vector2Int(0,0), itemSize);
+	Rect itemRect = Rect(Vector2Int(0, 0), itemSize);
 	for (int idx = 0; idx < drawDataCnt; idx++)
 	{
-		if (idx % (drawDataCnt / rowCnt) == 0)
+		if (idx % (drawDataCnt / STATUS_ROW_CNT) == 0)
 		{
-			itemRect.center = Vector2Int(statusDrawRect.Left() + itemSize.w * (idx / (drawDataCnt / rowCnt) + 0.5f),
+			itemRect.center = Vector2Int(statusDrawRect.Left() + itemSize.w * (idx / (drawDataCnt / STATUS_ROW_CNT) + 0.5f),
 				statusDrawRect.Top() + itemSize.h / 2);
 		}
 		int space = 20;
 		DrawStringToHandle(Vector2Int(itemRect.Left() + space, itemRect.center.y), Anker::leftcenter, 0xffffff, fontH, _drawDatas[idx].name.c_str());
 		DrawStringToHandle(itemRect.center, Anker::center, 0xffffff, fontH, "%d", _drawDatas[idx].current);
-		if (_drawIdx >= idx && _drawDatas[idx].add != 0)
+		if (_drawIdx > idx && _drawDatas[idx].add != 0)
 		{
 			DrawStringToHandle(Vector2Int(itemRect.Right() - space, itemRect.center.y), Anker::rightcenter, 0x88ff00, fontH, "+%d", _drawDatas[idx].add);
 		}
 		itemRect.center.y += itemSize.h;
 	}
+	SetDrawScreen(currentScreen);
 }
 
 Experience::Experience(BattleCharactor& battleChar, const bool kill, std::deque<std::shared_ptr<UI>>& uiDeque)
@@ -225,7 +283,7 @@ Experience::Experience(BattleCharactor& battleChar, const bool kill, std::deque<
 	_currentExp = battleStatus.status.exp;
 	_currentAddExp = _addExp;
 
-	_updater = &Experience::AddExpUpdate;
+	_updater = &Experience::ExpBerUpdate;
 	_drawer = &Experience::ExpBerDraw;
 
 	_drawDatas[static_cast<size_t>(Item::health)].name			= "HP";
@@ -240,6 +298,10 @@ Experience::Experience(BattleCharactor& battleChar, const bool kill, std::deque<
 	_expAnimCnt = 0;
 	_itemAnimCnt = 0;
 	_waitCnt = 0;
+
+	_scaleTrack = make_unique<Track<float>>();
+	_scaleTrack->AddKey(0, 0.0f);
+	_scaleTrack->AddKey(20, 1.0f);
 }
 
 Experience::~Experience()

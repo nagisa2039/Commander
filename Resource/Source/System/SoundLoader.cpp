@@ -26,21 +26,25 @@ int SoundLoader::GetSoundHandle(const char* path)
 
 bool SoundLoader::PlayBGM(const char* path, const bool playTop)
 {
+	return false;
 	return PlayBGM(GetSoundHandle(path), playTop);
 }
 
 bool SoundLoader::PlayBGM(const int handle, const bool playTop)
 {
+	return false;
 	return PlaySoundMem(handle, DX_PLAYTYPE_LOOP, playTop) != -1;
 }
 
 bool SoundLoader::PlaySE(const char* path)
 {
+	return false;
 	return PlaySE(GetSoundHandle(path));
 }
 
 bool SoundLoader::PlaySE(const int handle)
 {
+	return false;
 	return PlaySoundMem(handle, DX_PLAYTYPE_BACK, true) != -1;
 }
 

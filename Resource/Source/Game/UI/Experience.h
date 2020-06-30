@@ -9,39 +9,14 @@ class BattleCharactor;
 class Experience :
 	public UI
 {
-private:
-	BattleCharactor& _battleChar;
-	uint8_t _currentExp;
-	uint8_t _currentAddExp;
-	uint8_t _addExp;
-	const uint8_t _maxExp;
-
-	Status _addStatus;
-
-	int _expAnimCnt;
-	int _itemAnimCnt;
-	int _waitCnt;
-
-	void StartEndUpdate();
-	int GetNextDrawIdx();
-	bool NextDrawItem();
-
-	void AddExpUpdate(const Input& input);
-	void LevelUpUpdate(const Input& input);
-	void EndUpdate(const Input& input);
-	void (Experience::* _updater)(const Input& input);
-
-	void ExpBerDraw();
-	void LevelUpDraw();
-	void (Experience::* _drawer)();
-
-	struct drawData
+private:struct 
+	drawData
 	{
 		std::string name;
 		uint8_t current;
 		uint8_t add;
 
-		drawData():name(""), current(0), add(0) {};
+		drawData() :name(""), current(0), add(0) {};
 		drawData(const std::string& na, const uint8_t cu, const uint8_t ad) :name(na), current(cu), add(ad) {};
 	};
 
@@ -58,7 +33,44 @@ private:
 		max
 	};
 	std::array<drawData, static_cast<size_t>(Item::max)> _drawDatas;
+
+	static int _windowStatusH;
+
+	BattleCharactor& _battleChar;
+	uint8_t _currentExp;
+	uint8_t _currentAddExp;
+	uint8_t _addExp;
+	const uint8_t _maxExp;
+
+	Status _addStatus;
+
+	int _expAnimCnt;
+	int _itemAnimCnt;
+	int _waitCnt;
+
 	int _drawIdx;
+
+	std::unique_ptr<Track<float>> _scaleTrack;
+
+	int GetNextDrawIdx();
+	bool NextDrawItem();
+	void End();
+
+	void WaitUpdate(const Input& input);
+	void ExpBerUpdate(const Input& input);
+	void ScaleUpdate(const Input& input);
+	void LevelUpUpdate(const Input& input);
+
+	void (Experience::* _updater)(const Input& input);
+	void (Experience::* _nextUpdater)(const Input& input);
+
+	void Wait(void(Experience::* nextUpdate)(const Input&));
+
+	void ExpBerDraw();
+	void LevelUpDraw();
+	void (Experience::* _drawer)();
+
+	void DrawToStatusWindow();
 
 public:
 	Experience(BattleCharactor& battleChar, const bool kill, std::deque<std::shared_ptr<UI>>& uiDeque);

@@ -58,6 +58,17 @@ const AnkerCalculation& Application::GetAnkerCalculation() const
 	return *_ankerCalculation;
 }
 
+double Application::GetDeltaTime() const
+{
+	return static_cast<double>(_end.QuadPart - _start.QuadPart) / static_cast<double>(_freq.QuadPart);
+}
+
+unsigned int Application::GetFPS()const
+{
+	auto deltaTime = GetDeltaTime();
+	return static_cast<unsigned int>(1.0 / deltaTime);
+}
+
 bool Application::Initialize()
 {
 	_configure = make_unique<Configure>();
@@ -88,6 +99,19 @@ bool Application::Initialize()
 	KeySetUp();
 
 	// ƒtƒHƒ“ƒg“Çž
+	FontSetUp();
+
+	_freq = {};
+	_start = {};
+	_end = {};
+	QueryPerformanceFrequency(&_freq);
+	QueryPerformanceCounter(&_end);
+
+	return true;
+}
+
+void Application::FontSetUp()
+{
 	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin20", 20, 1, false, false);
 	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin30", 30, 1, false, false);
 	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin40", 40, 1, false, false);
@@ -107,8 +131,6 @@ bool Application::Initialize()
 	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin80edge", 80, 1, true, false);
 	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin100edge", 100, 1, true, false);
 	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin200edge", 200, 1, true, false);
-
-	return true;
 }
 
 void Application::KeySetUp()
@@ -162,12 +184,16 @@ void Application::Run()
 {
 	while (ProcessMessage() == 0 && !CheckHitKey(KEY_INPUT_ESCAPE))
 	{
+		_start = _end;
+		QueryPerformanceCounter(&_end);
+
 		_input->Update();
 
 		ClsDrawScreen();
 
-
 		_sceneController->SceneUpdate(*_input);
+
+		// DrawFormatString(0,0, 0xffffff, "FPS : %d", GetFPS());
 
 		ScreenFlip();
 	}

@@ -18,12 +18,13 @@ private:
 
 	Status _addStatus;
 
-	std::unique_ptr<Track<int>> _expAnimTrack;
-	std::unique_ptr<Track<int>> _itemAnimTrack;
-	
-	int _endCnt;
+	int _expAnimCnt;
+	int _itemAnimCnt;
+	int _waitCnt;
 
 	void StartEndUpdate();
+	int GetNextDrawIdx();
+	bool NextDrawItem();
 
 	void AddExpUpdate(const Input& input);
 	void LevelUpUpdate(const Input& input);

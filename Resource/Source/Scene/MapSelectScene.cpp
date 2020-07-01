@@ -163,7 +163,7 @@ void MapSelectScene::Draw()
 {
 	auto offset = _camera->GetCameraOffset();
 	auto wsize = Application::Instance().GetWindowSize();
-	DrawBox(Vector2Int(0,0), wsize.ToVector2Int(), 0x114514);
+	DrawBox(Vector2Int(0,0), wsize.ToVector2Int(), 0x364364);
 
 	Size contentSize = Size(300, 200);
 	auto mapDataVec = Application::Instance().GetDataBase().GetMapDataTable();

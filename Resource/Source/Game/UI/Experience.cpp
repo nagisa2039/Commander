@@ -19,9 +19,12 @@ namespace
 	constexpr unsigned int STATUS_ITEM_SIZE_W = 300;
 	constexpr unsigned int STATUS_ITEM_SIZE_H = 60;
 	constexpr unsigned int STATUS_ROW_CNT = 2;
+
+	constexpr unsigned int NUM_GRAPH_SIZE = 128;
 }
 
-int  Experience::_windowStatusH = -1;
+int Experience::_windowStatusH = -1;
+int Experience::_numGraphH = -1;
 
 using namespace std;
 
@@ -72,10 +75,14 @@ void Experience::ExpBerUpdate(const Input& input)
 			_windowStatusH = MakeScreen(STATUS_ITEM_SIZE_W * STATUS_ROW_CNT, _drawDatas.size() / STATUS_ROW_CNT * STATUS_ITEM_SIZE_H, true);
 		}
 
+		if (_numGraphH == -1)
+		{
+			_numGraphH = MakeScreen(NUM_GRAPH_SIZE, NUM_GRAPH_SIZE, true);
+		}
+
 		auto& charactor = _battleChar.GetCharacotr();
-		charactor.AddExp(_addExp, _maxExp);
-		_addStatus = charactor.GetLevelUpStatus();
 		auto startStatus = charactor.GetStartStatus();
+		_addStatus = charactor.GetLevelUpStatus();
 
 		_drawDatas[static_cast<size_t>(Item::health)].current = startStatus.health;
 		_drawDatas[static_cast<size_t>(Item::power)].current = startStatus.power;
@@ -103,6 +110,8 @@ void Experience::ExpBerUpdate(const Input& input)
 
 		_drawIdx = -1;
 		_drawIdx = GetNextDrawIdx();
+
+		DrawToNumGraph(static_cast<int>(startStatus.level + _addStatus.level));
 
 		return;
 	}
@@ -132,6 +141,15 @@ void Experience::ScaleUpdate(const Input& input)
 
 void Experience::LevelUpUpdate(const Input& input)
 {
+	_levlAnimTrack->Update();
+	if (_levlAnimTrack->GetEnd())
+	{
+		_updater = &Experience::StatusUpdate;
+	}
+}
+
+void Experience::StatusUpdate(const Input& input)
+{
 	_itemAnimCnt++;
 	if (input.GetButtonDown(0, "ok"))
 	{
@@ -143,7 +161,7 @@ void Experience::LevelUpUpdate(const Input& input)
 		// I—¹
 		if (NextDrawItem())
 		{
-			_updater = &Experience::ScaleUpdate;
+			Wait(&Experience::ScaleUpdate);
 			_scaleTrack->Reset();
 			_scaleTrack->SetReverse(true);
 			return;
@@ -179,6 +197,12 @@ int Experience::GetNextDrawIdx()
 
 void Experience::End()
 {
+	auto status = _battleChar.GetCharacotr().GetStartStatus();
+	if (status.exp + _addExp >= _maxExp)
+	{
+		status.AddStatus(_addStatus);
+		_battleChar.GetCharacotr().SetStatus(status);
+	}
 	_battleChar.GetCharacotr().AddExp(_addExp, _maxExp);
 	_uiDeque.pop_front();
 }
@@ -215,16 +239,22 @@ void Experience::LevelUpDraw()
 	auto status = _battleChar.GetCharacotr().GetStatus();
 	auto levelUpCenter = Vector2Int(screenCenter.x, 120);
 
-	auto& fileSystem = Application::Instance().GetFileSystem();
-	DrawRotaGraph(levelUpCenter + Vector2Int(0, -45), 1.0f, 0.0f, fileSystem.GetImageHandle("Resource/Image/UI/levelUp.png"), true);
-	auto fontH = Application::Instance().GetFileSystem().GetFontHandle("choplin30edge");
-	char str[10];
-	sprintf_s(str, 10, "%d", static_cast<int>(status.level + _addStatus.level));
-	DrawStringToHandle(levelUpCenter, Anker::center, 0xffffff, fontH, str);
+	DrawLevel(levelUpCenter, status);
 
 	DrawToStatusWindow();
 
 	DrawRotaGraph(screenCenter, _scaleTrack->GetValue(), 0.0f, _windowStatusH, false);
+}
+
+void Experience::DrawLevel(const Vector2Int& levelUpCenter, const Status& status)
+{
+	auto& fileSystem = Application::Instance().GetFileSystem();
+	DrawRotaGraph(levelUpCenter + Vector2Int(0, -40), 1.0f, 0.0f, fileSystem.GetImageHandle("Resource/Image/UI/levelUp.png"), true);
+
+	float animVel = _levlAnimTrack->GetValue();
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(animVel * 255));
+	DrawRotaGraph(levelUpCenter, Lerp(5.0f, 1.0f, animVel), 0.0f, _numGraphH, true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }
 
 void Experience::DrawToStatusWindow()
@@ -256,6 +286,18 @@ void Experience::DrawToStatusWindow()
 		}
 		itemRect.center.y += itemSize.h;
 	}
+	SetDrawScreen(currentScreen);
+}
+
+void Experience::DrawToNumGraph(const int num)
+{
+	auto currentScreen = GetDrawScreen();
+	SetDrawScreen(_numGraphH);
+	ClsDrawScreen();
+
+	auto fontH = Application::Instance().GetFileSystem().GetFontHandle("choplin50edge");
+	DrawStringToHandle(Vector2Int(NUM_GRAPH_SIZE/2, NUM_GRAPH_SIZE/2), Anker::center, 0xffff00, fontH, "%d", num);
+
 	SetDrawScreen(currentScreen);
 }
 
@@ -302,6 +344,10 @@ Experience::Experience(BattleCharactor& battleChar, const bool kill, std::deque<
 	_scaleTrack = make_unique<Track<float>>();
 	_scaleTrack->AddKey(0, 0.0f);
 	_scaleTrack->AddKey(20, 1.0f);
+
+	_levlAnimTrack = make_unique<Track<float>>();
+	_levlAnimTrack->AddKey(0, 0.0f);
+	_levlAnimTrack->AddKey(60, 1.0f);
 }
 
 Experience::~Experience()

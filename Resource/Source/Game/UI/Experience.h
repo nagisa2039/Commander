@@ -35,6 +35,7 @@ private:struct
 	std::array<drawData, static_cast<size_t>(Item::max)> _drawDatas;
 
 	static int _windowStatusH;
+	static int _numGraphH;
 
 	BattleCharactor& _battleChar;
 	uint8_t _currentExp;
@@ -51,6 +52,7 @@ private:struct
 	int _drawIdx;
 
 	std::unique_ptr<Track<float>> _scaleTrack;
+	std::unique_ptr<Track<float>> _levlAnimTrack;;
 
 	int GetNextDrawIdx();
 	bool NextDrawItem();
@@ -60,6 +62,7 @@ private:struct
 	void ExpBerUpdate(const Input& input);
 	void ScaleUpdate(const Input& input);
 	void LevelUpUpdate(const Input& input);
+	void StatusUpdate(const Input& input);
 
 	void (Experience::* _updater)(const Input& input);
 	void (Experience::* _nextUpdater)(const Input& input);
@@ -68,9 +71,11 @@ private:struct
 
 	void ExpBerDraw();
 	void LevelUpDraw();
+	void DrawLevel(const Vector2Int& levelUpCenter, const Status& status);
 	void (Experience::* _drawer)();
 
 	void DrawToStatusWindow();
+	void DrawToNumGraph(const int num);
 
 public:
 	Experience(BattleCharactor& battleChar, const bool kill, std::deque<std::shared_ptr<UI>>& uiDeque);

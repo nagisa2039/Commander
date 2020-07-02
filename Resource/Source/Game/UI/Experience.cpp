@@ -24,7 +24,6 @@ namespace
 }
 
 int Experience::_windowStatusH = -1;
-int Experience::_numGraphH = -1;
 
 using namespace std;
 
@@ -75,11 +74,6 @@ void Experience::ExpBerUpdate(const Input& input)
 			_windowStatusH = MakeScreen(STATUS_ITEM_SIZE_W * STATUS_ROW_CNT, _drawDatas.size() / STATUS_ROW_CNT * STATUS_ITEM_SIZE_H, true);
 		}
 
-		if (_numGraphH == -1)
-		{
-			_numGraphH = MakeScreen(NUM_GRAPH_SIZE, NUM_GRAPH_SIZE, true);
-		}
-
 		auto& charactor = _battleChar.GetCharacotr();
 		auto startStatus = charactor.GetStartStatus();
 		_addStatus = charactor.GetLevelUpStatus();
@@ -110,8 +104,6 @@ void Experience::ExpBerUpdate(const Input& input)
 
 		_drawIdx = -1;
 		_drawIdx = GetNextDrawIdx();
-
-		DrawToNumGraph(static_cast<int>(startStatus.level + _addStatus.level));
 
 		return;
 	}
@@ -253,7 +245,10 @@ void Experience::DrawLevel(const Vector2Int& levelUpCenter, const Status& status
 
 	float animVel = _levlAnimTrack->GetValue();
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(animVel * 255));
-	DrawRotaGraph(levelUpCenter, Lerp(5.0f, 1.0f, animVel), 0.0f, _numGraphH, true);
+
+	auto fontH = Application::Instance().GetFileSystem().GetFontHandle("choplin50edge");
+	DrawStringToHandle(Vector2Int(NUM_GRAPH_SIZE / 2, NUM_GRAPH_SIZE / 2), Anker::center, 0xffff00, fontH, "%d", );
+
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }
 
@@ -286,18 +281,6 @@ void Experience::DrawToStatusWindow()
 		}
 		itemRect.center.y += itemSize.h;
 	}
-	SetDrawScreen(currentScreen);
-}
-
-void Experience::DrawToNumGraph(const int num)
-{
-	auto currentScreen = GetDrawScreen();
-	SetDrawScreen(_numGraphH);
-	ClsDrawScreen();
-
-	auto fontH = Application::Instance().GetFileSystem().GetFontHandle("choplin50edge");
-	DrawStringToHandle(Vector2Int(NUM_GRAPH_SIZE/2, NUM_GRAPH_SIZE/2), Anker::center, 0xffff00, fontH, "%d", num);
-
 	SetDrawScreen(currentScreen);
 }
 

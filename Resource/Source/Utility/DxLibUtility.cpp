@@ -53,7 +53,22 @@ void DrawStringToHandle(const Vector2Int& drawPos, const Anker anker, const unsi
 
 	Size strSize;
 	int lineCnt;
-	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, fontHandle, str);
+	GetDrawExtendFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, 1.0, 1.0, fontHandle, str);
 	auto calPos = GetDrawPos(drawPos, strSize, anker);
-	DrawFormatStringToHandle(calPos.x, calPos.y, color, fontHandle, str);
+	DrawExtendFormatStringFToHandle(calPos.x, calPos.y, 1.0, 1.0, color, fontHandle, str);
+}
+
+void DrawStringToHandle(const Vector2Int& drawPos, const Anker anker, const unsigned color, const double exRate, const int fontHandle, const char* format, ...)
+{
+	va_list list;
+	va_start(list, format);
+	char str[256];
+	_vstprintf_s(str, 256, format, list);
+	va_end(list);
+
+	Size strSize;
+	int lineCnt;
+	GetDrawExtendFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, exRate, exRate, fontHandle, str);
+	auto calPos = GetDrawPos(drawPos, strSize, anker);
+	DrawExtendFormatStringFToHandle(calPos.x, calPos.y, exRate, exRate, color, fontHandle, str);
 }

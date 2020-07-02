@@ -247,7 +247,8 @@ void Experience::DrawLevel(const Vector2Int& levelUpCenter, const Status& status
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(animVel * 255));
 
 	auto fontH = Application::Instance().GetFileSystem().GetFontHandle("choplin50edge");
-	DrawStringToHandle(Vector2Int(NUM_GRAPH_SIZE / 2, NUM_GRAPH_SIZE / 2), Anker::center, 0xffff00, fontH, "%d", );
+	uint8_t level = _battleChar.GetCharacotr().GetStartStatus().level + _addStatus.level;
+	DrawStringToHandle(levelUpCenter, Anker::center, 0xffff00, Lerp(5.0f, 1.0f, animVel), fontH, "%d", level);
 
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }

@@ -183,7 +183,7 @@ void BattlePreparationCursor::DrawMovableMass()
 	auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
 	if (charactor == nullptr) return;
 
-	charactor->DrawMovableMass(64);
+	charactor->DrawMovableMass(128);
 }
 
 bool BattlePreparationCursor::GetEnd() const

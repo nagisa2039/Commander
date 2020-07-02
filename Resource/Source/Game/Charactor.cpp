@@ -82,11 +82,7 @@ void Charactor::NormalDraw()
 	float sizeRate = 0.3f;
 	auto iconRect= Rect(_camera.GetCameraOffset() + _pos.ToVector2Int() + chipSize * Vector2(sizeRate / 2.0f, sizeRate / 2.0f), 
 		(chipSize * sizeRate).ToSize());
-	int handle = Application::Instance().GetFileSystem().GetImageHandle(_iconPath.c_str());
-	iconRect.Draw(0x000000);
-	auto attributeData = Application::Instance().GetDataBase().GetAttributeData(
-		Application::Instance().GetDataBase().GetWeaponData(_status.weaponId).attribute);
-	Rect(iconRect.center, iconRect.size * 0.8f).Draw(attributeData.color);
+	DrawAtributeIcon(iconRect);
 
 	// HPBer‚Ì•`‰æ
 	Size hpberSize = (chipSize * Vector2(0.8f, 0.1f)).ToSize();
@@ -110,6 +106,15 @@ void Charactor::NormalDraw()
 	//DrawFormatString(drawPos.x, drawPos.y, 0x000000, "OutT%d",_targetCnt.y);
 	//drawPos.y += 16;
 	//DrawFormatString(drawPos.x, drawPos.y, 0x000000, "ollc%d", _onelineListCnt);
+}
+
+void Charactor::DrawAtributeIcon(const Rect& iconRect)const
+{
+	int handle = Application::Instance().GetFileSystem().GetImageHandle(_iconPath.c_str());
+	iconRect.Draw(0x000000);
+	auto attributeData = Application::Instance().GetDataBase().GetAttributeData(
+		Application::Instance().GetDataBase().GetWeaponData(_status.weaponId).attribute);
+	Rect(iconRect.center, iconRect.size * 0.8f).Draw(attributeData.color);
 }
 
 void Charactor::DyingDraw()

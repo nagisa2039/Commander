@@ -130,6 +130,7 @@ void BattleCharactor::UIDraw()
 	Rect windowRect(Vector2Int(0,0), Size(wsize.w / 2, 200));
 	Rect paramWindowRect(Vector2Int(0,0), Size(windowRect.size.w / 3, 120));
 	Rect nameWindowRect(Vector2Int(0, 0), Size(300,50));
+	Rect weaponNameRect(Vector2Int(0, 0), Size(windowRect.size.w / 3 * 2, 100));
 
 	const char* teamString = _selfChar.GetTeam() == Team::player ? "player" : "enemy";
 
@@ -138,12 +139,14 @@ void BattleCharactor::UIDraw()
 		windowRect.center = Vector2Int(wsize.w / 2 - windowRect.size.w/2, wsize.h - windowRect.size.h /2);
 		paramWindowRect.center = Vector2Int(paramWindowRect.size.w/2, windowRect.center.y - paramWindowRect.size.h/2);
 		nameWindowRect.center = nameWindowRect.size.ToVector2Int() * 0.5f;
+		weaponNameRect.center = Vector2Int(wsize.w / 2 - weaponNameRect.size.w / 2, windowRect.center.y - weaponNameRect.size.h/2);
 	}
 	else
 	{
 		windowRect.center = Vector2Int(wsize.w / 2 + windowRect.size.w / 2, wsize.h - windowRect.size.h / 2);
 		paramWindowRect.center = Vector2Int(wsize.w - paramWindowRect.size.w / 2, windowRect.center.y - paramWindowRect.size.h / 2);
 		nameWindowRect.center = Vector2Int(wsize.w, 0) + Vector2Int(-nameWindowRect.size.w, nameWindowRect.size.h) * 0.5f;
+		weaponNameRect.center = Vector2Int(wsize.w / 2 + weaponNameRect.size.w / 2, windowRect.center.y - weaponNameRect.size.h / 2);
 	}
 
 	// âÊñ â∫UIÇÃóÃàÊï`âÊ
@@ -225,6 +228,13 @@ void BattleCharactor::UIDraw()
 			DrawBox(hpBerDrawPos, hpBerDrawPos + startSize, 0x000000, false);
 			hpBerDrawPos.y += hpPerDot.h;
 		};
+	}
+
+	{
+		// ïêäÌñºÇÃï\é¶
+		auto choplin30 = fileSystem.GetFontHandle("choplin30edge");
+		const char* str = Application::Instance().GetDataBase().GetWeaponData(GetCharacotr().GetStartStatus().weaponId).name.c_str();
+		DrawStringToHandle(weaponNameRect.center, Anker::center, 0xffffff, choplin30, str);
 	}
 
 	{

@@ -18,14 +18,18 @@ private:
 
 	static int _windowH;
 
-	Size _leftWindowSize;
-	Size _rightWindowSize;
+	Size _sideWindowSize;
+	Size _centerWindowSize;
 
 	void DrawToWindowScreen();
-	void DrawIcon(Rect& iconRect);
-	void DrawBaseInf(Rect& statusRect0);
-	void DrawBattleStatus(Rect& statusRect1);
-	void DrawStatus(Rect& statusRect2);
+	void DrawIcon(const Rect& iconRect);
+	void DrawBaseInf(const Rect& statusRect0);
+	void DrawBattleStatus(const Rect& statusRect1);
+	void DrawStatus(const Rect& statusRect2);
+	void DrawWeapon(const Rect& weaponRect);
+	void DrawItems(const Rect& itemRect);
+
+	std::string GetAttackRengeString(const Range& attackRange);
 
 public:
 	StatusWindow(std::deque<std::shared_ptr<UI>>& uiDeque, const Charactor& charactor);

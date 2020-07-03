@@ -74,7 +74,6 @@ private:struct
 	void (Experience::* _drawer)();
 
 	void DrawToStatusWindow();
-	void DrawToNumGraph(const int num);
 
 public:
 	Experience(BattleCharactor& battleChar, const bool kill, std::deque<std::shared_ptr<UI>>& uiDeque);

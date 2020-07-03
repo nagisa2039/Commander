@@ -253,13 +253,15 @@ const int Rect::Botton() const
 
 void Rect::Draw(unsigned int color, const bool fill)const
 {
-	DxLib::DrawBox(this->Left(),this->Top(),this->Right(),this->Botton(),color, fill);
+	int rightbuttomOffset = fill ? 0 : -1;
+	DxLib::DrawBox(this->Left(),this->Top(),this->Right() + rightbuttomOffset,this->Botton() + rightbuttomOffset,color, fill);
 }
 
 void Rect::Draw(const Vector2Int& offset, int color, const bool fill)const
 {
+	int rightbuttomOffset = fill ? 0 : -1;
 	DxLib::DrawBox(static_cast<int>(offset.x + this->Left()), static_cast<int>(offset.y + this->Top()),
-		static_cast<int>(offset.x + this->Right()), static_cast<int>(offset.y + this->Botton()), 
+		static_cast<int>(offset.x + this->Right() + rightbuttomOffset), static_cast<int>(offset.y + this->Botton() + rightbuttomOffset),
 		color, fill);
 }
 

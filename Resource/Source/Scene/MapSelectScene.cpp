@@ -11,6 +11,7 @@
 #include "MapSelectCharactor.h"
 #include "Fade.h"
 #include "SoundLoader.h"
+#include "UI/UIList.h"
 
 using namespace std;
 
@@ -56,6 +57,10 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller)
 	_charactorIdx = 0;
 
 	_debug = true;
+
+	//------------------
+	_uiDeque.emplace_front(make_shared<UIList>(Size(400, 400), _uiDeque));
+	//------------------
 }
 
 MapSelectScene::~MapSelectScene()
@@ -157,6 +162,8 @@ void MapSelectScene::CursorMove(const Input& input)
 			}
 		}
 	}
+
+	(*_uiDeque.begin())->Update(input);
 }
 
 void MapSelectScene::Draw()
@@ -190,6 +197,8 @@ void MapSelectScene::Draw()
 	{
 		(*rItr)->Draw();
 	}
+
+	(*_uiDeque.begin())->Draw();
 
 	_fade->Draw();
 }

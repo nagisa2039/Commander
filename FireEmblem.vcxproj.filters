@@ -34,9 +34,6 @@
     <Filter Include="ヘッダー ファイル\Utility">
       <UniqueIdentifier>{841e2782-813d-411e-a50e-0ea2fe74add4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Utility">
-      <UniqueIdentifier>{02abb838-d30f-4c79-be1e-ebdae6d985da}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Game\Actor">
       <UniqueIdentifier>{f5abaf48-87fd-46ea-8784-84106d93e59a}</UniqueIdentifier>
     </Filter>
@@ -73,6 +70,15 @@
     <Filter Include="ヘッダー ファイル\Game\Actor\Effect\BattleEffect">
       <UniqueIdentifier>{c41cfa6b-30fc-4688-a796-b59ec5ffef96}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Utility">
+      <UniqueIdentifier>{e7df3acf-f9d6-4bda-9e57-f2f2ed6a7135}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\UI\UILIst">
+      <UniqueIdentifier>{e7f6386d-e774-4b59-911d-67d1acecf934}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Game\UI\UIList">
+      <UniqueIdentifier>{de754d78-5984-4327-a075-03d3375ef144}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Resource\Source\System\FileSystem.cpp">
@@ -108,17 +114,8 @@
     <ClCompile Include="Resource\Source\System\Application.cpp">
       <Filter>ソース ファイル\System</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Utility\Input.cpp">
-      <Filter>ソース ファイル\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Utility\DxLibUtility.cpp">
-      <Filter>ソース ファイル\Utility</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Source\Game\Astar.cpp">
       <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Utility\Geometry.cpp">
-      <Filter>ソース ファイル\Utility</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\Animator.cpp">
       <Filter>ソース ファイル\Game</Filter>
@@ -170,9 +167,6 @@
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\DataBase.cpp">
       <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Utility\TimeLine.cpp">
-      <Filter>ソース ファイル\Utility</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\Archer.cpp">
       <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
@@ -276,17 +270,38 @@
     <ClCompile Include="Resource\Source\Game\UI\MenuTopInf.cpp">
       <Filter>ソース ファイル\Game\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Utility\AnkerCalculation.cpp">
-      <Filter>ソース ファイル\Utility</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Source\System\SoundLoader.cpp">
       <Filter>ソース ファイル\System</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Game\UI\UIList.cpp">
+    <ClCompile Include="Resource\Source\Game\UI\UIListItem.cpp">
       <Filter>ソース ファイル\Game\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Game\UI\UIListItem.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Resource\Source\Utility\Input.cpp">
+      <Filter>ソース ファイル\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Utility\TimeLine.cpp">
+      <Filter>ソース ファイル\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Utility\AnkerCalculation.cpp">
+      <Filter>ソース ファイル\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Utility\DxLibUtility.cpp">
+      <Filter>ソース ファイル\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Utility\Geometry.cpp">
+      <Filter>ソース ファイル\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\UIList\UIList.cpp">
+      <Filter>ソース ファイル\Game\UI\UILIst</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\UIList\UIListItem.cpp">
+      <Filter>ソース ファイル\Game\UI\UILIst</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\UIList\WeaponList.cpp">
+      <Filter>ソース ファイル\Game\UI\UILIst</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\UIList\WeaponListItem.cpp">
+      <Filter>ソース ファイル\Game\UI\UILIst</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -506,11 +521,20 @@
     <ClInclude Include="Resource\Source\System\SoundLoader.h">
       <Filter>ヘッダー ファイル\System</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Source\Game\UI\UIList.h">
+    <ClInclude Include="Resource\Source\Game\UI\UIListItem.h">
       <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Source\Game\UI\UIListItem.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Resource\Source\Game\UI\UIList\UIList.h">
+      <Filter>ヘッダー ファイル\Game\UI\UIList</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\UIList\UIListItem.h">
+      <Filter>ヘッダー ファイル\Game\UI\UIList</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\UIList\WeaponList.h">
+      <Filter>ヘッダー ファイル\Game\UI\UIList</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\UIList\WeaponListItem.h">
+      <Filter>ヘッダー ファイル\Game\UI\UIList</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

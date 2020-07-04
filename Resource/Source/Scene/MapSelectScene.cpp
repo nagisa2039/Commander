@@ -11,7 +11,7 @@
 #include "MapSelectCharactor.h"
 #include "Fade.h"
 #include "SoundLoader.h"
-#include "UI/UIList.h"
+#include "UI/UIList/WeaponList.h"
 
 using namespace std;
 
@@ -59,7 +59,7 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller)
 	_debug = true;
 
 	//------------------
-	_uiDeque.emplace_front(make_shared<UIList>(Size(400, 400), _uiDeque));
+	_uiDeque.emplace_front(make_shared<WeaponList>(Rect(Vector2Int(400, 400), Size(400, 400)), _uiDeque));
 	//------------------
 }
 

@@ -3,6 +3,7 @@
 #include "DxLibUtility.h"
 #include "Application.h"
 #include "FileSystem.h"
+#include "SelectPen.h"
 #include <Dxlib.h>
 
 using namespace std;
@@ -22,20 +23,16 @@ void Menu::Init(const size_t contentNum, const int frameH)
 
 	// çsä‘
 	int lineSpace = 30;
-	Size menuFrameSize;
-	GetGraphSize(frameH, menuFrameSize);
-	Vector2Int center = Vector2Int(offset.x + wsize.w - menuFrameSize.w / 2, offset.y + menuFrameSize.h / 2);
+	GetGraphSize(frameH, _contentSize);
+	Vector2Int center = Vector2Int(offset.x + wsize.w - _contentSize.w / 2, offset.y + _contentSize.h / 2);
 
 	for (auto& contentInf : _contentInfs)
 	{
 		contentInf.centerPos = center;
-		center.y += lineSpace + menuFrameSize.h;
+		center.y += lineSpace + _contentSize.h;
 	}
 
-	_penAnimTrack = make_unique<Track<float>>(true);
-	_penAnimTrack->AddKey(0, 0.0f);
-	_penAnimTrack->AddKey(30, 1.0f);
-	_penAnimTrack->AddKey(60, 0.0f);
+	_selectPen = make_unique<SelectPen>(nullptr);
 
 	_openAnimTrack = make_unique<Track<float>>();
 	_openAnimTrack->AddKey(0, 0.0f);
@@ -131,7 +128,7 @@ void Menu::OpenUpdate(const Input& input)
 	{
 		_selectContent = _selectContent + 1;
 	}
-	_penAnimTrack->Update();
+	_selectPen->Update(input);
 }
 
 void Menu::CloseUpdate(const Input& input)
@@ -166,7 +163,7 @@ void Menu::OpenDraw()
 		DrawContent(_contentInfs[idx].centerPos, _contentList[idx]);
 	}
 
-	DrawPen();
+	_selectPen->Draw(_contentInfs[_selectContent].centerPos - Vector2Int(_contentSize.w/2, 0));
 }
 
 void Menu::CloseDraw()
@@ -206,22 +203,6 @@ void Menu::CloseAnimDraw()
 	{
 		DrawContent(GetCenterPos(idx), _contentList[idx]);
 	}
-}
-
-void Menu::DrawPen()
-{
-	auto fileSystem = Application::Instance().GetFileSystem();
-	auto penH = fileSystem.GetImageHandle("Resource/Image/UI/quillPen.png");
-	Size penSize;
-	GetGraphSize(penH, penSize);
-	Vector2Int penMove = penSize.ToVector2Int() * -0.2f;
-
-	auto menuFrameH = fileSystem.GetImageHandle("Resource/Image/UI/menuFrame.png");
-	Size menuFrameSize;
-	GetGraphSize(menuFrameH, menuFrameSize);
-
-	Vector2Int penDrawPos = penMove * _penAnimTrack->GetValue() + _contentInfs[static_cast<size_t>(_selectContent)].centerPos - Vector2Int(menuFrameSize.w / 2 - 10, -10);
-	DrawGraph(GetDrawPos(penDrawPos, penSize, Anker::rightdown), penH, true);
 }
 
 void Menu::DrawContent(const Vector2Int& drawCenterPos, const unsigned int idx)

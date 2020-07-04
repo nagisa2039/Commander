@@ -6,6 +6,7 @@
 #include "Geometry.h"
 #include "TimeLine.h"
 
+class SelectPen;
 class PlayerCommander;
 class MapCtrl;
 
@@ -16,12 +17,13 @@ protected:
 	PlayerCommander& _playerCommander;
 	const MapCtrl& _mapCtrl;
 
+	Size _contentSize;
 	size_t _selectContent;
-
-	std::unique_ptr<Track<float>> _penAnimTrack;
 
 	std::unique_ptr<Track<float>> _openAnimTrack;
 	std::unique_ptr<Track<float>> _closeAnimTrack;
+
+	std::unique_ptr<SelectPen> _selectPen;
 
 	enum class State
 	{
@@ -61,7 +63,6 @@ protected:
 	void OpenAnimDraw();
 	void CloseAnimDraw();
 
-	void DrawPen();
 	void DrawContent(const Vector2Int& drawCenterPos, const unsigned int idx);
 
 	void Init(const size_t contentNum, const int frameH);

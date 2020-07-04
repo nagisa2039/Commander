@@ -177,7 +177,7 @@ DataBase::DataBase()
 			split(line, ',', outputVec);
 			if (outputVec[0] == "")break;
 			_weaponDataTable.emplace_back(WeaponData(outputVec[1], atoi(outputVec[2].c_str()), atoi(outputVec[3].c_str()), atoi(outputVec[4].c_str()), atoi(outputVec[5].c_str()), 
-				Range(atoi(outputVec[6].c_str()), atoi(outputVec[7].c_str())), outputVec[8] != "", outputVec[9] != "", outputVec[10], outputVec[11]) );
+				Range(atoi(outputVec[6].c_str()), atoi(outputVec[7].c_str())), outputVec[8] != "", outputVec[9] != "", outputVec[10], atoi(outputVec[11].c_str()), outputVec[12]) );
 		}
 	}
 }

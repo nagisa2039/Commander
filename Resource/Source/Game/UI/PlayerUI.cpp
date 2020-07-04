@@ -65,9 +65,9 @@ void PlayerUI::Update(const Input& input)
 		_statusInf->Open();
 	}
 
-	auto UpdateUI = [](std::shared_ptr<UI> ui, const Input& input)
+	auto UpdateUI = [&input](std::shared_ptr<UI>& ui)
 	{
-		if (ui == nullptr)return;
+		if (!ui)return;
 
 		ui->Update(input);
 		if (ui->GetDelete())
@@ -76,7 +76,7 @@ void PlayerUI::Update(const Input& input)
 		}
 	};
 
-	auto UpdateUIDeque = [](auto& deque, const Input& input)
+	auto UpdateUIDeque = [&input](auto& deque)
 	{
 		if (deque.size() > 0)
 		{
@@ -87,11 +87,11 @@ void PlayerUI::Update(const Input& input)
 	_terrainInf->Update(input);
 	_statusInf->Update(input);
 
-	UpdateUI(_statusWindow, input);
-	UpdateUI(_battlePre, input);
+	UpdateUI(_statusWindow);
+	UpdateUI(_battlePre);
 
-	UpdateUIDeque(_playerMenuDeque, input);
-	UpdateUIDeque(_moveMenuDeque, input);
+	UpdateUIDeque(_playerMenuDeque);
+	UpdateUIDeque(_moveMenuDeque);
 
 	if (_playerMenu->GetIsOpen())
 	{

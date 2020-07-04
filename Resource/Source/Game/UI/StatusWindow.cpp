@@ -6,6 +6,7 @@
 #include "FileSystem.h"
 #include "DataBase.h"
 #include "Input.h"
+#include "WeaponStatusWindow.h"
 
 using namespace std;
 
@@ -31,8 +32,7 @@ void StatusWindow::ScaleUpdate(const Input& input)
 		// ï¬Ç∂ÇÈÇ»ÇÁ
 		if (_animTrack->GetReverse())
 		{
-			_uiDeque->pop_front();
-			_isOpen = false;
+			_delete = true;
 		}
 		else
 		{
@@ -43,6 +43,7 @@ void StatusWindow::ScaleUpdate(const Input& input)
 
 StatusWindow::StatusWindow(std::deque<std::shared_ptr<UI>>* uiDeque, const Charactor& charactor):UI(uiDeque), _charactor (charactor)
 {
+	_weaponStatusWindow = make_unique<WeaponStatusWindow>(nullptr);
 	_isOpen = true;
 	_animTrack = make_unique<Track<float>>();
 	_animTrack->AddKey(0, 0.0f);
@@ -99,7 +100,7 @@ void StatusWindow::DrawToWindowScreen()
 	DrawBaseInf(levelRect);
 	DrawBattleStatus(battleStatusRect);
 	DrawStatus(statusRect);
-	DrawWeapon(weaponRect);
+	_weaponStatusWindow->Draw(weaponRect.center, Application::Instance().GetDataBase().GetWeaponData(_charactor.GetStatus().weaponId));
 	DrawItems(itemRect);
 
 	SetDrawScreen(currentScreen);
@@ -227,7 +228,8 @@ void StatusWindow::DrawBattleStatus(const Rect& battleStatusRect)
 	DrawStringToHandle(Vector2Int(contentRect.center.x - static_cast<int>(contentRect.size.w * 0.25f), contentRect.center.y), 
 		Anker::center, 0xffffff, choplin30, "éÀíˆ");
 	DrawStringToHandle(Vector2Int(contentRect.center.x + static_cast<int>(contentRect.size.w * 0.25f), contentRect.center.y),
-		Anker::center, 0xffffff, choplin30, GetAttackRengeString(_charactor.GetAttackRange()).c_str());
+		Anker::center, 0xffffff, choplin30, 
+		Application::Instance().GetDataBase().GetWeaponData(_charactor.GetStartStatus().weaponId).GetRengeString().c_str());
 }
 
 void StatusWindow::DrawStatus(const Rect& statusRect)
@@ -275,60 +277,6 @@ void StatusWindow::DrawStatus(const Rect& statusRect)
 	DrawNumContent(contentRect, "ñÇñh", currentStatus.magic_defense);
 }
 
-void StatusWindow::DrawWeapon(const Rect& weaponRect)
-{
-	auto& fileSystem = Application::Instance().GetFileSystem();
-	weaponRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/statusWindow1.png"));
-
-	auto choplin30 = fileSystem.GetFontHandle("choplin30edge");
-	auto& weaponData = Application::Instance().GetDataBase().GetWeaponData(_charactor.GetStartStatus().weaponId);
-
-	// ïêäÌñºÇÃï`âÊ
-	Size nameRectSize = Size(250, 50);
-	auto weaponNameRect = Rect(Vector2Int(weaponRect.center.x, weaponRect.Top() + nameRectSize.h/2), nameRectSize);
-	weaponNameRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/equipmentFrame.png"));
-
-	int spaceX = 5;
-	Size atributeIconSize(40, 40);
-	_charactor.DrawAtributeIcon(Rect(Vector2Int(weaponNameRect.Left() + atributeIconSize.w/2 + spaceX, weaponNameRect.center.y), atributeIconSize));
-
-	DrawStringToHandle(Vector2Int(weaponNameRect.center.x + (atributeIconSize.w + spaceX) /2, weaponNameRect.center.y), Anker::center,
-		0xffffff, choplin30, weaponData.name.c_str());
-	
-	int itemH		= fileSystem.GetImageHandle("Resource/Image/UI/equipmentStatusFrame.png");
-	Size itemSize	= Size(125, 30);
-	Rect itemRect	= Rect(Vector2Int(weaponRect.Left() + itemSize.w / 2, weaponNameRect.Botton() + itemSize.h / 2), itemSize);
-	auto choplin20	= fileSystem.GetFontHandle("choplin20");
-
-	auto drawItemNum = [&itemH, &itemRect, &choplin20](const char* str, const int value)
-	{
-		itemRect.DrawGraph(itemH);
-		DrawStringToHandle(itemRect.center - Vector2Int(itemRect.size.w / 4, 0), Anker::center, 0xffffff, choplin20, str);
-		DrawStringToHandle(itemRect.center + Vector2Int(itemRect.size.w/4, 0), Anker::center, 0xffffff, choplin20, "%d", value);
-	};
-
-	auto drawItemStr = [&itemH, &itemRect, &choplin20](const char* str, const char* value)
-	{
-		itemRect.DrawGraph(itemH);
-		DrawStringToHandle(itemRect.center - Vector2Int(itemRect.size.w / 4, 0), Anker::center, 0xffffff, choplin20, str);
-		DrawStringToHandle(itemRect.center + Vector2Int(itemRect.size.w / 4, 0), Anker::center, 0xffffff, choplin20, value);
-	};
-
-	drawItemNum("à–óÕ", weaponData.power);
-	itemRect.center.y += itemRect.size.h;
-	drawItemNum("ñΩíÜ", weaponData.hit);
-	itemRect.center.y += itemRect.size.h;
-	drawItemNum("ïKéE", weaponData.critical);
-	itemRect.center = Vector2Int(weaponRect.Left() + itemSize.w / 2 + itemSize.w, weaponNameRect.Botton() + itemSize.h / 2);
-	drawItemStr("éÀíˆ", GetAttackRengeString(_charactor.GetAttackRange()).c_str());
-	itemRect.center.y += itemRect.size.h;
-	drawItemNum("èdÇ≥", weaponData.weight);
-
-	Size weaponTextSize = Size(250, 110);
-	auto weaponTextRect = Rect(Vector2Int(weaponRect.center.x, weaponRect.Botton() - weaponTextSize.h / 2), weaponTextSize);
-	weaponTextRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/weaponTextFrame.png"));
-}
-
 void StatusWindow::DrawItems(const Rect& itemRect)
 {
 	auto& fileSystem = Application::Instance().GetFileSystem();
@@ -347,18 +295,4 @@ void StatusWindow::DrawItems(const Rect& itemRect)
 		DrawStringToHandle(center, Anker::center, 0xffffff, choplin30, itemName.c_str());
 		center.y += itemSize.h;
 	}
-}
-
-std::string StatusWindow::GetAttackRengeString(const Range& attackRange)
-{
-	char str[256];
-	if (attackRange.min == attackRange.max)
-	{
-		sprintf_s(str, 256, "%d", attackRange.max);
-	}
-	else
-	{
-		sprintf_s(str, 256, "%d Å` %d", attackRange.min, attackRange.max);
-	}
-	return str;
 }

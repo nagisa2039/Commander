@@ -10,7 +10,7 @@ private:
     bool _isSelect;
 
 public:
-    UIListItem(const Vector2Int& pos, std::deque<std::shared_ptr<UI>>* uiDeque);
+    UIListItem(const Rect& rect, std::deque<std::shared_ptr<UI>>* uiDeque);
     ~UIListItem();
 
     virtual void Update(const Input& input)override = 0;

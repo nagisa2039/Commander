@@ -3,6 +3,13 @@
 #include "Input.h"
 #include "UIList.h"
 #include "UIListItem.h"
+#include "../SelectPen.h"
+
+namespace
+{
+	constexpr unsigned int INPUT_ITV_MAX = 30;
+	constexpr unsigned int INPUT_ITV_MIN = 5;
+}
 
 void UIList::DrawToListWindow()
 {
@@ -33,14 +40,56 @@ void UIList::CursorMove(const Input& input)
 		Decision();
 		return;
 	}
-	if (input.GetButtonDown(0, "up"))
+
+	bool move = false;
+	if (input.GetButton(0, "up"))
 	{
-		SetItemIdx(-1);
+		move = true;
+		if (_inputCnt >= _inputItv)
+		{
+			SetItemIdx(-1);
+			_inputItv = max(_inputItv/2, INPUT_ITV_MIN);
+			_inputCnt = 0;
+		}
 	}
-	if (input.GetButtonDown(0, "down"))
+	if (input.GetButton(0, "down"))
 	{
-		SetItemIdx(+1);
+		move = true;
+		if (_inputCnt >= _inputItv)
+		{
+			SetItemIdx(+1);
+			_inputItv = max(_inputItv / 2, INPUT_ITV_MIN);
+			_inputCnt = 0;
+		}
 	}
+
+	if (move)
+	{
+		_inputCnt++;
+	}
+	else
+	{
+		_inputItv = INPUT_ITV_MAX;
+		_inputCnt = INPUT_ITV_MAX;
+	}
+}
+
+void UIList::ListItemInit(const Vector2Int& leftup, const Size itemSize)
+{
+	Size rectSize = Size(itemSize.w + LIST_ITEM_SPACE*2, LIST_ITEM_SPACE + (itemSize.h + LIST_ITEM_SPACE) * DRAW_ITEM_MAX);
+	_rect = Rect(leftup + rectSize.ToVector2Int() * 0.5f, rectSize);
+	_viewportRect = Rect(rectSize.ToVector2Int() * 0.5f, rectSize);
+
+	_listWindowH = MakeScreen(rectSize.w, rectSize.h, true);
+	_selectPen = std::make_unique<SelectPen>(nullptr);
+
+	assert(_listItems.size() > 0);
+
+	SetItemIdx(0);
+	UpdateViewport();
+
+	_inputItv = INPUT_ITV_MAX;
+	_inputCnt = INPUT_ITV_MAX;
 }
 
 UIListItem* UIList::GetListItem()
@@ -53,24 +102,13 @@ void UIList::AddListItem(std::shared_ptr<UIListItem> item)
 	_listItems.emplace_back(item);
 }
 
-UIList::UIList(const Rect& rect, const unsigned int drawItemMax, std::deque<std::shared_ptr<UI>>* uiDeque) :UI(uiDeque), 
-	DRAW_ITEM_MAX(drawItemMax), LIST_ITEM_SPACE_Y(5)
+UIList::UIList(const Vector2Int& leftup, const unsigned int drawItemMax, std::deque<std::shared_ptr<UI>>* uiDeque) :UI(uiDeque),
+	DRAW_ITEM_MAX(drawItemMax), LIST_ITEM_SPACE(5)
 {
+	_listWindowH = -1;
 	_drawCnt = 0;
 	_itemIdx = 0;
-	_rect = rect;
-	_viewportRect = Rect(rect.size.ToVector2Int()*0.5f, rect.size);
 
-	_listWindowH = MakeScreen(rect.size.w, rect.size.h, true);
-	_listItems.clear();
-}
-
-void UIList::ListItemInit()
-{
-	assert(_listItems.size() > 0);
-
-	SetItemIdx(0);
-	UpdateViewport();
 }
 
 UIList::~UIList()
@@ -79,11 +117,12 @@ UIList::~UIList()
 
 void UIList::SetItemIdx(const int add)
 {
-	if (_itemIdx + add >= 0 && _itemIdx + add < _listItems.size())
+	auto nextIdx = _itemIdx + add;
+	if(nextIdx >= 0 && nextIdx < _listItems.size())
 	{
 		_listItems[_itemIdx]->SetIsSelect(false);
-		_listItems[_itemIdx + add]->SetIsSelect(true);
 		_itemIdx += add;
+		_listItems[_itemIdx]->SetIsSelect(true);
 
 		if (add > 0)
 		{
@@ -127,19 +166,22 @@ void UIList::SetItemIdx(const int add)
 void UIList::UpdateViewport()
 {
 	auto itemRect = _listItems[_itemIdx]->GetRect();
-	int topY = _viewportRect.size.h / 2 - LIST_ITEM_SPACE_Y - itemRect.size.h / 2;
-	_viewportRect.center = itemRect.center + Vector2Int(0, topY - _drawCnt * (itemRect.size.h + LIST_ITEM_SPACE_Y));
+	int topY = _viewportRect.size.h / 2 - LIST_ITEM_SPACE - itemRect.size.h / 2;
+	_viewportRect.center = itemRect.center + Vector2Int(0, topY - _drawCnt * (itemRect.size.h + LIST_ITEM_SPACE));
 }
 
 void UIList::Update(const Input& input)
 {
 	CursorMove(input);
+	_selectPen->Update(input);
 }
 
 void UIList::Draw()
 {
 	DrawToListWindow();
 	_rect.DrawGraph(_listWindowH);
+	auto itemRect = _listItems[_itemIdx]->GetRect();
+	_selectPen->Draw(Vector2Int(_rect.Left(), _rect.Top() + LIST_ITEM_SPACE + (LIST_ITEM_SPACE + itemRect.size.h) * _drawCnt));
 }
 
 void UIList::SetCenter(const Vector2Int& center)

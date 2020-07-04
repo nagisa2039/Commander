@@ -120,14 +120,14 @@ void BattleScene::RightHPAnim(const Input& input)
 
 void BattleScene::ExpUpdate(const Input& input)
 {
-	if (!_expUI)
+	_expUI->Update(input);
+	if (_expUI->GetDelete())
 	{
+		_expUI.reset();
 		// ’ÇŒ‚Ï‚Ý‚È‚Ì‚Åí“¬‚ðI—¹‚·‚é
 		_updater = &BattleScene::SceneEndAnim;
 		return;
 	}
-
-	_expUI->Update(input);
 }
 
 bool BattleScene::PursuitAttack(const bool rightAttack)

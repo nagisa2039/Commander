@@ -28,9 +28,9 @@ private:
 	std::shared_ptr<MoveMenu> _moveMenu;
 
 	std::shared_ptr<TerrainInf> _terrainInf;
-	std::shared_ptr<StatusWindow> _statusWindow;
 	std::shared_ptr<StatusInf> _statusInf;
-	std::shared_ptr<BattlePrediction> _battlePre;
+	std::shared_ptr<UI> _statusWindow;
+	std::shared_ptr<UI> _battlePre;
 
 public:
 	PlayerUI(PlayerCommander& playerCommander, const MapCtrl& mapCtrl, const unsigned char& turnCnt);

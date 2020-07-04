@@ -273,9 +273,6 @@
     <ClCompile Include="Resource\Source\System\SoundLoader.cpp">
       <Filter>ソース ファイル\System</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Game\UI\UIListItem.cpp">
-      <Filter>ソース ファイル\Game\UI</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Source\Utility\Input.cpp">
       <Filter>ソース ファイル\Utility</Filter>
     </ClCompile>
@@ -302,6 +299,15 @@
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\UI\UIList\WeaponListItem.cpp">
       <Filter>ソース ファイル\Game\UI\UILIst</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\WeaponData.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\SelectPen.cpp">
+      <Filter>ソース ファイル\Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\WeaponStatusWindow.cpp">
+      <Filter>ソース ファイル\Game\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -521,9 +527,6 @@
     <ClInclude Include="Resource\Source\System\SoundLoader.h">
       <Filter>ヘッダー ファイル\System</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Source\Game\UI\UIListItem.h">
-      <Filter>ヘッダー ファイル\Game\UI</Filter>
-    </ClInclude>
     <ClInclude Include="Resource\Source\Game\UI\UIList\UIList.h">
       <Filter>ヘッダー ファイル\Game\UI\UIList</Filter>
     </ClInclude>
@@ -535,6 +538,12 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\UI\UIList\WeaponListItem.h">
       <Filter>ヘッダー ファイル\Game\UI\UIList</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\SelectPen.h">
+      <Filter>ヘッダー ファイル\Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\WeaponStatusWindow.h">
+      <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

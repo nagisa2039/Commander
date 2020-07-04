@@ -196,9 +196,7 @@ void Experience::End()
 		_battleChar.GetCharacotr().SetStatus(status);
 	}
 	_battleChar.GetCharacotr().AddExp(_addExp, _maxExp);
-
-	assert(_uiDeque != nullptr);
-	_uiDeque->pop_front();
+	_delete = true;
 }
 
 void Experience::Wait(void(Experience::* nextUpdate)(const Input&))

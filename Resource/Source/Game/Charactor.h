@@ -193,9 +193,6 @@ public:
 	// キャラクターを指定したRectの範囲に描画する
 	void DrawCharactorIcon(const Rect& drawRect)const;
 
-	// 属性アイコンを描画する
-	void DrawAtributeIcon(const Rect& iconRect)const;
-
 	// 指定した座標までの経路を描画する
 	void DrawRoute(const Vector2Int& targetPos);
 

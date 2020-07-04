@@ -64,6 +64,7 @@ private:
 		unsigned int color;
 		AttributeData():name(""), color(0) {};
 		AttributeData(const std::string& na, const unsigned int c) :name(na), color(c) {};
+
 	};
 
 	struct MapData

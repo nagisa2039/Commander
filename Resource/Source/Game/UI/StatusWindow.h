@@ -3,6 +3,7 @@
 #include "TimeLine.h"
 
 class Charactor;
+class WeaponStatusWindow;
 
 class StatusWindow :
 	public UI
@@ -10,6 +11,7 @@ class StatusWindow :
 private:
 	const Charactor& _charactor;
 
+	std::unique_ptr<WeaponStatusWindow> _weaponStatusWindow;
 	std::unique_ptr<Track<float>> _animTrack;
 	void(StatusWindow::* _updater)(const Input& input);
 
@@ -26,10 +28,7 @@ private:
 	void DrawBaseInf(const Rect& statusRect0);
 	void DrawBattleStatus(const Rect& statusRect1);
 	void DrawStatus(const Rect& statusRect2);
-	void DrawWeapon(const Rect& weaponRect);
 	void DrawItems(const Rect& itemRect);
-
-	std::string GetAttackRengeString(const Range& attackRange);
 
 public:
 	StatusWindow(std::deque<std::shared_ptr<UI>>* uiDeque, const Charactor& charactor);

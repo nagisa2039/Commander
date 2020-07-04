@@ -72,6 +72,7 @@
     <ClCompile Include="Resource\Source\Game\UI\UIList\UIListItem.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\WarSituation.cpp" />
     <ClCompile Include="Resource\Source\Game\Warrior.cpp" />
+    <ClCompile Include="Resource\Source\Game\WeaponData.cpp" />
     <ClCompile Include="Resource\Source\Scene\BattleScene.cpp" />
     <ClCompile Include="Resource\Source\Scene\MapEditScene.cpp" />
     <ClCompile Include="Resource\Source\Scene\MapSelectScene.cpp" />
@@ -92,6 +93,8 @@
     <ClCompile Include="Resource\Source\Utility\TimeLine.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\UIList\WeaponList.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\UIList\WeaponListItem.cpp" />
+    <ClCompile Include="Resource\Source\Game\UI\SelectPen.cpp" />
+    <ClCompile Include="Resource\Source\Game\UI\WeaponStatusWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Game\Actor.h" />
@@ -170,6 +173,8 @@
     <ClInclude Include="Resource\Source\Utility\TimeLine.h" />
     <ClInclude Include="Resource\Source\Game\UI\UIList\WeaponList.h" />
     <ClInclude Include="Resource\Source\Game\UI\UIList\WeaponListItem.h" />
+    <ClInclude Include="Resource\Source\Game\UI\SelectPen.h" />
+    <ClInclude Include="Resource\Source\Game\UI\WeaponStatusWindow.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -285,7 +290,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>

@@ -59,7 +59,7 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller)
 	_debug = true;
 
 	//------------------
-	_weaponList = make_shared<WeaponList>(Rect(Vector2Int(400, 400), Size(400, 400)), nullptr);
+	_weaponList = make_shared<WeaponList>(Vector2Int(200,100), nullptr);
 	//------------------
 }
 

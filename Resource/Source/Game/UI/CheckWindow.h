@@ -32,7 +32,7 @@ private:
 	Select _select;
 
 public:
-	CheckWindow(const std::string& messageStr, std::deque<std::shared_ptr<UI>>& uiDeque, const std::function<void()>& func);
+	CheckWindow(const std::string& messageStr, std::deque<std::shared_ptr<UI>>* uiDeque, const std::function<void()>& func);
 	~CheckWindow();
 
 	void Update(const Input& input)override;

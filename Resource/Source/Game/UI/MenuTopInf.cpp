@@ -7,7 +7,7 @@
 
 using namespace std;
 
-MenuTopInf::MenuTopInf(const MapCtrl& mapCtrl, const unsigned char& turnCnt, std::deque<std::shared_ptr<UI>> uiDeque)
+MenuTopInf::MenuTopInf(const MapCtrl& mapCtrl, const unsigned char& turnCnt, std::deque<std::shared_ptr<UI>>* uiDeque)
 	: UI(uiDeque), _mapCtrl(mapCtrl), _turnCnt(turnCnt)
 {
 	auto fileSystem = Application::Instance().GetFileSystem();

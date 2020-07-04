@@ -76,8 +76,7 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctr
 		}
 	}
 
-	_preparationDeque.clear();
-	_preparationUI = make_shared<PreparationUI>(_preparationDeque, *_camera, *_mapCtrl);
+	_preparationUI = make_shared<PreparationUI>(&_preparationDeque, *_camera, *_mapCtrl);
 	_preparationDeque.emplace_back(_preparationUI);
 
 	_preparationUI->Open(true);

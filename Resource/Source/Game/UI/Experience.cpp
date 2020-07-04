@@ -196,7 +196,9 @@ void Experience::End()
 		_battleChar.GetCharacotr().SetStatus(status);
 	}
 	_battleChar.GetCharacotr().AddExp(_addExp, _maxExp);
-	_uiDeque.pop_front();
+
+	assert(_uiDeque != nullptr);
+	_uiDeque->pop_front();
 }
 
 void Experience::Wait(void(Experience::* nextUpdate)(const Input&))
@@ -285,7 +287,7 @@ void Experience::DrawToStatusWindow()
 	SetDrawScreen(currentScreen);
 }
 
-Experience::Experience(BattleCharactor& battleChar, const bool kill, std::deque<std::shared_ptr<UI>>& uiDeque)
+Experience::Experience(BattleCharactor& battleChar, const bool kill, std::deque<std::shared_ptr<UI>>* uiDeque)
 	: _battleChar(battleChar), UI(uiDeque), _maxExp(100)
 {
 	auto battleStatus = _battleChar.GetCharacotr().GetBattleStatus();

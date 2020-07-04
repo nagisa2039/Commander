@@ -22,7 +22,7 @@ private:
 	std::unique_ptr<Camera> _camera;
 	std::vector<std::unique_ptr<MapSelectCharactor>> _mapSelectCharactors;
 
-	std::deque<std::shared_ptr<UI>>_uiDeque;
+	std::shared_ptr<UI>_weaponList;
 	
 
 	unsigned int _selectIdx;

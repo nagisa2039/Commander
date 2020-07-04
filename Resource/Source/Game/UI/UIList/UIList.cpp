@@ -53,7 +53,7 @@ void UIList::AddListItem(std::shared_ptr<UIListItem> item)
 	_listItems.emplace_back(item);
 }
 
-UIList::UIList(const Rect& rect, const unsigned int drawItemMax, std::deque<std::shared_ptr<UI>>& uiDeque) :UI(uiDeque), 
+UIList::UIList(const Rect& rect, const unsigned int drawItemMax, std::deque<std::shared_ptr<UI>>* uiDeque) :UI(uiDeque), 
 	DRAW_ITEM_MAX(drawItemMax), LIST_ITEM_SPACE_Y(5)
 {
 	_drawCnt = 0;

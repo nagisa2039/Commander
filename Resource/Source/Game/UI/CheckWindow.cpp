@@ -11,7 +11,7 @@ using namespace std;
 int CheckWindow::_windowImageH = -1;
 int CheckWindow::_selectImageH = -1;
 
-CheckWindow::CheckWindow(const std::string& messageStr, std::deque<std::shared_ptr<UI>>& uiDeque, const std::function<void()>& func)
+CheckWindow::CheckWindow(const std::string& messageStr, std::deque<std::shared_ptr<UI>>* uiDeque, const std::function<void()>& func)
 	:_messageStr(messageStr), _func(func), UI(uiDeque)
 {
 	_exRateTrack = make_unique<Track<float>>();
@@ -103,7 +103,7 @@ void CheckWindow::ScalingUpdate(const Input& input)
 			{
 				_func();
 			}
-			_uiDeque.pop_front();
+			_uiDeque->pop_front();
 		}
 		else
 		{

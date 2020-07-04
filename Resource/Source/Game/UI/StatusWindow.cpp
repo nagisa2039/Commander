@@ -31,7 +31,7 @@ void StatusWindow::ScaleUpdate(const Input& input)
 		// •Â‚¶‚é‚È‚ç
 		if (_animTrack->GetReverse())
 		{
-			_uiDeque.pop_front();
+			_uiDeque->pop_front();
 			_isOpen = false;
 		}
 		else
@@ -41,7 +41,7 @@ void StatusWindow::ScaleUpdate(const Input& input)
 	}
 }
 
-StatusWindow::StatusWindow(std::deque<std::shared_ptr<UI>>& uiDeque, const Charactor& charactor):UI(uiDeque), _charactor (charactor)
+StatusWindow::StatusWindow(std::deque<std::shared_ptr<UI>>* uiDeque, const Charactor& charactor):UI(uiDeque), _charactor (charactor)
 {
 	_isOpen = true;
 	_animTrack = make_unique<Track<float>>();

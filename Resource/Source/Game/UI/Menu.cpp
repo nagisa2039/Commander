@@ -7,7 +7,7 @@
 
 using namespace std;
 
-Menu::Menu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl)
+Menu::Menu(std::deque<std::shared_ptr<UI>>* uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl)
 	: _playerCommander(playerCom), _mapCtrl(mapCtrl), UI(uiDeque)
 {
 	_selectContent = 0;

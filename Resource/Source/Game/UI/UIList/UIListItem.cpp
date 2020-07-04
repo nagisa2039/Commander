@@ -1,6 +1,6 @@
 #include "UIListItem.h"
 
-UIListItem::UIListItem(const Vector2Int& pos, std::deque<std::shared_ptr<UI>>& uiDeque) :UI(uiDeque), _rect(pos, Size(400, 74)), _isSelect(false)
+UIListItem::UIListItem(const Vector2Int& pos, std::deque<std::shared_ptr<UI>>* uiDeque) :UI(uiDeque), _rect(pos, Size(400, 74)), _isSelect(false)
 {
 }
 

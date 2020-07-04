@@ -7,12 +7,12 @@ class Input;
 class UI
 {
 protected:
-	std::deque<std::shared_ptr<UI>>& _uiDeque;
+	std::deque<std::shared_ptr<UI>>* _uiDeque;
 	bool _delete;
 	bool _isOpen;
 
 public:
-	UI(std::deque<std::shared_ptr<UI>>& uiDeque);
+	UI(std::deque<std::shared_ptr<UI>>* uiDeque);
 	~UI();
 
 	virtual void Update(const Input& input) = 0;

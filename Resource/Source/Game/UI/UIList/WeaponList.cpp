@@ -9,11 +9,9 @@ void WeaponList::Decision()
 {
 	auto item = dynamic_cast<WeaponListItem*>(GetListItem());
 	assert(item != nullptr);
-
-
 }
 
-WeaponList::WeaponList(const Rect& rect, std::deque<std::shared_ptr<UI>>& uiDeque)
+WeaponList::WeaponList(const Rect& rect, std::deque<std::shared_ptr<UI>>* uiDeque)
 	:UIList(rect, 5, uiDeque)
 {
 	auto& dataBase = Application::Instance().GetDataBase();

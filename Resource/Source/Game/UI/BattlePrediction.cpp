@@ -33,7 +33,7 @@ int BattlePrediction::GetChengePoint(const Dir& dir, bool rightAttack, BattleSta
 	return chengePoint;
 }
 
-BattlePrediction::BattlePrediction(const Charactor& self, const Charactor& target, std::deque<std::shared_ptr<UI>> uiDeque, const Vector2Int& attackStartPos, const Map_Chip mapChip)
+BattlePrediction::BattlePrediction(const Charactor& self, const Charactor& target, std::deque<std::shared_ptr<UI>>* uiDeque, const Vector2Int& attackStartPos, const Map_Chip mapChip)
 	: _selfCharactor(self), _targetCharactor(target), _mapChip(mapChip), UI(uiDeque)
 {
 	auto sub = _targetCharactor.GetMapPos() - attackStartPos;

@@ -7,6 +7,7 @@
 class Charactor;
 class TerrainInf;
 class StatusInf;
+class StatusWindow;
 class UI;
 
 class BattlePreparationCursor :
@@ -21,10 +22,7 @@ private:
 
 	std::shared_ptr<TerrainInf> _terrainInf;
 	std::shared_ptr<StatusInf> _statusInf;
-
-	std::deque<std::shared_ptr<UI>> _terrainInfDeque;
-	std::deque<std::shared_ptr<UI>> _statusInfDeque;
-	std::deque<std::shared_ptr<UI>> _statusWindowDeque;
+	std::shared_ptr<StatusWindow> _statusWindow;
 
 public:
 	BattlePreparationCursor(MapCtrl& mapCtrl, Camera& camera);

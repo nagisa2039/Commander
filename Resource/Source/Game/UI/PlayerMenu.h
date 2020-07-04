@@ -19,7 +19,7 @@ private:
 	std::shared_ptr<MenuTopInf> _menuTop;
 
 public:
-	PlayerMenu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl, const unsigned char& turnCnt);
+	PlayerMenu(std::deque<std::shared_ptr<UI>>* uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl, const unsigned char& turnCnt);
 	~PlayerMenu();
 
 	void Update(const Input& input)override;

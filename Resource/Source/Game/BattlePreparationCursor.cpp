@@ -23,15 +23,9 @@ BattlePreparationCursor::BattlePreparationCursor(MapCtrl& mapCtrl, Camera& camer
 	_exRateTrack->AddKey(30, 1.0f);
 	_exRateTrack->AddKey(60, 0.8f);
 
-	_terrainInfDeque.clear();
-	_statusInfDeque.clear();
-	_statusWindowDeque.clear();
-
-	_terrainInf = make_shared<TerrainInf>(_terrainInfDeque, _mapCtrl, _mapPos);
-	_terrainInfDeque.emplace_back(_terrainInf);
-
-	_statusInf = make_shared<StatusInf>(_statusInfDeque, _mapCtrl, _mapPos);
-	_statusInfDeque.emplace_back(_statusInf);
+	_terrainInf = make_shared<TerrainInf>(nullptr, _mapCtrl, _mapPos);
+	_statusInf = make_shared<StatusInf>(nullptr, _mapCtrl, _mapPos);
+	_statusWindow.reset();
 }
 
 BattlePreparationCursor::~BattlePreparationCursor()
@@ -40,30 +34,21 @@ BattlePreparationCursor::~BattlePreparationCursor()
 
 void BattlePreparationCursor::Update(const Input& input)
 {
-	bool open = _statusWindowDeque.size() > 0;
-	if (!open)
-	{
-		CursorMove(input);
-	}
 	_exRateTrack->Update();
-
-	if (open)
+	if (_statusWindow)
 	{
 		_terrainInf->Close();
 		_statusInf->Close();
+
+		if (_statusWindow->GetDelete())
+		{
+			_statusWindow.reset();
+		}
 	}
-
-	auto dequeUpdate = [&](std::deque<std::shared_ptr<UI>>& uiDeque)
+	else
 	{
-		if (uiDeque.size() <= 0)return;
-		(*uiDeque.begin())->Update(input);
-	};
-	dequeUpdate(_statusWindowDeque);
-	dequeUpdate(_terrainInfDeque);
-	dequeUpdate(_statusInfDeque);
+		CursorMove(input);
 
-	if (!open)
-	{
 		if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
 		{
 			Select();
@@ -78,12 +63,22 @@ void BattlePreparationCursor::Update(const Input& input)
 		{
 			auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
 			if (charactor == nullptr)return;
-			_statusWindowDeque.emplace_back(make_shared<StatusWindow>(_statusWindowDeque, *charactor));
+			_statusWindow = make_shared<StatusWindow>(nullptr, *charactor);
 		}
 
 		_terrainInf->Open();
 		_statusInf->Open();
 	}
+
+	auto UIUpdate = [&input](std::shared_ptr<UI> ui)
+	{
+		if (!ui)return;
+		ui->Update(input);
+	};
+
+	UIUpdate(_statusWindow);
+	UIUpdate(_terrainInf);
+	UIUpdate(_statusInf);
 }
 
 void BattlePreparationCursor::Select()
@@ -144,17 +139,17 @@ void BattlePreparationCursor::Draw()
 	DrawRectRotaGraph(offset + _mapPos * chipSize + chipSize * 0.5, Vector2Int(0, 0), graphSize,
 		_exRateTrack->GetValue() * (chipSize.w / static_cast<float>(graphSize.w)), 0.0f, handle);
 
-	auto dequeDraw = [&](std::deque<std::shared_ptr<UI>>& uiDeque)
+	auto dequeDraw = [](std::shared_ptr<UI> ui)
 	{
-		for (auto rItr = uiDeque.rbegin(); rItr != uiDeque.rend(); rItr++)
+		if (ui)
 		{
-			(*rItr)->Draw();
+			ui->Draw();
 		}
 	};
 
-	dequeDraw(_terrainInfDeque);
-	dequeDraw(_statusInfDeque);
-	dequeDraw(_statusWindowDeque);
+	dequeDraw(_terrainInf);
+	dequeDraw(_statusInf);
+	dequeDraw(_statusWindow);
 }
 
 void BattlePreparationCursor::DrawSortieMass()

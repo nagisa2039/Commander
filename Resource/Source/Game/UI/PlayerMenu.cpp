@@ -6,9 +6,11 @@
 #include "WarSituation.h"
 #include "MenuTopInf.h"
 
-PlayerMenu::PlayerMenu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl, const unsigned char& turnCnt)
+PlayerMenu::PlayerMenu(std::deque<std::shared_ptr<UI>>* uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl, const unsigned char& turnCnt)
 	:Menu(uiDeque, playerCom, mapCtrl)
 {
+	assert(_uiDeque != nullptr);
+
 	auto menuFrameH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/menuFrame.png");
 	Init(static_cast<size_t>(Content::max), menuFrameH);
 
@@ -19,15 +21,15 @@ PlayerMenu::PlayerMenu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander
 	
 	_contentInfs[static_cast<size_t>(Content::situation)].func = [this] ()
 	{
-		_uiDeque.emplace_front(make_shared<WarSituation>(_uiDeque, _mapCtrl));
+		_uiDeque->emplace_front(make_shared<WarSituation>(_uiDeque, _mapCtrl));
 	};
 	_contentInfs[static_cast<size_t>(Content::retreat)].func = [this]()
 	{
-		_uiDeque.emplace_front(make_shared<CheckWindow>("退却しますか？", _uiDeque, [&]() {_playerCommander.SetBackMapSelect(true); }));
+		_uiDeque->emplace_front(make_shared<CheckWindow>("退却しますか？", _uiDeque, [&]() {_playerCommander.SetBackMapSelect(true); }));
 	};
 	_contentInfs[static_cast<size_t>(Content::turnEnd)].func = [this]()
 	{
-		_uiDeque.emplace_front(make_shared<CheckWindow>("ターンを終了しますか？", _uiDeque, [&]() {_playerCommander.End(); }));
+		_uiDeque->emplace_front(make_shared<CheckWindow>("ターンを終了しますか？", _uiDeque, [&]() {_playerCommander.End(); }));
 	};
 
 	for (int idx = 0; idx != static_cast<size_t>(Content::max); idx++)
@@ -36,7 +38,7 @@ PlayerMenu::PlayerMenu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander
 	}
 
 	_menuTopDeque.clear();
-	_menuTop = make_shared<MenuTopInf>(_mapCtrl, turnCnt, _menuTopDeque);
+	_menuTop = make_shared<MenuTopInf>(_mapCtrl, turnCnt, &_menuTopDeque);
 	_menuTopDeque.emplace_back(_menuTop);
 }
 

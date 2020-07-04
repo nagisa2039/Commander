@@ -8,9 +8,9 @@
 
 using namespace std;
 
-TerrainInf::TerrainInf(std::deque<std::shared_ptr<UI>>& uiDeque, const MapCtrl& mapCtrl, const Vector2Int& mapPos): UI(uiDeque), _mapCtrl(mapCtrl), _mapPos(mapPos)
+TerrainInf::TerrainInf(std::deque<std::shared_ptr<UI>>* uiDeque, const MapCtrl& mapCtrl, const Vector2Int& mapPos): UI(uiDeque), _mapCtrl(mapCtrl), _mapPos(mapPos)
 {
-	_animTrack = make_unique<Track<float>>();
+	_animTrack = make_shared<Track<float>>();
 	_animTrack->AddKey(0, 0.0f);
 	_animTrack->AddKey(15, 1.0f);
 

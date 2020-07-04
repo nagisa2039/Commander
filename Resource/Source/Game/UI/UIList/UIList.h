@@ -36,7 +36,7 @@ protected:
 	void AddListItem(std::shared_ptr<UIListItem> item);
 
 public:
-	UIList(const Rect& rect, const unsigned int drawItemMax, std::deque<std::shared_ptr<UI>>& uiDeque);
+	UIList(const Rect& rect, const unsigned int drawItemMax, std::deque<std::shared_ptr<UI>>* uiDeque);
 	~UIList();
 
 	virtual void Update(const Input& input)override;

@@ -93,9 +93,10 @@ void PreparationUI::OpenAnimUpdate(const Input& input)
 	}
 }
 
-PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>& uiDeque, Camera& camera, MapCtrl& mapCtrl)
+PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& camera, MapCtrl& mapCtrl)
 	:UI(uiDeque), _mapCtrl(mapCtrl), _camera(camera)
 {
+	assert(_uiDeque != nullptr);
 	_updater = &PreparationUI::CloseUpdate;
 	auto screenCenter = Application::Instance().GetWindowSize().ToVector2Int() * 0.5f;
 
@@ -115,11 +116,11 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>& uiDeque, Camera& c
 	}; 
 	_itemInfTable[static_cast<size_t>(Item::warsituation)].func = [&]()
 	{
-		_uiDeque.emplace_front(make_shared<WarSituation>(_uiDeque, _mapCtrl));
+		_uiDeque->emplace_front(make_shared<WarSituation>(_uiDeque, _mapCtrl));
 	};
 	_itemInfTable[static_cast<size_t>(Item::back)].func = [&]()
 	{
-		_uiDeque.emplace_front(make_shared<CheckWindow>("ëﬁãpÇµÇ‹Ç∑Ç©ÅH", _uiDeque, [&](){SetBackMapSelect(true);}));
+		_uiDeque->emplace_front(make_shared<CheckWindow>("ëﬁãpÇµÇ‹Ç∑Ç©ÅH", _uiDeque, [&](){SetBackMapSelect(true);}));
 	};
 
 	Vector2Int currentDrawPos = screenCenter - Vector2Int(0, static_cast<int>((static_cast<int>(Item::max)-1) / 2.0f * spaceY));

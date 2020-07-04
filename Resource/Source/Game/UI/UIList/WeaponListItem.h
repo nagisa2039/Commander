@@ -11,7 +11,7 @@ private:
 
 public:
     WeaponListItem(const WeaponData& wd, 
-        const Vector2Int& pos, std::deque<std::shared_ptr<UI>> uiDeque);
+        const Vector2Int& pos, std::deque<std::shared_ptr<UI>>* uiDeque);
     ~WeaponListItem();
 
     void Update(const Input& input)override;

@@ -23,7 +23,7 @@ private:
 	void OpenUpdate(const Input& input)override;
 
 public:
-	MoveMenu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl);
+	MoveMenu(std::deque<std::shared_ptr<UI>>* uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl);
 	~MoveMenu();
 
 	void SetContent(const std::list<Vector2Int>& attackPosList);

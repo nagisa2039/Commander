@@ -1,6 +1,6 @@
 #include "UI.h"
 
-UI::UI(std::deque<std::shared_ptr<UI>>& uiDeque):_uiDeque(uiDeque)
+UI::UI(std::deque<std::shared_ptr<UI>>* uiDeque):_uiDeque(uiDeque)
 {
 	_delete = false;
 	_isOpen = false;

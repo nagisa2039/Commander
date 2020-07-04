@@ -16,10 +16,10 @@ private:
 	const Vector2Int& _mapPos;
 
 	std::list<Vector2Int> _targetPosList;
-	std::unique_ptr<Track<float>> _moveAnimTrack;
+	std::shared_ptr<Track<float>> _moveAnimTrack;
 
 public:
-	StatusInf(std::deque<std::shared_ptr<UI>>& uiDeque, const MapCtrl& mapCtrl, const Vector2Int& mapPos);
+	StatusInf(std::deque<std::shared_ptr<UI>>* uiDeque, const MapCtrl& mapCtrl, const Vector2Int& mapPos);
 	~StatusInf();
 
 	void Update(const Input& input)override;

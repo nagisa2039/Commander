@@ -14,7 +14,7 @@ private:
     std::unique_ptr<Track<Vector2Int>> _moveAnimTrack;
 
 public:
-    MenuTopInf(const MapCtrl& mapCtrl, const unsigned char& turnCnt, std::deque<std::shared_ptr<UI>> uiDeque);
+    MenuTopInf(const MapCtrl& mapCtrl, const unsigned char& turnCnt, std::deque<std::shared_ptr<UI>>* uiDeque);
     ~MenuTopInf();
 
     void Update(const Input& input) override;

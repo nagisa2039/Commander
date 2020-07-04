@@ -6,7 +6,7 @@
 #include "DataBase.h"
 
 WeaponListItem::WeaponListItem(const WeaponData& wd,
-	const Vector2Int& pos, std::deque<std::shared_ptr<UI>> uiDeque):_weaponData(wd), UIListItem(pos, uiDeque)
+	const Vector2Int& pos, std::deque<std::shared_ptr<UI>>* uiDeque):_weaponData(wd), UIListItem(pos, uiDeque)
 {
 
 }

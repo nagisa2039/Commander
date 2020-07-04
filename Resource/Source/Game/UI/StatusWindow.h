@@ -32,7 +32,7 @@ private:
 	std::string GetAttackRengeString(const Range& attackRange);
 
 public:
-	StatusWindow(std::deque<std::shared_ptr<UI>>& uiDeque, const Charactor& charactor);
+	StatusWindow(std::deque<std::shared_ptr<UI>>* uiDeque, const Charactor& charactor);
 	~StatusWindow();
 
 	void Update(const Input& input)override;

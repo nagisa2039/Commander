@@ -25,7 +25,7 @@ private:
 	std::shared_ptr<Camera> _camera;
 
 	std::vector<std::shared_ptr<Effect>> _effects;
-	std::deque< std::shared_ptr<UI>> _expUIDeque;
+	std::shared_ptr<UI> _expUI;
 
 	Vector2Int _startPos;
 	float _floatY;

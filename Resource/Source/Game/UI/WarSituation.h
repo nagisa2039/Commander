@@ -18,7 +18,7 @@ private:
 	void NormalUpdate(const Input& input);
 
 public:
-	WarSituation(std::deque<std::shared_ptr<UI>>& uiDeque, const MapCtrl& mapCtrl);
+	WarSituation(std::deque<std::shared_ptr<UI>>* uiDeque, const MapCtrl& mapCtrl);
 	~WarSituation();
 
 	void Update(const Input& input)override;

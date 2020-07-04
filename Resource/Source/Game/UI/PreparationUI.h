@@ -51,7 +51,7 @@ private:
 	void OpenAnimUpdate(const Input& input);
 
 public:
-	PreparationUI(std::deque<std::shared_ptr<UI>>& uiDeque, Camera& camera, MapCtrl& mapCtrl);
+	PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& camera, MapCtrl& mapCtrl);
 	~PreparationUI();
 
 	void Update(const Input& input)override;

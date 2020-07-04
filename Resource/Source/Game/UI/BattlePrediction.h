@@ -20,7 +20,7 @@ private:
 	int GetChengePoint(const Dir& dir, bool rightAttack, BattleStatus& selfStatus, BattleStatus& targetStatus);
 
 public:
-	BattlePrediction(const Charactor& self, const Charactor& target, std::deque<std::shared_ptr<UI>> uiDeque, const Vector2Int& attackStartPos, const Map_Chip mapChip);
+	BattlePrediction(const Charactor& self, const Charactor& target, std::deque<std::shared_ptr<UI>>* uiDeque, const Vector2Int& attackStartPos, const Map_Chip mapChip);
 	~BattlePrediction();
 
 	void Update(const Input& input)override;

@@ -70,7 +70,7 @@ protected:
 	virtual void Decision();
 
 public:
-	Menu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl);
+	Menu(std::deque<std::shared_ptr<UI>>* uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl);
 	~Menu();
 
 	void Update(const Input& input)override;

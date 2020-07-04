@@ -60,7 +60,7 @@ void MoveMenu::OpenUpdate(const Input& input)
 	}
 }
 
-MoveMenu::MoveMenu(std::deque<std::shared_ptr<UI>>& uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl)
+MoveMenu::MoveMenu(std::deque<std::shared_ptr<UI>>* uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl)
 	:Menu(uiDeque, playerCom, mapCtrl)
 {
 	auto menuFrameH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/menuFrame.png");

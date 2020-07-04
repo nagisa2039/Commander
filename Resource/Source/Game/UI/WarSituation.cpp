@@ -15,7 +15,8 @@ void WarSituation::ScalingUpdate(const Input& input)
 	{
 		if (_end)
 		{
-			_uiDeque.pop_front();
+			assert(_uiDeque != nullptr);
+			_uiDeque->pop_front();
 		}
 		else
 		{
@@ -38,7 +39,7 @@ void WarSituation::NormalUpdate(const Input& input)
 	}
 }
 
-WarSituation::WarSituation(std::deque<std::shared_ptr<UI>>& uiDeque, const MapCtrl& mapCtrl)
+WarSituation::WarSituation(std::deque<std::shared_ptr<UI>>* uiDeque, const MapCtrl& mapCtrl)
 	: UI(uiDeque), _mapCtrl(mapCtrl)
 {
 	_end = false;

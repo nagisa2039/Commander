@@ -59,7 +59,7 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller)
 	_debug = true;
 
 	//------------------
-	_uiDeque.emplace_front(make_shared<WeaponList>(Rect(Vector2Int(400, 400), Size(400, 400)), _uiDeque));
+	_weaponList = make_shared<WeaponList>(Rect(Vector2Int(400, 400), Size(400, 400)), nullptr);
 	//------------------
 }
 
@@ -163,7 +163,7 @@ void MapSelectScene::CursorMove(const Input& input)
 		}
 	}
 
-	(*_uiDeque.begin())->Update(input);
+	_weaponList->Update(input);
 }
 
 void MapSelectScene::Draw()
@@ -198,7 +198,7 @@ void MapSelectScene::Draw()
 		(*rItr)->Draw();
 	}
 
-	(*_uiDeque.begin())->Draw();
+	_weaponList->Draw();
 
 	_fade->Draw();
 }

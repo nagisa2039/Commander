@@ -120,17 +120,14 @@ void BattleScene::RightHPAnim(const Input& input)
 
 void BattleScene::ExpUpdate(const Input& input)
 {
-	if (_expUIDeque.size() <= 0)
-	{
-		return;
-	}
-	(*_expUIDeque.begin())->Update(input);
-	if (_expUIDeque.size() <= 0)
+	if (!_expUI)
 	{
 		// ’ÇŒ‚Ï‚Ý‚È‚Ì‚Åí“¬‚ðI—¹‚·‚é
 		_updater = &BattleScene::SceneEndAnim;
 		return;
 	}
+
+	_expUI->Update(input);
 }
 
 bool BattleScene::PursuitAttack(const bool rightAttack)
@@ -206,7 +203,7 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 
 	_updater = &BattleScene::SceneStartAnim;
 
-	_expUIDeque.clear();
+	_expUI.reset();
 
 	auto& soundLoader = Application::Instance().GetFileSystem().GetSoundLoader();
 	soundLoader.PlayBGM("Resource/Sound/BGM/game_maoudamashii_3_theme11b.mp3", true);
@@ -244,13 +241,13 @@ void BattleScene::StartExpUpdate()
 {
 	if (_leftBC.GetCharacotr().GetTeam() == Team::player)
 	{
-		_expUIDeque.emplace_front(make_shared<Experience>(_leftBC, _rightBC.GetCharacotr().GetIsDying(), _expUIDeque));
+		_expUI = make_shared<Experience>(_leftBC, _rightBC.GetCharacotr().GetIsDying(), nullptr);
 		_updater = &BattleScene::ExpUpdate;
 		return;
 	}
 	if (_rightBC.GetCharacotr().GetTeam() == Team::player && _rightBC.GetGivenDamage() > 0)
 	{
-		_expUIDeque.emplace_front(make_shared<Experience>(_rightBC, _leftBC.GetCharacotr().GetIsDying(), _expUIDeque));
+		_expUI = make_shared<Experience>(_rightBC, _leftBC.GetCharacotr().GetIsDying(), nullptr);
 		_updater = &BattleScene::ExpUpdate;
 		return;
 	}
@@ -289,9 +286,9 @@ void BattleScene::Draw(void)
 		effect->Draw();
 	}
 
-	for (auto rItr = _expUIDeque.rbegin(); rItr != _expUIDeque.rend(); rItr++)
+	if (_expUI)
 	{
-		(*rItr)->Draw();
+		_expUI->Draw();
 	}
 
 	auto wsize = Application::Instance().GetWindowSize();

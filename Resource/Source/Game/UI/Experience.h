@@ -76,7 +76,7 @@ private:struct
 	void DrawToStatusWindow();
 
 public:
-	Experience(BattleCharactor& battleChar, const bool kill, std::deque<std::shared_ptr<UI>>& uiDeque);
+	Experience(BattleCharactor& battleChar, const bool kill, std::deque<std::shared_ptr<UI>>* uiDeque);
 	~Experience();
 
 	void Update(const Input& input)override;

@@ -9,10 +9,10 @@
 #include "Charactor.h"
 #include "PlayerUI.h"
 
-StatusInf::StatusInf(std::deque<std::shared_ptr<UI>>& uiDeque, const MapCtrl& mapCtrl, const Vector2Int& mapPos)
+StatusInf::StatusInf(std::deque<std::shared_ptr<UI>>* uiDeque, const MapCtrl& mapCtrl, const Vector2Int& mapPos)
 	:UI(uiDeque), _mapCtrl(mapCtrl), _mapPos(mapPos)
 {
-	_moveAnimTrack = std::make_unique<Track<float>>();
+	_moveAnimTrack = std::make_shared<Track<float>>();
 	_moveAnimTrack->AddKey(0, 0.0f);
 	_moveAnimTrack->AddKey(15, 1.0f);
 

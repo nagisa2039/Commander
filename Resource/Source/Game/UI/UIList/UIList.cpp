@@ -50,6 +50,8 @@ void UIList::CursorMove(const Input& input)
 			SetItemIdx(-1);
 			_inputItv = max(_inputItv/2, INPUT_ITV_MIN);
 			_inputCnt = 0;
+
+			ChengeItem();
 		}
 	}
 	if (input.GetButton(0, "down"))
@@ -60,6 +62,8 @@ void UIList::CursorMove(const Input& input)
 			SetItemIdx(+1);
 			_inputItv = max(_inputItv / 2, INPUT_ITV_MIN);
 			_inputCnt = 0;
+
+			ChengeItem();
 		}
 	}
 
@@ -69,27 +73,32 @@ void UIList::CursorMove(const Input& input)
 	}
 	else
 	{
-		_inputItv = INPUT_ITV_MAX;
-		_inputCnt = INPUT_ITV_MAX;
+		InitInputItv();
 	}
 }
 
-void UIList::ListItemInit(const Vector2Int& leftup, const Size itemSize)
+void UIList::InitInputItv()
 {
-	Size rectSize = Size(itemSize.w + LIST_ITEM_SPACE*2, LIST_ITEM_SPACE + (itemSize.h + LIST_ITEM_SPACE) * DRAW_ITEM_MAX);
+	_inputItv = INPUT_ITV_MAX;
+	_inputCnt = INPUT_ITV_MAX;
+}
+
+void UIList::ListItemInit(const Vector2Int& leftup)
+{
+	assert(_listItems.size() > 0);
+
+	auto itemSize = _listItems[0]->GetRect().size;
+	Size rectSize = Size(itemSize.w + LIST_ITEM_SPACE*2, LIST_ITEM_SPACE + (itemSize.h + LIST_ITEM_SPACE) * _drawItemMax);
 	_rect = Rect(leftup + rectSize.ToVector2Int() * 0.5f, rectSize);
 	_viewportRect = Rect(rectSize.ToVector2Int() * 0.5f, rectSize);
 
 	_listWindowH = MakeScreen(rectSize.w, rectSize.h, true);
 	_selectPen = std::make_unique<SelectPen>(nullptr);
 
-	assert(_listItems.size() > 0);
-
 	SetItemIdx(0);
 	UpdateViewport();
 
-	_inputItv = INPUT_ITV_MAX;
-	_inputCnt = INPUT_ITV_MAX;
+	InitInputItv();
 }
 
 UIListItem* UIList::GetListItem()
@@ -97,18 +106,31 @@ UIListItem* UIList::GetListItem()
 	return _listItems[_itemIdx].get();
 }
 
+void UIList::Decision()
+{
+}
+
+void UIList::ChengeItem()
+{
+}
+
 void UIList::AddListItem(std::shared_ptr<UIListItem> item)
 {
+	auto itemSize = item->GetRect().size;
+	int centerX = _rect.size.w / 2;
+	auto pos = Vector2Int(centerX, static_cast<int>(_listItems.size()) * (itemSize.h + LIST_ITEM_SPACE) + LIST_ITEM_SPACE + itemSize.h / 2);
+	item->SetPos(pos);
 	_listItems.emplace_back(item);
 }
 
-UIList::UIList(const Vector2Int& leftup, const unsigned int drawItemMax, std::deque<std::shared_ptr<UI>>* uiDeque) :UI(uiDeque),
-	DRAW_ITEM_MAX(drawItemMax), LIST_ITEM_SPACE(5)
+UIList::UIList(const unsigned int drawItemMax, std::deque<std::shared_ptr<UI>>* uiDeque) :UI(uiDeque), LIST_ITEM_SPACE(5)
 {
 	_listWindowH = -1;
 	_drawCnt = 0;
 	_itemIdx = 0;
+	_drawItemMax = drawItemMax;
 
+	InitInputItv();
 }
 
 UIList::~UIList()
@@ -126,7 +148,7 @@ void UIList::SetItemIdx(const int add)
 
 		if (add > 0)
 		{
-			if (_drawCnt + add >= DRAW_ITEM_MAX - 1)
+			if (_drawCnt + add >= _drawItemMax - 1)
 			{
 				if (_itemIdx >= _listItems.size() - 1)
 				{

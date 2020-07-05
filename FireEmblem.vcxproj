@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Resource\Source\Game\UI\UIList\CharactorListItem.cpp" />
+    <ClCompile Include="Resource\Source\Game\UI\UIList\CharactorList.cpp" />
+    <ClCompile Include="Resource\Source\Game\UI\StatusWindow\ItemWindow.cpp" />
     <ClCompile Include="Resource\Source\Game\Actor.cpp" />
     <ClCompile Include="Resource\Source\Game\Animator.cpp" />
     <ClCompile Include="Resource\Source\Game\Archer.cpp" />
@@ -65,7 +68,8 @@
     <ClCompile Include="Resource\Source\Game\UI\PlayerUI.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\PreparationUI.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\StatusInfomation.cpp" />
-    <ClCompile Include="Resource\Source\Game\UI\StatusWindow.cpp" />
+    <ClCompile Include="Resource\Source\Game\UI\StatusWindow\StatusWindow.cpp" />
+    <ClCompile Include="Resource\Source\Game\UI\StatusWindow\WeaponWindow.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\TerrainInf.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\UI.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\UIList\UIList.cpp" />
@@ -94,9 +98,11 @@
     <ClCompile Include="Resource\Source\Game\UI\UIList\WeaponList.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\UIList\WeaponListItem.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\SelectPen.cpp" />
-    <ClCompile Include="Resource\Source\Game\UI\WeaponStatusWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Resource\Source\Game\UI\UIList\CharactorListItem.h" />
+    <ClInclude Include="Resource\Source\Game\UI\UIList\CharactorList.h" />
+    <ClInclude Include="Resource\Source\Game\UI\StatusWindow\ItemWindow.h" />
     <ClInclude Include="Resource\Source\Game\Actor.h" />
     <ClInclude Include="Resource\Source\Game\Animator.h" />
     <ClInclude Include="Resource\Source\Game\Archer.h" />
@@ -145,7 +151,8 @@
     <ClInclude Include="Resource\Source\Game\UI\PlayerUI.h" />
     <ClInclude Include="Resource\Source\Game\UI\PreparationUI.h" />
     <ClInclude Include="Resource\Source\Game\UI\StatusInfomation.h" />
-    <ClInclude Include="Resource\Source\Game\UI\StatusWindow.h" />
+    <ClInclude Include="Resource\Source\Game\UI\StatusWindow\StatusWindow.h" />
+    <ClInclude Include="Resource\Source\Game\UI\StatusWindow\WeaponWindow.h" />
     <ClInclude Include="Resource\Source\Game\UI\TerrainInf.h" />
     <ClInclude Include="Resource\Source\Game\UI\UI.h" />
     <ClInclude Include="Resource\Source\Game\UI\UIList\UIList.h" />
@@ -174,7 +181,6 @@
     <ClInclude Include="Resource\Source\Game\UI\UIList\WeaponList.h" />
     <ClInclude Include="Resource\Source\Game\UI\UIList\WeaponListItem.h" />
     <ClInclude Include="Resource\Source\Game\UI\SelectPen.h" />
-    <ClInclude Include="Resource\Source\Game\UI\WeaponStatusWindow.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

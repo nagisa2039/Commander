@@ -6,16 +6,17 @@
 
 class Charactor;
 
+struct CharactorData
+{
+	CharactorType charType;
+	Status status;
+	CharactorData() :charType(CharactorType::max), status(Status()) {};
+	CharactorData(const CharactorType ct, const Status& st) :charType(ct), status(st) {};
+};
+
 class SaveData
 {
 private:
-	struct CharactorData
-	{
-		CharactorType charType;
-		Status status;
-		CharactorData() :charType(CharactorType::max), status(Status()) {};
-		CharactorData(const CharactorType ct, const Status& st) :charType(ct), status(st) {};
-	};
 	std::vector<CharactorData> _charactorDataVec;
 	int _mapNum;
 

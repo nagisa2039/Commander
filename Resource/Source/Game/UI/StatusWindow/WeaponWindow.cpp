@@ -1,10 +1,11 @@
 #include <Dxlib.h>
-#include "WeaponStatusWindow.h"
+#include "WeaponWindow.h"
 #include "Application.h"
 #include "Geometry.h"
 #include "WeaponData.h"
 #include "FileSystem.h"
 #include "DxLibUtility.h"
+#include "DataBase.h"
 
 namespace
 {
@@ -12,30 +13,49 @@ namespace
 	constexpr unsigned int WINDOW_SIZE_H = 250;
 }
 
-WeaponStatusWindow::WeaponStatusWindow(std::deque<std::shared_ptr<UI>>* uiDeque):UI(uiDeque)
+int WeaponWindow::_windowH = -1;
+
+WeaponWindow::WeaponWindow(const uint8_t weaponId, std::deque<std::shared_ptr<UI>>* uiDeque):UI(uiDeque)
+{
+	if (_windowH == -1)
+	{
+		_windowH = MakeScreen(WINDOW_SIZE_W, WINDOW_SIZE_H, true);
+	}
+	SetWeaponId(weaponId);
+}
+
+WeaponWindow::~WeaponWindow()
 {
 }
 
-WeaponStatusWindow::~WeaponStatusWindow()
-{
-}
-
-Size WeaponStatusWindow::GetSize() const
+Size WeaponWindow::GetSize() const
 {
 	return Size(WINDOW_SIZE_W, WINDOW_SIZE_H);
 }
 
-void WeaponStatusWindow::Update(const Input& input)
+void WeaponWindow::Update(const Input& input)
 {
 }
 
-void WeaponStatusWindow::Draw()
+void WeaponWindow::Draw()
 {
 }
 
-void WeaponStatusWindow::Draw(const Vector2Int& pos, const WeaponData& weaponData)
+void WeaponWindow::Draw(const Vector2Int& pos)
 {
-	Rect rect = Rect(pos, Size(WINDOW_SIZE_W, WINDOW_SIZE_H));
+	Rect(pos, GetSize()).DrawGraph(_windowH);
+}
+
+void WeaponWindow::DrawToWindow()
+{
+	auto currentScreen = GetDrawScreen();
+	SetDrawScreen(_windowH);
+
+	auto& weaponData = Application::Instance().GetDataBase().GetWeaponData(_weaponId);
+
+	auto rectSize = GetSize();
+	Rect rect = Rect(rectSize.ToVector2Int()*0.5f, rectSize);
+
 	auto& fileSystem = Application::Instance().GetFileSystem();
 	rect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/statusWindow1.png"));
 
@@ -85,4 +105,13 @@ void WeaponStatusWindow::Draw(const Vector2Int& pos, const WeaponData& weaponDat
 	Size weaponTextSize = Size(250, 110);
 	auto weaponTextRect = Rect(Vector2Int(rect.center.x, rect.Botton() - weaponTextSize.h / 2), weaponTextSize);
 	weaponTextRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/weaponTextFrame.png"));
+
+	SetDrawScreen(currentScreen);
+}
+
+void WeaponWindow::SetWeaponId(const uint8_t weaponId)
+{
+	_weaponId = weaponId;
+
+	DrawToWindow();
 }

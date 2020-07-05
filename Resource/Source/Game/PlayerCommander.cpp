@@ -10,8 +10,7 @@
 #include "FileSystem.h"
 #include "UI/PlayerUI.h"
 #include "UI/MoveMenu.h"
-
-#include "UI/StatusWindow.h"
+#include "UI/StatusWindow/StatusWindow.h"
 
 using namespace std;
 

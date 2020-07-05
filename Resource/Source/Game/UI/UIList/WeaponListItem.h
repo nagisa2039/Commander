@@ -1,22 +1,19 @@
 #pragma once
 #include "UIListItem.h"
 
-struct WeaponData;
-
 class WeaponListItem :
     public UIListItem
 {
 private:
-    const WeaponData& _weaponData;
+    const uint8_t _weaponId;
 
 public:
-    WeaponListItem(const WeaponData& wd, 
-        const Vector2Int& pos, std::deque<std::shared_ptr<UI>>* uiDeque);
+    WeaponListItem(const uint8_t _weaponId, std::deque<std::shared_ptr<UI>>* uiDeque);
     ~WeaponListItem();
 
     void Update(const Input& input)override;
     void Draw(const Vector2Int& offset);
 
-    const WeaponData& GetWeaponData();
+    const uint8_t GetWeaponId()const;
 };
 

@@ -9,7 +9,7 @@
 #include "UI/PreparationUI.h"
 #include "UI/TerrainInf.h"
 #include "UI/StatusInfomation.h"
-#include "UI/StatusWindow.h"
+#include "UI/StatusWindow/StatusWindow.h"
 
 using namespace std;
 

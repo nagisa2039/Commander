@@ -6,7 +6,8 @@
 #include "FileSystem.h"
 #include "DataBase.h"
 #include "Input.h"
-#include "WeaponStatusWindow.h"
+#include "WeaponWindow.h"
+#include "ItemWindow.h"
 
 using namespace std;
 
@@ -43,7 +44,9 @@ void StatusWindow::ScaleUpdate(const Input& input)
 
 StatusWindow::StatusWindow(std::deque<std::shared_ptr<UI>>* uiDeque, const Charactor& charactor):UI(uiDeque), _charactor (charactor)
 {
-	_weaponStatusWindow = make_unique<WeaponStatusWindow>(nullptr);
+	_weaponWindow = make_unique<WeaponWindow>(_charactor.GetStatus().weaponId, nullptr);
+	_itemWindow = make_unique<ItemWindow>(nullptr);
+
 	_isOpen = true;
 	_animTrack = make_unique<Track<float>>();
 	_animTrack->AddKey(0, 0.0f);
@@ -100,8 +103,8 @@ void StatusWindow::DrawToWindowScreen()
 	DrawBaseInf(levelRect);
 	DrawBattleStatus(battleStatusRect);
 	DrawStatus(statusRect);
-	_weaponStatusWindow->Draw(weaponRect.center, Application::Instance().GetDataBase().GetWeaponData(_charactor.GetStatus().weaponId));
-	DrawItems(itemRect);
+	_weaponWindow->Draw(weaponRect.center);
+	_itemWindow->Draw(itemRect.center);
 
 	SetDrawScreen(currentScreen);
 }
@@ -275,24 +278,4 @@ void StatusWindow::DrawStatus(const Rect& statusRect)
 	contentRect.center.y += contentRect.Height();
 
 	DrawNumContent(contentRect, "魔防", currentStatus.magic_defense);
-}
-
-void StatusWindow::DrawItems(const Rect& itemRect)
-{
-	auto& fileSystem = Application::Instance().GetFileSystem();
-
-	itemRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/statusWindow1.png"));
-
-	auto itemSize = Size(250, 40);
-
-	std::string itemNames[] = {"傷薬", "凄い傷薬", "ボロの釣り竿", "探検セット" };
-
-	auto choplin30 = fileSystem.GetFontHandle("choplin30edge");
-	Vector2Int center = Vector2Int(itemRect.center.x, itemRect.Top() +  itemSize.h / 2);
-	for (const auto& itemName : itemNames)
-	{
-		Rect(center, itemSize).DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/itemFrame.png"));
-		DrawStringToHandle(center, Anker::center, 0xffffff, choplin30, itemName.c_str());
-		center.y += itemSize.h;
-	}
 }

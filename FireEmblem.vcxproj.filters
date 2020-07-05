@@ -79,6 +79,12 @@
     <Filter Include="ヘッダー ファイル\Game\UI\UIList">
       <UniqueIdentifier>{de754d78-5984-4327-a075-03d3375ef144}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\Game\UI\StatusWindow">
+      <UniqueIdentifier>{96c14c2c-fb34-498d-a7e0-49a41b992190}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\UI\StatusWindow">
+      <UniqueIdentifier>{97f6a588-cf83-42bb-af7a-f93b6bd3dcd1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Resource\Source\System\FileSystem.cpp">
@@ -150,9 +156,6 @@
     <ClCompile Include="Resource\Source\Game\TurnChangeAnim.cpp">
       <Filter>ソース ファイル\Game\Actor</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Game\BattleCharactor.cpp">
-      <Filter>ソース ファイル\Game\Actor</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Source\Game\Soldier.cpp">
       <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
     </ClCompile>
@@ -187,9 +190,6 @@
       <Filter>ソース ファイル\Game\UI</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\UI\WarSituation.cpp">
-      <Filter>ソース ファイル\Game\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Game\UI\StatusWindow.cpp">
       <Filter>ソース ファイル\Game\UI</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\UI\StatusInfomation.cpp">
@@ -252,9 +252,6 @@
     <ClCompile Include="Resource\Source\Game\SaveData.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Game\MapSelectCharactor.cpp">
-      <Filter>ソース ファイル\Game\Actor</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Source\Game\Fade.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
@@ -306,8 +303,26 @@
     <ClCompile Include="Resource\Source\Game\UI\SelectPen.cpp">
       <Filter>ソース ファイル\Game\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Game\UI\WeaponStatusWindow.cpp">
-      <Filter>ソース ファイル\Game\UI</Filter>
+    <ClCompile Include="Resource\Source\Game\UI\StatusWindow\StatusWindow.cpp">
+      <Filter>ソース ファイル\Game\UI\StatusWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\StatusWindow\WeaponWindow.cpp">
+      <Filter>ソース ファイル\Game\UI\StatusWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\StatusWindow\ItemWindow.cpp">
+      <Filter>ソース ファイル\Game\UI\StatusWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\UIList\CharactorList.cpp">
+      <Filter>ソース ファイル\Game\UI\UILIst</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\MapSelectCharactor.cpp">
+      <Filter>ソース ファイル\Game\Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\BattleCharactor.cpp">
+      <Filter>ソース ファイル\Game\Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\UIList\CharactorListItem.cpp">
+      <Filter>ソース ファイル\Game\UI\UILIst</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -434,9 +449,6 @@
     <ClInclude Include="Resource\Source\Game\UI\WarSituation.h">
       <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Source\Game\UI\StatusWindow.h">
-      <Filter>ヘッダー ファイル\Game\UI</Filter>
-    </ClInclude>
     <ClInclude Include="Resource\Source\Game\UI\StatusInfomation.h">
       <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
@@ -542,8 +554,20 @@
     <ClInclude Include="Resource\Source\Game\UI\SelectPen.h">
       <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Source\Game\UI\WeaponStatusWindow.h">
-      <Filter>ヘッダー ファイル\Game\UI</Filter>
+    <ClInclude Include="Resource\Source\Game\UI\StatusWindow\StatusWindow.h">
+      <Filter>ヘッダー ファイル\Game\UI\StatusWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\StatusWindow\WeaponWindow.h">
+      <Filter>ヘッダー ファイル\Game\UI\StatusWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\StatusWindow\ItemWindow.h">
+      <Filter>ヘッダー ファイル\Game\UI\StatusWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\UIList\CharactorList.h">
+      <Filter>ヘッダー ファイル\Game\UI\UIList</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\UIList\CharactorListItem.h">
+      <Filter>ヘッダー ファイル\Game\UI\UIList</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

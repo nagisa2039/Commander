@@ -11,7 +11,9 @@
 #include "MapSelectCharactor.h"
 #include "Fade.h"
 #include "SoundLoader.h"
-#include "UI/UIList/WeaponList.h"
+
+
+#include "UI/UIList/CharactorList.h"
 
 using namespace std;
 
@@ -41,7 +43,7 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller)
 	}
 	assert(_contentPosVec.size() > 0);
 
-	auto charactorDataVec = Application::Instance().GetSaveData().GetCharactorDataVec();
+	auto& charactorDataVec = Application::Instance().GetSaveData().GetCharactorDataVec();
 	assert(charactorDataVec.size() > 0);
 	for (const auto& charactorData : charactorDataVec)
 	{
@@ -59,7 +61,7 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller)
 	_debug = true;
 
 	//------------------
-	_weaponList = make_shared<WeaponList>(Vector2Int(200,100), nullptr);
+	_charactroList = make_shared<CharactorList>(Vector2Int(200,100), charactorDataVec, nullptr);
 	//------------------
 }
 
@@ -163,7 +165,7 @@ void MapSelectScene::CursorMove(const Input& input)
 		}
 	}
 
-	_weaponList->Update(input);
+	_charactroList->Update(input);
 }
 
 void MapSelectScene::Draw()
@@ -198,7 +200,7 @@ void MapSelectScene::Draw()
 		(*rItr)->Draw();
 	}
 
-	_weaponList->Draw();
+	_charactroList->Draw();
 
 	_fade->Draw();
 }

@@ -1,9 +1,10 @@
 #pragma once
-#include "UI.h"
+#include "../UI.h"
 #include "TimeLine.h"
 
 class Charactor;
-class WeaponStatusWindow;
+class WeaponWindow;
+class ItemWindow;
 
 class StatusWindow :
 	public UI
@@ -11,7 +12,9 @@ class StatusWindow :
 private:
 	const Charactor& _charactor;
 
-	std::unique_ptr<WeaponStatusWindow> _weaponStatusWindow;
+	std::unique_ptr<WeaponWindow> _weaponWindow;
+	std::unique_ptr<ItemWindow> _itemWindow;
+
 	std::unique_ptr<Track<float>> _animTrack;
 	void(StatusWindow::* _updater)(const Input& input);
 
@@ -28,7 +31,6 @@ private:
 	void DrawBaseInf(const Rect& statusRect0);
 	void DrawBattleStatus(const Rect& statusRect1);
 	void DrawStatus(const Rect& statusRect2);
-	void DrawItems(const Rect& itemRect);
 
 public:
 	StatusWindow(std::deque<std::shared_ptr<UI>>* uiDeque, const Charactor& charactor);

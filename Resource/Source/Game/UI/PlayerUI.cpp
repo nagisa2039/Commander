@@ -9,7 +9,7 @@
 #include "PlayerMenu.h"
 #include "MoveMenu.h"
 #include "Input.h"
-#include "StatusWindow.h"
+#include "../UI/StatusWindow/StatusWindow.h"
 #include "StatusInfomation.h"
 #include "BattlePrediction.h"
 #include "Charactor.h"

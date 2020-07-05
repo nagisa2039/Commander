@@ -86,10 +86,6 @@ bool Application::Initialize()
 	SetWindowText("Commander");
 
 	_fileSystem = make_unique<FileSystem>();
-	_sceneController = make_unique<SceneController>();
-	//_sceneController->ChangeScene(make_unique<PlayScene>(*_sceneController));
-	//_sceneController->ChangeScene(make_unique<MapEditScene>(*_sceneController));
-	_sceneController->ChangeScene(make_unique<MapSelectScene>(*_sceneController));
 
 	// input‚Ì‰Šú‰»
 	_input = make_unique<Input>();
@@ -100,6 +96,12 @@ bool Application::Initialize()
 
 	// ƒtƒHƒ“ƒg“Ç
 	FontSetUp();
+
+	_sceneController = make_unique<SceneController>();
+	//_sceneController->ChangeScene(make_unique<PlayScene>(*_sceneController));
+	//_sceneController->ChangeScene(make_unique<MapEditScene>(*_sceneController));
+	_sceneController->ChangeScene(make_unique<MapSelectScene>(*_sceneController));
+
 
 	_freq = {};
 	_start = {};

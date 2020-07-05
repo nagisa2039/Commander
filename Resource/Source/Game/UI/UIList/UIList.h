@@ -10,7 +10,7 @@ class UIList :
 	public UI
 {
 private:
-	const unsigned int DRAW_ITEM_MAX;
+	unsigned int _drawItemMax;
 
 	Rect _rect;
 	Rect _viewportRect;
@@ -31,18 +31,21 @@ private:
 	void SetItemIdx(const int add);
 	void UpdateViewport();
 	void CursorMove(const Input& input);
+	void InitInputItv();
 
 protected:
 	const unsigned int LIST_ITEM_SPACE;
 
-	void ListItemInit(const Vector2Int& leftup, const Size itemSize);
+	void ListItemInit(const Vector2Int& leftup);
 	UIListItem* GetListItem();
 
-	virtual void Decision()=0;
+	virtual void Decision();
+	virtual void ChengeItem();
+
 	void AddListItem(std::shared_ptr<UIListItem> item);
 
 public:
-	UIList(const Vector2Int& leftup, const unsigned int drawItemMax, std::deque<std::shared_ptr<UI>>* uiDeque);
+	UIList(const unsigned int drawItemMax, std::deque<std::shared_ptr<UI>>* uiDeque);
 	~UIList();
 
 	virtual void Update(const Input& input)override;

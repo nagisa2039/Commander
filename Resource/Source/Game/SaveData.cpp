@@ -108,7 +108,7 @@ int SaveData::GetMapNum() const
 	return _mapNum;
 }
 
-const std::vector<SaveData::CharactorData>& SaveData::GetCharactorDataVec()const
+const std::vector<CharactorData>& SaveData::GetCharactorDataVec()const
 {
 	return _charactorDataVec;
 }

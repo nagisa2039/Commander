@@ -11,7 +11,6 @@ class Fade;
 
 //DEBUG-------------
 class UI;
-class UIList;
 //------------------
 
 class MapSelectScene :
@@ -22,7 +21,7 @@ private:
 	std::unique_ptr<Camera> _camera;
 	std::vector<std::unique_ptr<MapSelectCharactor>> _mapSelectCharactors;
 
-	std::shared_ptr<UI>_weaponList;
+	std::shared_ptr<UI>_charactroList;
 	
 
 	unsigned int _selectIdx;

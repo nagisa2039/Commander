@@ -101,4 +101,7 @@ public:
 	void Draw(void) override final;
 
 	void PushShopScene();
+
+	// ショップなどで装備品などが変更されたときに呼ぶ
+	void CharactorDataUpdate();
 };

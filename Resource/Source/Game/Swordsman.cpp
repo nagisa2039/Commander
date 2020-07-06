@@ -18,7 +18,6 @@ Swordsman::Swordsman(const uint8_t level, const Vector2Int& mapPos, const Team t
 {
 	CharactorDataInit(CharactorType::swordman, level);
 	_battleC = make_shared<SwordBC>(*this, _animator->GetImageH(), _camera);
-	_startStatus.weaponId = 0;
 }
 
 Swordsman::~Swordsman()

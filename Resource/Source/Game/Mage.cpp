@@ -17,7 +17,6 @@ Mage::Mage(const uint8_t level, const Vector2Int& mapPos, const Team team, const
 {
 	CharactorDataInit(CharactorType::mage, level);
 	_battleC = make_shared<MageBC>(*this, _animator->GetImageH(), _camera);
-	_startStatus.weaponId = 3;
 }
 
 Mage::~Mage()

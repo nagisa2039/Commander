@@ -249,3 +249,8 @@ const WeaponData& DataBase::GetWeaponData(const unsigned int weaponId) const
 {
 	return _weaponDataTable.at(weaponId);
 }
+
+const std::vector<WeaponData>& DataBase::GetWeaponDataTable() const
+{
+	return _weaponDataTable;
+}

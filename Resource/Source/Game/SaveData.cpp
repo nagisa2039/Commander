@@ -123,3 +123,8 @@ const std::vector<CharactorData>& SaveData::GetCharactorDataVec()const
 {
 	return _charactorDataVec;
 }
+
+CharactorData& SaveData::GetCharactorData(const unsigned int charactorData)
+{
+	return _charactorDataVec[charactorData];
+}

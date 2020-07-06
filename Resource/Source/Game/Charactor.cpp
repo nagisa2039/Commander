@@ -332,12 +332,8 @@ void Charactor::SetStatus(const Status& status)
 
 void Charactor::InitStatus(const Status& status)
 {
-	auto weaponId = _startStatus.weaponId;
 	_status = status;
 	_startStatus = status;
-
-	_status.weaponId = weaponId;
-	_startStatus.weaponId = weaponId;
 }
 
 void Charactor::SetMoveActive(const bool active)

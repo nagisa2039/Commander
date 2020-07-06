@@ -119,5 +119,7 @@ public:
 
 	// WeaponData‚ðŽæ“¾‚·‚é
 	const WeaponData& GetWeaponData(const unsigned int weaponId)const;
+
+	const std::vector<WeaponData>& GetWeaponDataTable()const;
 };
 

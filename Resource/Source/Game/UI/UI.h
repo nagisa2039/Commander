@@ -23,4 +23,7 @@ public:
 
 	// 開いているか(表示中)
 	bool GetIsOpen()const;
+
+	// 最前面に表示するときなどに更新処理を走らせる
+	virtual void OnActive();
 };

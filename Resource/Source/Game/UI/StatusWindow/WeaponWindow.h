@@ -9,7 +9,7 @@ class WeaponWindow :
     public UI
 {
 private:
-    static int _windowH;
+    int _windowH;
     uint8_t _weaponId;
 
     void DrawToWindow();

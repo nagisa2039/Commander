@@ -10,19 +10,25 @@ using namespace std;
 
 void WeaponList::Decision()
 {
-	auto& saveData = Application::Instance().GetSaveData();
-	auto charactorData = saveData.GetCharactorDataVec()[_charactorDataIdx];
+	_weaponId = GetWeaponId();
+	_weaponWindowBefore->SetWeaponId(_weaponId);
 
-	auto weaponId = GetWeaponId();
-	charactorData.status.weaponId = weaponId;
+	_func();
 
-	saveData.SaveCharactorData(charactorData, _charactorDataIdx);
-	_weaponWindowBefore->SetWeaponId(weaponId);
+	Back();
 }
 
 void WeaponList::Back()
 {
-	_uiDeque->pop_front();
+	if (_uiDeque && _uiDeque->size() > 0)
+	{
+		if (_uiDeque->size() > 1)
+		{
+			(*(_uiDeque->begin() + 1))->OnActive();
+		}
+
+		_uiDeque->pop_front();
+	}
 }
 
 void WeaponList::ChengeItem()
@@ -30,31 +36,29 @@ void WeaponList::ChengeItem()
 	WeaponListItem* listItem = dynamic_cast<WeaponListItem*>(GetListItem());
 	assert(listItem);
 
-	_weaponWindowAfter->SetWeaponId(listItem->GetWeaponId());
+	_weaponWindowAfter->SetWeaponId((*listItem).GetWeaponId());
 }
 
 uint8_t WeaponList::GetWeaponId()
 {
 	WeaponListItem* listItem = dynamic_cast<WeaponListItem*>(GetListItem());
 	assert(listItem);
-	return listItem->GetWeaponId();
+	return (*listItem).GetWeaponId();
 }
 
-WeaponList::WeaponList(const Vector2Int& leftup, const unsigned int charactorDataIdx, std::deque<std::shared_ptr<UI>>* uiDeque)
-	:_charactorDataIdx(charactorDataIdx), UIList(9, uiDeque)
+WeaponList::WeaponList(const Vector2Int& leftup, uint8_t& weaponId, std::deque<std::shared_ptr<UI>>* uiDeque, std::function<void()> func)
+	:_weaponId(weaponId), _func(func), UIList(9, uiDeque)
 {
-	assert(uiDeque);
-
-	for (int i = 0; i < 30; i++)
+	auto& weaponDataVec = Application::Instance().GetDataBase().GetWeaponDataTable();
+	for(int weaponId = 0; weaponId < weaponDataVec.size(); weaponId++)
 	{
-		AddListItem(std::make_shared<WeaponListItem>(i%6, nullptr));
+		AddListItem(std::make_shared<WeaponListItem>(weaponId, nullptr));
 	}
 
 	ListItemInit(leftup);
 
 	auto& saveData = Application::Instance().GetSaveData();
-	auto charactorData = saveData.GetCharactorDataVec()[_charactorDataIdx];
-	_weaponWindowBefore = make_unique<WeaponWindow>(charactorData.status.weaponId, nullptr);
+	_weaponWindowBefore = make_unique<WeaponWindow>(_weaponId, nullptr);
 	_weaponWindowAfter	= make_unique<WeaponWindow>(GetWeaponId(), nullptr);
 }
 
@@ -72,6 +76,6 @@ void WeaponList::Draw()
 
 	auto weaponWindowSize = _weaponWindowBefore->GetSize();
 	_weaponWindowBefore->Draw(	Vector2Int(rect.Right() + weaponWindowSize.w / 2 + space, drawY + weaponWindowSize.h / 2));
-	drawY += weaponWindowSize.h + space*2;
+	drawY += weaponWindowSize.h + space;
 	_weaponWindowAfter->Draw(	Vector2Int(rect.Right() + weaponWindowSize.w / 2 + space, drawY + weaponWindowSize.h / 2));
 }

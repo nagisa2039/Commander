@@ -309,8 +309,10 @@ void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr
 			}
 			else
 			{
+				auto initStatus = dataBase.GetLevelInitStatus(mapData.charactorChip.level, mapData.charactorChip.type);
+				initStatus.weaponId = mapData.charactorChip.weaponId;
 				_charactorCreateFuncs[static_cast<size_t>(mapData.charactorChip.type)](mapData.charactorChip, 
-					dataBase.GetLevelInitStatus(mapData.charactorChip.level, mapData.charactorChip.type), ctrl, effects, camera);
+					initStatus, ctrl, effects, camera);
 			}
 		}
 	}

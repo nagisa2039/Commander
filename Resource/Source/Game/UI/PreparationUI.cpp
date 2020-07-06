@@ -33,6 +33,7 @@ void PreparationUI::CloseUpdate(const Input& input)
 	{
 		Open(true);
 		_execution = false;
+		_playScene.CharactorDataUpdate();
 	}
 }
 
@@ -101,7 +102,6 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 	_updater = &PreparationUI::CloseUpdate;
 	auto screenCenter = Application::Instance().GetWindowSize().ToVector2Int() * 0.5f;
 
-	int spaceY = 150;
 	_itemInfTable[static_cast<size_t>(Item::start)].name		= "戦闘開始";
 	_itemInfTable[static_cast<size_t>(Item::placement)].name	= "マップ・配置";
 	_itemInfTable[static_cast<size_t>(Item::warsituation)].name = "戦況確認";
@@ -129,6 +129,7 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 		_uiDeque->emplace_front(make_shared<CheckWindow>("退却しますか？", _uiDeque, [&](){SetBackMapSelect(true);}));
 	};
 
+	const int spaceY = 120;
 	Vector2Int currentDrawPos = screenCenter - Vector2Int(0, static_cast<int>((static_cast<int>(Item::max)-1) / 2.0f * spaceY));
 	for (auto& itemInf : _itemInfTable)
 	{
@@ -148,9 +149,9 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 	_backMapSelect = false;
 
 	_selectExRateTrack = make_unique<Track<float>>(true);
-	_selectExRateTrack->AddKey(0, 1.0f);
-	_selectExRateTrack->AddKey(30, 1.2f);
-	_selectExRateTrack->AddKey(60, 1.0f);
+	_selectExRateTrack->AddKey(0, 0.9);
+	_selectExRateTrack->AddKey(30, 1.0f);
+	_selectExRateTrack->AddKey(60, 0.9);
 
 	if (_itemScreenH == -1)
 	{
@@ -193,7 +194,7 @@ void PreparationUI::Draw()
 
 		auto centerPos = Lerp(Vector2Int(wsize.w + graphSize.w / 2, _itemInfTable[idx].pos.y), _itemInfTable[idx].pos, _animTrack->GetValue());
 		SetDrawScreen(currentDrawScreen);
-		DrawRotaGraph(centerPos, idx == static_cast<int>(_selectItem) ? _selectExRateTrack->GetValue() : 1.0f, 0.0f, _itemScreenH, true);
+		DrawRotaGraph(centerPos, idx == static_cast<int>(_selectItem) ? _selectExRateTrack->GetValue() : 0.9f, 0.0f, _itemScreenH, true);
 	}
 }
 

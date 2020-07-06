@@ -37,5 +37,6 @@ public:
 
 	const std::vector<CharactorData>& GetCharactorDataVec()const;
 
+	CharactorData& GetCharactorData(const unsigned int charactorData);
 };
 

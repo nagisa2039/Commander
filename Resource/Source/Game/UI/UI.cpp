@@ -19,3 +19,7 @@ bool UI::GetIsOpen() const
 {
 	return _isOpen;
 }
+
+void UI::OnActive()
+{
+}

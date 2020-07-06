@@ -573,3 +573,21 @@ void PlayScene::PushShopScene()
 {
 	_controller.PushScene(make_shared<ShopScene>(_controller));
 }
+
+void PlayScene::CharactorDataUpdate()
+{
+	int idx = 0;
+	for (auto& charactorData : Application::Instance().GetSaveData().GetCharactorDataVec())
+	{
+		for (int i = idx; i < _charactors.size(); i++)
+		{
+			if (_charactors[i]->GetTeam() != Team::player)continue;
+
+			_charactors[i]->InitStatus(charactorData.status);
+			idx = i+1;
+			break;
+		}
+	}
+
+	_mapCtrl->AllCharactorRouteSearch();
+}

@@ -22,4 +22,8 @@ struct CharactorChipInf
 	CharactorType type;
 	Team team;
 	bool active;
+
+	uint8_t weaponId;	// •Ší
+
+	uint8_t stuffing[3];	// 4ƒoƒCƒg‹æØ‚è‚É‚·‚é‚½‚ß‚Ì‹l‚ß•¨
 };

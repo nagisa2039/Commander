@@ -13,19 +13,15 @@ namespace
 	constexpr unsigned int WINDOW_SIZE_H = 250;
 }
 
-int WeaponWindow::_windowH = -1;
-
 WeaponWindow::WeaponWindow(const uint8_t weaponId, std::deque<std::shared_ptr<UI>>* uiDeque):UI(uiDeque)
 {
-	if (_windowH == -1)
-	{
-		_windowH = MakeScreen(WINDOW_SIZE_W, WINDOW_SIZE_H, true);
-	}
+	_windowH = MakeScreen(WINDOW_SIZE_W, WINDOW_SIZE_H, true);
 	SetWeaponId(weaponId);
 }
 
 WeaponWindow::~WeaponWindow()
 {
+	DeleteGraph(_windowH);
 }
 
 Size WeaponWindow::GetSize() const

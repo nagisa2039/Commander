@@ -24,5 +24,7 @@ public:
 	~CharactorList();
 
 	void Draw()override;
+
+	void OnActive()override;
 };
 

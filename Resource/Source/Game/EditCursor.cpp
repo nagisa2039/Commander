@@ -1,12 +1,13 @@
-#include "EditCursor.h"
-#include "../Utility/Input.h"
-#include "MapCtrl.h"
+#include <DxLib.h>
+#include <algorithm>
 #include "../Utility/DxLibUtility.h"
+#include "../Utility/Input.h"
+#include "EditCursor.h"
+#include "MapCtrl.h"
 #include "Camera.h"
 #include "Application.h"
 #include "FileSystem.h"
-#include <DxLib.h>
-#include <algorithm>
+#include "UI/UIList/WeaponList.h"
 
 using namespace std;
 
@@ -15,6 +16,7 @@ EditCursor::EditCursor(MapCtrl& mapCtrl, Camera& camera): MapCursor(mapCtrl, cam
 	_mapPos = Vector2Int(0, 0);
 	_pos = Vector2(0, 0);
 	_mapChip = Map_Chip::forest;
+	_charactorChipInf = {};
 	_charactorChipInf.type = static_cast<CharactorType>(0);
 	_charactorChipInf.level = 5;
 	_charactorChipInf.team = Team::player;
@@ -64,6 +66,7 @@ void EditCursor::MapEidtUpdate(const Input& input)
 		_uniqueUpdater = &EditCursor::CharactorEditUpdate;
 		_uniqueDrawer = &EditCursor::CharactorEditDraw;
 	}
+	CursorUpdate(input);
 }
 
 void EditCursor::CharactorEditUpdate(const Input& input)
@@ -132,20 +135,43 @@ void EditCursor::CharactorEditUpdate(const Input& input)
 
 	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
 	{
-		auto charChipInf = _charactorChipInf;
-		charChipInf.groupNum += _charactorChipInf.team == Team::enemy ? 100 : 0;
-		_mapCtrl.SetCharactorChip(charChipInf);
+		_uiDeque.push_front(make_unique<WeaponList>(Vector2Int(200, 100), _charactorChipInf.weaponId, &_uiDeque,
+			[this]() 
+			{
+				auto charChipInf = _charactorChipInf;
+				charChipInf.groupNum += _charactorChipInf.team == Team::enemy ? 100 : 0;
+				_mapCtrl.SetCharactorChip(charChipInf); 
+			}));
+		_uniqueUpdater = &EditCursor::WeaponSelectUpdate;
+		_uniqueDrawer = &EditCursor::WeapponSelectDraw;
 	}
 	if (input.GetButtonDown(KEY_INPUT_M))
 	{
 		_charactorChipInf.active = !_charactorChipInf.active;
+	}
+	CursorUpdate(input);
+}
+
+void EditCursor::WeaponSelectUpdate(const Input& input)
+{
+	if (_uiDeque.size() > 0)
+	{
+		(*_uiDeque.begin())->Update(input);
+	}
+	if (_uiDeque.size() <= 0)
+	{
+		_uniqueUpdater = &EditCursor::CharactorEditUpdate;
+		_uniqueDrawer = &EditCursor::CharactorEditDraw;
 	}
 }
 
 void EditCursor::Update(const Input& input)
 {
 	(this->*_uniqueUpdater)(input);
+}
 
+void EditCursor::CursorUpdate(const Input& input)
+{
 	CursorMove(input);
 
 	_animCnt += 5;
@@ -221,6 +247,12 @@ void EditCursor::CharactorEditDraw()
 	DrawFormatString(516, drawY, 0xffffff, moveActive.c_str());
 	drawY += 16;
 	DrawFormatString(516, drawY, 0xffffff, "GroupNum %d    + : I  - : U", _charactorChipInf.groupNum + (_charactorChipInf.team == Team::enemy ?100 : 0));
+}
+
+void EditCursor::WeapponSelectDraw()
+{
+	CharactorEditDraw();
+	(*_uiDeque.begin())->Draw();
 }
 
 void EditCursor::Draw()

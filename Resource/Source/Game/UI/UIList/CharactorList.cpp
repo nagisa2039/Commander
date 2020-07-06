@@ -5,13 +5,17 @@
 #include "../StatusWindow/ItemWindow.h"
 #include "Input.h"
 #include "WeaponList.h"
+#include "Application.h"
+
 
 using namespace std;
 
 void CharactorList::Decision()
 {
 	auto rect = GetRect();
-	_uiDeque->push_front(make_shared<WeaponList>(Vector2Int(rect.Left(), rect.Top()), GetListIdx(), _uiDeque));
+
+	auto& charactorData = Application::Instance().GetSaveData().GetCharactorData(GetListIdx());
+	_uiDeque->push_front(make_shared<WeaponList>(Vector2Int(rect.Left(), rect.Top()), charactorData.status.weaponId, _uiDeque, []() {}));
 }
 
 void CharactorList::Back()
@@ -66,4 +70,10 @@ void CharactorList::Draw()
 	drawY += (weaponWindowSizeH + space);
 	auto itemWindowSizeH = _itemWindow->GetSize().h;
 	_itemWindow->Draw(	Vector2Int(listRect.Right() + weaponRectSize.w / 2 + space, drawY + itemWindowSizeH/2));
+}
+
+void CharactorList::OnActive()
+{
+	_weaponWindow->SetWeaponId(GetWeaponId());
+	_itemWindow->SetHoge();
 }

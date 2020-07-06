@@ -18,8 +18,6 @@ Archer::Archer(const uint8_t level, const Vector2Int& mapPos, const Team team, c
 {
 	CharactorDataInit(CharactorType::archer, level);
 	_battleC = make_shared<ArcherBC>(*this, _animator->GetImageH(), _camera);
-
-	_startStatus.weaponId = 4;
 }
 
 Archer::~Archer()

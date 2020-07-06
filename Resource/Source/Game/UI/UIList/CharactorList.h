@@ -14,6 +14,7 @@ private:
 	std::unique_ptr<WeaponWindow> _weaponWindow;
 
 	void Decision()override;
+	void Back()override;
 	void ChengeItem()override;
 
 	uint8_t GetWeaponId();

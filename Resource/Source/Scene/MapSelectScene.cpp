@@ -12,9 +12,6 @@
 #include "Fade.h"
 #include "SoundLoader.h"
 
-
-#include "UI/UIList/CharactorList.h"
-
 using namespace std;
 
 MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller)
@@ -59,10 +56,6 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller)
 	_charactorIdx = 0;
 
 	_debug = true;
-
-	//------------------
-	_charactroList = make_shared<CharactorList>(Vector2Int(200,100), charactorDataVec, nullptr);
-	//------------------
 }
 
 MapSelectScene::~MapSelectScene()
@@ -164,8 +157,6 @@ void MapSelectScene::CursorMove(const Input& input)
 			}
 		}
 	}
-
-	_charactroList->Update(input);
 }
 
 void MapSelectScene::Draw()
@@ -199,8 +190,6 @@ void MapSelectScene::Draw()
 	{
 		(*rItr)->Draw();
 	}
-
-	_charactroList->Draw();
 
 	_fade->Draw();
 }

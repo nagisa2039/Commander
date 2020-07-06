@@ -19,6 +19,7 @@
 #include "Effect/FlyText.h"
 #include "TurnChangeAnim.h"
 #include "MapSelectScene.h"
+#include "ShopScene.h"
 
 using namespace std;
 
@@ -71,7 +72,7 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctr
 		}
 	}
 
-	_preparationUI = make_shared<PreparationUI>(&_preparationDeque, *_camera, *_mapCtrl);
+	_preparationUI = make_shared<PreparationUI>(&_preparationDeque, *_camera, *_mapCtrl, *this);
 	_preparationDeque.emplace_back(_preparationUI);
 
 	_preparationUI->Open(true);
@@ -568,6 +569,7 @@ void PlayScene::Draw(void)
 	//DrawPSTBuffer();
 }
 
-void PlayScene::DrawMovableMass()
+void PlayScene::PushShopScene()
 {
+	_controller.PushScene(make_shared<ShopScene>(_controller));
 }

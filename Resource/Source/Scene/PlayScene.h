@@ -100,5 +100,5 @@ public:
 	void Update(const Input& input) override final;
 	void Draw(void) override final;
 
-	virtual void DrawMovableMass();
+	void PushShopScene();
 };

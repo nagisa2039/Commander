@@ -35,14 +35,20 @@ void UIList::DrawToListWindow()
 
 void UIList::CursorMove(const Input& input)
 {
-	if (input.GetButtonDown(KEY_INPUT_X))
+	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
 	{
 		Decision();
 		return;
 	}
 
+	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
+	{
+		Back();
+		return;
+	}
+
 	bool move = false;
-	if (input.GetButton(0, "up"))
+	if (input.GetButton(0, "up") || input.GetButtonDown(1, "up"))
 	{
 		move = true;
 		if (_inputCnt >= _inputItv)
@@ -54,7 +60,7 @@ void UIList::CursorMove(const Input& input)
 			ChengeItem();
 		}
 	}
-	if (input.GetButton(0, "down"))
+	if (input.GetButton(0, "down") || input.GetButtonDown(1, "down"))
 	{
 		move = true;
 		if (_inputCnt >= _inputItv)
@@ -106,7 +112,16 @@ UIListItem* UIList::GetListItem()
 	return _listItems[_itemIdx].get();
 }
 
+unsigned int UIList::GetListIdx()
+{
+	return _itemIdx;
+}
+
 void UIList::Decision()
+{
+}
+
+void UIList::Back()
 {
 }
 
@@ -194,8 +209,8 @@ void UIList::UpdateViewport()
 
 void UIList::Update(const Input& input)
 {
-	CursorMove(input);
 	_selectPen->Update(input);
+	CursorMove(input);
 }
 
 void UIList::Draw()

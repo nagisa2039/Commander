@@ -9,10 +9,6 @@ class Camera;
 class MapSelectCharactor;
 class Fade;
 
-//DEBUG-------------
-class UI;
-//------------------
-
 class MapSelectScene :
     public Scene
 {
@@ -20,9 +16,6 @@ private:
 	std::vector<Vector2Int> _contentPosVec;
 	std::unique_ptr<Camera> _camera;
 	std::vector<std::unique_ptr<MapSelectCharactor>> _mapSelectCharactors;
-
-	std::shared_ptr<UI>_charactroList;
-	
 
 	unsigned int _selectIdx;
 

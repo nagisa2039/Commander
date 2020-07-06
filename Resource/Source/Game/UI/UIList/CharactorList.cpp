@@ -3,9 +3,20 @@
 #include "SaveData.h"
 #include "../StatusWindow/WeaponWindow.h"
 #include "../StatusWindow/ItemWindow.h"
+#include "Input.h"
+#include "WeaponList.h"
+
+using namespace std;
 
 void CharactorList::Decision()
 {
+	auto rect = GetRect();
+	_uiDeque->push_front(make_shared<WeaponList>(Vector2Int(rect.Left(), rect.Top()), GetListIdx(), _uiDeque));
+}
+
+void CharactorList::Back()
+{
+	_uiDeque->pop_front();
 }
 
 void CharactorList::ChengeItem()
@@ -24,6 +35,8 @@ uint8_t CharactorList::GetWeaponId()
 CharactorList::CharactorList(const Vector2Int& leftup, const std::vector<CharactorData>& charactorDatas, std::deque<std::shared_ptr<UI>>* uiDeque)
 	:UIList(6, uiDeque), _charactorDatas(charactorDatas)
 {
+	assert(_uiDeque);
+
 	for (const auto& charactorData : _charactorDatas)
 	{
 		AddListItem(std::make_shared<CharactorListItem>(charactorData, nullptr));

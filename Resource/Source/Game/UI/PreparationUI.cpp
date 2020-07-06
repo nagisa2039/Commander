@@ -10,6 +10,7 @@
 #include "WarSituation.h"
 #include "CheckWindow.h"
 #include "DxLib.h"
+#include "../Scene/PlayScene.h"
 
 using namespace std;
 
@@ -93,8 +94,8 @@ void PreparationUI::OpenAnimUpdate(const Input& input)
 	}
 }
 
-PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& camera, MapCtrl& mapCtrl)
-	:UI(uiDeque), _mapCtrl(mapCtrl), _camera(camera)
+PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& camera, MapCtrl& mapCtrl, PlayScene& playScene)
+	:UI(uiDeque), _mapCtrl(mapCtrl), _camera(camera), _playScene(playScene)
 {
 	assert(_uiDeque != nullptr);
 	_updater = &PreparationUI::CloseUpdate;
@@ -104,6 +105,7 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 	_itemInfTable[static_cast<size_t>(Item::start)].name		= "戦闘開始";
 	_itemInfTable[static_cast<size_t>(Item::placement)].name	= "マップ・配置";
 	_itemInfTable[static_cast<size_t>(Item::warsituation)].name = "戦況確認";
+	_itemInfTable[static_cast<size_t>(Item::shop)].name			= "購入";
 	_itemInfTable[static_cast<size_t>(Item::back)].name			= "退却";
 
 	_itemInfTable[static_cast<size_t>(Item::start)].func = [&]()
@@ -117,6 +119,10 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 	_itemInfTable[static_cast<size_t>(Item::warsituation)].func = [&]()
 	{
 		_uiDeque->emplace_front(make_shared<WarSituation>(_uiDeque, _mapCtrl));
+	};
+	_itemInfTable[static_cast<size_t>(Item::shop)].func = [&]()
+	{
+		_playScene.PushShopScene();
 	};
 	_itemInfTable[static_cast<size_t>(Item::back)].func = [&]()
 	{

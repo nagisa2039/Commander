@@ -47,6 +47,17 @@ bool SaveData::CreateSaveData()
 	return true;
 }
 
+bool SaveData::SaveCharactorData(const CharactorData& charactorData, const unsigned int charactorDataIdx)
+{
+	if (charactorDataIdx < 0 || charactorDataIdx >= _charactorDataVec.size())
+	{
+		return false;
+	}
+	_charactorDataVec[charactorDataIdx] = charactorData;
+
+	return true;
+}
+
 bool SaveData::Save(const std::vector<std::shared_ptr<Charactor>>& charactorVec, const int mapNum)
 {
 	CreateSaveCharactorData(charactorVec);

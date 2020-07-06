@@ -38,8 +38,10 @@ protected:
 
 	void ListItemInit(const Vector2Int& leftup);
 	UIListItem* GetListItem();
+	unsigned int GetListIdx();
 
 	virtual void Decision();
+	virtual void Back();
 	virtual void ChengeItem();
 
 	void AddListItem(std::shared_ptr<UIListItem> item);

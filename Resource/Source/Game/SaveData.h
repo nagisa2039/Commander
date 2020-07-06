@@ -28,6 +28,7 @@ public:
 	SaveData();
 	~SaveData();
 
+	bool SaveCharactorData(const CharactorData& charactorData, const unsigned int charactorDataIdx);
 	bool Save(const std::vector<std::shared_ptr<Charactor>>& charactorVec, const int mapNum);
 	bool Load();
 

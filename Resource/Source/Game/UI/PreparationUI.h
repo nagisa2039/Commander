@@ -8,6 +8,7 @@
 class BattlePreparationCursor;
 class MapCtrl;
 class Camera;
+class PlayScene;
 
 class PreparationUI :
 	public UI
@@ -18,6 +19,7 @@ private:
 		start,	//　戦闘開始
 		placement,	// 配置換え
 		warsituation,	// 戦況確認
+		shop,		// 店
 		back,
 		max
 	};
@@ -30,6 +32,8 @@ private:
 	};
 
 	Item _selectItem;
+
+	PlayScene& _playScene;
 	Camera& _camera;
 	MapCtrl& _mapCtrl;
 
@@ -51,7 +55,7 @@ private:
 	void OpenAnimUpdate(const Input& input);
 
 public:
-	PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& camera, MapCtrl& mapCtrl);
+	PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& camera, MapCtrl& mapCtrl, PlayScene& playScene);
 	~PreparationUI();
 
 	void Update(const Input& input)override;

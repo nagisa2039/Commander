@@ -64,7 +64,7 @@ void WeaponWindow::DrawToWindow()
 
 	int spaceX = 5;
 	Size atributeIconSize(40, 40);
-	weaponData.DrawWeaponIcon(Rect(Vector2Int(weaponNameRect.Left() + atributeIconSize.w / 2 + spaceX, weaponNameRect.center.y), atributeIconSize));
+	weaponData.GetTypeData().DrawWeaponIcon(Rect(Vector2Int(weaponNameRect.Left() + atributeIconSize.w / 2 + spaceX, weaponNameRect.center.y), atributeIconSize));
 
 	DrawStringToHandle(Vector2Int(weaponNameRect.center.x + (atributeIconSize.w + spaceX) / 2, weaponNameRect.center.y), Anker::center,
 		0xffffff, choplin30, weaponData.name.c_str());

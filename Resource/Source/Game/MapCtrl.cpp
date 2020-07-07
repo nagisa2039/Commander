@@ -401,7 +401,8 @@ void MapCtrl::RouteSearch(Charactor& charactor)
 	CreateMapVec(mapVec2, charactor.GetTeam());
 
 	return _astar->RouteSearch(charactor.GetMapPos(), charactor.GetStatus().move, charactor.GetAttackRange(), 
-		mapVec2, charactor.GetResutlPosListVec2(), charactor.GetTeam(), Application::Instance().GetDataBase().GetWeaponData(charactor.GetStatus().weaponId).heal);
+		mapVec2, charactor.GetResutlPosListVec2(), charactor.GetTeam(), 
+		Application::Instance().GetDataBase().GetWeaponTypeData(charactor.GetStatus().weaponId).heal);
 }
 
 bool MapCtrl::MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, std::list<Astar::ResultPos>& resutlPosList, const Team team, const std::list<Astar::ResultPos>& excludeList)

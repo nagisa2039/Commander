@@ -142,9 +142,9 @@ void BattlePrediction::Draw()
 
 			auto dataBase = Application::Instance().GetDataBase();
 			unsigned int selfColor		= GetAttackColor(Application::Instance().GetDataBase().
-				GetAttributeRate(selfBattleStatus.weaponData.attribute, targetBattleStatus.weaponData.attribute));
+				GetAttributeRate(selfBattleStatus.weaponTypeData.attribute, targetBattleStatus.weaponTypeData.attribute));
 			unsigned int targetColor	= GetAttackColor(Application::Instance().GetDataBase().
-				GetAttributeRate(targetBattleStatus.weaponData.attribute, selfBattleStatus.weaponData.attribute));
+				GetAttributeRate(targetBattleStatus.weaponTypeData.attribute, selfBattleStatus.weaponTypeData.attribute));
 
 			DrawContent("ˆÐ—Í", selfBattleStatus.GetDamage(targetBattleStatus), 
 				targetBattleStatus.GetDamage(selfBattleStatus), selfColor, targetColor);

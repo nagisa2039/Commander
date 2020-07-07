@@ -33,7 +33,7 @@ void WeaponListItem::Draw(const Vector2Int& offset)
 	int drawX = drawRect.Left() + offsetX;
 
 	int sizeH = rect.size.h * 0.8f;
-	weaponData.DrawWeaponIcon(Rect(Vector2Int(drawX + sizeH /2, drawRect.center.y), Size(sizeH, sizeH)));
+	weaponData.GetTypeData().DrawWeaponIcon(Rect(Vector2Int(drawX + sizeH /2, drawRect.center.y), Size(sizeH, sizeH)));
 	drawX += (sizeH + offsetX);
 
 	DrawStringToHandle(Vector2Int(drawX, drawRect.center.y), Anker::leftcenter, GetIsSelect() ? 0xff0000 : 0xffffff, choplin30, weaponData.name.c_str());

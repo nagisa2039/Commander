@@ -36,16 +36,28 @@ DataBase::DataBase()
 			// キャラクターID
 			// 職業名
 			charactorData.name = outputVec[1];
+
+			// 武器種ID
+			charactorData.weaponType = atoi(outputVec[2].c_str());
+
 			// 初期ステータス
-			charactorData.initialStatus = Status(1, atoi(outputVec[2].c_str()), atoi(outputVec[3].c_str()), atoi(outputVec[4].c_str()),
-				atoi(outputVec[5].c_str()), atoi(outputVec[6].c_str()), atoi(outputVec[7].c_str()), atoi(outputVec[8].c_str()), atoi(outputVec[9].c_str()), atoi(outputVec[10].c_str()));
+			int initSbeginIdx = 3;
+			charactorData.initialStatus = 
+				Status(1, atoi(outputVec[initSbeginIdx].c_str()), atoi(outputVec[initSbeginIdx+1].c_str()), atoi(outputVec[initSbeginIdx+2].c_str()),
+					atoi(outputVec[initSbeginIdx+3].c_str()), atoi(outputVec[initSbeginIdx+4].c_str()), atoi(outputVec[initSbeginIdx+5].c_str()), 
+					atoi(outputVec[initSbeginIdx+6].c_str()), atoi(outputVec[initSbeginIdx+7].c_str()), atoi(outputVec[initSbeginIdx+8].c_str()));
+		
 			// ステータス成長率
-			charactorData.statusGrowRate = Status(1, atoi(outputVec[11].c_str()), atoi(outputVec[12].c_str()), atoi(outputVec[13].c_str()),
-				atoi(outputVec[14].c_str()), atoi(outputVec[15].c_str()), atoi(outputVec[16].c_str()), atoi(outputVec[17].c_str()), atoi(outputVec[18].c_str()), 0);
+			int growSbeginIdx = 12;
+			charactorData.statusGrowRate =
+				Status(1, atoi(outputVec[growSbeginIdx].c_str()), atoi(outputVec[growSbeginIdx + 1].c_str()), atoi(outputVec[growSbeginIdx + 2].c_str()),
+					atoi(outputVec[growSbeginIdx + 3].c_str()), atoi(outputVec[growSbeginIdx + 4].c_str()), atoi(outputVec[growSbeginIdx + 5].c_str()), 
+					atoi(outputVec[growSbeginIdx + 6].c_str()), atoi(outputVec[growSbeginIdx + 7].c_str()), 0);
+
 			// キャラクター画像パス
-			charactorData.ImagePath = outputVec[19];
+			charactorData.ImagePath = outputVec[20];
 			// 職業アイコンパス
-			charactorData.iconImagePath = outputVec[20];
+			charactorData.iconImagePath = outputVec[21];
 
 			_charactorDataTable[idx++] = charactorData;
 		}
@@ -109,18 +121,18 @@ DataBase::DataBase()
 
 	// 属性テーブルの読み込み
 	{
-		_attributeDataTable.reserve(10);
+		_attributeDataTable.reserve(4);
 		ifstream ifs("Resource/DataBase/Attribute.csv");
 		string line;
 		vector<string> outputVec;
-		outputVec.reserve(10);
+		outputVec.reserve(4);
 		// 最初の行はスキップ
 		getline(ifs, line);
 		while (getline(ifs, line))
 		{
 			split(line, ',', outputVec);
 			if (outputVec[0] == "")break;
-			_attributeDataTable[outputVec[0]] = AttributeData(outputVec[0], atoi(outputVec[1].c_str()));
+			_attributeDataTable.emplace_back(outputVec[1], atoi(outputVec[2].c_str()));
 		}
 	}
 
@@ -128,23 +140,23 @@ DataBase::DataBase()
 	{
 		ifstream ifs("Resource/DataBase/AttributeRate.csv");
 		string line;
-		vector<string> targetNameVec;
-		targetNameVec.reserve(5);
 		vector<string> outputVec;
 		outputVec.reserve(5);
 
 		// 最初の行は相手の属性名が書いてあるので保存しておく
 		getline(ifs, line);
-		split(line, ',', targetNameVec);
-		targetNameVec.erase(targetNameVec.begin());
+		int y = 0;
+		_attributeRateTable.resize(_attributeDataTable.size());
 		while (getline(ifs, line))
 		{
+			_attributeRateTable[y].resize(_attributeDataTable.size());
 			split(line, ',', outputVec);
 			if (outputVec[0] == "")break;
-			for (size_t idx = 0; idx < outputVec.size()-1; idx++)
+			for (size_t x = 0; x < outputVec.size()-1; x++)
 			{
-				_attributeRateTable[outputVec[0]][targetNameVec[idx]] = static_cast<float>(atof(outputVec[idx + 1].c_str()));
+				_attributeRateTable[y][x] = static_cast<float>(atof(outputVec[x + 1].c_str()));
 			}
+			y++;
 		}
 	}
 
@@ -164,20 +176,42 @@ DataBase::DataBase()
 		}
 	}
 
-	// weaponDataTableの読み込み
+	// weaponTypeDataTableの読み込み
 	{
-		ifstream ifs("Resource/DataBase/weapon.csv");
+		ifstream ifs("Resource/DataBase/weaponType.csv");
 		string line;
 		vector<string> outputVec;
-		outputVec.reserve(12);
+		outputVec.reserve(6);
 		// 最初の行はスキップ
 		getline(ifs, line);
 		while (getline(ifs, line))
 		{
 			split(line, ',', outputVec);
 			if (outputVec[0] == "")break;
-			_weaponDataTable.emplace_back(WeaponData(outputVec[1], atoi(outputVec[2].c_str()), atoi(outputVec[3].c_str()), atoi(outputVec[4].c_str()), atoi(outputVec[5].c_str()), 
-				Range(atoi(outputVec[6].c_str()), atoi(outputVec[7].c_str())), outputVec[8] != "", outputVec[9] != "", outputVec[10], atoi(outputVec[11].c_str()), outputVec[12]) );
+			WeaponTypeData wt = { outputVec[1], outputVec[2] != "",
+				outputVec[3] != "", atoi(outputVec[4].c_str()), outputVec[5] };
+			_weaponTypeDataTable.emplace_back(wt);
+		}
+	}
+
+	// weaponDataTableの読み込み
+	{
+		ifstream ifs("Resource/DataBase/weapon.csv");
+		string line;
+		vector<string> outputVec;
+		outputVec.reserve(10);
+		// 最初の行はスキップ
+		getline(ifs, line);
+		while (getline(ifs, line))
+		{
+			split(line, ',', outputVec);
+			if (outputVec[0] == "")break;
+			atoi(outputVec[8].c_str());
+			WeaponData wd = {
+				atoi(outputVec[1].c_str()), outputVec[2], 
+				atoi(outputVec[3].c_str()),	atoi(outputVec[4].c_str()), atoi(outputVec[5].c_str()), atoi(outputVec[6].c_str()),
+				Range(atoi(outputVec[7].c_str()), atoi(outputVec[8].c_str())), atoi(outputVec[9].c_str())};
+			_weaponDataTable.emplace_back(wd);
 		}
 	}
 }
@@ -186,9 +220,9 @@ DataBase::~DataBase()
 {
 }
 
-float DataBase::GetAttributeRate(const std::string& atributeName, const std::string& targetAtributeName) const
+float DataBase::GetAttributeRate(const uint8_t selfAttributeId, const uint8_t targetAttributeId) const
 {
-	return _attributeRateTable.at(atributeName).at(targetAtributeName);
+	return _attributeRateTable[selfAttributeId][targetAttributeId];
 }
 
 int DataBase::GetCharactorImageHandle(const CharactorType charactorType, const Team team) const
@@ -230,9 +264,9 @@ const DataBase::MapChipData& DataBase::GetMapChipData(const Map_Chip mapChip) co
 //	return _expDataTable.at(level);
 //}
 
-const DataBase::AttributeData& DataBase::GetAttributeData(const std::string& atributeName) const
+const DataBase::AttributeData& DataBase::GetAttributeData(const uint8_t attibuteId) const
 {
-	return _attributeDataTable.at(atributeName);
+	return _attributeDataTable[attibuteId];
 }
 
 const std::vector<DataBase::MapData>& DataBase::GetMapDataTable() const
@@ -245,9 +279,14 @@ const DataBase::MapData& DataBase::GetMapData(const unsigned int mapDataId) cons
 	return _mapDataTable.at(mapDataId);
 }
 
+const WeaponTypeData& DataBase::GetWeaponTypeData(const unsigned int weaponId) const
+{
+	return _weaponTypeDataTable[_weaponDataTable[weaponId].typeId];
+}
+
 const WeaponData& DataBase::GetWeaponData(const unsigned int weaponId) const
 {
-	return _weaponDataTable.at(weaponId);
+	return _weaponDataTable[weaponId];
 }
 
 const std::vector<WeaponData>& DataBase::GetWeaponDataTable() const

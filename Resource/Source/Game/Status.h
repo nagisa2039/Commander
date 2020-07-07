@@ -35,12 +35,13 @@ struct BattleStatus
 {
 	const Status& status;
 	const WeaponData& weaponData;
+	const WeaponTypeData& weaponTypeData;
 
 	int defenseCorrection;		// ç”õ—Í•â³
 	int avoidanceCorrection;	// ‰ñ”ğ—Í•â³
 
 	BattleStatus(const Status& st, const WeaponData& wd, const int dc, const int ac)
-		: status(st), weaponData(wd), defenseCorrection(dc), avoidanceCorrection(ac) {};
+		: status(st), weaponData(wd), weaponTypeData(wd.GetTypeData()), defenseCorrection(dc), avoidanceCorrection(ac) {};
 
 	int GetPower()const;
 	int GetDamage(const BattleStatus& target)const;	// ƒ_ƒ[ƒW

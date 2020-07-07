@@ -46,13 +46,17 @@ uint8_t WeaponList::GetWeaponId()
 	return (*listItem).GetWeaponId();
 }
 
-WeaponList::WeaponList(const Vector2Int& leftup, uint8_t& weaponId, std::deque<std::shared_ptr<UI>>* uiDeque, std::function<void()> func)
+WeaponList::WeaponList(const Vector2Int& leftup, uint8_t& weaponId, const uint8_t typeFilter, std::deque<std::shared_ptr<UI>>* uiDeque, std::function<void()> func)
 	:_weaponId(weaponId), _func(func), UIList(9, uiDeque)
 {
 	auto& weaponDataVec = Application::Instance().GetDataBase().GetWeaponDataTable();
 	for(int weaponId = 0; weaponId < weaponDataVec.size(); weaponId++)
 	{
-		AddListItem(std::make_shared<WeaponListItem>(weaponId, nullptr));
+		// typeID分シフトしてbitfieldを作成しfilterと&演算を行う
+		if (1 << weaponDataVec[weaponId].typeId & typeFilter)
+		{
+			AddListItem(std::make_shared<WeaponListItem>(weaponId, nullptr));
+		}
 	}
 
 	ListItemInit(leftup);

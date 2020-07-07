@@ -19,7 +19,7 @@ private:
 	uint8_t GetWeaponId();
 
 public:
-	WeaponList(const Vector2Int& leftup, uint8_t& weaponId, std::deque<std::shared_ptr<UI>>* uiDeque, std::function<void()> func);
+	WeaponList(const Vector2Int& leftup, uint8_t& weaponId, const uint8_t typeFilter, std::deque<std::shared_ptr<UI>>* uiDeque, std::function<void()> func);
 	~WeaponList();
 
 	void Draw()override;

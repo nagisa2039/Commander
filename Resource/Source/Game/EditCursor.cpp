@@ -135,7 +135,8 @@ void EditCursor::CharactorEditUpdate(const Input& input)
 
 	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
 	{
-		_uiDeque.push_front(make_unique<WeaponList>(Vector2Int(200, 100), _charactorChipInf.weaponId, &_uiDeque,
+		uint8_t type = 1 << Application::Instance().GetDataBase().GetCharactorData(_charactorChipInf.type).weaponType;
+		_uiDeque.push_front(make_unique<WeaponList>(Vector2Int(200, 100), _charactorChipInf.weaponId, type, &_uiDeque,
 			[this]() 
 			{
 				auto charChipInf = _charactorChipInf;

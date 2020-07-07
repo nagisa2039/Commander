@@ -6,7 +6,7 @@
 #include "Input.h"
 #include "WeaponList.h"
 #include "Application.h"
-
+#include "DataBase.h"
 
 using namespace std;
 
@@ -15,7 +15,9 @@ void CharactorList::Decision()
 	auto rect = GetRect();
 
 	auto& charactorData = Application::Instance().GetSaveData().GetCharactorData(GetListIdx());
-	_uiDeque->push_front(make_shared<WeaponList>(Vector2Int(rect.Left(), rect.Top()), charactorData.status.weaponId, _uiDeque, []() {}));
+
+	auto weaponType = 1 << Application::Instance().GetDataBase().GetCharactorData(charactorData.charType).weaponType;
+	_uiDeque->push_front(make_shared<WeaponList>(Vector2Int(rect.Left(), rect.Top()), charactorData.status.weaponId, weaponType, _uiDeque, []() {}));
 }
 
 void CharactorList::Back()

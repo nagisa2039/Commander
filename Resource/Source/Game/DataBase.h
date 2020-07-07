@@ -7,7 +7,6 @@
 #include "CharactorType.h"
 #include "MapChip.h"
 #include <vector>
-#include <unordered_map>
 #include "WeaponData.h"
 
 class DataBase
@@ -42,12 +41,11 @@ private:
 	struct CharactorData
 	{
 		std::string name;
+		uint8_t weaponType;
 		Status initialStatus;
 		Status statusGrowRate;
 		std::string ImagePath;
 		std::string iconImagePath;
-
-		CharactorData() {};
 	};
 
 	//struct ExpData
@@ -81,9 +79,10 @@ private:
 
 	//std::vector<ExpData> _expDataTable;
 
-	std::unordered_map<std::string, AttributeData> _attributeDataTable;
-	std::unordered_map<std::string, std::unordered_map<std::string, float>> _attributeRateTable;
+	std::vector<AttributeData> _attributeDataTable;
+	std::vector<std::vector<float>> _attributeRateTable;
 
+	std::vector<WeaponTypeData> _weaponTypeDataTable;
 	std::vector<WeaponData> _weaponDataTable;
 
 	std::vector<MapData> _mapDataTable;
@@ -93,7 +92,7 @@ public:
 	~DataBase();
 
 	// 属性ごとの威力倍率を取得する		GetAttributeRate(攻撃する側,	攻撃される側)
-	float GetAttributeRate(const std::string& atributeName, const std::string& targetAtributeName)const;
+	float GetAttributeRate(const uint8_t selfAttributeId, const uint8_t targetAttributeId)const;
 
 	// キャラクターの画像を取得する
 	int GetCharactorImageHandle(const CharactorType charactorType, const Team team)const;
@@ -111,15 +110,18 @@ public:
 	//const ExpData& GetExpData(const uint8_t level)const;
 
 	// 属性データを取得する
-	const AttributeData& GetAttributeData(const std::string& atributeName)const;
+	const AttributeData& GetAttributeData(const uint8_t attlebuteId)const;
 
 	// マップデータを取得する
 	const std::vector<MapData>& GetMapDataTable()const;
 	const MapData& GetMapData(const unsigned int mapDataId)const;
 
+	// WeaponTypeDataを取得する
+	const WeaponTypeData& GetWeaponTypeData(const unsigned int weaponId)const;
+
 	// WeaponDataを取得する
 	const WeaponData& GetWeaponData(const unsigned int weaponId)const;
-
+	// weaponDataの配列取得
 	const std::vector<WeaponData>& GetWeaponDataTable()const;
 };
 

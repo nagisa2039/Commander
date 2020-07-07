@@ -82,7 +82,7 @@ void Charactor::NormalDraw()
 	float sizeRate = 0.3f;
 	auto iconRect= Rect(_camera.GetCameraOffset() + _pos.ToVector2Int() + chipSize * Vector2(sizeRate / 2.0f, sizeRate / 2.0f), 
 		(chipSize * sizeRate).ToSize());
-	Application::Instance().GetDataBase().GetWeaponData(_startStatus.weaponId).DrawWeaponIcon(iconRect);
+	Application::Instance().GetDataBase().GetWeaponData(_startStatus.weaponId).GetTypeData().DrawWeaponIcon(iconRect);
 
 	// HPBer‚Ì•`‰æ
 	Size hpberSize = (chipSize * Vector2(0.8f, 0.1f)).ToSize();

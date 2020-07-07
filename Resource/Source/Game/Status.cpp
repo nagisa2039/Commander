@@ -7,14 +7,14 @@ using namespace std;
 
 int BattleStatus::GetPower() const
 {
-	return (weaponData.magicAttack ? status.magic_power : status.power) + weaponData.power;
+	return (weaponTypeData.magicAttack ? status.magic_power : status.power) + weaponData.power;
 }
 
 int BattleStatus::GetDamage(const BattleStatus& target)const
 {
 	const auto& dataBase = Application::Instance().GetDataBase();
-	auto rate = dataBase.GetAttributeRate(weaponData.attribute, dataBase.GetWeaponData(target.status.weaponId).attribute);
-	return max( static_cast<int>((GetPower() - (weaponData.magicAttack ? target.status.magic_defense : target.status.defense))  * rate) - target.defenseCorrection, 0);
+	auto rate = dataBase.GetAttributeRate(weaponTypeData.attribute, dataBase.GetWeaponTypeData(target.status.weaponId).attribute);
+	return max( static_cast<int>((GetPower() - (weaponTypeData.magicAttack ? target.status.magic_defense : target.status.defense))  * rate) - target.defenseCorrection, 0);
 }
 
 int BattleStatus::GetRecover()
@@ -59,12 +59,12 @@ int BattleStatus::GetAvoidance() const
 
 bool BattleStatus::CheckHeal() const
 {
-	return weaponData.heal;
+	return weaponTypeData.heal;
 }
 
 bool BattleStatus::CheckMagicAttack() const
 {
-	return weaponData.magicAttack;
+	return weaponTypeData.magicAttack;
 }
 
 bool BattleStatus::CheckPursuit(const BattleStatus& target) const

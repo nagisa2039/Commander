@@ -48,24 +48,28 @@ void UIList::CursorMove(const Input& input)
 	}
 
 	bool move = false;
-	if (input.GetButton(0, "up") || input.GetButtonDown(1, "up"))
+	int moveCnt = -1;
+	if (input.GetButton(0, "up") || input.GetButtonDown(1, "up")
+		&& _itemIdx + moveCnt > 0)
 	{
 		move = true;
 		if (_inputCnt >= _inputItv)
 		{
-			SetItemIdx(-1);
+			SetItemIdx(moveCnt);
 			_inputItv = max(_inputItv/2, INPUT_ITV_MIN);
 			_inputCnt = 0;
 
 			ChengeItem();
 		}
 	}
-	if (input.GetButton(0, "down") || input.GetButtonDown(1, "down"))
+	moveCnt = 1;
+	if (input.GetButton(0, "down") || input.GetButtonDown(1, "down")
+		&& _itemIdx + moveCnt < _listItems.size())
 	{
 		move = true;
 		if (_inputCnt >= _inputItv)
 		{
-			SetItemIdx(+1);
+			SetItemIdx(moveCnt);
 			_inputItv = max(_inputItv / 2, INPUT_ITV_MIN);
 			_inputCnt = 0;
 

@@ -1,7 +1,7 @@
-E‹ÆID,E‹Æ–¼,HP,—Í,–‚—Í,ç”õ,–‚–h,‘f‘‚³,‹Zp,K‰^,ˆÚ“®—Í,HP,—Í,–‚—Í,ç”õ,–‚–h,‘f‘‚³,‹Zp,K‰^,ƒLƒƒƒ‰ƒNƒ^[‰æ‘œƒpƒX,E‹ÆƒAƒCƒRƒ“ƒpƒX
-0,Swordman,20,10,10,5,5,5,5,5,5,60,40,40,40,20,40,40,40,Resource/Image/Charactor/swordman,Resource/Image/Icon/swordIcon.png
-1,Soldier,20,10,10,5,5,5,5,5,5,60,40,40,40,20,40,40,40,Resource/Image/Charactor/soldier,Resource/Image/Icon/spearIcon.png
-2,Warrior,20,10,10,5,5,5,5,5,5,60,40,40,40,20,40,40,40,Resource/Image/Charactor/warrior,Resource/Image/Icon/axIcon.png
-3,Mage,20,10,10,5,5,5,5,5,5,60,40,40,40,20,40,40,40,Resource/Image/Charactor/mage,Resource/Image/Icon/mageIcon.png
-4,Archer,20,10,10,5,5,5,5,5,5,60,40,40,40,20,40,40,40,Resource/Image/Charactor/archer,Resource/Image/Icon/archerIcon.png
-5,Priest,20,10,10,5,5,5,5,5,5,60,40,40,40,20,40,40,40,Resource/Image/Charactor/priest,Resource/Image/Icon/priestIcon.png
+E‹ÆID,E‹Æ–¼,•‹RíID,HP,—Í,–‚—Í,ç”õ,–‚–h,‘f‘‚³,‹Zp,K‰^,ˆÚ“®—Í,HP,—Í,–‚—Í,ç”õ,–‚–h,‘f‘‚³,‹Zp,K‰^,ƒLƒƒƒ‰ƒNƒ^[‰æ‘œƒpƒX,E‹ÆƒAƒCƒRƒ“ƒpƒX
+0,Swordman,0,20,10,10,5,5,5,5,5,5,60,40,40,40,20,40,40,40,Resource/Image/Charactor/swordman,Resource/Image/Icon/swordIcon.png
+1,Soldier,1,20,10,10,5,5,5,5,5,5,60,40,40,40,20,40,40,40,Resource/Image/Charactor/soldier,Resource/Image/Icon/spearIcon.png
+2,Warrior,2,20,10,10,5,5,5,5,5,5,60,40,40,40,20,40,40,40,Resource/Image/Charactor/warrior,Resource/Image/Icon/axIcon.png
+3,Mage,3,20,10,10,5,5,5,5,5,5,60,40,40,40,20,40,40,40,Resource/Image/Charactor/mage,Resource/Image/Icon/mageIcon.png
+4,Archer,4,20,10,10,5,5,5,5,5,5,60,40,40,40,20,40,40,40,Resource/Image/Charactor/archer,Resource/Image/Icon/archerIcon.png
+5,Priest,5,20,10,10,5,5,5,5,5,5,60,40,40,40,20,40,40,40,Resource/Image/Charactor/priest,Resource/Image/Icon/priestIcon.png

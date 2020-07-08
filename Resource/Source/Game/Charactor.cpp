@@ -181,21 +181,21 @@ void Charactor::DrawMovableMass(const uint8_t alpha) const
 	int graphH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/Battle/movableMass.png");
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
-
-	for (int y = 0; y < _resultPosListVec2.size(); y++)
+	for (auto& resultPosListVec : _resultPosListVec2)
 	{
-		for (int x = 0; x < _resultPosListVec2[y].size(); x++)
+		for (auto& resultPosList : resultPosListVec)
 		{
-			if (_resultPosListVec2[y][x].size() <= 0)continue;
+			if (resultPosList.size() <= 0)continue;
 
-			Vector2Int mapPos(x,y);
+			Vector2Int mapPos = resultPosList.begin()->mapPos;
 			Rect box(offset + (mapPos * chipSize.ToVector2Int() + chipSize * 0.5) + -1, chipSize);
 
-			box.DrawRectGraph(Vector2Int(static_cast<int>(!CheckMoveMapPos(mapPos)) * 32,0), Size(32, 32), graphH);
+			box.DrawRectGraph(Vector2Int(static_cast<int>(!CheckMoveMapPos(mapPos)) * 32, 0), Size(32, 32), graphH);
 
 			Vector2Int leftup = offset + mapPos * chipSize.ToVector2Int();
 
 			DrawFormatString(leftup.x, leftup.y, 0x000000, "%d,%d", mapPos.x, mapPos.y);
+			//DrawFormatString(leftup.x, leftup.y+16, 0x000000, "Cost : %d", resultPosList.begin()->moveCnt);
 		}
 	}
 

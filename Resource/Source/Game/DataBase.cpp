@@ -279,7 +279,12 @@ const DataBase::MapData& DataBase::GetMapData(const unsigned int mapDataId) cons
 	return _mapDataTable.at(mapDataId);
 }
 
-const WeaponTypeData& DataBase::GetWeaponTypeData(const unsigned int weaponId) const
+const WeaponTypeData& DataBase::GetWeaponTypeData(const uint8_t type) const
+{
+	return _weaponTypeDataTable[type];
+}
+
+const WeaponTypeData& DataBase::GetWeaponTypeDataFromWeaponId(const uint8_t weaponId) const
 {
 	return _weaponTypeDataTable[_weaponDataTable[weaponId].typeId];
 }

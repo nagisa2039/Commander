@@ -24,6 +24,7 @@ private:
 	bool CreateSaveCharactorData(const std::vector<std::shared_ptr<Charactor>>& charactorVec);
 	bool CreateSaveData();
 	void SaveCharactorData(const int& mapNum);
+	void LoadStartPlayerCharactorData();
 
 public:
 	SaveData();

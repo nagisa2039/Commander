@@ -117,7 +117,8 @@ public:
 	const MapData& GetMapData(const unsigned int mapDataId)const;
 
 	// WeaponTypeData‚ðŽæ“¾‚·‚é
-	const WeaponTypeData& GetWeaponTypeData(const unsigned int weaponId)const;
+	const WeaponTypeData& GetWeaponTypeData(const uint8_t type)const;
+	const WeaponTypeData& GetWeaponTypeDataFromWeaponId(const uint8_t weaponId)const;
 
 	// WeaponData‚ðŽæ“¾‚·‚é
 	const WeaponData& GetWeaponData(const unsigned int weaponId)const;

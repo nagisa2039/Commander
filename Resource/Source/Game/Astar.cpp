@@ -202,11 +202,12 @@ bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const 
 			}
 
 			// 移動済みには移動しない
-			if (_searchPosVec2Move[checkPos.y][checkPos.x].state != Astar::SearchState::non)
+			if (CheckMoved(checkPos, startMapPos, nowPos))
 			{
 				continue;
 			}
 
+			// 親のイテレータを取得
 			auto parentIt = tmpList.begin();
 			for (; parentIt != tmpList.end(); parentIt++)
 			{
@@ -257,6 +258,7 @@ void Astar::AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, con
 	seachIdxList.clear();
 
 	seachIdxList.emplace_front(startMapPos);
+	_searchPosVec2Move[startMapPos.y][startMapPos.x] = SearchPos(startMapPos, startMapPos, Astar::SearchState::search, 0);
 
 	for (auto it = seachIdxList.begin(); it != seachIdxList.end();)
 	{
@@ -273,11 +275,10 @@ void Astar::AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, con
 			}
 
 			// 移動済みには移動しない
-			if (_searchPosVec2Move[checkPos.y][checkPos.x].state != Astar::SearchState::non)
+			if (CheckMoved(checkPos, startMapPos, nowPos))
 			{
 				continue;
 			}
-
 
 			// 移動不可
 			if (mapData[checkPos.y][checkPos.x].moveCost < 0 || (mapData[checkPos.y][checkPos.x].team != team && mapData[checkPos.y][checkPos.x].team != Team::max))
@@ -286,6 +287,11 @@ void Astar::AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, con
 			}
 
 			auto moveCnt = _searchPosVec2Move[nowPos.y][nowPos.x].moveCost + mapData[checkPos.y][checkPos.x].moveCost;
+
+			if (team == Team::player && (checkPos == Vector2Int(3, 14) || checkPos == Vector2Int(4, 15)))
+			{
+				bool a = true;
+			}
 
 			// 移動可能な距離か
 			if (moveCnt <= (searchEnemy ? 100 : move))
@@ -306,6 +312,19 @@ void Astar::AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, con
 
 		it = seachIdxList.erase(it);
 	}
+}
+
+bool Astar::CheckMoved(const Vector2Int& checkPos, const Vector2Int& startMapPos, const Vector2Int& nowPos)
+{
+	for (auto parentPos = _searchPosVec2Move[nowPos.y][nowPos.x].parentPos; parentPos != startMapPos;
+		parentPos = _searchPosVec2Move[parentPos.y][parentPos.x].parentPos)
+	{
+		if (checkPos == parentPos)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 Astar::SearchPos::SearchPos()

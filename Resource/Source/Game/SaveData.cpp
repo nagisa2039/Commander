@@ -1,6 +1,8 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
+#include <direct.h>
+#include <sys/stat.h>
 #include "SaveData.h"
 #include "Charactor.h"
 #include "DataBase.h"
@@ -11,9 +13,15 @@ using namespace std;
 SaveData::SaveData()
 {
 	_mapNum = 0;
-	Load();
 
-	_startCharactorData.resize(6); auto split = [](const string& input, const char delimiter, vector<string>& output)
+	LoadStartPlayerCharactorData();
+
+	Load();
+}
+
+void SaveData::LoadStartPlayerCharactorData()
+{
+	auto split = [](const string& input, const char delimiter, vector<string>& output)
 	{
 		istringstream stream(input);
 		string field;
@@ -26,6 +34,7 @@ SaveData::SaveData()
 
 	// キャラクターデータテーブルの読み込み
 	{
+		_startCharactorData.reserve(6); 
 		ifstream ifs("Resource/DataBase/StartPlayerCharactor.csv");
 		string line;
 		vector<string> outputVec;
@@ -38,7 +47,7 @@ SaveData::SaveData()
 		{
 			split(line, ',', outputVec);
 			auto charactorType = static_cast<CharactorType>(atoi(outputVec[1].c_str()));
-			auto status = dataBase.GetLevelInitStatus( atoi(outputVec[2].c_str()) , charactorType);
+			auto status = dataBase.GetLevelInitStatus(atoi(outputVec[2].c_str()), charactorType);
 			status.weaponId = atoi(outputVec[3].c_str());
 			_startCharactorData.emplace_back(charactorType, status);
 		}
@@ -114,7 +123,19 @@ bool SaveData::Load()
 	_charactorDataVec.clear();
 	FILE* fp = nullptr;
 
-	fopen_s(&fp, "Resource/SaveData/savedata", "rb");
+	// ディレクトリの存在確認
+	const char* dir = "Resource/SaveData";
+	struct stat statBuf;
+	if (stat(dir, &statBuf) != 0)
+	{
+		// 無かったので作成
+		assert(_mkdir(dir) == 0);
+	}
+
+	const char* fileName = "savedata";
+	stringstream ss;
+	ss << dir << fileName;
+	fopen_s(&fp, ss.str().c_str(), "rb");
 
 	if (fp == NULL)
 	{

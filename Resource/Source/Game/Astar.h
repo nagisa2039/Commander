@@ -64,6 +64,9 @@ private:
 	void AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, 
 		const std::vector<std::vector<MapData>>& mapData, std::vector<std::vector<std::list<Astar::ResultPos>>>& resutlPosListVec2, const Team team, const bool addThrough, const bool heal, const bool searchEnemy = false);
 
+	// _serchPosVec2MoveとcheckPosを基に移動済みのマスか確認する
+	bool CheckMoved(const Vector2Int& checkPos, const Vector2Int& startMapPos, const Vector2Int& nowPos);
+
 public:
 	Astar();
 	~Astar();

@@ -1,8 +1,10 @@
+#include <algorithm>
+#include <fstream>
+#include <sstream>
 #include "SaveData.h"
 #include "Charactor.h"
 #include "DataBase.h"
 #include "Application.h"
-#include <algorithm>
 
 using namespace std;
 
@@ -10,6 +12,37 @@ SaveData::SaveData()
 {
 	_mapNum = 0;
 	Load();
+
+	_startCharactorData.resize(6); auto split = [](const string& input, const char delimiter, vector<string>& output)
+	{
+		istringstream stream(input);
+		string field;
+		output.clear();
+		while (getline(stream, field, delimiter))
+		{
+			output.emplace_back(field);
+		}
+	};
+
+	// キャラクターデータテーブルの読み込み
+	{
+		ifstream ifs("Resource/DataBase/StartPlayerCharactor.csv");
+		string line;
+		vector<string> outputVec;
+		outputVec.reserve(4);
+		// 最初の行はスキップ
+		getline(ifs, line);
+		int idx = 0;
+		auto& dataBase = Application::Instance().GetDataBase();
+		while (getline(ifs, line))
+		{
+			split(line, ',', outputVec);
+			auto charactorType = static_cast<CharactorType>(atoi(outputVec[1].c_str()));
+			auto status = dataBase.GetLevelInitStatus( atoi(outputVec[2].c_str()) , charactorType);
+			status.weaponId = atoi(outputVec[3].c_str());
+			_startCharactorData.emplace_back(charactorType, status);
+		}
+	}
 }
 
 SaveData::~SaveData()
@@ -32,18 +65,9 @@ bool SaveData::CreateSaveCharactorData(const std::vector<std::shared_ptr<Charact
 
 bool SaveData::CreateSaveData()
 {
-	// 仮のセーブデータ	もしかしたらcsvにするかも
-	auto dataBase = Application::Instance().GetDataBase();
 	_charactorDataVec.clear();
-	_charactorDataVec.emplace_back(CharactorData(CharactorType::archer,		dataBase.GetLevelInitStatus(5, CharactorType::archer)));
-	_charactorDataVec.emplace_back(CharactorData(CharactorType::priest,		dataBase.GetLevelInitStatus(5, CharactorType::priest)));
-	_charactorDataVec.emplace_back(CharactorData(CharactorType::swordman,	dataBase.GetLevelInitStatus(5, CharactorType::swordman)));
-	_charactorDataVec.emplace_back(CharactorData(CharactorType::warrior,	dataBase.GetLevelInitStatus(5, CharactorType::warrior)));
-	_charactorDataVec.emplace_back(CharactorData(CharactorType::soldier,	dataBase.GetLevelInitStatus(5, CharactorType::soldier)));
-	_charactorDataVec.emplace_back(CharactorData(CharactorType::mage,		dataBase.GetLevelInitStatus(5, CharactorType::mage)));
-
+	_charactorDataVec = _startCharactorData;
 	SaveCharactorData(0);
-
 	return true;
 }
 

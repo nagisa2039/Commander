@@ -17,6 +17,7 @@ struct CharactorData
 class SaveData
 {
 private:
+	std::vector<CharactorData> _startCharactorData;
 	std::vector<CharactorData> _charactorDataVec;
 	int _mapNum;
 

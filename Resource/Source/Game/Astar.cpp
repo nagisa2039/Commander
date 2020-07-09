@@ -6,13 +6,15 @@ using namespace std;
 
 void Astar::ResetSerchPosVec2D(const std::vector<std::vector<MapData>>& mapData)
 {
-	_searchPosVec2Move.resize(mapData.size());
-	_searchPosVec2Attack.resize(mapData.size());
-	for (int i = 0; i < mapData.size(); i++)
+	int mapDataSizeY = mapData.size();
+	int mapDataSizeX = mapData[0].size();
+	_searchPosVec2Move.resize(mapDataSizeY);
+	_searchPosVec2Attack.resize(mapDataSizeY);
+	for (int i = 0; i < mapDataSizeY; ++i)
 	{
-		_searchPosVec2Move[i].resize(mapData[0].size());
-		_searchPosVec2Attack[i].resize(mapData[0].size());
-		for (int j = 0; j < mapData[0].size(); j++)
+		_searchPosVec2Move[i].resize(mapDataSizeX);
+		_searchPosVec2Attack[i].resize(mapDataSizeX);
+		for (int j = 0; j < mapDataSizeX; ++j)
 		{
 			_searchPosVec2Move[i][j].state = Astar::SearchState::non;
 			_searchPosVec2Attack[i][j].state = Astar::SearchState::non;
@@ -187,12 +189,13 @@ bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const 
 
 	seachIdxList.emplace_front(startMapPos);
 
+	int dirMax = static_cast<int>(Dir::max);
 	for (auto it = seachIdxList.begin(); it != seachIdxList.end();)
 	{
 		Vector2Int nowPos = *it;
 
 		// 開始地点から四方向のサーチを行う
-		for (int i = 0; i < static_cast<int>(Dir::max); i++)
+		for (int i = 0; i < dirMax; ++i)
 		{
 			// 範囲外チェック
 			auto checkPos = nowPos + _dirTable[i];
@@ -258,24 +261,26 @@ void Astar::AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, con
 	seachIdxList.clear();
 
 	seachIdxList.emplace_front(startMapPos);
+	for (auto& searchPosVec : _searchPosVec2Move)
+	{
+		for (auto& searchPos : searchPosVec)
+		{
+			searchPos.moveCost = 999;
+		}
+	}
 	_searchPosVec2Move[startMapPos.y][startMapPos.x] = SearchPos(startMapPos, startMapPos, Astar::SearchState::search, 0);
 
+	int dirMax = static_cast<int>(Dir::max);
 	for (auto it = seachIdxList.begin(); it != seachIdxList.end();)
 	{
 		Vector2Int nowPos = *it;
 
 		// 開始地点から四方向のサーチを行う
-		for (int i = 0; i < static_cast<int>(Dir::max); i++)
+		for (int i = 0; i < dirMax; ++i)
 		{
 			// 範囲外チェック
 			auto checkPos = nowPos + _dirTable[i];
 			if (!CheckSearchPosVec2Range(checkPos))
-			{
-				continue;
-			}
-
-			// 移動済みには移動しない
-			if (CheckMoved(checkPos, startMapPos, nowPos))
 			{
 				continue;
 			}
@@ -287,10 +292,9 @@ void Astar::AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, con
 			}
 
 			auto moveCnt = _searchPosVec2Move[nowPos.y][nowPos.x].moveCost + mapData[checkPos.y][checkPos.x].moveCost;
-
-			if (team == Team::player && (checkPos == Vector2Int(3, 14) || checkPos == Vector2Int(4, 15)))
+			if (moveCnt >= _searchPosVec2Move[checkPos.y][checkPos.x].moveCost)
 			{
-				bool a = true;
+				continue;
 			}
 
 			// 移動可能な距離か

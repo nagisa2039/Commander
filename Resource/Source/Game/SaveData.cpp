@@ -14,6 +14,9 @@ SaveData::SaveData()
 {
 	_mapNum = 0;
 
+	_waitCharactorDataVec.clear();
+	_charactorDataVec.clear();
+
 	LoadStartPlayerCharactorData();
 
 	Load();
@@ -60,6 +63,7 @@ SaveData::~SaveData()
 
 bool SaveData::CreateSaveCharactorData(const std::vector<std::shared_ptr<Charactor>>& charactorVec)
 {
+	_charactorDataVec = _waitCharactorDataVec;
 	for (const auto& charactor : charactorVec)
 	{
 		if (charactor->GetTeam() != Team::player)continue;
@@ -75,18 +79,8 @@ bool SaveData::CreateSaveData()
 {
 	_charactorDataVec.clear();
 	_charactorDataVec = _charactorDataForCreateSaveData;
+	_waitCharactorDataVec = _charactorDataVec;
 	SaveCharactorData(0);
-	return true;
-}
-
-bool SaveData::SaveCharactorData(const CharactorData& charactorData, const unsigned int charactorDataIdx)
-{
-	if (charactorDataIdx < 0 || charactorDataIdx >= _charactorDataVec.size())
-	{
-		return false;
-	}
-	_charactorDataVec[charactorDataIdx] = charactorData;
-
 	return true;
 }
 
@@ -149,6 +143,7 @@ bool SaveData::Load()
 
 	// キャラクターデータの読み込み
 	fread_s(_charactorDataVec.data(), sizeof(CharactorData) * cnt, sizeof(CharactorData), cnt, fp);
+	_waitCharactorDataVec = _charactorDataVec;
 
 	// クリアマップの読み込み
 	fread_s(&_mapNum, sizeof(_mapNum), sizeof(_mapNum), 1, fp);
@@ -168,9 +163,9 @@ const std::vector<CharactorData>& SaveData::GetCharactorDataVec()const
 	return _charactorDataVec;
 }
 
-void SaveData::SetCharactorDataVec(const std::vector<CharactorData>& charactorDataVec)
+void SaveData::SetWaitCharactorDataVec(const std::vector<CharactorData>& charactorDataVec)
 {
-	_charactorDataVec = charactorDataVec;
+	_waitCharactorDataVec = charactorDataVec;
 }
 
 CharactorData& SaveData::GetCharactorData(const unsigned int charactorData)

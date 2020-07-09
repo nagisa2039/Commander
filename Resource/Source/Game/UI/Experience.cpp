@@ -189,11 +189,18 @@ int Experience::GetNextDrawIdx()
 
 void Experience::End()
 {
-	auto status = _battleChar.GetCharacotr().GetStartStatus();
-	if (status.exp + _addExp >= _maxExp)
+	auto& charactor = _battleChar.GetCharacotr();
+	auto startStatus = charactor.GetStartStatus();
+	auto currentStatus = charactor.GetStatus();
+
+	if (currentStatus.exp + _addExp >= _maxExp)
 	{
-		status.AddStatus(_addStatus);
-		_battleChar.GetCharacotr().SetStatus(status);
+		startStatus.AddStatus(_addStatus);
+		charactor.InitStatus(startStatus);
+		auto nextStatus = charactor.GetStatus();
+		nextStatus.exp = (currentStatus.exp + _addExp) % _maxExp;
+		nextStatus.health = currentStatus.health + _addStatus.health;
+		charactor.SetStatus(nextStatus);
 	}
 	_battleChar.GetCharacotr().AddExp(_addExp, _maxExp);
 	_delete = true;

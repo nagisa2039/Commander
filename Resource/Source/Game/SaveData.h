@@ -18,7 +18,7 @@ class SaveData
 {
 private:
 	std::vector<CharactorData> _charactorDataForCreateSaveData;	// セーブデータ生成用
-	std::vector<CharactorData> _charactorDataVec;	// キャラクターデータ(すべてのキャラクターを管理)
+	std::vector<CharactorData> _charactorDataVec;		// キャラクターデータ(すべてのキャラクターを管理)
 	std::vector<CharactorData> _waitCharactorDataVec;	// 待機中のキャラクターデータ(出撃したキャラクターはいない)
 
 	int _mapNum;
@@ -32,7 +32,6 @@ public:
 	SaveData();
 	~SaveData();
 
-	bool SaveCharactorData(const CharactorData& charactorData, const unsigned int charactorDataIdx);
 	bool Save(const std::vector<std::shared_ptr<Charactor>>& charactorVec, const int mapNum);
 	bool Load();
 
@@ -40,7 +39,7 @@ public:
 	int GetMapNum()const;
 
 	const std::vector<CharactorData>& GetCharactorDataVec()const;
-	void SetCharactorDataVec(const std::vector<CharactorData>& charactorDataVec);
+	void SetWaitCharactorDataVec(const std::vector<CharactorData>& charactorDataVec);
 
 	CharactorData& GetCharactorData(const unsigned int charactorData);
 };

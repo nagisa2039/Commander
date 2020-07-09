@@ -18,7 +18,6 @@ SceneController::~SceneController()
 void SceneController::SceneUpdate(const Input & input)
 {
 	bool quick = input.GetButton(KEY_INPUT_Q);
-	quick = true;
 
 	for (int i = 0; i < (quick ? 3 : 1); i++)
 	{

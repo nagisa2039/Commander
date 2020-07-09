@@ -321,7 +321,7 @@ void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr
 			}
 		}
 	}
-	saveData.SetCharactorDataVec(charactorDataVec);
+	saveData.SetWaitCharactorDataVec(charactorDataVec);
 }
 
 bool MapCtrl::SaveMap()

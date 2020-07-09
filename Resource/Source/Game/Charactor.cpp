@@ -179,6 +179,7 @@ void Charactor::DrawMovableMass(const uint8_t alpha) const
 	auto offset = _camera.GetCameraOffset();
 	auto chipSize = _mapCtrl.GetChipSize();
 	int graphH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/Battle/movableMass.png");
+	bool heal = Application::Instance().GetDataBase().GetWeaponData(_status.weaponId).GetTypeData().heal;
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 	for (auto& resultPosListVec : _resultPosListVec2)
@@ -190,7 +191,16 @@ void Charactor::DrawMovableMass(const uint8_t alpha) const
 			Vector2Int mapPos = resultPosList.begin()->mapPos;
 			Rect box(offset + (mapPos * chipSize.ToVector2Int() + chipSize * 0.5) + -1, chipSize);
 
-			box.DrawRectGraph(Vector2Int(static_cast<int>(!CheckMoveMapPos(mapPos)) * 32, 0), Size(32, 32), graphH);
+			int scrX = 0;
+			if (heal && CheckAttackMapPos(mapPos))
+			{
+				scrX = 64;
+			}
+			else
+			{
+				scrX = CheckMoveMapPos(mapPos) ? 0 : 32;
+			}
+			box.DrawRectGraph(Vector2Int(scrX, 0), Size(32, 32), graphH);
 
 			Vector2Int leftup = offset + mapPos * chipSize.ToVector2Int();
 

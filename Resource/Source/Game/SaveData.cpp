@@ -117,7 +117,7 @@ bool SaveData::Load()
 	FILE* fp = nullptr;
 
 	// ディレクトリの存在確認
-	const char* dir = "Resource/SaveData";
+	const char* dir = "Resource/SaveData/";
 	struct stat statBuf;
 	if (stat(dir, &statBuf) != 0)
 	{

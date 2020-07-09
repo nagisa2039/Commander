@@ -500,7 +500,7 @@ void PlayScene::GameClearDraw(const Camera& camera)
 
 	auto fileSystem = Application::Instance().GetFileSystem();
 	auto animValue = _clearAnimTrack->GetValue();
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(animValue) * 255);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(animValue * 255));
 	DrawRotaGraph(wsize.ToVector2Int() * 0.5f, 1.0f, 0.0f, fileSystem.GetImageHandle("Resource/Image/Battle/light.png"), true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 

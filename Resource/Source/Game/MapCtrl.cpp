@@ -38,15 +38,19 @@ void MapCtrl::DrawToMapChipScreen()
 	SetDrawScreen(_mapChipH);
 	ClsDrawScreen();
 
-	for (int y = 0; y < _mapDataVec2.size(); y++)
+	int y = 0;
+	for (const auto& mapDataVec : _mapDataVec2)
 	{
-		for (int x = 0; x < _mapDataVec2[y].size(); x++)
+		int x = 0;
+		for (const auto& mapData : mapDataVec)
 		{
-			if (_mapDataVec2[y][x].mapChip > Map_Chip::none && _mapDataVec2[y][x].mapChip < Map_Chip::max)
+			if (_mapDataVec2[y][x].mapChip > Map_Chip::none&& _mapDataVec2[y][x].mapChip < Map_Chip::max)
 			{
 				DrawMapChip(Vector2Int(x, y), _mapDataVec2[y][x].mapChip);
 			}
+			x++;
 		}
+		y++;
 	}
 
 	SetDrawScreen(currentScreen);
@@ -287,8 +291,9 @@ bool MapCtrl::DrawCharactorChip(const CharactorChipInf& charactorChipInf, const 
 
 void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 {
-	auto dataBase = Application::Instance().GetDataBase();
-	auto charactorDataVec = Application::Instance().GetSaveData().GetCharactorDataVec();
+	auto& dataBase = Application::Instance().GetDataBase();
+	auto& saveData = Application::Instance().GetSaveData();
+	auto charactorDataVec = saveData.GetCharactorDataVec();
 	auto itr = charactorDataVec.begin();
 
 	for (const auto& mapDataVec : _mapDataVec2)
@@ -305,7 +310,7 @@ void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr
 				auto charactorChip = mapData.charactorChip;
 				_charactorCreateFuncs[static_cast<size_t>(saveData.charType)](mapData.charactorChip,
 					saveData.status, ctrl, effects, camera);
-				itr++;
+				itr = charactorDataVec.erase(itr);
 			}
 			else
 			{
@@ -316,6 +321,7 @@ void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr
 			}
 		}
 	}
+	saveData.SetCharactorDataVec(charactorDataVec);
 }
 
 bool MapCtrl::SaveMap()
@@ -439,11 +445,12 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor, Vector2Int& targetCnt)
 	list<TargetCharactor> targetCharactorList;
 	// ”hˆÈŠO‚Ì“G‚ðŠi”[‚·‚éƒŠƒXƒg
 	list<TargetCharactor> outRangeCharactorList;
-	for (size_t y = 0; y < resultPosListVec2.size(); y++)
+
+	for (const auto& resultPosListVec : resultPosListVec2)
 	{
-		for (size_t x = 0; x < resultPosListVec2[y].size(); x++)
+		for (const auto& resultPosList : resultPosListVec)
 		{
-			for (const auto& resultPos : resultPosListVec2[y][x])
+			for (const auto& resultPos : resultPosList)
 			{
 				// UŒ‚ƒ}ƒX‚É‚È‚é‚Ü‚Åcontinue
 				if (!resultPos.attack)
@@ -556,6 +563,19 @@ void MapCtrl::CreateWarSituation()const
 
 	auto dataBase = Application::Instance().GetDataBase();
 	// ƒ}ƒbƒvƒ`ƒbƒv‚Ì•`‰æ
+	int y = 0;
+	for (const auto& mapDataVec : _mapDataVec2)
+	{
+		int x = 0;
+		for (const auto& mapData : mapDataVec)
+		{
+			DrawBox(x * WAR_SITUATION_CHIP_SIZE, y * WAR_SITUATION_CHIP_SIZE,
+				(x + 1) * WAR_SITUATION_CHIP_SIZE, (y + 1) * WAR_SITUATION_CHIP_SIZE,
+				dataBase.GetMapChipData(mapData.mapChip).simpleColor, true);
+			x++;
+		}
+		y++;
+	}
 	for (int y = 0; y < MAP_CHIP_CNT_H; y++)
 	{
 		for (int x = 0; x < MAP_CHIP_CNT_W; x++)

@@ -34,7 +34,7 @@ void SaveData::LoadStartPlayerCharactorData()
 
 	// キャラクターデータテーブルの読み込み
 	{
-		_startCharactorData.reserve(6); 
+		_charactorDataForCreateSaveData.reserve(6); 
 		ifstream ifs("Resource/DataBase/StartPlayerCharactor.csv");
 		string line;
 		vector<string> outputVec;
@@ -49,7 +49,7 @@ void SaveData::LoadStartPlayerCharactorData()
 			auto charactorType = static_cast<CharactorType>(atoi(outputVec[1].c_str()));
 			auto status = dataBase.GetLevelInitStatus(atoi(outputVec[2].c_str()), charactorType);
 			status.weaponId = atoi(outputVec[3].c_str());
-			_startCharactorData.emplace_back(charactorType, status);
+			_charactorDataForCreateSaveData.emplace_back(charactorType, status);
 		}
 	}
 }
@@ -60,7 +60,6 @@ SaveData::~SaveData()
 
 bool SaveData::CreateSaveCharactorData(const std::vector<std::shared_ptr<Charactor>>& charactorVec)
 {
-	_charactorDataVec.clear();
 	for (const auto& charactor : charactorVec)
 	{
 		if (charactor->GetTeam() != Team::player)continue;
@@ -75,7 +74,7 @@ bool SaveData::CreateSaveCharactorData(const std::vector<std::shared_ptr<Charact
 bool SaveData::CreateSaveData()
 {
 	_charactorDataVec.clear();
-	_charactorDataVec = _startCharactorData;
+	_charactorDataVec = _charactorDataForCreateSaveData;
 	SaveCharactorData(0);
 	return true;
 }
@@ -167,6 +166,11 @@ int SaveData::GetMapNum() const
 const std::vector<CharactorData>& SaveData::GetCharactorDataVec()const
 {
 	return _charactorDataVec;
+}
+
+void SaveData::SetCharactorDataVec(const std::vector<CharactorData>& charactorDataVec)
+{
+	_charactorDataVec = charactorDataVec;
 }
 
 CharactorData& SaveData::GetCharactorData(const unsigned int charactorData)

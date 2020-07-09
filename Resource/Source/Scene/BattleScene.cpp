@@ -145,7 +145,7 @@ bool BattleScene::PursuitAttack(const bool rightAttack)
 	{
 		if (rightAttack && rightBattleStatus.CheckPursuit(leftBattleStatus))
 		{
-			_leftBC.StartAttackAnim();
+			_rightBC.StartAttackAnim();
 			_updater = &BattleScene::RightTurn;
 			_pursuit = true;
 			return true;

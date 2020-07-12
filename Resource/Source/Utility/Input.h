@@ -57,6 +57,7 @@ private:
 	int _mouseState;						// 現在のマウス入力情報
 	int _lastMouseState;					// 1フレーム前のﾏｳｽの状況
 	Vector2Int _mousePos;					// マウスの座標
+	Vector2Int _lastMousePos;				// 1フレーム前のマウス座標
 	int playerCnt;							// プレイヤーの人数
 
 public:
@@ -108,11 +109,18 @@ public:
 
 	// マウスの座標を返す
 	const Vector2Int& GetMousePos()const;
+	// 1フレーム前とのマウス移動量を返す
+	const Vector2Int GetMouseMove()const;
 
 	bool GetButton(const char keycode)const;
 	bool GetButtonDown(const char keycode)const;
 	bool GetButtonUp(const char keycode)const;
 
 	bool GetXInputButtonDown(const int padNum, const int keycode)const;
+
+	// キーボードから何かしらの入力があるか
+	bool GetAnyKeybordInput()const;
+	// マウスから何かしらの入力があるか
+	bool GetAnyMouseInput()const;
 };
 

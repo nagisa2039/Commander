@@ -26,6 +26,7 @@ bool operator!=(const PeripheralInfo & lval, const PeripheralInfo & rval)
 
 Input::Input()
 {
+	_lastMousePos = Vector2Int();
 }
 
 
@@ -42,15 +43,15 @@ void Input::SetPlayerCnt(const int pcount)
 {
 	// 0ならキーボード分の1を入れる
 	playerCnt = pcount <= 0 ? 1 : pcount;
-	playerCnt = 5;
+	playerCnt = 2;
 
 	// キー情報格納用変数をプレイヤー分格納
 	_inputTbl.resize(playerCnt);
 	_currentInputState.resize(playerCnt);
 	_lastInputState.resize(playerCnt);
 	_padState.resize(playerCnt);
-	_currentXInputState.resize(playerCnt-1);
-	_lastXInputState.resize(playerCnt - 1);
+	_currentXInputState.resize(playerCnt);
+	_lastXInputState.resize(playerCnt);
 }
 
 void Input::Update(void)
@@ -62,6 +63,8 @@ void Input::Update(void)
 	// マウスの入力情報更新
 	_lastMouseState = _mouseState;
 	_mouseState = GetMouseInput();
+
+	_lastMousePos = _mousePos;
 	GetMousePoint(&_mousePos.x, &_mousePos.y);
 
 	_lastXInputState = _currentXInputState;
@@ -182,6 +185,11 @@ const Vector2Int& Input::GetMousePos()const
 	return _mousePos;
 }
 
+const Vector2Int Input::GetMouseMove() const
+{
+	return _mousePos - _lastMousePos;
+}
+
 bool Input::GetButton(const char keycode)const
 {
 	return _keystate[keycode];
@@ -200,4 +208,14 @@ bool Input::GetButtonUp(const char keycode)const
 bool Input::GetXInputButtonDown(const int padNum, const int keycode) const
 {
 	return _currentXInputState[padNum-1].Buttons[keycode] && !(_lastXInputState[padNum-1].Buttons[keycode]);
+}
+
+bool Input::GetAnyKeybordInput()const
+{
+	return CheckHitKeyAll(DX_CHECKINPUT_KEY);
+}
+
+bool Input::GetAnyMouseInput()const
+{
+	return CheckHitKeyAll(DX_CHECKINPUT_MOUSE);
 }

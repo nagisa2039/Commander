@@ -1,11 +1,13 @@
+#include <algorithm>
+#include "../System/Application.h"
 #include "MapCursor.h"
+#include "Camera.h"
 #include "MapCtrl.h"
 #include "../Utility/Input.h"
-#include <algorithm>
 
 using namespace std;
 
-void MapCursor::CursorMove(const Input& input)
+void MapCursor::KeybordMove(const Input& input)
 {
 	_moveItv--;
 	auto oldMapPos = _mapPos;
@@ -36,12 +38,12 @@ void MapCursor::CursorMove(const Input& input)
 	move |= Move("left", Vector2Int(-1, 0));
 	move |= Move("right", Vector2Int(1, 0));
 
-	if(move)
+	if (move)
 	{
 		if (_moveItv <= 0)
 		{
 			_moveItv = max(_moveItvCurrentMax / 2, 5);
-			_moveItvCurrentMax = _moveItvCurrentMax /2;
+			_moveItvCurrentMax = _moveItvCurrentMax / 2;
 		}
 	}
 	else
@@ -55,8 +57,55 @@ void MapCursor::CursorMove(const Input& input)
 		_mapPos = oldMapPos;
 		CursorMoveMoment();
 	}
-
 	_pos = (_mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToVector2();
+}
+
+void MapCursor::MouseMove(const Input& input)
+{
+	auto mousePos = input.GetMousePos();
+	auto wsize = Application::Instance().GetWindowSize();
+	
+	_pos = (input.GetMousePos() - _camera.GetCameraOffset()).ToVector2();
+	auto currentMapPos = _pos.ToVector2Int() / _mapCtrl.GetChipSize().ToVector2Int();
+
+	// ”ÍˆÍŠO§Œä
+	auto mapSize = _mapCtrl.GetMapSize();
+	if (currentMapPos.x < 0 || currentMapPos.y < 0 
+	 || currentMapPos.x >= mapSize.w || currentMapPos.y >= mapSize.h)
+	{
+		return;
+	}
+
+	if (currentMapPos != _mapPos)
+	{
+		_mapPos = currentMapPos;
+		CursorMoveMoment();
+	}
+}
+
+void MapCursor::CursorMove(const Input& input)
+{
+	if (input.GetAnyMouseInput())
+	{
+		ChangeMouseInput();
+	}
+	else if (input.GetAnyKeybordInput())
+	{
+		ChangeKeybordInput();
+	}
+	(this->*_cursorMover)(input);
+}
+
+void MapCursor::ChangeKeybordInput()
+{
+	_cursorMover = &MapCursor::KeybordMove;
+	_camera.SetLooseFollow(false);
+}
+
+void MapCursor::ChangeMouseInput()
+{
+	_cursorMover = &MapCursor::MouseMove;
+	_camera.SetLooseFollow(true);
 }
 
 bool MapCursor::PutCheck(const Input& input, const std::string& key)
@@ -89,6 +138,8 @@ MapCursor::MapCursor(MapCtrl& mapCtrl, Camera& camera):_mapCtrl(mapCtrl), _moveI
 
 	_putItv = 0;
 	_putItvCurrentMax = _putItvMax;
+
+	ChangeKeybordInput();
 }
 
 MapCursor::~MapCursor()
@@ -107,7 +158,7 @@ void MapCursor::SetMapPos(const Vector2Int& mapPos)
 
 Vector2 MapCursor::GetCenterPos() const
 {
-	return Vector2(_pos + (_mapCtrl.GetChipSize() * 0.5f).ToVector2());
+	return _cursorMover == &MapCursor::MouseMove ? _pos : _pos + _mapCtrl.GetChipSize().ToVector2() * 0.5f;
 }
 
 void MapCursor::CursorMoveMoment()

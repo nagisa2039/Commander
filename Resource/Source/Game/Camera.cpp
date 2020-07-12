@@ -5,12 +5,48 @@
 
 using namespace std;
 
+void Camera::NormalFollow()
+{
+	_pos = Lerp(_pos, (*_targets.begin())->GetCenterPos(), 0.1f);
+}
+
+void Camera::LooseFollow()
+{
+	auto targetPos = (*_targets.begin())->GetCenterPos();
+	int space = 50;
+
+	int subX = targetPos.x - _pos.x;
+	if (subX != 0)
+	{
+		int absX = abs(subX);
+		int lenX = _rect.size.w / 2 - space;
+		int signX = subX / absX;
+		if (absX > lenX)
+		{
+			_pos.x = targetPos.x - lenX * signX;
+		}
+	}
+	int subY = targetPos.y - _pos.y;
+	if (subY != 0)
+	{
+		int absY = abs(subY);
+		int lenY = _rect.size.h / 2 - space;
+		int signY = subY / absY;
+		if (absY > lenY)
+		{
+			_pos.y = targetPos.y - lenY * signY;
+		}
+	}
+}
+
 Camera::Camera(const Rect& rect) :_rect(rect)
 {
-	_pos = Vector3(0,0,0);
+	_pos = Vector2(0,0);
 
 	// size.w == 0 ‚Í§ŒÀ‚È‚µ
 	_limitRect.size.w = 0;
+
+	_follower = &Camera::NormalFollow;
 }
 
 Camera::~Camera()
@@ -31,17 +67,10 @@ void Camera::Update()
 		}
 	}
 
+	// ƒJƒƒ‰‚ÌêŠ‚ðŒˆ‚ß‚é
 	if (_targets.size() > 0)
 	{
-		// ƒJƒƒ‰‚ÌêŠ‚ðŒˆ‚ß‚é
-		Vector2 pos2D = { 0.0f, 0.0f };
-		/*for (auto& target : _targets)
-		{
-			pos2D += target->GetCenterPos();
-		}
-		Vector3 targetPos = Vector3(pos2D.x, pos2D.y, 0) / _targets.size();*/
-		pos2D = (*_targets.begin())->GetCenterPos();
-		_pos = Lerp(_pos, Vector3(pos2D.x, pos2D.y, 0), 0.1f);
+		(this->*_follower)();
 	}
 
 	_rect.center = Vector2Int(static_cast<int>(_pos.x), static_cast<int>(_pos.y));
@@ -116,6 +145,11 @@ void Camera::SetPos(const Vector3& pos)
 void Camera::SetLimitRect(const Rect& rect)
 {
 	_limitRect = rect;
+}
+
+void Camera::SetLooseFollow(bool lose)
+{
+	_follower = lose ? &Camera::LooseFollow : &Camera::NormalFollow;
 }
 
 const Rect& Camera::GetRect() const

@@ -11,8 +11,13 @@ private:
 	Rect _rect;
 	std::deque<Actor*> _targets;
 
-	Vector3 _pos;
+	Vector2 _pos;
 	Rect _limitRect;
+
+	void NormalFollow();
+	void LooseFollow();
+
+	void(Camera::* _follower)();
 
 public:
 	Camera(const Rect& rect);
@@ -29,6 +34,8 @@ public:
 	Vector2Int GetCameraOffset()const;
 	void SetPos(const Vector3& pos);
 	void SetLimitRect(const Rect& rect);
+
+	void SetLooseFollow(bool lose);
 
 	const Rect& GetRect()const;
 };

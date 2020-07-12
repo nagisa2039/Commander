@@ -7,6 +7,12 @@ class MapCtrl;
 class MapCursor :
 	public Actor
 {
+private:
+	void KeybordMove(const Input& input);
+	void MouseMove(const Input& input);
+
+	void(MapCursor::* _cursorMover)(const Input&);
+
 protected:
 	Vector2Int _mapPos;
 	MapCtrl& _mapCtrl;
@@ -20,6 +26,9 @@ protected:
 	const int _putItvMax;
 
 	void CursorMove(const Input& input);
+
+	void ChangeKeybordInput();
+	void ChangeMouseInput();
 
 	bool PutCheck(const Input& input, const std::string& key);
 

@@ -160,9 +160,9 @@ void Application::KeySetUp()
 	_input->AddCommand(0, "F6", 0, KEY_INPUT_F6);
 
 	// マウスの入力
-	_input->AddCommand(0, "mouseLeft", 5, MOUSE_INPUT_LEFT);
-	_input->AddCommand(0, "mouseRight", 5, MOUSE_INPUT_RIGHT);
-	_input->AddCommand(0, "mouseMiddle", 5, MOUSE_INPUT_MIDDLE);
+	_input->AddCommand(0, "ok", 5, MOUSE_INPUT_LEFT);
+	_input->AddCommand(0, "back", 5, MOUSE_INPUT_RIGHT);
+	_input->AddCommand(0, "status", 5, MOUSE_INPUT_MIDDLE);
 
 	// プレイヤーごとのパッド入力
 	auto wSize = GetWindowSize();

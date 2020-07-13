@@ -298,7 +298,7 @@ void Astar::AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, con
 			}
 
 			// ˆÚ“®‰Â”\‚È‹——£‚©
-			if (moveCnt <= (searchEnemy ? 100 : move))
+			if (moveCnt <= (searchEnemy ? 50 : move))
 			{
 				_searchPosVec2Move[checkPos.y][checkPos.x] = SearchPos(checkPos, nowPos, Astar::SearchState::search, moveCnt);
 				seachIdxList.emplace_back(checkPos);

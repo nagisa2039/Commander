@@ -302,9 +302,12 @@ void Astar::AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, con
 			{
 				_searchPosVec2Move[checkPos.y][checkPos.x] = SearchPos(checkPos, nowPos, Astar::SearchState::search, moveCnt);
 				seachIdxList.emplace_back(checkPos);
-				if (resutlPosListVec2[nowPos.y][nowPos.x].size() > 0)
+				auto& nowResultPosList = resutlPosListVec2[nowPos.y][nowPos.x];
+				if (nowResultPosList.size() > 0)
 				{
-					auto prev = &*resutlPosListVec2[nowPos.y][nowPos.x].begin();
+					auto it = find_if(nowResultPosList.begin(), nowResultPosList.end(), 
+						[moveCnt](const Astar::ResultPos& rp) {return rp.moveCnt < moveCnt; });
+					Astar::ResultPos* prev = (it == nowResultPosList.end() ? nullptr : &*it);
 					resutlPosListVec2[checkPos.y][checkPos.x].emplace_back(ResultPos(false, checkPos, prev, static_cast<Dir>(i), moveCnt));
 				}
 				else

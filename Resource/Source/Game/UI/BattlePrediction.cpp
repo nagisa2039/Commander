@@ -129,18 +129,18 @@ void BattlePrediction::Draw()
 			auto GetAttackColor = [](const float rate)
 			{
 				unsigned int color = 0xffffff;
-				if (rate > 1.01f)
+				if (rate > 1.0f)
 				{
 					color = 0x00ff80;
 				}
-				else if (rate < 0.99f)
+				else if (rate < 1.0f)
 				{
 					color = 0xff0000;
 				}
 				return color;
 			};
 
-			auto dataBase = Application::Instance().GetDataBase();
+			auto& dataBase = Application::Instance().GetDataBase();
 			unsigned int selfColor		= GetAttackColor(Application::Instance().GetDataBase().
 				GetAttributeRate(selfBattleStatus.weaponTypeData.attribute, targetBattleStatus.weaponTypeData.attribute));
 			unsigned int targetColor	= GetAttackColor(Application::Instance().GetDataBase().
@@ -149,7 +149,7 @@ void BattlePrediction::Draw()
 			DrawContent("ˆÐ—Í", selfBattleStatus.GetDamage(targetBattleStatus), 
 				targetBattleStatus.GetDamage(selfBattleStatus), selfColor, targetColor);
 		}
-		auto fileSystem = Application::Instance().GetFileSystem();
+		auto& fileSystem = Application::Instance().GetFileSystem();
 		int tag_playerHandle = fileSystem.GetImageHandle("Resource/Image/UI/tag_player.png");
 		int tag_enemyHandle = fileSystem.GetImageHandle("Resource/Image/UI/tag_enemy.png");
 		Size graphSize;

@@ -128,7 +128,6 @@ protected:
 	// resultPosList‚©‚çMoveDirList‚ğì¬‚·‚é
 	void CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosList);
 
-
 public:
 	Charactor(const uint8_t level, const Vector2Int& mapPos, const Team team, const unsigned int groupNum, MapCtrl& mapCtrl, SceneController& ctrl, 
 		std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
@@ -168,6 +167,7 @@ public:
 	const int GetHurtPoint()const;	// Å‘å‘Ì—Í‚©‚çŒ»İ‚Ì‘Ì—Í‚ğˆø‚¢‚½’l‚ğ•Ô‚·
 	bool GetMoved()const;	// ˆÚ“®Ï‚İ‚©’²‚×‚é
 	CharactorType GetCharactorType()const;
+	bool GetAttackStartPos(Vector2Int& attackPos, const Vector2Int& targetMapPos)const;
 
 	void InitmapPos(const Vector2Int& mapPos);
 	void SetIsSelect(const bool select);

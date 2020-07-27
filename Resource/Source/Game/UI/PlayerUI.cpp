@@ -111,32 +111,20 @@ void PlayerUI::AddBattlePre()
 		return;
 	}
 
-	auto charactor = _mapCtrl.GetMapPosChar(_playerCommander.GetMapPos());
+	auto targetMapPos = _playerCommander.GetMapPos();
+	auto charactor = _mapCtrl.GetMapPosChar(targetMapPos);
 	if (charactor == nullptr)
 	{
 		_battlePre.reset();
 		return;
 	}
 
-	auto resultPosList = self->GetResutlPosList(_playerCommander.GetMapPos());
-	if(resultPosList.size() <= 0)
+	Vector2Int attackStartPos;
+	if (!self->GetAttackStartPos(attackStartPos, targetMapPos))
 	{
 		_battlePre.reset();
 		return;
 	}
-
-	auto itr = resultPosList.begin();
-	for (; itr != resultPosList.end(); itr++)
-	{
-		if (itr->attack)break;
-	}
-	if (itr == resultPosList.end())
-	{
-		_battlePre.reset();
-		return;
-	}
-
-	auto attackStartPos = itr->prev == nullptr ? self->GetMapPos() : itr->prev->mapPos;
 
 	_battlePre = make_shared<BattlePrediction>(*self, *charactor, nullptr, attackStartPos, _mapCtrl.GetMapData(attackStartPos).mapChip);
 }

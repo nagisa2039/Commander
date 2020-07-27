@@ -311,6 +311,37 @@ CharactorType Charactor::GetCharactorType() const
 	return _charactorType;
 }
 
+bool Charactor::GetAttackStartPos(Vector2Int& attackStartPos, const Vector2Int& targetMapPos) const
+{
+	const auto targetChar = _mapCtrl.GetMapPosChar(targetMapPos);
+	if (!targetChar)return false;
+
+	auto& resultPosList = _resultPosListVec2[targetMapPos.y][targetMapPos.x];
+	if (resultPosList.size() <= 0)return false;
+
+	bool set = false;
+	auto targetAttackRange = targetChar->GetAttackRange();
+	auto itr = resultPosList.begin();
+	for (; itr != resultPosList.end(); itr++)
+	{
+		if (!itr->attack)continue;
+
+		set = true;
+		attackStartPos = itr->prev->mapPos;
+
+		auto sub = targetMapPos - itr->prev->mapPos;
+		int attackDistance = abs(sub.x) + abs(sub.y);
+		if (!targetAttackRange.Hit(attackDistance))
+		{
+			attackStartPos = itr->prev->mapPos;
+			return true;
+		}
+
+	}
+	
+	return set;
+}
+
 void Charactor::InitmapPos(const Vector2Int& mapPos)
 {
 	_startMapPos = mapPos;
@@ -594,8 +625,6 @@ std::list<Astar::ResultPos> Charactor::CreateResultPosList(const Vector2Int mapP
 				for (const auto& targetPos : _resultPosListVec2[mapPos.y][mapPos.x])
 				{
 					// ひとつ前のマスが自分か、空きスペースなら
-					if (targetPos.prev == nullptr) continue;
-
 					auto prevCharactor = _mapCtrl.GetMapPosChar(targetPos.prev->mapPos);
 					if (prevCharactor == this || prevCharactor == nullptr)
 					{

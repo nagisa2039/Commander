@@ -2,7 +2,6 @@
 
 enum class Map_Chip
 {
-	floor_meadow,
 	none,
 	forest,
 	river_pond,

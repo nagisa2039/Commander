@@ -66,7 +66,7 @@ void MapCtrl::DrawToMapFloorScreen()
 	{
 		for (int x = 0; x < _mapDataVec2[y].size(); x++)
 		{
-			DrawMapChip(Vector2Int(x, y), Map_Chip::floor_meadow);
+			DrawMapChip(Vector2Int(x, y), Map_Chip::none);
 		}
 	}
 

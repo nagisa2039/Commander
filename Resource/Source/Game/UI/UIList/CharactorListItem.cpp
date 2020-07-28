@@ -35,7 +35,7 @@ void CharactorListItem::Draw(const Vector2Int& offset)
 	// キャラアイコンの描画
 	auto charIconSize = Size(drawRect.size.h * 0.9f, drawRect.size.h * 0.9f);
 	char charIconPath[256];
-	sprintf_s(charIconPath, 256, "%s_player.png", dataBase_charactorData.ImagePath.c_str());
+	sprintf_s(charIconPath, 256, "%s_player.png", dataBase_charactorData.imagePath.c_str());
 
 	Rect(Vector2Int(drawX + charIconSize.w / 2, drawRect.center.y), charIconSize).DrawRectGraph(Vector2Int(32, 0), Size(32,32),
 		Application::Instance().GetFileSystem().GetImageHandle(charIconPath));

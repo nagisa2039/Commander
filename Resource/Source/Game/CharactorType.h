@@ -25,5 +25,5 @@ struct CharactorChipInf
 
 	uint8_t weaponId;	// 武器
 
-	uint8_t stuffing[3];	// 4バイト区切りにするための詰め物
+	uint8_t stuffing[7];	// 8バイト区切りにするための詰め物
 };

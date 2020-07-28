@@ -1,6 +1,6 @@
 #include <Dxlib.h>
 #include <algorithm>
-#include "Input.h"
+#include "../../../Utility/Input.h"
 #include "UIList.h"
 #include "UIListItem.h"
 #include "../SelectPen.h"
@@ -33,7 +33,90 @@ void UIList::DrawToListWindow()
 	SetDrawScreen(currentScreen);
 }
 
-void UIList::CursorMove(const Input& input)
+void UIList::InitInputItv()
+{
+	_inputItv = INPUT_ITV_MAX;
+	_inputCnt = INPUT_ITV_MAX;
+}
+
+void UIList::MouseMove(const Input& input)
+{
+	auto mousePosRect = Rect(input.GetMousePos(), Size(1,1));
+	if (mousePosRect.IsHit(_rect))
+	{
+		auto listMousePos = mousePosRect.center
+			- (_rect.center - _rect.size.ToVector2Int() * 0.5f)
+			+ (_viewportRect.center - _viewportRect.size.ToVector2Int()*0.5f);
+
+		int idx = 0;
+		bool sideOver = false;
+		bool sideClick = false;
+		for (const auto item : _listItems)
+		{
+			// “–‚½‚Á‚Ä‚È‚¢
+			if (!Rect(listMousePos, Size(1, 1)).IsHit(item->GetRect()))
+			{
+				idx++;
+				continue;
+			}
+
+			auto add = idx - _itemIdx;
+
+			// ã‰º‚ÌÛ‚É‚ ‚é
+			if (_drawCnt + add >= _drawItemMax - 1 || _drawCnt + add <= 0)
+			{
+				sideOver = true;
+				if (_inputCnt >= _inputItv)
+				{
+					sideClick = true;
+					_inputItv = max(_inputItv / 2, INPUT_ITV_MIN);
+					_inputCnt = 0;
+					SetItemIdx(idx);
+					break;
+				}
+			}
+			else
+			{
+				SetItemIdx(idx);
+				break;
+			}
+			idx++;
+		}
+
+		if (!sideClick)
+		{
+			if (sideOver)
+			{
+				_inputCnt++;
+			}
+			else
+			{
+				InitInputItv();
+			}
+		}
+
+		if (input.GetButtonDown(0, "mouseLeft"))
+		{
+			Decision();
+			return;
+		}
+	}
+
+	if (input.GetButtonDown(0, "mouseRight"))
+	{
+		Back();
+		return;
+	}
+
+	if (input.GetAnyKeybordInput())
+	{
+		_mover = &UIList::KeybordMove;
+		return;
+	}
+
+}
+
+void UIList::KeybordMove(const Input& input)
 {
 	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
 	{
@@ -55,11 +138,9 @@ void UIList::CursorMove(const Input& input)
 		move = true;
 		if (_inputCnt >= _inputItv)
 		{
-			SetItemIdx(moveCnt);
-			_inputItv = max(_inputItv/2, INPUT_ITV_MIN);
+			SetItemIdx(_itemIdx + moveCnt);
+			_inputItv = max(_inputItv / 2, INPUT_ITV_MIN);
 			_inputCnt = 0;
-
-			ChengeItem();
 		}
 	}
 	moveCnt = 1;
@@ -69,28 +150,30 @@ void UIList::CursorMove(const Input& input)
 		move = true;
 		if (_inputCnt >= _inputItv)
 		{
-			SetItemIdx(moveCnt);
+			SetItemIdx(_itemIdx + moveCnt);
 			_inputItv = max(_inputItv / 2, INPUT_ITV_MIN);
 			_inputCnt = 0;
 
-			ChengeItem();
 		}
+	}
+
+	if (input.GetMouseMove() != Vector2Int(0, 0))
+	{
+		_mover = &UIList::MouseMove;
+		return;
 	}
 
 	if (move)
 	{
 		_inputCnt++;
+		return;
 	}
 	else
 	{
 		InitInputItv();
+		return;
 	}
-}
 
-void UIList::InitInputItv()
-{
-	_inputItv = INPUT_ITV_MAX;
-	_inputCnt = INPUT_ITV_MAX;
 }
 
 void UIList::ListItemInit(const Vector2Int& leftup)
@@ -101,6 +184,10 @@ void UIList::ListItemInit(const Vector2Int& leftup)
 	Size rectSize = Size(itemSize.w + LIST_ITEM_SPACE*2, LIST_ITEM_SPACE + (itemSize.h + LIST_ITEM_SPACE) * _drawItemMax);
 	_rect = Rect(leftup + rectSize.ToVector2Int() * 0.5f, rectSize);
 	_viewportRect = Rect(rectSize.ToVector2Int() * 0.5f, rectSize);
+	for (auto& item : _listItems)
+	{
+		item->SetPos(Vector2Int(_viewportRect.center.x, item->GetRect().center.y));
+	}
 
 	_listWindowH = MakeScreen(rectSize.w, rectSize.h, true);
 	_selectPen = std::make_unique<SelectPen>(nullptr);
@@ -150,20 +237,26 @@ UIList::UIList(const unsigned int drawItemMax, std::deque<std::shared_ptr<UI>>* 
 	_drawItemMax = drawItemMax;
 
 	InitInputItv();
+
+	_mover = &UIList::MouseMove;
 }
 
 UIList::~UIList()
 {
 }
 
-void UIList::SetItemIdx(const int add)
+void UIList::SetItemIdx(const int nextIdx)
 {
-	auto nextIdx = _itemIdx + add;
+	auto add = nextIdx - _itemIdx;
+	if (add == 0)return;
+
 	if(nextIdx >= 0 && nextIdx < _listItems.size())
 	{
 		_listItems[_itemIdx]->SetIsSelect(false);
 		_itemIdx += add;
 		_listItems[_itemIdx]->SetIsSelect(true);
+
+		ChengeItem();
 
 		if (add > 0)
 		{
@@ -214,7 +307,7 @@ void UIList::UpdateViewport()
 void UIList::Update(const Input& input)
 {
 	_selectPen->Update(input);
-	CursorMove(input);
+	(this->*_mover)(input);
 }
 
 void UIList::Draw()

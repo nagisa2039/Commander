@@ -1,11 +1,70 @@
 #include "DataBase.h"
 #include <fstream>
 #include <sstream>
-#include "Application.h"
-#include "FileSystem.h"
-#include "SaveData.h"
+#include <Dxlib.h>
+#include "../System/Application.h"
+#include "../System/FileSystem.h"
 
 using namespace std;
+
+namespace
+{
+	std::string WStringToString(std::wstring inWstr)
+	{
+		// wstring → SJIS
+		int iBufferSize = WideCharToMultiByte(CP_OEMCP, 0, inWstr.c_str()
+			, -1, (char*)NULL, 0, NULL, NULL);
+
+		// バッファの取得
+		CHAR* cpMultiByte = new CHAR[iBufferSize];
+
+		// wstring → SJIS
+		WideCharToMultiByte(CP_OEMCP, 0, inWstr.c_str(), -1, cpMultiByte
+			, iBufferSize, NULL, NULL);
+
+		// stringの生成
+		std::string oRet(cpMultiByte, cpMultiByte + iBufferSize - 1);
+
+		// バッファの破棄
+		delete[] cpMultiByte;
+
+		// 変換結果を返す
+		return(oRet);
+	}
+}
+
+bool DataBase::ReadCSV(const char* path, std::vector<std::vector<std::string>>& out)
+{
+	int fileH = FileRead_open(path);
+	assert(fileH != 0);
+
+	unsigned int lineCnt;
+	FileRead_read(&lineCnt, sizeof(lineCnt), fileH);
+	out.resize(lineCnt);
+
+	for (int lineNum = 0; lineNum < lineCnt; ++lineNum)
+	{
+		unsigned int contentCnt;
+		FileRead_read(&contentCnt, sizeof(contentCnt), fileH);
+		out[lineNum].resize(contentCnt);
+
+		for (int contentNum = 0; contentNum < contentCnt; ++contentNum)
+		{
+			std::wstring content;
+			unsigned int strLen;
+			FileRead_read(&strLen, sizeof(strLen), fileH);
+
+			content.resize(strLen);
+			FileRead_read(&content[0],
+				sizeof(content[0]) * strLen, fileH);
+
+			out[lineNum][contentNum] = WStringToString(content);
+		}
+	}
+	FileRead_close(fileH);
+
+	return true;
+}
 
 DataBase::DataBase()
 {
@@ -22,83 +81,71 @@ DataBase::DataBase()
 
 	// キャラクターデータテーブルの読み込み
 	{
-		ifstream ifs("Resource/DataBase/Charactor.csv");
-		string line;
-		vector<string> outputVec;
-		outputVec.reserve(20);
-		// 最初の行はスキップ
-		getline(ifs, line);
-		int idx = 0;
-		while (getline(ifs, line))
+		vector<vector<string>> data;
+		ReadCSV("Resource/DataBase/Charactor.data", data);
+		int aryNum = 0;
+		for (int idx = 1; idx < data.size(); ++idx)
 		{
-			split(line, ',', outputVec);
 			CharactorData charactorData;
 			// キャラクターID
 			// 職業名
-			charactorData.name = outputVec[1];
+			charactorData.name = data[idx][1];
 
 			// 武器種ID
-			charactorData.weaponType = atoi(outputVec[2].c_str());
+			charactorData.weaponType = atoi(data[idx][2].c_str());
 
 			// 初期ステータス
 			int initSbeginIdx = 3;
 			charactorData.initialStatus = 
-				Status(1, atoi(outputVec[initSbeginIdx].c_str()), atoi(outputVec[initSbeginIdx+1].c_str()), atoi(outputVec[initSbeginIdx+2].c_str()),
-					atoi(outputVec[initSbeginIdx+3].c_str()), atoi(outputVec[initSbeginIdx+4].c_str()), atoi(outputVec[initSbeginIdx+5].c_str()), 
-					atoi(outputVec[initSbeginIdx+6].c_str()), atoi(outputVec[initSbeginIdx+7].c_str()), atoi(outputVec[initSbeginIdx+8].c_str()));
+				Status(1, atoi(data[idx][initSbeginIdx].c_str()), atoi(data[idx][initSbeginIdx+1].c_str()), atoi(data[idx][initSbeginIdx+2].c_str()),
+					atoi(data[idx][initSbeginIdx+3].c_str()), atoi(data[idx][initSbeginIdx+4].c_str()), atoi(data[idx][initSbeginIdx+5].c_str()),
+					atoi(data[idx][initSbeginIdx+6].c_str()), atoi(data[idx][initSbeginIdx+7].c_str()), atoi(data[idx][initSbeginIdx+8].c_str()));
 		
 			// ステータス成長率
 			int growSbeginIdx = 12;
 			charactorData.statusGrowRate =
-				Status(1, atoi(outputVec[growSbeginIdx].c_str()), atoi(outputVec[growSbeginIdx + 1].c_str()), atoi(outputVec[growSbeginIdx + 2].c_str()),
-					atoi(outputVec[growSbeginIdx + 3].c_str()), atoi(outputVec[growSbeginIdx + 4].c_str()), atoi(outputVec[growSbeginIdx + 5].c_str()), 
-					atoi(outputVec[growSbeginIdx + 6].c_str()), atoi(outputVec[growSbeginIdx + 7].c_str()), 0);
+				Status(1, atoi(data[idx][growSbeginIdx].c_str()), atoi(data[idx][growSbeginIdx + 1].c_str()), atoi(data[idx][growSbeginIdx + 2].c_str()),
+					atoi(data[idx][growSbeginIdx + 3].c_str()), atoi(data[idx][growSbeginIdx + 4].c_str()), atoi(data[idx][growSbeginIdx + 5].c_str()),
+					atoi(data[idx][growSbeginIdx + 6].c_str()), atoi(data[idx][growSbeginIdx + 7].c_str()), 0);
 
 			// キャラクター画像パス
-			charactorData.ImagePath = outputVec[20];
+			charactorData.imagePath = data[idx][20];
 			// 職業アイコンパス
-			charactorData.iconImagePath = outputVec[21];
+			charactorData.iconImagePath = data[idx][21];
 
-			_charactorDataTable[idx++] = charactorData;
+			_charactorDataTable[aryNum++] = charactorData;
 		}
 	}
 
 	// マップチップテーブルの読み込み
 	{
-		ifstream ifs("Resource/DataBase/MapChip.csv");
-		string line;
-		vector<string> outputVec;
-		outputVec.reserve(20);
-		// 最初の行はスキップ
-		getline(ifs, line);
-		int idx = 0;
-		while (getline(ifs, line))
+		vector<vector<string>> data;
+		ReadCSV("Resource/DataBase/MapChip.data", data);
+		int aryNum = 0;
+		for (int idx = 1; idx < data.size(); ++idx)
 		{
-			split(line, ',', outputVec);
-			if (outputVec[0] == "")break;
-
 			MapChipData mapChipData;
 			// 名前
-			mapChipData.name = outputVec[1];
+			mapChipData.name = data[idx][1];
 			// パス
-			mapChipData.drawData.path = outputVec[2];
+			mapChipData.drawData.path = data[idx][2];
 			// 画像の左上座標
-			mapChipData.drawData.leftup = Vector2Int(atoi(outputVec[3].c_str()), atoi(outputVec[4].c_str()));
+			mapChipData.drawData.leftup = Vector2Int(atoi(data[idx][3].c_str()), atoi(data[idx][4].c_str()));
 			// 画像のサイズ
-			mapChipData.drawData.size = Size(atoi(outputVec[5].c_str()), atoi(outputVec[6].c_str()));
+			mapChipData.drawData.size = Size(atoi(data[idx][5].c_str()), atoi(data[idx][6].c_str()));
 			// 簡略化色
-			mapChipData.simpleColor = atoi(outputVec[7].c_str());
+			mapChipData.simpleColor = atoi(data[idx][7].c_str());
 			// 移動コスト
-			mapChipData.moveCost = atoi(outputVec[8].c_str());
+			mapChipData.moveCost = atoi(data[idx][8].c_str());
 			// 防御補正値
-			mapChipData.defense = atoi(outputVec[9].c_str());
+			mapChipData.defense = atoi(data[idx][9].c_str());
 			// 回避補正値
-			mapChipData.avoidance = atoi(outputVec[10].c_str());
+			mapChipData.avoidance = atoi(data[idx][10].c_str());
 			// 回復量
-			mapChipData.recovery = atoi(outputVec[11].c_str());
+			mapChipData.recovery = atoi(data[idx][11].c_str());
 
-			_mapChipDataTable[idx] = mapChipData;
-			idx++;
+			_mapChipDataTable[aryNum] = mapChipData;
+			aryNum++;
 		}
 	}
 
@@ -121,96 +168,63 @@ DataBase::DataBase()
 
 	// 属性テーブルの読み込み
 	{
-		_attributeDataTable.reserve(4);
-		ifstream ifs("Resource/DataBase/Attribute.csv");
-		string line;
-		vector<string> outputVec;
-		outputVec.reserve(4);
-		// 最初の行はスキップ
-		getline(ifs, line);
-		while (getline(ifs, line))
+		vector<vector<string>> data;
+		ReadCSV("Resource/DataBase/Attribute.data", data);
+		for (int idx = 1; idx < data.size(); ++idx)
 		{
-			split(line, ',', outputVec);
-			if (outputVec[0] == "")break;
-			_attributeDataTable.emplace_back(outputVec[1], atoi(outputVec[2].c_str()));
+			_attributeDataTable.emplace_back(data[idx][1], atoi(data[idx][2].c_str()));
 		}
 	}
 
 	// rateTableの読み込み
 	{
-		ifstream ifs("Resource/DataBase/AttributeRate.csv");
-		string line;
-		vector<string> outputVec;
-		outputVec.reserve(5);
+		vector<vector<string>> data;
+		ReadCSV("Resource/DataBase/AttributeRate.data", data);
 
-		// 最初の行は相手の属性名が書いてあるので保存しておく
-		getline(ifs, line);
-		int y = 0;
 		_attributeRateTable.resize(_attributeDataTable.size());
-		while (getline(ifs, line))
+		for(int y = 0; y < _attributeDataTable.size(); ++y)
 		{
 			_attributeRateTable[y].resize(_attributeDataTable.size());
-			split(line, ',', outputVec);
-			if (outputVec[0] == "")break;
-			for (size_t x = 0; x < outputVec.size()-1; x++)
+			for (size_t x = 0; x < _attributeDataTable.size(); x++)
 			{
-				_attributeRateTable[y][x] = static_cast<float>(atof(outputVec[x + 1].c_str()));
+				_attributeRateTable[y][x] = static_cast<float>(atof(data[y+1][x + 1].c_str()));
 			}
-			y++;
 		}
 	}
 
 	// mapDataTableの読み込み
 	{
-		ifstream ifs("Resource/DataBase/Map.csv");
-		string line;
-		vector<string> outputVec;
-		outputVec.reserve(10);
-		// 最初の行はスキップ
-		getline(ifs, line);
-		while (getline(ifs, line))
+		vector<vector<string>> data;
+		ReadCSV("Resource/DataBase/map.data", data);
+		for (int idx = 1; idx < data.size(); ++idx)
 		{
-			split(line, ',', outputVec);
-			if (outputVec[0] == "")break;
-			_mapDataTable.emplace_back(MapData(outputVec[1], outputVec[2]));
+			_mapDataTable.emplace_back(MapData(data[idx][1], data[idx][2]));
 		}
 	}
 
 	// weaponTypeDataTableの読み込み
 	{
-		ifstream ifs("Resource/DataBase/weaponType.csv");
-		string line;
-		vector<string> outputVec;
-		outputVec.reserve(6);
-		// 最初の行はスキップ
-		getline(ifs, line);
-		while (getline(ifs, line))
+		vector<vector<string>> data;
+		ReadCSV("Resource/DataBase/weaponType.data", data);
+
+		for (int idx = 1; idx < data.size(); ++idx)
 		{
-			split(line, ',', outputVec);
-			if (outputVec[0] == "")break;
-			WeaponTypeData wt = { outputVec[1], outputVec[2] != "",
-				outputVec[3] != "", atoi(outputVec[4].c_str()), outputVec[5] };
+			WeaponTypeData wt = { data[idx][1], data[idx][2] != "",
+				data[idx][3] != "", atoi(data[idx][4].c_str()), data[idx][5] };
 			_weaponTypeDataTable.emplace_back(wt);
 		}
 	}
 
 	// weaponDataTableの読み込み
 	{
-		ifstream ifs("Resource/DataBase/weapon.csv");
-		string line;
-		vector<string> outputVec;
-		outputVec.reserve(10);
-		// 最初の行はスキップ
-		getline(ifs, line);
-		while (getline(ifs, line))
+		vector<vector<string>> data;
+		ReadCSV("Resource/DataBase/weapon.data", data);
+		for (int idx = 1; idx < data.size(); ++idx)
 		{
-			split(line, ',', outputVec);
-			if (outputVec[0] == "")break;
-			atoi(outputVec[8].c_str());
 			WeaponData wd = {
-				atoi(outputVec[1].c_str()), outputVec[2], 
-				atoi(outputVec[3].c_str()),	atoi(outputVec[4].c_str()), atoi(outputVec[5].c_str()), atoi(outputVec[6].c_str()),
-				Range(atoi(outputVec[7].c_str()), atoi(outputVec[8].c_str())), atoi(outputVec[9].c_str())};
+				atoi(data[idx][1].c_str()), data[idx][2],
+				atoi(data[idx][3].c_str()),	atoi(data[idx][4].c_str()), atoi(data[idx][5].c_str()), atoi(data[idx][6].c_str()),
+				Range(atoi(data[idx][7].c_str()), atoi(data[idx][8].c_str())), atoi(data[idx][9].c_str())};
 			_weaponDataTable.emplace_back(wd);
 		}
 	}
@@ -228,7 +242,7 @@ float DataBase::GetAttributeRate(const uint8_t selfAttributeId, const uint8_t ta
 int DataBase::GetCharactorImageHandle(const CharactorType charactorType, const Team team) const
 {
 	char str[256];
-	sprintf_s(str, 256, "%s%s", GetCharactorData(charactorType).ImagePath.c_str(), team == Team::player ? "_player.png" : "_enemy.png");
+	sprintf_s(str, 256, "%s%s", GetCharactorData(charactorType).imagePath.c_str(), team == Team::player ? "_player.png" : "_enemy.png");
 	return Application::Instance().GetFileSystem().GetImageHandle(str);
 }
 
@@ -297,4 +311,13 @@ const WeaponData& DataBase::GetWeaponData(const unsigned int weaponId) const
 const std::vector<WeaponData>& DataBase::GetWeaponDataTable() const
 {
 	return _weaponDataTable;
+}
+
+void DataBase::CharactorData::DrawIcon(const Rect& rect, const Team team)const
+{
+	stringstream ss;
+	ss << imagePath << "_" << (Team::player == team ? "player" : "enemy") << ".png";
+	rect.DrawRectGraph(Vector2Int(32, 0), Size(32, 32),
+		Application::Instance().GetFileSystem().GetImageHandle(ss.str().c_str()));
+	
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "../UI.h"
-#include "Geometry.h"
+#include "../../../Utility/Geometry.h"
 
 class UIListItem;
 class SelectPen;
@@ -27,11 +27,15 @@ private:
 
 	std::unique_ptr<SelectPen> _selectPen;
 
+	void (UIList::*_mover)(const Input&);
+
 	void DrawToListWindow();
-	void SetItemIdx(const int add);
+	void SetItemIdx(const int nextIdx);
 	void UpdateViewport();
-	void CursorMove(const Input& input);
 	void InitInputItv();
+
+	void MouseMove(const Input& input);
+	void KeybordMove(const Input& input);
 
 protected:
 	const unsigned int LIST_ITEM_SPACE;

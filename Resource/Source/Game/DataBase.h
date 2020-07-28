@@ -1,7 +1,7 @@
 #pragma once
 #include <array>
 #include <string>
-#include "Geometry.h"
+#include "../Utility/Geometry.h"
 #include "Status.h"
 #include "Team.h"
 #include "CharactorType.h"
@@ -44,8 +44,10 @@ private:
 		uint8_t weaponType;
 		Status initialStatus;
 		Status statusGrowRate;
-		std::string ImagePath;
+		std::string imagePath;
 		std::string iconImagePath;
+
+		void DrawIcon(const Rect& rect, const Team team)const;
 	};
 
 	//struct ExpData
@@ -75,7 +77,7 @@ private:
 
 	std::array<CharactorData, static_cast<size_t>(CharactorType::max)> _charactorDataTable;
 
-	std::array<MapChipData, static_cast<size_t>(Map_Chip::max)> _mapChipDataTable;
+	std::array<DataBase::MapChipData, static_cast<size_t>(Map_Chip::max)> _mapChipDataTable;
 
 	//std::vector<ExpData> _expDataTable;
 
@@ -86,6 +88,8 @@ private:
 	std::vector<WeaponData> _weaponDataTable;
 
 	std::vector<MapData> _mapDataTable;
+
+	bool ReadCSV(const char* path, std::vector<std::vector<std::string>>& out);
 
 public:
 	DataBase();

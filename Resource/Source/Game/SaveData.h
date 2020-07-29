@@ -22,6 +22,7 @@ private:
 	std::vector<CharactorData> _waitCharactorDataVec;	// 待機中のキャラクターデータ(出撃したキャラクターはいない)
 
 	int _mapNum;
+	unsigned int _money;
 
 	bool CreateSaveCharactorData(const std::vector<std::shared_ptr<Charactor>>& charactorVec);
 	bool CreateSaveData();
@@ -37,6 +38,11 @@ public:
 
 	// 現在開放しているマップ番号を返す	(例 : 5なら0から4までクリアし、5を開放している)
 	int GetMapNum()const;
+
+	// 所持金を返す
+	unsigned int GetMoney();
+	// 所持金を設定する
+	void SetMoney(const unsigned int money);
 
 	const std::vector<CharactorData>& GetCharactorDataVec()const;
 	void SetWaitCharactorDataVec(const std::vector<CharactorData>& charactorDataVec);

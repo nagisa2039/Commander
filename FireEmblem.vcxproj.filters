@@ -327,6 +327,9 @@
     <ClCompile Include="Resource\Source\Scene\ShopScene.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Game\UI\MoneyUI.cpp">
+      <Filter>ソース ファイル\Game\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -574,6 +577,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Scene\ShopScene.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\UI\MoneyUI.h">
+      <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

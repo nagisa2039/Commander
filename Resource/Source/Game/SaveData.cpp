@@ -80,6 +80,7 @@ bool SaveData::CreateSaveData()
 	_charactorDataVec.clear();
 	_charactorDataVec = _charactorDataForCreateSaveData;
 	_waitCharactorDataVec = _charactorDataVec;
+	_money = 5000;
 	SaveCharactorData(0);
 	return true;
 }
@@ -107,6 +108,9 @@ void SaveData::SaveCharactorData(const int& mapNum)
 	// クリアマップの書き込み
 	_mapNum = max(_mapNum, mapNum);
 	fwrite(&_mapNum, sizeof(_mapNum), 1, fp);
+
+	// 所持金の書き込み
+	fwrite(&_money, sizeof(_money), 1, fp);
 
 	fclose(fp);
 }
@@ -148,6 +152,9 @@ bool SaveData::Load()
 	// クリアマップの読み込み
 	fread_s(&_mapNum, sizeof(_mapNum), sizeof(_mapNum), 1, fp);
 
+	// 所持金の読み込み
+	fread_s(&_money, sizeof(_money), sizeof(_money), 1, fp);
+
 	fclose(fp);
 
 	return true;
@@ -156,6 +163,16 @@ bool SaveData::Load()
 int SaveData::GetMapNum() const
 {
 	return _mapNum;
+}
+
+unsigned int SaveData::GetMoney()
+{
+	return _money;
+}
+
+void SaveData::SetMoney(const unsigned int money)
+{
+	_money = money;
 }
 
 const std::vector<CharactorData>& SaveData::GetCharactorDataVec()const

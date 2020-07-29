@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Resource\Source\Game\UI\MoneyUI.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\UIList\CharactorListItem.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\UIList\CharactorList.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\StatusWindow\ItemWindow.cpp" />
@@ -101,6 +102,7 @@
     <ClCompile Include="Resource\Source\Scene\ShopScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Resource\Source\Game\UI\MoneyUI.h" />
     <ClInclude Include="Resource\Source\Game\UI\UIList\CharactorListItem.h" />
     <ClInclude Include="Resource\Source\Game\UI\UIList\CharactorList.h" />
     <ClInclude Include="Resource\Source\Game\UI\StatusWindow\ItemWindow.h" />

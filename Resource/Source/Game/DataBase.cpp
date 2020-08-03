@@ -33,7 +33,7 @@ namespace
 	}
 }
 
-bool DataBase::ReadCSV(const char* path, std::vector<std::vector<std::string>>& out)
+bool DataBase::ReadData(const char* path, std::vector<std::vector<std::string>>& out)
 {
 	int fileH = FileRead_open(path);
 	assert(fileH != 0);
@@ -82,7 +82,7 @@ DataBase::DataBase()
 	// キャラクターデータテーブルの読み込み
 	{
 		vector<vector<string>> data;
-		ReadCSV("Resource/DataBase/Charactor.data", data);
+		ReadData("Resource/DataBase/Charactor.data", data);
 		int aryNum = 0;
 		for (int idx = 1; idx < data.size(); ++idx)
 		{
@@ -120,7 +120,7 @@ DataBase::DataBase()
 	// マップチップテーブルの読み込み
 	{
 		vector<vector<string>> data;
-		ReadCSV("Resource/DataBase/MapChip.data", data);
+		ReadData("Resource/DataBase/MapChip.data", data);
 		int aryNum = 0;
 		for (int idx = 1; idx < data.size(); ++idx)
 		{
@@ -169,7 +169,7 @@ DataBase::DataBase()
 	// 属性テーブルの読み込み
 	{
 		vector<vector<string>> data;
-		ReadCSV("Resource/DataBase/Attribute.data", data);
+		ReadData("Resource/DataBase/Attribute.data", data);
 		for (int idx = 1; idx < data.size(); ++idx)
 		{
 			_attributeDataTable.emplace_back(data[idx][1], atoi(data[idx][2].c_str()));
@@ -179,7 +179,7 @@ DataBase::DataBase()
 	// rateTableの読み込み
 	{
 		vector<vector<string>> data;
-		ReadCSV("Resource/DataBase/AttributeRate.data", data);
+		ReadData("Resource/DataBase/AttributeRate.data", data);
 
 		_attributeRateTable.resize(_attributeDataTable.size());
 		for(int y = 0; y < _attributeDataTable.size(); ++y)
@@ -195,7 +195,7 @@ DataBase::DataBase()
 	// mapDataTableの読み込み
 	{
 		vector<vector<string>> data;
-		ReadCSV("Resource/DataBase/map.data", data);
+		ReadData("Resource/DataBase/map.data", data);
 		for (int idx = 1; idx < data.size(); ++idx)
 		{
 			_mapDataTable.emplace_back(MapData(data[idx][1], data[idx][2]));
@@ -205,7 +205,7 @@ DataBase::DataBase()
 	// weaponTypeDataTableの読み込み
 	{
 		vector<vector<string>> data;
-		ReadCSV("Resource/DataBase/weaponType.data", data);
+		ReadData("Resource/DataBase/weaponType.data", data);
 
 		for (int idx = 1; idx < data.size(); ++idx)
 		{
@@ -218,7 +218,8 @@ DataBase::DataBase()
 	// weaponDataTableの読み込み
 	{
 		vector<vector<string>> data;
-		ReadCSV("Resource/DataBase/weapon.data", data);
+		ReadData("Resource/DataBase/weapon.data", data);
+		_weaponDataTable.reserve(data.size());
 		for (int idx = 1; idx < data.size(); ++idx)
 		{
 			WeaponData wd = {
@@ -226,6 +227,20 @@ DataBase::DataBase()
 				atoi(data[idx][3].c_str()),	atoi(data[idx][4].c_str()), atoi(data[idx][5].c_str()), atoi(data[idx][6].c_str()),
 				Range(atoi(data[idx][7].c_str()), atoi(data[idx][8].c_str())), atoi(data[idx][9].c_str())};
 			_weaponDataTable.emplace_back(wd);
+		}
+	}
+
+	// キャラクターデータテーブルの読み込み
+	{
+		vector<vector<string>> data;
+		ReadData("Resource/DataBase/StartPlayerCharactor.data", data);
+		_saveDataCharactors.reserve(6);
+		for (int idx = 1; idx < data.size(); ++idx)
+		{
+			auto charactorType = static_cast<CharactorType>(atoi(data[idx][1].c_str()));
+			auto status = GetLevelInitStatus(atoi(data[idx][2].c_str()), charactorType);
+			status.weaponId = atoi(data[idx][3].c_str());
+			_saveDataCharactors.emplace_back(charactorType, status);
 		}
 	}
 }
@@ -254,7 +269,7 @@ const DataBase::CharactorData& DataBase::GetCharactorData(const CharactorType ch
 Status DataBase::GetLevelInitStatus(const uint8_t level, const CharactorType charType)const
 {
 	Status status;
-	auto charactorData = Application::Instance().GetDataBase().GetCharactorData(charType);
+	auto charactorData = _charactorDataTable[static_cast<size_t>(charType)];
 	status = charactorData.initialStatus;
 	status.level		  = level;
 	status.health		 = status.health		+ static_cast<uint8_t>(level * charactorData.statusGrowRate.health			/ 100.0f);
@@ -311,6 +326,11 @@ const WeaponData& DataBase::GetWeaponData(const unsigned int weaponId) const
 const std::vector<WeaponData>& DataBase::GetWeaponDataTable() const
 {
 	return _weaponDataTable;
+}
+
+const std::vector<SaveDataCharactor> DataBase::GetSaveDataCharactors() const
+{
+	return _saveDataCharactors;
 }
 
 void DataBase::CharactorData::DrawIcon(const Rect& rect, const Team team)const

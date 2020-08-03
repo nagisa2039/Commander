@@ -102,7 +102,7 @@ void UIList::MouseMove(const Input& input)
 		}
 	}
 
-	if (input.GetButtonDown(0, "mouseRight"))
+	if (input.GetButtonDown(0, "back"))
 	{
 		Back();
 		return;
@@ -192,7 +192,9 @@ void UIList::ListItemInit(const Vector2Int& leftup)
 	_listWindowH = MakeScreen(rectSize.w, rectSize.h, true);
 	_selectPen = std::make_unique<SelectPen>(nullptr);
 
-	SetItemIdx(0);
+	int initIdx = 0;
+	SetItemIdx(initIdx);
+	_listItems[initIdx]->SetIsSelect(true);
 	UpdateViewport();
 
 	InitInputItv();

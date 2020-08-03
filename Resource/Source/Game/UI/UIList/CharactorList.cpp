@@ -7,6 +7,7 @@
 #include "WeaponList.h"
 #include "Application.h"
 #include "DataBase.h"
+#include "../MoneyUI.h"
 
 using namespace std;
 
@@ -28,7 +29,7 @@ void CharactorList::Back()
 void CharactorList::ChengeItem()
 {
 	_weaponWindow->SetWeaponId(GetWeaponId());
-	_itemWindow->SetHoge();
+	//_itemWindow->SetHoge();
 }
 
 uint8_t CharactorList::GetWeaponId()
@@ -38,7 +39,7 @@ uint8_t CharactorList::GetWeaponId()
 	return charactorListItem->GetCharactorData().status.weaponId;
 }
 
-CharactorList::CharactorList(const Vector2Int& leftup, const std::vector<CharactorData>& charactorDatas, std::deque<std::shared_ptr<UI>>* uiDeque)
+CharactorList::CharactorList(const Vector2Int& leftup, const std::vector<SaveDataCharactor>& charactorDatas, std::deque<std::shared_ptr<UI>>* uiDeque)
 	:UIList(6, uiDeque), _charactorDatas(charactorDatas)
 {
 	assert(_uiDeque);
@@ -49,7 +50,10 @@ CharactorList::CharactorList(const Vector2Int& leftup, const std::vector<Charact
 	}
 
 	_weaponWindow = std::make_unique<WeaponWindow>(GetWeaponId(), nullptr);
-	_itemWindow = std::make_unique<ItemWindow>(nullptr);
+	//_itemWindow = std::make_unique<ItemWindow>(nullptr);
+
+	auto wsize = Application::Instance().GetWindowSize();
+	_moneyUI = make_unique<MoneyUI>(Vector2Int(wsize.w - 120, 40), nullptr);
 
 	ListItemInit(leftup);
 }
@@ -70,12 +74,14 @@ void CharactorList::Draw()
 	auto weaponWindowSizeH = _weaponWindow->GetSize().h;
 	_weaponWindow->Draw(Vector2Int(listRect.Right() + weaponRectSize.w / 2 + space, drawY + weaponWindowSizeH/2));
 	drawY += (weaponWindowSizeH + space);
-	auto itemWindowSizeH = _itemWindow->GetSize().h;
-	_itemWindow->Draw(	Vector2Int(listRect.Right() + weaponRectSize.w / 2 + space, drawY + itemWindowSizeH/2));
+	/*auto itemWindowSizeH = _itemWindow->GetSize().h;
+	_itemWindow->Draw(	Vector2Int(listRect.Right() + weaponRectSize.w / 2 + space, drawY + itemWindowSizeH/2));*/
+
+	_moneyUI->Draw();
 }
 
 void CharactorList::OnActive()
 {
 	_weaponWindow->SetWeaponId(GetWeaponId());
-	_itemWindow->SetHoge();
+	//_itemWindow->SetHoge();
 }

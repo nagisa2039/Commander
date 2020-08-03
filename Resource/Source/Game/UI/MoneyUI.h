@@ -7,6 +7,7 @@ class MoneyUI :
 {
 private:
 	Rect _drawRect;
+	const unsigned int& _money;
 
 public:
 	MoneyUI(const Vector2Int& pos, std::deque<std::shared_ptr<UI>>* uiDeque);

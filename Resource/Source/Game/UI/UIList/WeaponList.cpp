@@ -5,17 +5,30 @@
 #include "../StatusWindow/WeaponWindow.h"
 #include "Input.h"
 #include "SaveData.h"
+#include "../MoneyUI.h"
+#include "../CheckWindow.h"
 
 using namespace std;
 
 void WeaponList::Decision()
 {
+	_uiDeque->push_front(make_shared<CheckWindow>("w“ü‚µ‚Ü‚·‚©H", _uiDeque, [this]() {Buy(); }));
+}
+
+void WeaponList::Buy()
+{
+	auto& saveData = Application::Instance().GetSaveData();
 	_weaponId = GetWeaponId();
-	_weaponWindowBefore->SetWeaponId(_weaponId);
+	auto money = saveData.GetMoney();
+	auto price = Application::Instance().GetDataBase().GetWeaponData(_weaponId).price;
 
-	_func();
+	if (money >= price)
+	{
+		_weaponWindowBefore->SetWeaponId(_weaponId);
+		_func();
 
-	Back();
+		saveData.SetMoney(money - price);
+	}
 }
 
 void WeaponList::Back()
@@ -64,6 +77,9 @@ WeaponList::WeaponList(const Vector2Int& leftup, uint8_t& weaponId, const uint8_
 	auto& saveData = Application::Instance().GetSaveData();
 	_weaponWindowBefore = make_unique<WeaponWindow>(_weaponId, nullptr);
 	_weaponWindowAfter	= make_unique<WeaponWindow>(GetWeaponId(), nullptr);
+
+	auto wsize = Application::Instance().GetWindowSize();
+	_moneyUI = make_unique<MoneyUI>(Vector2Int(wsize.w - 120, 40), nullptr);
 }
 
 WeaponList::~WeaponList()
@@ -82,4 +98,6 @@ void WeaponList::Draw()
 	_weaponWindowBefore->Draw(	Vector2Int(rect.Right() + weaponWindowSize.w / 2 + space, drawY + weaponWindowSize.h / 2));
 	drawY += weaponWindowSize.h + space;
 	_weaponWindowAfter->Draw(	Vector2Int(rect.Right() + weaponWindowSize.w / 2 + space, drawY + weaponWindowSize.h / 2));
+
+	_moneyUI->Draw();
 }

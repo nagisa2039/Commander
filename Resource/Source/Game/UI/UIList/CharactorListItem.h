@@ -1,21 +1,21 @@
 #pragma once
 #include "UIListItem.h"
 
-struct CharactorData;
+struct SaveDataCharactor;
 
 class CharactorListItem :
     public UIListItem
 {
 private:
-    const CharactorData& _charactorData;
+    const SaveDataCharactor& _charactorData;
 
 public:
-    CharactorListItem(const CharactorData& charactorData, std::deque<std::shared_ptr<UI>>* uiDeque);
+    CharactorListItem(const SaveDataCharactor& charactorData, std::deque<std::shared_ptr<UI>>* uiDeque);
     ~CharactorListItem();
 
     void Update(const Input& input)override;
     void Draw(const Vector2Int& offset);
 
-    const CharactorData& GetCharactorData()const;
+    const SaveDataCharactor& GetCharactorData()const;
 };
 

@@ -7,7 +7,7 @@
 #include "SaveData.h"
 #include "DataBase.h"
 
-CharactorListItem::CharactorListItem(const CharactorData& charactorData, std::deque<std::shared_ptr<UI>>* uiDeque)
+CharactorListItem::CharactorListItem(const SaveDataCharactor& charactorData, std::deque<std::shared_ptr<UI>>* uiDeque)
 	:UIListItem(Rect(Vector2Int(), Size(350, 60)), uiDeque), _charactorData(charactorData)
 {
 	
@@ -43,10 +43,11 @@ void CharactorListItem::Draw(const Vector2Int& offset)
 
 	// –¼‘O‚Ì•`‰æ
 	int choplin30 = Application::Instance().GetFileSystem().GetFontHandle("choplin30edge");
-	DrawStringToHandle(Vector2Int(drawX, drawRect.center.y), Anker::leftcenter, 0xffffff, choplin30, dataBase_charactorData.name.c_str());
+	DrawStringToHandle(Vector2Int(drawX, drawRect.center.y), Anker::leftcenter, 
+		GetIsSelect() ? 0xff0000 : 0xffffff, choplin30, dataBase_charactorData.name.c_str());
 }
 
-const CharactorData& CharactorListItem::GetCharactorData() const
+const SaveDataCharactor& CharactorListItem::GetCharactorData() const
 {
 	return _charactorData;
 }

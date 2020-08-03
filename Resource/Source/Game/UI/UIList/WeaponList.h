@@ -16,6 +16,7 @@ private:
 	std::unique_ptr<MoneyUI> _moneyUI;
 
 	void Decision()override;
+	void Buy();
 	void Back()override;
 	void ChengeItem()override;
 

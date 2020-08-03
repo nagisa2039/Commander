@@ -10,6 +10,11 @@
 
 using namespace std;
 
+namespace
+{
+	constexpr unsigned int INIT_MONEY = 114514;
+}
+
 SaveData::SaveData()
 {
 	_mapNum = 0;
@@ -17,44 +22,7 @@ SaveData::SaveData()
 	_waitCharactorDataVec.clear();
 	_charactorDataVec.clear();
 
-	LoadStartPlayerCharactorData();
-
 	Load();
-}
-
-void SaveData::LoadStartPlayerCharactorData()
-{
-	auto split = [](const string& input, const char delimiter, vector<string>& output)
-	{
-		istringstream stream(input);
-		string field;
-		output.clear();
-		while (getline(stream, field, delimiter))
-		{
-			output.emplace_back(field);
-		}
-	};
-
-	// キャラクターデータテーブルの読み込み
-	{
-		_charactorDataForCreateSaveData.reserve(6); 
-		ifstream ifs("Resource/DataBase/StartPlayerCharactor.csv");
-		string line;
-		vector<string> outputVec;
-		outputVec.reserve(4);
-		// 最初の行はスキップ
-		getline(ifs, line);
-		int idx = 0;
-		auto& dataBase = Application::Instance().GetDataBase();
-		while (getline(ifs, line))
-		{
-			split(line, ',', outputVec);
-			auto charactorType = static_cast<CharactorType>(atoi(outputVec[1].c_str()));
-			auto status = dataBase.GetLevelInitStatus(atoi(outputVec[2].c_str()), charactorType);
-			status.weaponId = atoi(outputVec[3].c_str());
-			_charactorDataForCreateSaveData.emplace_back(charactorType, status);
-		}
-	}
 }
 
 SaveData::~SaveData()
@@ -68,7 +36,7 @@ bool SaveData::CreateSaveCharactorData(const std::vector<std::shared_ptr<Charact
 	{
 		if (charactor->GetTeam() != Team::player)continue;
 
-		_charactorDataVec.emplace_back(CharactorData(charactor->GetCharactorType(), charactor->GetStartStatus()));
+		_charactorDataVec.emplace_back(SaveDataCharactor(charactor->GetCharactorType(), charactor->GetStartStatus()));
 	}
 	assert(_charactorDataVec.size() > 0);
 
@@ -78,9 +46,9 @@ bool SaveData::CreateSaveCharactorData(const std::vector<std::shared_ptr<Charact
 bool SaveData::CreateSaveData()
 {
 	_charactorDataVec.clear();
-	_charactorDataVec = _charactorDataForCreateSaveData;
+	_charactorDataVec = Application::Instance().GetDataBase().GetSaveDataCharactors();
 	_waitCharactorDataVec = _charactorDataVec;
-	_money = 5000;
+	_money = INIT_MONEY;
 	SaveCharactorData(0);
 	return true;
 }
@@ -103,7 +71,7 @@ void SaveData::SaveCharactorData(const int& mapNum)
 	unsigned int cnt = static_cast<unsigned int>(_charactorDataVec.size());
 	fwrite(&cnt, sizeof(cnt), 1, fp);
 	// キャラクターデータの書き込み
-	fwrite(_charactorDataVec.data(), sizeof(CharactorData) * cnt, 1, fp);
+	fwrite(_charactorDataVec.data(), sizeof(SaveDataCharactor) * cnt, 1, fp);
 
 	// クリアマップの書き込み
 	_mapNum = max(_mapNum, mapNum);
@@ -146,7 +114,7 @@ bool SaveData::Load()
 	_charactorDataVec.resize(cnt);
 
 	// キャラクターデータの読み込み
-	fread_s(_charactorDataVec.data(), sizeof(CharactorData) * cnt, sizeof(CharactorData), cnt, fp);
+	fread_s(_charactorDataVec.data(), sizeof(SaveDataCharactor) * cnt, sizeof(SaveDataCharactor), cnt, fp);
 	_waitCharactorDataVec = _charactorDataVec;
 
 	// クリアマップの読み込み
@@ -165,7 +133,7 @@ int SaveData::GetMapNum() const
 	return _mapNum;
 }
 
-unsigned int SaveData::GetMoney()
+const unsigned int& SaveData::GetMoney() const
 {
 	return _money;
 }
@@ -175,17 +143,17 @@ void SaveData::SetMoney(const unsigned int money)
 	_money = money;
 }
 
-const std::vector<CharactorData>& SaveData::GetCharactorDataVec()const
+const std::vector<SaveDataCharactor>& SaveData::GetCharactorDataVec()const
 {
 	return _charactorDataVec;
 }
 
-void SaveData::SetWaitCharactorDataVec(const std::vector<CharactorData>& charactorDataVec)
+void SaveData::SetWaitCharactorDataVec(const std::vector<SaveDataCharactor>& charactorDataVec)
 {
 	_waitCharactorDataVec = charactorDataVec;
 }
 
-CharactorData& SaveData::GetCharactorData(const unsigned int charactorData)
+SaveDataCharactor& SaveData::GetCharactorData(const unsigned int charactorData)
 {
 	return _charactorDataVec[charactorData];
 }

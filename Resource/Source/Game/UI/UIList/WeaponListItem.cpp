@@ -36,9 +36,11 @@ void WeaponListItem::Draw(const Vector2Int& offset)
 	weaponData.GetTypeData().DrawWeaponIcon(Rect(Vector2Int(drawX + sizeH /2, drawRect.center.y), Size(sizeH, sizeH)));
 	drawX += (sizeH + offsetX);
 
-	DrawStringToHandle(Vector2Int(drawX, drawRect.center.y), Anker::leftcenter, GetIsSelect() ? 0xff0000 : 0xffffff, choplin30, weaponData.name.c_str());
+	DrawStringToHandle(Vector2Int(drawX, drawRect.center.y), Anker::leftcenter, 
+		GetIsSelect() ? 0xff0000 : 0xffffff, choplin30, weaponData.name.c_str());
 
-	DrawStringToHandle(Vector2Int(drawRect.Right() - offsetX, drawRect.center.y), Anker::rightcenter, 0xffffff, choplin30, "%d%s", weaponData.price, " G");
+	DrawStringToHandle(Vector2Int(drawRect.Right() - offsetX, drawRect.center.y), Anker::rightcenter, 
+		GetIsSelect() ? 0xff0000 : 0xffffff, choplin30, "%d%s", weaponData.price, " G");
 }
 
 const uint8_t WeaponListItem::GetWeaponId()const

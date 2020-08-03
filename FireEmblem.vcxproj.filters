@@ -581,5 +581,8 @@
     <ClInclude Include="Resource\Source\Game\UI\MoneyUI.h">
       <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Source\Game\SaveDataCharactor.h">
+      <Filter>ヘッダー ファイル\Game</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

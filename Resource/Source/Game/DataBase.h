@@ -1,13 +1,12 @@
 #pragma once
 #include <array>
 #include <string>
-#include "../Utility/Geometry.h"
-#include "Status.h"
-#include "Team.h"
-#include "CharactorType.h"
-#include "MapChip.h"
 #include <vector>
+#include "../Utility/Geometry.h"
+#include "Team.h"
+#include "MapChip.h"
 #include "WeaponData.h"
+#include "SaveDataCharactor.h"
 
 class DataBase
 {
@@ -89,7 +88,9 @@ private:
 
 	std::vector<MapData> _mapDataTable;
 
-	bool ReadCSV(const char* path, std::vector<std::vector<std::string>>& out);
+	std::vector<SaveDataCharactor> _saveDataCharactors;	// セーブデータ生成用
+
+	bool ReadData(const char* path, std::vector<std::vector<std::string>>& out);
 
 public:
 	DataBase();
@@ -128,5 +129,8 @@ public:
 	const WeaponData& GetWeaponData(const unsigned int weaponId)const;
 	// weaponDataの配列取得
 	const std::vector<WeaponData>& GetWeaponDataTable()const;
+
+	// 初期のセーブデータ作成用配列の取得
+	const std::vector<SaveDataCharactor> GetSaveDataCharactors()const;
 };
 

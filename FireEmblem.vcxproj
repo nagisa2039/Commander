@@ -185,6 +185,7 @@
     <ClInclude Include="Resource\Source\Game\UI\UIList\WeaponListItem.h" />
     <ClInclude Include="Resource\Source\Game\UI\SelectPen.h" />
     <ClInclude Include="Resource\Source\Scene\ShopScene.h" />
+    <ClInclude Include="Resource\Source\Game\SaveDataCharactor.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

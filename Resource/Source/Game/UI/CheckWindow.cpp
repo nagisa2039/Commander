@@ -8,11 +8,12 @@
 
 using namespace std;
 
-int CheckWindow::_windowImageH = -1;
-int CheckWindow::_selectImageH = -1;
+int PopupWindow::_messageImageH = -1;
+int CheckWindow::_yesImageH = -1;
+int CheckWindow::_noImageH = -1;
 
-CheckWindow::CheckWindow(const std::string& messageStr, std::deque<std::shared_ptr<UI>>* uiDeque, const std::function<void()>& func)
-	:_messageStr(messageStr), _func(func), UI(uiDeque)
+PopupWindow::PopupWindow(const std::string& messageStr, std::deque<std::shared_ptr<UI>>* uiDeque)
+	:_messageStr(messageStr), UI(uiDeque)
 {
 	_exRateTrack = make_unique<Track<float>>();
 	_exRateTrack->AddKey(0, 0.0f);
@@ -23,49 +24,186 @@ CheckWindow::CheckWindow(const std::string& messageStr, std::deque<std::shared_p
 	_selectExRateTrack->AddKey(30, 1.2f);
 	_selectExRateTrack->AddKey(60, 1.0f);
 
+	_updater	= &PopupWindow::ScalingUpdate;
+	_drawer		= &PopupWindow::ScalingDraw;
+
+	if (_messageImageH == -1)
+	{
+		int messageH = Application::Instance().GetFileSystem().
+			GetImageHandle("Resource/Image/UI/checkWindow.png");
+		Size messageSize;
+		GetGraphSize(messageH, messageSize);
+		_messageImageH = MakeScreen(messageSize.w, messageSize.h, true);
+	}
+
+	DrawToWindow();
+}
+
+PopupWindow::~PopupWindow()
+{
+}
+
+void PopupWindow::Update(const Input& input)
+{
+	(this->*_updater)(input);
+}
+
+void PopupWindow::Draw()
+{
+	(this->*_drawer)();
+}
+
+void PopupWindow::NormalUpdate(const Input& input)
+{
+}
+
+void PopupWindow::ScalingUpdate(const Input& input)
+{
+	_exRateTrack->Update();
+	if (_exRateTrack->GetEnd())
+	{
+		if (_exRateTrack->GetReverse())
+		{
+			// •Â‚ß‚é‚Æ‚«
+			_delete = true;
+			Closed();
+			_uiDeque->pop_front();
+		}
+		else
+		{
+			// ŠJ‚¯‚é‚Æ‚«
+			_updater = &PopupWindow::NormalUpdate;
+			_drawer = &PopupWindow::NormalDraw;
+		}
+	}
+}
+
+void PopupWindow::Closed()
+{
+}
+
+void PopupWindow::NormalDraw()
+{
+	auto wsize = Application::Instance().GetWindowSize();
+	DrawRotaGraph(wsize.w / 2, wsize.h / 2, _exRateTrack->GetValue(), 0.0f, _messageImageH, true);
+}
+
+void PopupWindow::ScalingDraw()
+{
+	PopupWindow::NormalDraw();
+}
+
+void PopupWindow::DrawToWindow()
+{
+	int currentScreen = GetDrawScreen();
+	SetDrawScreen(_messageImageH);
+	ClsDrawScreen();
+
+	Size space(50, 10);
+
+	auto& fileSystem = Application::Instance().GetFileSystem();
+	int messageH = fileSystem.GetImageHandle("Resource/Image/UI/checkWindow.png");
+	Size messageSize;
+	GetGraphSize(_messageImageH, messageSize);
+
+	int choplin30 = fileSystem.GetFontHandle("choplin30edge");
+
+	DrawGraph(0,0, messageH, true);
+	DrawStringToHandle(messageSize.ToVector2Int() * 0.5f, Anker::center, 0xffffff, choplin30, _messageStr.c_str());
+
+	SetDrawScreen(currentScreen);
+}
+
+CheckWindow::CheckWindow(const std::string& messageStr, std::deque<std::shared_ptr<UI>>* uiDeque, const std::function<void()>&func)
+	:_func(func), PopupWindow(messageStr, uiDeque)
+{
+	auto wsize = Application::Instance().GetWindowSize();
+
+	Size messageSize;
+	GetGraphSize(_messageImageH, messageSize);
+	int selectH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/checkWindowSelect.png");
+	Size selectSize;
+	GetGraphSize(selectH, selectSize);
+
+	Size space(50, 10);
+	int offsetX = (space.w + selectSize.w);
+	int drawY = (wsize.h + messageSize.h + selectSize.h + space.h) / 2;
+
+	_yesSelectRect	= Rect(Vector2Int((wsize.w - offsetX) / 2, drawY), selectSize);
+	_noSelectRect	= Rect(Vector2Int((wsize.w + offsetX) / 2, drawY), selectSize);
+
 	_select = Select::yes;
-
-	_updater = &CheckWindow::ScalingUpdate;
-
-	if (_windowImageH == -1)
+	if (_yesImageH == -1)
 	{
-		auto wsize = Application::Instance().GetWindowSize();
-		_windowImageH = MakeScreen(wsize.w, wsize.h, true);
+		_yesImageH	= MakeScreen(selectSize.w, selectSize.h, true);
+		_noImageH	= MakeScreen(selectSize.w, selectSize.h, true);
 	}
-	if (_selectImageH == -1)
-	{
-		int selectH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/checkWindowSelect.png");
-		Size selectSize;
-		GetGraphSize(selectH, selectSize);
-		_selectImageH = MakeScreen(selectSize.w, selectSize.h, true);
-	}
+
+
+	DrawToSelectImage();
 }
 
 CheckWindow::~CheckWindow()
 {
 }
 
-void CheckWindow::Update(const Input& input)
-{
-	(this->*_updater)(input);
-}
-
 void CheckWindow::NormalUpdate(const Input& input)
 {
-	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
+	bool click = input.GetButtonDown(0, "mouseLeft");
+	auto mouseRect = Rect(input.GetMousePos(), Size(1, 1));
+
+	auto decision = [this]() 
 	{
 		_exRateTrack->Reset();
 		_exRateTrack->SetReverse(true);
 		_updater = &CheckWindow::ScalingUpdate;
+		_drawer = &CheckWindow::ScalingDraw;
+	};
+
+	auto back = [this]()
+	{	
+		_exRateTrack->Reset();
+		_exRateTrack->SetReverse(true);
+		_updater = &CheckWindow::ScalingUpdate;
+		_drawer = &CheckWindow::ScalingDraw;
+		_select = Select::no;
+	};
+
+	auto select = [this](const Select select)
+	{
+		if (_select == select)return;
+		_select = select;
+		_selectExRateTrack->Reset();
+	};
+
+	if (_yesSelectRect.IsHit(mouseRect))
+	{
+		select(Select::yes);
+		if (click)
+		{
+			decision();
+			return;
+		}
+	}
+	if (_noSelectRect.IsHit(mouseRect))
+	{
+		select(Select::no);
+		if (click)
+		{
+			back();
+			return;
+		}
+	}
+
+	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
+	{
+		decision();
 		return;
 	}
 
 	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
 	{
-		_exRateTrack->Reset();
-		_exRateTrack->SetReverse(true);
-		_updater = &CheckWindow::ScalingUpdate;
-		_select = Select::no;
+		back();
 		return;
 	}
 
@@ -89,72 +227,72 @@ void CheckWindow::NormalUpdate(const Input& input)
 	}
 }
 
-void CheckWindow::ScalingUpdate(const Input& input)
-{
-	_exRateTrack->Update();
-	if (_exRateTrack->GetEnd())
-	{
-		if (_exRateTrack->GetReverse())
-		{
-			// •Â‚ß‚é‚Æ‚«
-			_delete = true;
-
-			if (_select == Select::yes)
-			{
-				_func();
-			}
-			_uiDeque->pop_front();
-		}
-		else
-		{
-			// ŠJ‚¯‚é‚Æ‚«
-			_updater = &CheckWindow::NormalUpdate;
-		}
-	}
-}
-
-void CheckWindow::Draw()
+void CheckWindow::DrawToSelectImage()
 {
 	int currentScreen = GetDrawScreen();
-	SetDrawScreen(_windowImageH);
-	ClsDrawScreen();
-
-	Size space(50, 10);
 
 	auto fileSystem = Application::Instance().GetFileSystem();
-	int messageH = fileSystem.GetImageHandle("Resource/Image/UI/checkWindow.png");
-	Size messageSize;
-	GetGraphSize(messageH, messageSize);
-
 	int selectH = fileSystem.GetImageHandle("Resource/Image/UI/checkWindowSelect.png");
 	Size selectSize;
 	GetGraphSize(selectH, selectSize);
-
 	int choplin30 = fileSystem.GetFontHandle("choplin30edge");
 
-	Rect totalRect = Rect(Application::Instance().GetWindowSize().ToVector2Int() * 0.5f, Size(messageSize.w, messageSize.h + selectSize.h + space.h));
-	auto massageWindowLeftup = Vector2Int(totalRect.Left(), totalRect.Top());
-	DrawGraph(massageWindowLeftup, messageH, true);
-	DrawStringToHandle(massageWindowLeftup + messageSize*0.5f, Anker::center, 0xffffff, choplin30, _messageStr.c_str());
-
-
-	SetDrawScreen(_selectImageH);
+	SetDrawScreen(_yesImageH);
+	ClsDrawScreen();
 	DrawGraph(0, 0, selectH, true);
-	DrawStringToHandle(selectSize.ToVector2Int()*0.5f, Anker::center, 0xffffff, choplin30, "‚Í‚¢");
+	DrawStringToHandle(selectSize.ToVector2Int() * 0.5f, Anker::center, 0xffffff, choplin30, "‚Í‚¢");
 
-	SetDrawScreen(_windowImageH);
-	auto yseSelectCenter = Vector2Int(totalRect.center.x - (space.w + selectSize.w) / 2, totalRect.Botton() - selectSize.h / 2);
-	DrawRotaGraph(yseSelectCenter, _select == Select::yes ? _selectExRateTrack->GetValue() : 1.0f, 0.0f, _selectImageH, true);
-
-	SetDrawScreen(_selectImageH);
+	SetDrawScreen(_noImageH);
+	ClsDrawScreen();
 	DrawGraph(0, 0, selectH, true);
 	DrawStringToHandle(selectSize.ToVector2Int() * 0.5f, Anker::center, 0xffffff, choplin30, "‚¢‚¢‚¦");
 
-	SetDrawScreen(_windowImageH);
-	auto noSelectCenter = Vector2Int(totalRect.center.x + (space.w + selectSize.w) / 2, totalRect.Botton() - selectSize.h / 2);
-	DrawRotaGraph(noSelectCenter, _select == Select::no ? _selectExRateTrack->GetValue() : 1.0f, 0.0f, _selectImageH, true);
-
 	SetDrawScreen(currentScreen);
+}
 
-	DrawRotaGraph(totalRect.center.x, totalRect.center.y, _exRateTrack->GetValue(), 0.0f, _windowImageH, true);
+void CheckWindow::Closed()
+{
+	if (_select == Select::yes)
+	{
+		_func();
+	}
+}
+
+void CheckWindow::NormalDraw()
+{
+	auto wsize = Application::Instance().GetWindowSize();
+	PopupWindow::NormalDraw();
+
+	DrawRotaGraph(_yesSelectRect.center, _select == Select::yes ? _selectExRateTrack->GetValue() : 1.0f, 0.0f, _yesImageH, true);
+	DrawRotaGraph(_noSelectRect.center, _select == Select::no ? _selectExRateTrack->GetValue() : 1.0f, 0.0f, _noImageH, true);
+}
+
+void MessageWindow::NormalUpdate(const Input& input)
+{
+	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok") || input.GetButtonDown(0, "mouseLeft"))
+	{
+		_exRateTrack->Reset();
+		_exRateTrack->SetReverse(true);
+		_updater = &MessageWindow::ScalingUpdate;
+		_drawer = &MessageWindow::ScalingDraw;
+		return;
+	}
+
+	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
+	{
+		_exRateTrack->Reset();
+		_exRateTrack->SetReverse(true);
+		_updater = &MessageWindow::ScalingUpdate;
+		_drawer = &MessageWindow::ScalingDraw;
+		return;
+	}
+}
+
+MessageWindow::MessageWindow(const std::string& messageStr, std::deque<std::shared_ptr<UI>>* uiDeque)
+	:PopupWindow(messageStr, uiDeque)
+{
+}
+
+MessageWindow::~MessageWindow()
+{
 }

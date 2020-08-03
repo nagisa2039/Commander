@@ -160,7 +160,7 @@ void Application::KeySetUp()
 	_input->AddCommand(0, "F6", 0, KEY_INPUT_F6);
 
 	// ƒ}ƒEƒX‚Ì“ü—Í
-	_input->AddCommand(0, "ok", 5, MOUSE_INPUT_LEFT);
+	_input->AddCommand(0, "mouseLeft", 5, MOUSE_INPUT_LEFT);
 	_input->AddCommand(0, "back", 5, MOUSE_INPUT_RIGHT);
 	_input->AddCommand(0, "status", 5, MOUSE_INPUT_MIDDLE);
 

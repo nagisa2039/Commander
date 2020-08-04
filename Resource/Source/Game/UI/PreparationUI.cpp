@@ -14,8 +14,6 @@
 
 using namespace std;
 
-int PreparationUI::_itemScreenH = -1;
-
 void PreparationUI::CloseUpdate(const Input& input)
 {
 	if (_execution && _selectItem == Item::placement)
@@ -41,10 +39,38 @@ void PreparationUI::OpenUpdate(const Input& input)
 {
 	if (_backMapSelect)return;
 
+	auto select = [this](const Item item)
+	{
+		_selectItem = item;
+		_selectExRateTrack->Reset();
+	};
+
+	if(input.GetAnyMouseInput() || input.GetMouseMove() != Vector2Int(0,0))
+	{
+		auto mouseRect = Rect(input.GetMousePos(), Size(1,1));
+		auto click = input.GetButtonDown(0, "mouseLeft");
+		for (int idx = 0; idx < _itemInfTable.size(); ++idx)
+		{
+			if (Rect(_itemInfTable[idx].pos, _itemSize).IsHit(mouseRect))
+			{
+				select(static_cast<Item>(idx));
+				if (click)
+				{
+					Close(true);
+				}
+				break;
+			}
+		}
+		if (input.GetButtonDown(0, "mouseRight"))
+		{
+			_itemInfTable[static_cast<size_t>(Item::back)].func();
+		}
+		return;
+	}
+
 	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
 	{
 		Close(true);
-		_execution = true;
 		return;
 	}
 
@@ -53,16 +79,14 @@ void PreparationUI::OpenUpdate(const Input& input)
 	{
 		if (_selectItem > static_cast<Item>(0))
 		{
-			_selectItem = static_cast<Item>(static_cast<int>(_selectItem) - 1);
-			_selectExRateTrack->Reset();
+			select(static_cast<Item>(static_cast<int>(_selectItem) - 1));
 		}
 	}
 	if (input.GetButtonDown(0, "down") || input.GetButtonDown(1, "down"))
 	{
 		if (_selectItem < static_cast<Item>(static_cast<int>(Item::max) - 1))
 		{
-			_selectItem = static_cast<Item>(static_cast<int>(_selectItem) + 1);
-			_selectExRateTrack->Reset();
+			select(static_cast<Item>(static_cast<int>(_selectItem) + 1));
 		}
 	}
 	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
@@ -126,16 +150,26 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 	};
 	_itemInfTable[static_cast<size_t>(Item::back)].func = [&]()
 	{
-		_uiDeque->emplace_front(make_shared<CheckWindow>("ëﬁãpÇµÇ‹Ç∑Ç©ÅH", _uiDeque, [&](){SetBackMapSelect(true);}));
+		_uiDeque->emplace_front(make_shared<CheckWindow>("ëﬁãpÇµÇ‹Ç∑Ç©ÅH", _uiDeque, [&](){BackMapSelect();}));
 	};
 
 	const int spaceY = 120;
+	int currentScreen = GetDrawScreen();
 	Vector2Int currentDrawPos = screenCenter - Vector2Int(0, static_cast<int>((static_cast<int>(Item::max)-1) / 2.0f * spaceY));
+	int windowH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/window0.png");
+	GetGraphSize(windowH, _itemSize);
+	int fontH = Application::Instance().GetFileSystem().GetFontHandle("choplin40edge");
 	for (auto& itemInf : _itemInfTable)
 	{
 		itemInf.pos = currentDrawPos;
 		currentDrawPos.y += spaceY;
+		itemInf.graphH = MakeScreen(_itemSize.w, _itemSize.h, true);
+		SetDrawScreen(itemInf.graphH);
+		ClsDrawScreen();
+		DrawGraph(0,0, windowH, true);
+		DrawStringToHandle(_itemSize.ToVector2Int()*0.5f, Anker::center, 0xffffff, fontH, itemInf.name.c_str());
 	}
+	SetDrawScreen(currentScreen);
 
 	_animTrack = make_unique<Track<float>>();
 	_animTrack->AddKey(0, 0.0f);
@@ -150,20 +184,17 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 
 	_selectExRateTrack = make_unique<Track<float>>(true);
 	_selectExRateTrack->AddKey(0, 0.9);
-	_selectExRateTrack->AddKey(30, 1.0f);
-	_selectExRateTrack->AddKey(60, 0.9);
-
-	if (_itemScreenH == -1)
-	{
-		int windowH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/window0.png");
-		Size windowSize;
-		GetGraphSize(windowH, windowSize);
-		_itemScreenH = MakeScreen(windowSize.w, windowSize.h, true);
-	}
+	_selectExRateTrack->AddKey(15, 1.0f);
+	_selectExRateTrack->AddKey(30, 0.9);
 }
 
 PreparationUI::~PreparationUI()
 {
+	for (auto& item : _itemInfTable)
+	{
+		DeleteGraph(item.graphH);
+		item.graphH = -1;
+	}
 }
 
 void PreparationUI::Update(const Input& input)
@@ -178,23 +209,10 @@ void PreparationUI::Draw()
 		_battlePreparationCursor->Draw();
 		return;
 	}
-	auto fileSystem = Application::Instance().GetFileSystem();
-	int fontH = fileSystem.GetFontHandle("choplin30edge");
-	int windowH = fileSystem.GetImageHandle("Resource/Image/UI/window0.png");
-	Size graphSize;
-	auto wsize = Application::Instance().GetWindowSize();
-	GetGraphSize(windowH, graphSize);
 	for (int idx = 0; idx < _itemInfTable.size(); idx++)
 	{
-		int currentDrawScreen = GetDrawScreen();
-		SetDrawScreen(_itemScreenH);
-		ClsDrawScreen();
-		DrawGraph(0,0, windowH, true);
-		DrawStringToHandle(graphSize.ToVector2Int() * 0.5f, Anker::center, 0xffffff, fontH, _itemInfTable[idx].name.c_str());
-
-		auto centerPos = Lerp(Vector2Int(wsize.w + graphSize.w / 2, _itemInfTable[idx].pos.y), _itemInfTable[idx].pos, _animTrack->GetValue());
-		SetDrawScreen(currentDrawScreen);
-		DrawRotaGraph(centerPos, idx == static_cast<int>(_selectItem) ? _selectExRateTrack->GetValue() : 0.9f, 0.0f, _itemScreenH, true);
+		auto exRate = idx == static_cast<int>(_selectItem) ? _selectExRateTrack->GetValue() : 0.9f;
+		DrawRotaGraph(_itemInfTable[idx].pos, exRate, 0.0f, _itemInfTable[idx].graphH, true);
 	}
 }
 
@@ -225,6 +243,7 @@ void PreparationUI::Open(const bool animation)
 
 void PreparationUI::Close(const bool animation)
 {
+	_execution = true;
 	if (_updater == &PreparationUI::CloseAnimUpdate || _updater == &PreparationUI::CloseUpdate)
 	{
 		return;
@@ -243,9 +262,9 @@ void PreparationUI::Close(const bool animation)
 	_updater = &PreparationUI::CloseAnimUpdate;
 }
 
-void PreparationUI::SetBackMapSelect(const bool backMapSelect)
+void PreparationUI::BackMapSelect()
 {
-	_backMapSelect = backMapSelect;
+	_backMapSelect = true;
 }
 
 bool PreparationUI::GetBackMapSelect()

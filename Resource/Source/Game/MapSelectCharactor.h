@@ -10,9 +10,10 @@ class MapSelectCharactor :
 {
 private:
     std::unique_ptr<Animator> _animator;
-    Vector2Int _targetPos;
-    int _speed;
-    bool _isMove;
+    Vector2Int _targetPos;  // ˆÚ“®–Ú“I’n
+    int _speed; // ˆÚ“®‘¬“x
+    bool _isMove;   // ˆÚ“®’†
+    int _fontChangeCnt; // ³–ÊŒü‚­‚Ü‚Å‚ÌŠÔ
 
 public:
     MapSelectCharactor(Camera& camera, const CharactorType& charactorType);

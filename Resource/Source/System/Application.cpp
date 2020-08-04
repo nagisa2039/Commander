@@ -161,7 +161,7 @@ void Application::KeySetUp()
 
 	// マウスの入力
 	_input->AddCommand(0, "mouseLeft", 5, MOUSE_INPUT_LEFT);
-	_input->AddCommand(0, "back", 5, MOUSE_INPUT_RIGHT);
+	_input->AddCommand(0, "mouseRight", 5, MOUSE_INPUT_RIGHT);
 	_input->AddCommand(0, "status", 5, MOUSE_INPUT_MIDDLE);
 
 	// プレイヤーごとのパッド入力

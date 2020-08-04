@@ -4,7 +4,6 @@
 #include "Application.h"
 #include "FileSystem.h"
 #include "SelectPen.h"
-#include <Dxlib.h>
 
 using namespace std;
 
@@ -109,6 +108,30 @@ void Menu::Decision()
 
 void Menu::OpenUpdate(const Input& input)
 {
+	_selectPen->Update(input);
+	if (input.GetAnyMouseInput() || input.GetMouseMove() != Vector2Int(0,0))
+	{
+		auto mouseRect = Rect(input.GetMousePos(), Size(1, 1));
+		auto click = input.GetButtonDown(0, "mouseLeft");
+		for (int idx = 0; idx < _contentInfs.size(); ++idx)
+		{
+			if (Rect(_contentInfs[idx].centerPos, _contentSize).IsHit(mouseRect))
+			{
+				_selectContent = idx;
+				if (click)
+				{
+					Decision();
+				}
+				break;
+			}
+		}
+		if (input.GetButtonDown(0, "mouseRight"))
+		{
+			Back();
+		}
+		return;
+	}
+
 	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
 	{
 		Back();
@@ -128,7 +151,6 @@ void Menu::OpenUpdate(const Input& input)
 	{
 		_selectContent = _selectContent + 1;
 	}
-	_selectPen->Update(input);
 }
 
 void Menu::CloseUpdate(const Input& input)
@@ -207,17 +229,9 @@ void Menu::CloseAnimDraw()
 
 void Menu::DrawContent(const Vector2Int& drawCenterPos, const unsigned int idx)
 {
-	auto fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = Application::Instance().GetFileSystem();
 	int choplin30 = fileSystem.GetFontHandle("choplin30edge");
 	auto menuFrameH = fileSystem.GetImageHandle("Resource/Image/UI/menuFrame.png");
-	Size menuFrameSize;
-	GetGraphSize(menuFrameH, menuFrameSize);
-	DrawGraph(GetDrawPos(drawCenterPos, menuFrameSize, Anker::center), menuFrameH, true);
-	Size strSize;
-	int lineCnt;
-	Vector2Int namePos = Vector2Int();
-	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, choplin30, _contentInfs[idx].name.c_str());
-
-	auto drawPos = GetDrawPos(drawCenterPos, strSize, Anker::center);
-	DrawFormatStringToHandle(drawPos.x, drawPos.y, 0xffffff, choplin30, _contentInfs[idx].name.c_str());
+	Rect(drawCenterPos, _contentSize).DrawGraph(menuFrameH);
+	DrawStringToHandle(drawCenterPos, Anker::center, 0xffffff, choplin30, _contentInfs[idx].name.c_str());
 }

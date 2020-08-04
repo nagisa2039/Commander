@@ -201,7 +201,7 @@ void CheckWindow::NormalUpdate(const Input& input)
 		return;
 	}
 
-	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
+	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back") || input.GetButtonDown(0, "mouseRight"))
 	{
 		back();
 		return;

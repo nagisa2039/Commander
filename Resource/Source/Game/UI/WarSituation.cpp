@@ -28,9 +28,8 @@ void WarSituation::ScalingUpdate(const Input& input)
 
 void WarSituation::NormalUpdate(const Input& input)
 {
-
-	if (input.GetButtonDown(0, "back") || input.GetButtonDown(0, "ok")
-	 || input.GetButtonDown(1, "back") || input.GetButtonDown(1, "ok"))
+	if (input.GetButtonDown(0, "back") || input.GetButtonDown(0, "ok") || input.GetButtonDown(0, "mouseLeft")
+	 || input.GetButtonDown(1, "back") || input.GetButtonDown(1, "ok") || input.GetButtonDown(0, "mouseRight"))
 	{
 		_end = true;
 		_exRate->SetReverse(true);

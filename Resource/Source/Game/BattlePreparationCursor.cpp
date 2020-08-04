@@ -49,12 +49,12 @@ void BattlePreparationCursor::Update(const Input& input)
 	{
 		CursorMove(input);
 
-		if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
+		if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok") || input.GetButtonDown(0, "mouseLeft"))
 		{
 			Select();
 		}
 
-		if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
+		if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back") || input.GetButtonDown(0, "mouseRight"))
 		{
 			_end = true;
 		}

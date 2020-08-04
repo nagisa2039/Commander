@@ -73,7 +73,7 @@ void MapSelectScene::Update(const Input& input)
 		return;
 	}
 
-	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
+	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok") || input.GetButtonDown(0, "mouseLeft"))
 	{
 		_fade->StartFadeOut();
 		_goPlayScene = true;
@@ -124,7 +124,10 @@ void MapSelectScene::CursorMove(const Input& input)
 		}
 	};
 
-	if (input.GetButton(0, "right") || input.GetButton(1, "right"))
+	auto& mousePos = input.GetMousePos();
+	auto wsize = Application::Instance().GetWindowSize();
+	float range = 0.1f;
+	if (input.GetButton(0, "right") || input.GetButton(1, "right") || mousePos.x >= wsize.w*(1.0f - range))
 	{
 		if (_selectIdx < _contentPosVec.size() - 1 && _selectIdx + 1 <= (_debug ? _contentPosVec.size() : Application::Instance().GetSaveData().GetMapNum()))
 		{
@@ -141,7 +144,7 @@ void MapSelectScene::CursorMove(const Input& input)
 			}
 		}
 	}
-	if (input.GetButton(0, "left") || input.GetButton(1, "left"))
+	if (input.GetButton(0, "left") || input.GetButton(1, "left") || mousePos.x <= wsize.w * range)
 	{
 		_dir = 1;
 		if (_selectIdx > 0)

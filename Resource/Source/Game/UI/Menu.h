@@ -41,10 +41,6 @@ protected:
 		std::string name;
 		Vector2Int centerPos;
 		std::function<void()> func;
-
-		ContentInf() {};
-		ContentInf(const std::string& na, const Vector2Int cp, const std::function<void()>& fu)
-			:name(na), centerPos(cp), func(fu) {}
 	};
 
 	std::vector<ContentInf> _contentInfs;

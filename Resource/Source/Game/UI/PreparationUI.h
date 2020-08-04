@@ -29,8 +29,10 @@ private:
 		std::string name;
 		Vector2Int pos;
 		std::function<void(void)> func;
+		int graphH;
 	};
 
+	Size _itemSize;
 	Item _selectItem;
 
 	PlayScene& _playScene;
@@ -38,8 +40,10 @@ private:
 	MapCtrl& _mapCtrl;
 
 	bool _execution;
+	/// <summary>
+	/// マップ選択に戻ってよいかのフラグ
+	/// </summary>
 	bool _backMapSelect;
-	static int _itemScreenH;
 
 	void (PreparationUI::* _updater)(const Input& input);
 
@@ -66,6 +70,8 @@ public:
 	void Open(const bool animation);
 	void Close(const bool animation);
 
-	void SetBackMapSelect(const bool backMapSelect);
+	// マップ選択に戻るためのフラグセット
+	void BackMapSelect();
+	// マップ選択に戻るかのフラグ取得
 	bool GetBackMapSelect();
 };

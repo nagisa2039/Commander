@@ -102,7 +102,7 @@ void UIList::MouseMove(const Input& input)
 		}
 	}
 
-	if (input.GetButtonDown(0, "back"))
+	if (input.GetButtonDown(0, "mouseRight"))
 	{
 		Back();
 		return;

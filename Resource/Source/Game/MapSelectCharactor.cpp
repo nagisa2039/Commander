@@ -8,6 +8,11 @@
 
 using namespace std;
 
+namespace
+{
+	constexpr unsigned int FRONT_CHANGE_ITV = 10;
+}
+
 MapSelectCharactor::MapSelectCharactor(Camera& camera, const CharactorType& charactorType): Actor(camera)
 {
 	_animator = make_unique<Animator>();
@@ -47,22 +52,25 @@ MapSelectCharactor::~MapSelectCharactor()
 
 void MapSelectCharactor::Update(const Input& input)
 {
+	if (!_isMove)
+	{
+		const char* downWalk = "DownWalk";
+		if (_animator->GetAnimName() != downWalk && --_fontChangeCnt <= 0)
+		{
+			_animator->ChangeAnim(downWalk);
+		}
+		return;
+	}
+
 	auto vec = (_targetPos.ToVector2() - _pos);
 	if (vec.Length() <= _speed)
 	{
 		_pos = _targetPos.ToVector2();
-		if (!input.GetButton(0, "left")  && !input.GetButton(1, "left")
-		 && !input.GetButton(0, "right") && !input.GetButton(1, "right"))
-		{
-			_animator->ChangeAnim("DownWalk");
-			_animator->AnimRestart();
-		}
-
 		_isMove = false;
+		_fontChangeCnt = FRONT_CHANGE_ITV;
 		return;
 	}
 
-	_isMove = true;
 	if (vec.x > 0)
 	{
 		_animator->ChangeAnim("RightWalk");
@@ -84,6 +92,7 @@ void MapSelectCharactor::Draw()
 
 void MapSelectCharactor::SetTargetPos(const Vector2Int& targetPos)
 {
+	_isMove = true;
 	_targetPos = targetPos;
 }
 

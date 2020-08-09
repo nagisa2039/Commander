@@ -119,7 +119,7 @@ void BattleCharactor::UIDraw()
 	auto battleSelfStatus   = _selfChar.GetBattleStatus();
 	auto targetBattleStatus = _targetChar->GetCharacotr().GetBattleStatus();
 	auto teamColor  = GetTeamColorBattle(_selfChar.GetTeam());
-	auto fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = Application::Instance().GetFileSystem();
 
 	auto fontHandle = fileSystem.GetFontHandle("choplin40edge");
 

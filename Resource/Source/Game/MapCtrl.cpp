@@ -99,58 +99,42 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 	DrawToMapFloorScreen();
 	DrawToMapChipScreen();
 
+	
+
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::swordman)] = 
 		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		auto charactor = make_shared<Swordsman>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
-		charactor->SetMoveActive(characotChipInf.active);
-		charactor->InitStatus(initStatus);
-		_charactors.emplace_back(charactor);
+		CreateCharactor<Swordsman>(characotChipInf, initStatus, ctrl, effects, camera);
 	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::soldier)] =
 		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		auto charactor = make_shared<Soldier>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
-		charactor->SetMoveActive(characotChipInf.active);
-		charactor->InitStatus(initStatus);
-		_charactors.emplace_back(charactor);
+		CreateCharactor<Soldier>(characotChipInf, initStatus, ctrl, effects, camera);
 	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::warrior)] =
 		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		auto charactor = make_shared<Warrior>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
-		charactor->SetMoveActive(characotChipInf.active);
-		charactor->InitStatus(initStatus);
-		_charactors.emplace_back(charactor);
+		CreateCharactor<Warrior>(characotChipInf, initStatus, ctrl, effects, camera);
 	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::mage)] =
 		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		auto charactor = make_shared<Mage>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
-		charactor->SetMoveActive(characotChipInf.active);
-		charactor->InitStatus(initStatus);
-		_charactors.emplace_back(charactor);
+		CreateCharactor<Mage>(characotChipInf, initStatus, ctrl, effects, camera);
 	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::archer)] =
 		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		auto charactor = make_shared<Archer>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
-		charactor->SetMoveActive(characotChipInf.active);
-		charactor->InitStatus(initStatus);
-		_charactors.emplace_back(charactor);
+		CreateCharactor<Archer>(characotChipInf, initStatus, ctrl, effects, camera);
 	};
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::priest)] =
 		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	{
-		auto charactor = make_shared<Priest>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
-		charactor->SetMoveActive(characotChipInf.active);
-		charactor->InitStatus(initStatus);
-		_charactors.emplace_back(charactor);
+		CreateCharactor<Priest>(characotChipInf, initStatus, ctrl, effects, camera);
 	};
 }
 
@@ -484,7 +468,37 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor, Vector2Int& targetCnt)
 
 	targetCnt.x = static_cast<int>(targetCharactorList.size());
 	targetCnt.y = static_cast<int>(outRangeCharactorList.size());
-	
+
+	if (battleStatus.CheckHeal())
+	{
+		if (targetCharactorList.size() > 0)
+		{
+			// 最もダメージを受けているキャラクターを探す
+			targetCharactorList.sort([](const TargetCharactor& left, const TargetCharactor& right)
+				{
+					return left.charactor->GetHurtPoint() > right.charactor->GetHurtPoint();
+				});
+			return targetCharactorList.begin()->charactor->GetMapPos();
+		}
+
+		if (outRangeCharactorList.size() > 0)
+		{
+			// 一番近いキャラクターを採用する
+			outRangeCharactorList.sort([](const TargetCharactor& lval, const TargetCharactor& rval)
+				{
+					return lval.resultPos.moveCnt < rval.resultPos.moveCnt;
+				});
+			for (auto& targetCharactor : outRangeCharactorList)
+			{
+				if (targetCharactor.charactor->GetHurtPoint() > 0)
+				{
+					return targetCharactor.charactor->GetMapPos();
+				}
+			}
+		}
+		return Vector2Int(-1, -1);
+	}
+
 	// 選別
 	for (const auto& targetCharactor : targetCharactorList)
 	{
@@ -498,16 +512,6 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor, Vector2Int& targetCnt)
 	// 敵の攻撃範囲外から攻撃できないので最初に見つけた敵の場所に向かう
 	if (targetCharactorList.size() > 0)
 	{
-		if (battleStatus.CheckHeal())
-		{
-			// 最もダメージを受けているキャラクターを探す
-			targetCharactorList.sort([](const TargetCharactor& left, const TargetCharactor& right)
-			{
-				return left.charactor->GetHurtPoint() > right.charactor->GetHurtPoint();
-			});
-			return targetCharactorList.begin()->charactor->GetMapPos();
-		}
-
 		// 最もダメージを与えられるキャラクターを探す
 		targetCharactorList.sort([&battleStatus](const TargetCharactor& left, const TargetCharactor& right)
 		{
@@ -561,7 +565,7 @@ void MapCtrl::CreateWarSituation()const
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 230);
 
-	auto dataBase = Application::Instance().GetDataBase();
+	auto& dataBase = Application::Instance().GetDataBase();
 	// マップチップの描画
 	int y = 0;
 	for (const auto& mapDataVec : _mapDataVec2)

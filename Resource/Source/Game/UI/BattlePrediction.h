@@ -16,7 +16,8 @@ private:
 	const Charactor& _targetCharactor; 
 	unsigned int _distance;
 	const Map_Chip _mapChip;
-	std::unique_ptr<Track<float>> _hpAnimAlpha; 
+	std::unique_ptr<Track<float>> _hpAnimTrack; 
+
 	int GetChengePoint(const Dir& dir, bool rightAttack, BattleStatus& selfStatus, BattleStatus& targetStatus);
 
 public:

@@ -192,13 +192,9 @@ void Charactor::DrawMovableMass(const uint8_t alpha) const
 			Rect box(offset + (mapPos * chipSize.ToVector2Int() + chipSize * 0.5) + -1, chipSize);
 
 			int scrX = 0;
-			if (heal && CheckAttackMapPos(mapPos))
+			if (!CheckMapPos(mapPos, false))
 			{
-				scrX = 64;
-			}
-			else
-			{
-				scrX = CheckMoveMapPos(mapPos) ? 0 : 32;
+				scrX = heal ? 64 : 32;
 			}
 			box.DrawRectGraph(Vector2Int(scrX, 0), Size(32, 32), graphH);
 
@@ -565,23 +561,11 @@ Status Charactor::GetLevelUpStatus()
 	return status;
 }
 
-bool Charactor::CheckMoveMapPos(const Vector2Int mapPos) const
+bool Charactor::CheckMapPos(const Vector2Int mapPos, const bool attack) const
 {
 	for (const auto& resutlPos : _resultPosListVec2[mapPos.y][mapPos.x])
 	{
-		if (!resutlPos.attack)
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool Charactor::CheckAttackMapPos(const Vector2Int mapPos) const
-{
-	for (const auto& resutlPos : _resultPosListVec2[mapPos.y][mapPos.x])
-	{
-		if (resutlPos.attack)
+		if (resutlPos.attack == attack)
 		{
 			return true;
 		}
@@ -897,7 +881,7 @@ void Charactor::CharactorDataInit(const CharactorType& type, const uint8_t& leve
 {
 	_charactorType = type;
 
-	auto dataBase = Application::Instance().GetDataBase();
+	auto& dataBase = Application::Instance().GetDataBase();
 
 	auto charactorData = dataBase.GetCharactorData(_charactorType);
 	_name = charactorData.name;

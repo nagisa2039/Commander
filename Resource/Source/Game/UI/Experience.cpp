@@ -297,7 +297,7 @@ Experience::Experience(BattleCharactor& battleChar, const bool kill, std::deque<
 {
 	auto battleStatus = _battleChar.GetCharacotr().GetBattleStatus();
 	auto targetStatus = _battleChar.GetTargetBattleCharactor()->GetCharacotr().GetStartStatus();
-	auto dataBase = Application::Instance().GetDataBase();
+	auto& dataBase = Application::Instance().GetDataBase();
 	
 	// ƒ_ƒ[ƒWŠ„‡
 	const float damageRate = battleChar.GetGivenDamage() / static_cast<float>(targetStatus.health);

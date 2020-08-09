@@ -231,7 +231,7 @@ void CheckWindow::DrawToSelectImage()
 {
 	int currentScreen = GetDrawScreen();
 
-	auto fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = Application::Instance().GetFileSystem();
 	int selectH = fileSystem.GetImageHandle("Resource/Image/UI/checkWindowSelect.png");
 	Size selectSize;
 	GetGraphSize(selectH, selectSize);

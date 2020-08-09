@@ -89,7 +89,7 @@ void StatusWindow::DrawToWindowScreen()
 
 	auto wsize = Application::Instance().GetWindowSize();
 
-	auto fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = Application::Instance().GetFileSystem();
 
 
 	Rect iconRect(_sideWindowSize.ToVector2Int() * 0.5f, _sideWindowSize);

@@ -51,7 +51,11 @@ private:
 	bool LoadMapData(const std::string& filePath);
 
 	// 指定したマスがマップの変更可能な範囲化を調べる
-	bool CheckMapPosPutRange(const Vector2Int& mapPos);
+	bool CheckMapPosPutRange(const Vector2Int& mapPos); 
+
+	template<typename T>
+	inline void CreateCharactor(const CharactorChipInf& characotChipInf, const Status& initStatus,
+		SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
 
 public:
 	MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors);
@@ -122,3 +126,12 @@ public:
 	// 現在のマップIDを返す
 	const int GetMapID()const;
 };
+
+template<typename T>
+inline void MapCtrl::CreateCharactor(const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
+{
+	auto charactor = make_shared<T>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
+	charactor->SetMoveActive(characotChipInf.active);
+	charactor->InitStatus(initStatus);
+	_charactors.emplace_back(charactor);
+}

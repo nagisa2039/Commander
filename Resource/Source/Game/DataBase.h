@@ -74,6 +74,9 @@ private:
 		MapData(const std::string& na, const std::string& pa) :name(na), fileName(pa) {};
 	};
 
+	DataBase(const DataBase&) = delete;
+	DataBase& operator=(const DataBase&) = delete;
+
 	std::array<CharactorData, static_cast<size_t>(CharactorType::max)> _charactorDataTable;
 
 	std::array<DataBase::MapChipData, static_cast<size_t>(Map_Chip::max)> _mapChipDataTable;

@@ -59,7 +59,7 @@ void TurnChangeAnim::Draw()
 	if (_animEnd) return;
 
 	auto wsize = Application::Instance().GetWindowSize();
-	auto fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = Application::Instance().GetFileSystem();
 	auto gHangle = fileSystem.GetImageHandle("Resource/Image/Battle/magicCircle.png");
 	auto blurHandle = fileSystem.GetImageHandle("Resource/Image/Battle/magicCircleBlur.png");
 

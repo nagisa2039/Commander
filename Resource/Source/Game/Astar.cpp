@@ -117,7 +117,7 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 							auto checkTeam = mapData[checkPos.y][checkPos.x].team;
 							if (heal)
 							{
-								if ((checkTeam == team || checkTeam == Team::max) && mapData[checkPos.y][checkPos.x].isHurt)
+								if ((checkTeam == team || checkTeam == Team::max)/* && mapData[checkPos.y][checkPos.x].isHurt*/)
 								{
 									attackResultPosList.emplace_back(ResultPos(true, checkPos, &resutlPos, static_cast<Dir>(i), resutlPos.moveCnt));
 								}

@@ -64,7 +64,7 @@ void WarSituation::Draw()
 {
 	auto wsize = Application::Instance().GetWindowSize().ToVector2();
 
-	auto fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = Application::Instance().GetFileSystem();
 	int window0H = fileSystem.GetImageHandle("Resource/Image/UI/window0.png");
 	Size window0Size;
 	GetGraphSize(window0H, window0Size);

@@ -11,6 +11,9 @@ class FontLoader;
 class FileSystem
 {
 private:
+	FileSystem(const FileSystem&) = delete;
+	FileSystem& operator=(const FileSystem&) = delete;
+
 	std::map<std::string,std::shared_ptr<Loader>>_loaders;
 	std::shared_ptr<FontLoader> _fontLoader;
 	std::shared_ptr<SoundLoader> _soundLoder;

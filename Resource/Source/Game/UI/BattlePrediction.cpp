@@ -38,10 +38,10 @@ BattlePrediction::BattlePrediction(const Charactor& self, const Charactor& targe
 {
 	auto sub = _targetCharactor.GetMapPos() - attackStartPos;
 	_distance = abs(sub.x) + abs(sub.y);
-	_hpAnimAlpha = std::make_unique<Track<float>>(true);
-	_hpAnimAlpha->AddKey(0,0.0f);
-	_hpAnimAlpha->AddKey(60, 1.0f);
-	_hpAnimAlpha->AddKey(120, 0.0f);
+	_hpAnimTrack = std::make_unique<Track<float>>(true);
+	_hpAnimTrack->AddKey(0,0.0f);
+	_hpAnimTrack->AddKey(60, 1.0f);
+	_hpAnimTrack->AddKey(120, 0.0f);
 }
 
 BattlePrediction::~BattlePrediction()
@@ -50,13 +50,13 @@ BattlePrediction::~BattlePrediction()
 
 void BattlePrediction::Update(const Input& input)
 {
-	_hpAnimAlpha->Update();
+	_hpAnimTrack->Update();
 }
 
 void BattlePrediction::Draw()
 {
 	auto wsize = Application::Instance().GetWindowSize();
-	Rect windowRect(wsize.ToVector2Int()*0.5f, Size(400, 600));
+	Rect windowRect(wsize.ToVector2Int()*0.5f, Size(600, 600));
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
 	windowRect.Draw(0x000000);
@@ -64,7 +64,7 @@ void BattlePrediction::Draw()
 
 	Size iconSize(200, 200);
 	int drawY = windowRect.Top() + iconSize.h/2 + 50;
-	auto fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = Application::Instance().GetFileSystem();
 	int fontH = fileSystem.GetFontHandle("choplin20edge");
 	_selfCharactor.DrawCharactorIcon(	Rect(Vector2Int(windowRect.center.x - iconSize.w / 2, drawY), iconSize));
 	_targetCharactor.DrawCharactorIcon(	Rect(Vector2Int(windowRect.center.x + iconSize.w / 2, drawY), iconSize));
@@ -114,7 +114,6 @@ void BattlePrediction::Draw()
 		Rect nameRect(Vector2Int(windowRect.center.x, drawY), Size(100,30));
 		DrawExtendGraph(nameRect.Left(), nameRect.Top(), nameRect.Right(), nameRect.Botton(), window1Handle, true);
 		DrawStringToHandle(nameRect.center, Anker::center, 0xffffff, fontH, name);
-
 	};
 
 	auto DrawContentForPower = [&]()
@@ -185,6 +184,13 @@ void BattlePrediction::DrawHPBer(int& drawY, const Rect& windowRect, bool rightA
 	Size hpSize(200, 30);
 	Size hpOutSize(250, 50);
 	drawY += hpOutSize.h / 2;
+	auto& FileSystem = Application::Instance().GetFileSystem();
+	auto fukidashiH = FileSystem.GetImageHandle("Resource/Image/UI/fukidashi.png");
+	Size fukisashiSize;
+	GetGraphSize(fukidashiH, fukisashiSize);
+	float fukidashiScale = 0.5f;
+	fukisashiSize *= fukidashiScale;
+	int choplin30 = FileSystem.GetFontHandle("choplin20");
 
 	auto DrawHP = [&](const Dir dir, const Charactor& self, const Charactor& target)
 	{
@@ -207,12 +213,22 @@ void BattlePrediction::DrawHPBer(int& drawY, const Rect& windowRect, bool rightA
 		float affter = affterHealth / static_cast<float>(self.GetStartStatus().health);
 
 		Size subSize(static_cast<int>(hpSize.w * (abs(before - affter)) + 2), hpSize.h);
-		float sizeRate = (before + affter) / 2.0f * (dir == Dir::left ? -1 : 1);
+		float sing = (dir == Dir::left ? -1 : 1);
+		float sizeRate = (before + affter) / 2.0f * sing;
 		drawPos = GetDrawPos(Vector2Int(windowRect.center.x + static_cast<int>(sizeRate * hpSize.w), drawY), subSize, Anker::center);
 
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(_hpAnimAlpha->GetValue() * 128));
+		auto hpAnimValue = _hpAnimTrack->GetValue();
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(hpAnimValue * 128));
 		DrawBox(drawPos, drawPos + subSize, teamColor);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+
+		// 残りHPの吹き出し表示
+		if (chengePoint != 0)
+		{
+			Vector2Int fukidashiDrawPos = drawPos + Vector2Int(subSize.w * (dir == Dir::left ? 1 : 0), -fukisashiSize.h / 2 - fukisashiSize.h/5 * hpAnimValue);
+			DrawRotaGraph(fukidashiDrawPos, fukidashiScale, 0.0f, fukidashiH, true);
+			DrawStringToHandle(fukidashiDrawPos, Anker::center, 0x000000, choplin30, "%d", affterHealth);
+		}
 
 		// HPの残量
 		Size currentSize(static_cast<int>(hpSize.w * (targetBattleStatus.CheckHeal() ? before : affter)), hpSize.h);

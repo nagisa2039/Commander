@@ -40,8 +40,8 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctr
 	_fade = make_unique<Fade>();
 	_turnChangeAnim = make_unique<TurnChangeAnim>();
 
-	_playerCommander = make_unique<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera, _turnCnt);
-	//_playerCommander = make_unique<EnemyCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
+	//_playerCommander = make_unique<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera, _turnCnt);
+	_playerCommander = make_unique<EnemyCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
 
 	_enemyCommander = make_unique<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy, *_camera);
 
@@ -498,7 +498,7 @@ void PlayScene::GameClearDraw(const Camera& camera)
 		effect->Draw();
 	}
 
-	auto fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = Application::Instance().GetFileSystem();
 	auto animValue = _clearAnimTrack->GetValue();
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(animValue * 255));
 	DrawRotaGraph(wsize.ToVector2Int() * 0.5f, 1.0f, 0.0f, fileSystem.GetImageHandle("Resource/Image/Battle/light.png"), true);

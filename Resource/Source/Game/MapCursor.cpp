@@ -85,7 +85,7 @@ void MapCursor::MouseMove(const Input& input)
 
 void MapCursor::CursorMove(const Input& input)
 {
-	if (input.GetAnyMouseInput())
+	if (input.GetAnyMouseInput() || input.GetMouseMove() != Vector2Int(0,0))
 	{
 		ChangeMouseInput();
 	}

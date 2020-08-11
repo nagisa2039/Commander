@@ -22,7 +22,7 @@ unsigned int  BattleEffect::AddDamage()
 
 	char damageText[10];
 	sprintf_s(damageText, 10, "%d", abs(damage));
-	auto flyText = std::make_shared<FlyText>(damageText, _target.GetCenterPos(), 120, _camera, false, critical);
+	auto flyText = std::make_shared<PopupText>("99999", _target.GetCenterPos(), _camera, false, critical);
 	_effects.emplace_back(flyText);
 	_target.GetCharacotr().AddDamage(damage);
 	if (selfBattleStatus.CheckHeal())

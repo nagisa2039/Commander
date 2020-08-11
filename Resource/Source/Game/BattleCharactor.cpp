@@ -37,6 +37,7 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 	{
 		_hpDotMaskH = LoadMask("Resource/Image/Battle/hpDotMask.png");
 	}
+	_damageType = damageType::none;
 }
 
 BattleCharactor::~BattleCharactor()
@@ -116,15 +117,10 @@ void BattleCharactor::UIAnimUpdate()
 void BattleCharactor::UIDraw()
 {
 	auto wsize = Application::Instance().GetWindowSize();
-	auto battleSelfStatus   = _selfChar.GetBattleStatus();
-	auto targetBattleStatus = _targetChar->GetCharacotr().GetBattleStatus();
 	auto teamColor  = GetTeamColorBattle(_selfChar.GetTeam());
 	auto& fileSystem = Application::Instance().GetFileSystem();
 
 	auto fontHandle = fileSystem.GetFontHandle("choplin40edge");
-
-	Vector2Int mapPosSub(_targetChar->GetCharacotr().GetMapPos() - _selfChar.GetMapPos());
-	unsigned int distance = abs(mapPosSub.x) + abs(mapPosSub.y);
 	
 	// UIの左上の座標
 	Rect windowRect(Vector2Int(0,0), Size(wsize.w / 2, 200));
@@ -154,95 +150,128 @@ void BattleCharactor::UIDraw()
 	sprintf_s(path, _MAX_PATH, "Resource/Image/Battle/battleWindow_%s.png", teamString);
 	windowRect.DrawGraph(fileSystem.GetImageHandle(path));
 
+	// パラメータ表示
+	DrawParameter(teamString, windowRect, fileSystem, paramWindowRect);
+
+	// HP表示
+	DrawHP(windowRect, fontHandle);
+
+	// 武器名の表示
+	DrawWeaponName(fileSystem, weaponNameRect);
+
+	// 名前表示
+	DrawName(teamString, nameWindowRect, fileSystem, fontHandle);
+}
+
+void BattleCharactor::DrawName(const char* teamString, Rect& nameWindowRect, FileSystem& fileSystem, int fontHandle)
+{
+	char path[_MAX_PATH];
+	sprintf_s(path, _MAX_PATH, "Resource/Image/Battle/battleWindow_%s.png", teamString);
+	sprintf_s(path, _MAX_PATH, "Resource/Image/Battle/battleNameWindow_%s.png", teamString);
+	nameWindowRect.DrawGraph(fileSystem.GetImageHandle(path));
+	DrawStringToHandle(nameWindowRect.center, Anker::center, 0xffffff, fontHandle, _selfChar.GetName().c_str());
+}
+
+void BattleCharactor::DrawParameter(const char* teamString, Rect& windowRect, FileSystem& fileSystem, Rect& paramWindowRect)
+{
+	char path[_MAX_PATH];
+	sprintf_s(path, _MAX_PATH, "Resource/Image/Battle/battleParamWindow_%s.png", teamString);
+
+	auto battleSelfStatus = _selfChar.GetBattleStatus();
+	auto targetBattleStatus = _targetChar->GetCharacotr().GetBattleStatus();
+	Vector2Int mapPosSub(_targetChar->GetCharacotr().GetMapPos() - _selfChar.GetMapPos());
+	unsigned int distance = abs(mapPosSub.x) + abs(mapPosSub.y);
+
+	// 攻撃力, 命中率, 必殺, の描画
+	paramWindowRect.DrawGraph(fileSystem.GetImageHandle(path));
+
+	const int ITEM_MAX = 3;
+	auto drawParam = [&](const int itemNum, const int fontH, const unsigned int color, const char* string, const int num)
 	{
-		// 攻撃力, 命中率, 必殺, の描画
-		sprintf_s(path, _MAX_PATH, "Resource/Image/Battle/battleParamWindow_%s.png", teamString);
-		paramWindowRect.DrawGraph(fileSystem.GetImageHandle(path));
-
-		const int ITEM_MAX = 3;
-		auto drawParam = [&](const int itemNum, const int fontH, const unsigned int color, const char* string, const int num)
+		int drawY = paramWindowRect.center.y + (itemNum - (ITEM_MAX - 2)) * 40;
+		DrawStringToHandle(Vector2Int(paramWindowRect.Left() + 10, drawY), Anker::leftcenter, color, fontH, string);
+		// 攻撃できるか
+		if (_selfChar.GetAttackRange().Hit(distance) && (!battleSelfStatus.CheckHeal() || _dir == Dir::left))
 		{
-			int drawY = paramWindowRect.center.y + (itemNum - (ITEM_MAX - 2)) * 40;
-			DrawStringToHandle(Vector2Int(paramWindowRect.Left() + 10, drawY), Anker::leftcenter, color, fontH, string);
-			// 攻撃できるか
-			if (_selfChar.GetAttackRange().Hit(distance) && (!battleSelfStatus.CheckHeal() || _dir == Dir::left))
-			{
-				char numStr[10];
-				sprintf_s(numStr, 10, "%d", num);
-				DrawStringToHandle(Vector2Int(paramWindowRect.Right() - 10, drawY), Anker::rightcenter, color, fontH, numStr);
-			}
-			else
-			{
-				DrawStringToHandle(Vector2Int(paramWindowRect.Right() - 10, drawY), Anker::rightcenter, color, fontH, "--");
-			}
-		};
-
-		int itemNum = 0;
-		// 攻撃力
-		const char* name = "";
-		int num = 0;
-
-		if (battleSelfStatus.CheckHeal())
-		{
-			name = "RCV";
-			num = battleSelfStatus.GetRecover();
+			char numStr[10];
+			sprintf_s(numStr, 10, "%d", num);
+			DrawStringToHandle(Vector2Int(paramWindowRect.Right() - 10, drawY), Anker::rightcenter, color, fontH, numStr);
 		}
 		else
 		{
-			name = "ATK";
-			num = battleSelfStatus.GetDamage(targetBattleStatus);
+			DrawStringToHandle(Vector2Int(paramWindowRect.Right() - 10, drawY), Anker::rightcenter, color, fontH, "--");
 		}
-		auto paramH = fileSystem.GetFontHandle("choplin30edge");
-		drawParam(itemNum++, paramH, 0xffffff, name, num);
-		// 命中
-		drawParam(itemNum++, paramH, 0xffffff, "HIT", battleSelfStatus.GetHit(targetBattleStatus));
-		// 必殺
-		drawParam(itemNum++, paramH, 0xffffff, "CRT", battleSelfStatus.GetCritical(targetBattleStatus));
+	};
+
+	int itemNum = 0;
+	// 攻撃力
+	const char* name = "";
+	int num = 0;
+
+	if (battleSelfStatus.CheckHeal())
+	{
+		name = "RCV";
+		num = battleSelfStatus.GetRecover();
+	}
+	else
+	{
+		name = "ATK";
+		num = battleSelfStatus.GetDamage(targetBattleStatus);
+	}
+	auto paramH = fileSystem.GetFontHandle("choplin30edge");
+	drawParam(itemNum++, paramH, 0xffffff, name, num);
+	// 命中
+	drawParam(itemNum++, paramH, 0xffffff, "HIT", battleSelfStatus.GetHit(targetBattleStatus));
+	// 必殺
+	drawParam(itemNum++, paramH, 0xffffff, "CRT", battleSelfStatus.GetCritical(targetBattleStatus));
+}
+
+void BattleCharactor::DrawHP(Rect& windowRect, int fontHandle)
+{
+	// 被ダメージ時の揺れ用オフセット
+	Vector2Int hpBerOffset(0,0);
+	Vector2Int hpNumOffset(0,0);
+	if (_damageType == damageType::damage || _damageType == damageType::critical)
+	{
+		int range = _damageType == damageType::damage ? 3 : 8;
+		hpBerOffset = Vector2Int(rand() % range, rand() % range);
+		hpNumOffset = Vector2Int(rand() % range, rand() % range);
 	}
 
+	// HPの数値表示
+	auto startHealth = _selfChar.GetStartStatus().health;
+	auto health = _animHealth;
+	auto hpDrawPos = Vector2Int(windowRect.Left(), windowRect.center.y) + Vector2Int(20, 20);
+	DrawFormatStringToHandle(hpDrawPos.x + hpNumOffset.x, hpDrawPos.y + hpNumOffset.y, 0xffffff, fontHandle, "%d", health);
+
+	Size hpPerDot(10, 30);
+	int linePerHp = 40;
+	int berCnt = static_cast<int>(ceil(startHealth / 40.0f));
+
+
+	auto hpBerDrawPos = GetDrawPos(hpDrawPos + Vector2Int(100, 30), Size(0, berCnt * hpPerDot.h), Anker::leftcenter) + hpBerOffset;
+	for (int idx = 0; idx < berCnt; idx++)
 	{
-		// HPの数値表示
-		auto startHealth = _selfChar.GetStartStatus().health;
-		auto health = _animHealth;
-		auto hpDrawPos = Vector2Int(windowRect.Left(), windowRect.center.y) + Vector2Int(20, 20);
-		DrawFormatStringToHandle(hpDrawPos.x, hpDrawPos.y, 0xffffff, fontHandle, "%d", health);
-
-		Size hpPerDot(10, 30);
-		int linePerHp = 40;
-		int berCnt = static_cast<int>(ceil(startHealth / 40.0f));
-
-		auto hpBerDrawPos = GetDrawPos(hpDrawPos + Vector2Int(100, 30), Size(0, berCnt * hpPerDot.h), Anker::leftcenter);
-		for (int idx = 0; idx < berCnt; idx++)
+		Size startSize = Size(min((startHealth - linePerHp * (berCnt - idx - 1)), linePerHp), 1) * hpPerDot;
+		Size currentSize = Size(min((health - linePerHp * (berCnt - idx - 1)), linePerHp), 1) * hpPerDot;
+		DrawBox(hpBerDrawPos, hpBerDrawPos + startSize, 0x888888, true);
+		if (currentSize.w > 0)
 		{
-			Size startSize = Size(min((startHealth - linePerHp * (berCnt - idx - 1)), linePerHp), 1) * hpPerDot;
-			Size currentSize = Size(min((health - linePerHp * (berCnt - idx - 1)), linePerHp), 1) * hpPerDot;
-			DrawBox(hpBerDrawPos, hpBerDrawPos + startSize, 0x888888, true);
-			if (currentSize.w > 0)
-			{
-				DrawBox(hpBerDrawPos, hpBerDrawPos + currentSize, 0x000000, true);
-				CreateMaskScreen();
-				DrawFillMask(hpBerDrawPos.x, hpBerDrawPos.y, hpBerDrawPos.x + currentSize.w, hpBerDrawPos.y + currentSize.h, _hpDotMaskH);
-				DrawBox(hpBerDrawPos, hpBerDrawPos + currentSize, 0x4eb79c, true);
-				DeleteMaskScreen();
-			}
-			DrawBox(hpBerDrawPos, hpBerDrawPos + startSize, 0x000000, false);
-			hpBerDrawPos.y += hpPerDot.h;
-		};
-	}
+			DrawBox(hpBerDrawPos, hpBerDrawPos + currentSize, 0x4eb79c, true);
+		}
+		CreateMaskScreen();
+		DrawFillMask(hpBerDrawPos.x, hpBerDrawPos.y, hpBerDrawPos.x + startSize.w, hpBerDrawPos.y + startSize.h, _hpDotMaskH);
+		DrawBox(hpBerDrawPos, hpBerDrawPos + startSize, 0x000000, true);
+		DeleteMaskScreen();
+		hpBerDrawPos.y += hpPerDot.h;
+	};
+}
 
-	{
-		// 武器名の表示
-		auto choplin30 = fileSystem.GetFontHandle("choplin30edge");
-		const char* str = Application::Instance().GetDataBase().GetWeaponData(GetCharacotr().GetStartStatus().weaponId).name.c_str();
-		DrawStringToHandle(weaponNameRect.center, Anker::center, 0xffffff, choplin30, str);
-	}
-
-	{
-		// 名前表示
-		sprintf_s(path, _MAX_PATH, "Resource/Image/Battle/battleNameWindow_%s.png", teamString);
-		nameWindowRect.DrawGraph(fileSystem.GetImageHandle(path));
-		DrawStringToHandle(nameWindowRect.center, Anker::center, 0xffffff, fontHandle, _selfChar.GetName().c_str());
-	}
+void BattleCharactor::DrawWeaponName(FileSystem& fileSystem, Rect& weaponNameRect)
+{
+	auto choplin30 = fileSystem.GetFontHandle("choplin30edge");
+	const char* str = Application::Instance().GetDataBase().GetWeaponData(GetCharacotr().GetStartStatus().weaponId).name.c_str();
+	DrawStringToHandle(weaponNameRect.center, Anker::center, 0xffffff, choplin30, str);
 }
 
 void BattleCharactor::StartAttackAnim()
@@ -301,6 +330,11 @@ BattleCharactor* BattleCharactor::GetTargetBattleCharactor()
 	return _targetChar;
 }
 
+BattleCharactor::damageType BattleCharactor::GetDamageType() const
+{
+	return _damageType;
+}
+
 void BattleCharactor::SetStartPos(const Vector2& startPos)
 {
 	_startPos = startPos;
@@ -324,6 +358,11 @@ void BattleCharactor::SetDir(const Dir dir)
 void BattleCharactor::SetTargetCharactor(BattleCharactor* target)
 {
 	_targetChar = target;
+}
+
+void BattleCharactor::SetDamageType(const damageType dt)
+{
+	_damageType = dt;
 }
 
 void BattleCharactor::SetGivenDamage(const unsigned int value)

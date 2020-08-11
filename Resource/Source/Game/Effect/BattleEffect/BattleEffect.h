@@ -11,6 +11,7 @@ protected:
 	std::vector<std::shared_ptr<Effect>>& _effects;
 	BattleCharactor& _self;
 	BattleCharactor& _target; 
+	bool _critical;
 
 	unsigned int AddDamage();
 

@@ -48,6 +48,7 @@ void BattleScene::LeftHPAnim(const Input& input)
 	_leftBC.UIAnimUpdate();
 	if (_leftBC.GetHPAnimEnd())
 	{
+		_leftBC.SetDamageType(BattleCharactor::damageType::none);
 		// éÄÇÒÇ≈Ç¢ÇΩÇÁèIÇÌÇÈ
 		if (_leftBC.GetCharacotr().GetIsDying())
 		{
@@ -84,6 +85,7 @@ void BattleScene::RightHPAnim(const Input& input)
 	_rightBC.UIAnimUpdate();
 	if (_rightBC.GetHPAnimEnd())
 	{
+		_rightBC.SetDamageType(BattleCharactor::damageType::none);
 		if (_leftBC.GetCharacotr().GetBattleStatus().CheckHeal())
 		{
 			StartExpUpdate();
@@ -263,18 +265,7 @@ void BattleScene::Draw(void)
 	auto screenCenter = _screenSize.ToVector2Int() * 0.5f;
 
 	// è∞ÇÃï`âÊ
-	auto mapPosSub = _leftBC.GetCharacotr().GetMapPos() - _rightBC.GetCharacotr().GetMapPos();
-	if (abs(mapPosSub.x) + abs(mapPosSub.y) <= 1)
-	{
-		int floorH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/Battle/floor_big.png");
-		DrawRotaGraph(screenCenter.x, static_cast<int>(_floatY), 1.0, 0.0, floorH, true);
-	}
-	else
-	{
-		int floorH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/Battle/floor_small.png");
-		DrawRotaGraph(_leftBC.GetStartPos(), 1.0, 0.0, floorH, true);
-		DrawRotaGraph(_rightBC.GetStartPos(), 1.0, 0.0, floorH, true);
-	}
+	DrawFloor(screenCenter);
 
 	auto charSize = Size(128, 128);
 
@@ -305,6 +296,22 @@ void BattleScene::Draw(void)
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>((1.0f - _brightTL->GetValue()) * 255));
 	DrawBox(0,0, wsize.w, wsize.h, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+}
+
+void BattleScene::DrawFloor(Vector2Int& screenCenter)
+{
+	auto mapPosSub = _leftBC.GetCharacotr().GetMapPos() - _rightBC.GetCharacotr().GetMapPos();
+	if (abs(mapPosSub.x) + abs(mapPosSub.y) <= 1)
+	{
+		int floorH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/Battle/floor_big.png");
+		DrawRotaGraph(Vector2Int(screenCenter.x, static_cast<int>(_floatY)), 1.0, 0.0, floorH, true);
+	}
+	else
+	{
+		int floorH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/Battle/floor_small.png");
+		DrawRotaGraph(_leftBC.GetStartPos(), 1.0, 0.0, floorH, true);
+		DrawRotaGraph(_rightBC.GetStartPos(), 1.0, 0.0, floorH, true);
+	}
 }
 
 std::vector<std::shared_ptr<Effect>>& BattleScene::GetEffectVec()

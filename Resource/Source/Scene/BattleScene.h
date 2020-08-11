@@ -59,6 +59,8 @@ public:
 	void Update(const Input& input) override final;
 	void Draw(void) override final;
 
+	void DrawFloor(Vector2Int& screenCenter);
+
 	std::vector<std::shared_ptr<Effect>>& GetEffectVec();
 };
 

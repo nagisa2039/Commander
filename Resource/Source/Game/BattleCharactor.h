@@ -9,11 +9,21 @@ class Animator;
 class Effect;
 class Charactor;
 class Camera;
+class FileSystem;
 
 class BattleScene;
 
 class BattleCharactor
 {
+public:
+	enum class damageType
+	{
+		none,		// UŒ‚‚ğó‚¯‚Ä‚¢‚È‚¢
+		damage,		// UŒ‚‚ğó‚¯‚Ä‚¢‚é
+		critical,	// ‰ïSUŒ‚‚ğó‚¯‚Ä‚¢‚é
+		max
+	};
+
 protected:
 	Charactor& _selfChar;
 	BattleCharactor* _targetChar;
@@ -34,6 +44,13 @@ protected:
 	unsigned int _givenDamage;	// —^‚¦‚½ƒ_ƒ[ƒW
 
 	static int _hpDotMaskH;
+
+	damageType _damageType;
+
+	void DrawName(const char* teamString, Rect& nameWindowRect, FileSystem& fileSystem, int fontHandle);
+	void DrawParameter(const char* teamString, Rect& windowRect, FileSystem& fileSystem, Rect& paramWindowRect);
+	void DrawHP(Rect& windowRect, int fontHandle);
+	void DrawWeaponName(FileSystem& fileSystem, Rect& weaponNameRect);
 
 public:
 	BattleCharactor(Charactor& charactor, const int imageHandle, Camera& camera);
@@ -62,10 +79,12 @@ public:
 	Charactor& GetCharacotr();
 	const unsigned int& GetGivenDamage()const;
 	BattleCharactor* GetTargetBattleCharactor();
+	damageType GetDamageType()const;
 
 	void SetStartPos(const Vector2& startPos);	// •`‰æ‚·‚éÀ•W(’†‰›‰º)
 	void SetDir(const Dir dir);	//  UŒ‚‚©ç”õ‚Ìİ’è
 	void SetTargetCharactor(BattleCharactor* target);	// í‚¤‘Šè‚Ìƒ|ƒCƒ“ƒ^[
+	void SetDamageType(const damageType dt);
 	void SetGivenDamage(const unsigned int value);
 	void AddGivenDamage(const unsigned int value);
 

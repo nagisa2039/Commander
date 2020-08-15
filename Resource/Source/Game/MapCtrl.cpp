@@ -18,88 +18,22 @@
 
 #include "SceneController.h"
 #include "Effect/Effect.h"
+#include "Map.h"
 
 using namespace std;
 
 namespace
 {
-	constexpr unsigned int CHIP_SIZE_W = 80;
-	constexpr unsigned int CHIP_SIZE_H = 80;
-
-	constexpr unsigned int MAP_CHIP_CNT_W = 20;
-	constexpr unsigned int MAP_CHIP_CNT_H = 20;
-
 	constexpr unsigned int WAR_SITUATION_CHIP_SIZE = 20;
 }
 
-void MapCtrl::DrawToMapChipScreen()
-{
-	int currentScreen = GetDrawScreen();
-	SetDrawScreen(_mapChipH);
-	ClsDrawScreen();
-
-	int y = 0;
-	for (const auto& mapDataVec : _mapDataVec2)
-	{
-		int x = 0;
-		for (const auto& mapData : mapDataVec)
-		{
-			if (_mapDataVec2[y][x].mapChip > Map_Chip::none&& _mapDataVec2[y][x].mapChip < Map_Chip::max)
-			{
-				DrawMapChip(Vector2Int(x, y), _mapDataVec2[y][x].mapChip);
-			}
-			x++;
-		}
-		y++;
-	}
-
-	SetDrawScreen(currentScreen);
-}
-
-void MapCtrl::DrawToMapFloorScreen()
-{
-	int currentScreen = GetDrawScreen();
-	SetDrawScreen(_mapFloorH);
-	ClsDrawScreen();
-
-	for (int y = 0; y < _mapDataVec2.size(); y++)
-	{
-		for (int x = 0; x < _mapDataVec2[y].size(); x++)
-		{
-			DrawMapChip(Vector2Int(x, y), Map_Chip::none);
-		}
-	}
-
-	SetDrawScreen(currentScreen);
-}
-
-MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charactors(charactors), imageFolderPath("Resource/Image/MapChip/")
+MapCtrl::MapCtrl(const int mapId, std::vector<std::shared_ptr<Charactor>>& charactors) : _charactors(charactors)
 {
 	_astar = make_unique<Astar>();
-	_mapChipH = MakeScreen(100 * CHIP_SIZE_W, 100 * CHIP_SIZE_H, true);
-	_mapFloorH = MakeScreen(100 * CHIP_SIZE_W, 100 * CHIP_SIZE_H, true);
-	_warSituationH = MakeScreen(WAR_SITUATION_CHIP_SIZE * MAP_CHIP_CNT_W, WAR_SITUATION_CHIP_SIZE * MAP_CHIP_CNT_H, true);
+	_map = make_shared<Map>(mapId);
 
-	_mapId = -1;
-
-	int frameNum = 2;
-
-	_mapDataVec2.resize(MAP_CHIP_CNT_H);
-	for (int y = 0; y < MAP_CHIP_CNT_H; y++)
-	{
-		_mapDataVec2[y].resize(MAP_CHIP_CNT_W);
-		for (int x = 0; x < MAP_CHIP_CNT_W; x++)
-		{
-			_mapDataVec2[y][x].mapChip = CheckMapPosPutRange(Vector2Int(x, y)) ? Map_Chip::none : Map_Chip::rock;
-			_mapDataVec2[y][x].charactorChip.team = Team::max;
-			_mapDataVec2[y][x].charactorChip.mapPos = Vector2Int(x, y);
-		}
-	}
-
-	DrawToMapFloorScreen();
-	DrawToMapChipScreen();
-
-	
+	auto& mapSize = _map->GetMapSize();
+	_warSituationH = MakeScreen(WAR_SITUATION_CHIP_SIZE * mapSize.w, WAR_SITUATION_CHIP_SIZE * mapSize.h, true);
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::swordman)] = 
 		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
@@ -140,44 +74,19 @@ MapCtrl::MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors) : _charact
 
 MapCtrl::~MapCtrl()
 {
+	DeleteGraph(_warSituationH);
 }
 
-void MapCtrl::Draw(const Camera& camera, const bool edit)
+void MapCtrl::Draw(const Camera& camera)
 {
-	auto offset = camera.GetCameraOffset();
-
-	DrawGraph(offset, _mapFloorH);
-	DrawGraph(offset, _mapChipH);
-
-	if (edit)
-	{
-		for (const auto& mapDataVec : _mapDataVec2)
-		{
-			for (const auto& mapData : mapDataVec)
-			{
-				DrawCharactorChip(mapData.charactorChip, offset);
-			}
-		}
-
-		auto mapSize = GetMapSize();
-		for (int h = 0; h <= mapSize.h; h++)
-		{
-			DrawLine(Vector2Int(0, h * CHIP_SIZE_H) + offset, 
-				Vector2Int(mapSize.w * CHIP_SIZE_W, h * CHIP_SIZE_H) + offset, 0xffffff);
-		}
-		for (int w = 0; w <= mapSize.w; w++)
-		{
-			DrawLine(Vector2Int(w * CHIP_SIZE_W, 0) + offset, 
-				Vector2Int(w * CHIP_SIZE_W, mapSize.h * CHIP_SIZE_H) + offset, 0xffffff);
-		}
-	}
+	_map->Draw(camera);
 }
 
 bool MapCtrl::DrawSortieMass(const Vector2Int& offset, const CharactorChipInf& charactorChipInf, const unsigned int color, const unsigned int frameColor)
 {
 	if (charactorChipInf.team != Team::player || charactorChipInf.type == CharactorType::max)return false;
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 192);
-	auto chipSize = GetChipSize();
+	auto chipSize = _map->GetChipSize();
 	Vector2Int leftup = offset + charactorChipInf.mapPos * chipSize;
 	DrawBox(leftup, leftup + chipSize, color);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
@@ -185,14 +94,14 @@ bool MapCtrl::DrawSortieMass(const Vector2Int& offset, const CharactorChipInf& c
 	return true;
 }
 
-Size MapCtrl::GetChipSize()const
+const Size& MapCtrl::GetChipSize()const
 {
-	return Size(CHIP_SIZE_W, CHIP_SIZE_H);
+	return _map->GetChipSize();
 }
 
-Size MapCtrl::GetMapSize() const
+const Size& MapCtrl::GetMapSize() const
 {
-	return Size(MAP_CHIP_CNT_W, MAP_CHIP_CNT_H);
+	return _map->GetMapSize();
 }
 
 Charactor* MapCtrl::GetMapPosChar(const Vector2Int mapPos)const
@@ -207,72 +116,6 @@ Charactor* MapCtrl::GetMapPosChar(const Vector2Int mapPos)const
 	return nullptr;
 }
 
-bool MapCtrl::SetMapChip(const Vector2Int& mapPos, const Map_Chip mapChip)
-{
-	if (CheckMapPosPutRange(mapPos))
-	{
-		_mapDataVec2[mapPos.y][mapPos.x].mapChip = mapChip;
-		DrawToMapChipScreen();
-		return true;
-	}
-	return false;
-}
-
-bool MapCtrl::DrawMapChip(const Vector2Int& mapPos, const Map_Chip mapChip, const Vector2Int& offset)
-{
-	auto drawData = Application::Instance().GetDataBase().GetMapChipData(mapChip).drawData;
-
-	auto graphH = Application::Instance().GetFileSystem().GetImageHandle((imageFolderPath + drawData.path).c_str());
-	DrawRectExtendGraph(offset.x + CHIP_SIZE_W * mapPos.x, offset.y + CHIP_SIZE_H * mapPos.y,
-		offset.x + CHIP_SIZE_W * mapPos.x + CHIP_SIZE_W, offset.y + CHIP_SIZE_H * mapPos.y + CHIP_SIZE_H,
-		drawData.leftup.x, drawData.leftup.y, drawData.size.w, drawData.size.h,
-		graphH, true);
-
-	return true;
-}
-
-const std::vector<std::vector<MapCtrl::MapData>>& MapCtrl::GetMapData() const
-{
-	return _mapDataVec2;
-}
-
-CharactorChipInf MapCtrl::GetCharactorChipInf(const Vector2Int& mapPos) const
-{
-	return _mapDataVec2[mapPos.y][mapPos.x].charactorChip;
-}
-
-bool MapCtrl::SetCharactorChip(const CharactorChipInf& charactorChipInf)
-{
-	// 移動不可のマスには設置できないようにする
-	if (Application::Instance().GetDataBase().GetMapChipData(_mapDataVec2[charactorChipInf.mapPos.y][charactorChipInf.mapPos.x].mapChip).moveCost < 0)
-	{
-		return false;
-	}
-
-	_mapDataVec2[charactorChipInf.mapPos.y][charactorChipInf.mapPos.x].charactorChip = charactorChipInf;
-	return true;
-}
-
-bool MapCtrl::DrawCharactorChip(const CharactorChipInf& charactorChipInf, const Vector2Int& offset)
-{
-	auto chipSize = GetChipSize();
-	Vector2Int leftup = offset + charactorChipInf.mapPos * chipSize;
-
-	if(!DrawSortieMass(offset, charactorChipInf))
-	{
-		if (charactorChipInf.team == Team::enemy && charactorChipInf.type != CharactorType::max)
-		{
-			int handle = Application::Instance().GetDataBase().GetCharactorImageHandle(charactorChipInf.type, charactorChipInf.team);
-			DrawRectExtendGraph(leftup.x, leftup.y, leftup.x + chipSize.w, leftup.y + chipSize.h, 0, 0, 32, 32, handle, true);
-			DrawFormatString(leftup.x, leftup.y, 0x000000, "Level.%d", charactorChipInf.level);
-			DrawFormatString(leftup.x, leftup.y + 16, 0x000000, "GN.%d", charactorChipInf.groupNum);
-			DrawFormatString(leftup.x, leftup.y + 32, 0x000000, charactorChipInf.active ? "Active : True" : "False");
-		}
-	}
-
-	return true;
-}
-
 void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 {
 	auto& dataBase = Application::Instance().GetDataBase();
@@ -280,7 +123,7 @@ void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr
 	auto charactorDataVec = saveData.GetCharactorDataVec();
 	auto itr = charactorDataVec.begin();
 
-	for (const auto& mapDataVec : _mapDataVec2)
+	for (const auto& mapDataVec : _map->GetMapData())
 	{
 		for (const auto& mapData : mapDataVec)
 		{
@@ -306,83 +149,6 @@ void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr
 		}
 	}
 	saveData.SetWaitCharactorDataVec(charactorDataVec);
-}
-
-bool MapCtrl::SaveMap()
-{
-	string filePath;
-	if (!FileSave(GetMainWindowHandle(), "map", "MAPファイル(*.map)\n*.map\n", "マップデータを保存します。", filePath))
-	{
-		return false;
-	}
-	SaveMapData(filePath.c_str());
-	return true;
-}
-
-
-bool MapCtrl::LoadMap(const int mapId)
-{
-	_mapId = mapId;
-	auto mapData = Application::Instance().GetDataBase().GetMapData(mapId);
-	char filePath[MAX_PATH];
-	sprintf_s(filePath, MAX_PATH, "Resource/Map/%s", mapData.fileName.c_str());
-	return LoadMapData(filePath);
-}
-
-bool MapCtrl::LoadMap()
-{
-	string filePath;
-	if (!FileLoad(GetMainWindowHandle(), "map", "MAPファイル(*.map)\n*.map\n", "マップデータを開きます。", filePath))
-	{
-		return false;
-	}
-
-	return LoadMapData(filePath);
-}
-
-bool MapCtrl::LoadMapData(const std::string& filePath)
-{
-	FILE* fp = nullptr;
-
-	fopen_s(&fp, filePath.c_str(), "rb");
-
-	TCHAR initPath[MAX_PATH];
-	GetCurrentDirectory(MAX_PATH, initPath);
-
-	if (fp == NULL)
-	{
-		return false;
-	}
-
-	// マップチップの読み込み
-	Size mapSize;
-	fread_s(&mapSize, sizeof(mapSize), sizeof(mapSize), 1, fp);
-
-	if (mapSize != GetMapSize())
-	{
-		fclose(fp);
-		return false;
-	}
-
-	_mapDataVec2.resize(mapSize.h);
-	for (auto& mapChipVec : _mapDataVec2)
-	{
-		mapChipVec.resize(mapSize.w);
-		fread_s(mapChipVec.data(), sizeof(MapData) * mapSize.w, sizeof(MapData), mapSize.w, fp);
-	}
-
-	fclose(fp);
-
-	DrawToMapChipScreen();
-
-	return true;
-}
-
-bool MapCtrl::CheckMapPosPutRange(const Vector2Int& mapPos)
-{
-	int frameNum = 2;
-	return mapPos.y >= frameNum && mapPos.y < static_cast<int>(MAP_CHIP_CNT_H - frameNum)
-		&& mapPos.x >= frameNum && mapPos.x < static_cast<int>(MAP_CHIP_CNT_W - frameNum);
 }
 
 void MapCtrl::RouteSearch(Charactor& charactor)
@@ -535,13 +301,15 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor, Vector2Int& targetCnt)
 
 void MapCtrl::CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, const Team team)
 {
-	mapVec2.resize(_mapDataVec2.size());
+	auto& mapData = _map->GetMapData();
+	auto& dataBase = Application::Instance().GetDataBase();
+	mapVec2.resize(mapData.size());
 	for (int y = 0; y < mapVec2.size(); y++)
 	{
-		mapVec2[y].resize(_mapDataVec2[y].size());
+		mapVec2[y].resize(mapData[y].size());
 		for (int x = 0; x < mapVec2[y].size(); x++)
 		{
-			mapVec2[y][x] = Astar::MapData(Application::Instance().GetDataBase().GetMapChipData(_mapDataVec2[y][x].mapChip).moveCost, Team::max, false);
+			mapVec2[y][x] = Astar::MapData(dataBase.GetMapChipData(mapData[y][x].mapChip).moveCost, Team::max, false);
 		}
 	}
 	for (const auto& charactor : _charactors)
@@ -552,11 +320,6 @@ void MapCtrl::CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, co
 	}
 }
 
-MapCtrl::MapData MapCtrl::GetMapData(const Vector2Int& mapPos) const
-{
-	return _mapDataVec2.at(mapPos.y).at(mapPos.x);
-}
-
 void MapCtrl::CreateWarSituation()const
 {
 	int currentScreen = GetDrawScreen();
@@ -565,10 +328,13 @@ void MapCtrl::CreateWarSituation()const
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 230);
 
+	auto& mapData = _map->GetMapData();
 	auto& dataBase = Application::Instance().GetDataBase();
+	auto& mapSize = _map->GetMapSize();
+
 	// マップチップの描画
 	int y = 0;
-	for (const auto& mapDataVec : _mapDataVec2)
+	for (const auto& mapDataVec : mapData)
 	{
 		int x = 0;
 		for (const auto& mapData : mapDataVec)
@@ -580,13 +346,13 @@ void MapCtrl::CreateWarSituation()const
 		}
 		y++;
 	}
-	for (int y = 0; y < MAP_CHIP_CNT_H; y++)
+	for (int y = 0; y < mapSize.h; y++)
 	{
-		for (int x = 0; x < MAP_CHIP_CNT_W; x++)
+		for (int x = 0; x < mapSize.w; x++)
 		{
 			DrawBox(x * WAR_SITUATION_CHIP_SIZE, y * WAR_SITUATION_CHIP_SIZE,
 				(x+1) * WAR_SITUATION_CHIP_SIZE, (y+1) * WAR_SITUATION_CHIP_SIZE, 
-				dataBase.GetMapChipData(_mapDataVec2[y][x].mapChip).simpleColor, true);
+				dataBase.GetMapChipData(mapData[y][x].mapChip).simpleColor, true);
 		}
 	}
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
@@ -600,16 +366,16 @@ void MapCtrl::CreateWarSituation()const
 
 	// グリット
 	unsigned int lineColor = 0xaaaaaa;
-	for (int x = 0; x < MAP_CHIP_CNT_W; x++)
+	for (int x = 0; x < mapSize.w; x++)
 	{
-		DxLib::DrawLine(x * WAR_SITUATION_CHIP_SIZE, 0, x * WAR_SITUATION_CHIP_SIZE, MAP_CHIP_CNT_H * WAR_SITUATION_CHIP_SIZE, lineColor);
+		DxLib::DrawLine(x * WAR_SITUATION_CHIP_SIZE, 0, x * WAR_SITUATION_CHIP_SIZE, mapSize.h * WAR_SITUATION_CHIP_SIZE, lineColor);
 	}
-	for (int y = 0; y < MAP_CHIP_CNT_H; y++)
+	for (int y = 0; y < mapSize.h; y++)
 	{
-		DxLib::DrawLine(0, y * WAR_SITUATION_CHIP_SIZE, MAP_CHIP_CNT_W * WAR_SITUATION_CHIP_SIZE, y * WAR_SITUATION_CHIP_SIZE, lineColor);
+		DxLib::DrawLine(0, y * WAR_SITUATION_CHIP_SIZE, mapSize.w * WAR_SITUATION_CHIP_SIZE, y * WAR_SITUATION_CHIP_SIZE, lineColor);
 	}
-	DrawLine(MAP_CHIP_CNT_W * WAR_SITUATION_CHIP_SIZE-1, 0, MAP_CHIP_CNT_W * WAR_SITUATION_CHIP_SIZE-1, MAP_CHIP_CNT_H* WAR_SITUATION_CHIP_SIZE, lineColor);
-	DrawLine(0, MAP_CHIP_CNT_H * WAR_SITUATION_CHIP_SIZE-1, MAP_CHIP_CNT_W * WAR_SITUATION_CHIP_SIZE, MAP_CHIP_CNT_H * WAR_SITUATION_CHIP_SIZE-1, lineColor);
+	DrawLine(mapSize.w * WAR_SITUATION_CHIP_SIZE-1, 0, mapSize.w * WAR_SITUATION_CHIP_SIZE-1, mapSize.h * WAR_SITUATION_CHIP_SIZE, lineColor);
+	DrawLine(0, mapSize.h * WAR_SITUATION_CHIP_SIZE-1, mapSize.w * WAR_SITUATION_CHIP_SIZE, mapSize.h * WAR_SITUATION_CHIP_SIZE-1, lineColor);
 
 	SetDrawScreen(currentScreen);
 }
@@ -671,98 +437,13 @@ void MapCtrl::SetGroupActive(const unsigned int groupNum, const bool active)
 	}
 }
 
-bool MapCtrl::CheckMapDataRange(const Vector2Int& mapPos)
-{
-	return mapPos.x >= 0 && mapPos.x < _mapDataVec2[mapPos.y].size() && mapPos.y >= 0 && mapPos.y < _mapDataVec2.size();
-}
-
 const std::vector<std::shared_ptr<Charactor>>& MapCtrl::GetCharacots() const
 {
 	return _charactors;
 }
 
-const int MapCtrl::GetMapID() const
+const std::shared_ptr<Map>& MapCtrl::GetMap() const
 {
-	return _mapId;
-}
-
-bool MapCtrl::FileSave(const HWND hWnd, const char* ext, const char* filter, const char* title, std::string& filePath)
-{
-	static OPENFILENAME     ofn;
-	static TCHAR            path[MAX_PATH];
-	static TCHAR            file[MAX_PATH];
-
-	TCHAR initPath[MAX_PATH];
-	GetCurrentDirectory(MAX_PATH, initPath);
-
-	if (path[0] == TEXT('\n'))
-	{
-		GetCurrentDirectory(MAX_PATH, path);
-	}
-	if (ofn.lStructSize == 0)
-	{
-		ofn.lStructSize = sizeof(OPENFILENAME);
-		ofn.hwndOwner = hWnd;
-		ofn.lpstrInitialDir = path;       // 初期フォルダ位置
-		ofn.lpstrFile = file;       // 選択ファイル格納
-		ofn.nMaxFile = MAX_PATH;
-		ofn.lpstrDefExt = TEXT(ext);
-		ofn.lpstrFilter = TEXT(filter);
-		ofn.lpstrTitle = TEXT(title);
-		ofn.Flags = OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
-	}
-	bool result = GetSaveFileName(&ofn);
-	SetCurrentDirectory(initPath);
-	filePath = file;
-
-	return result;
-}
-
-bool MapCtrl::FileLoad(const HWND hWnd, const char* ext, const char* filter, const char* title, std::string& loadFilePath)
-{
-	static OPENFILENAME     ofn;
-	static TCHAR            path[MAX_PATH];
-	static TCHAR            file[MAX_PATH];
-
-	TCHAR initPath[MAX_PATH];
-	GetCurrentDirectory(MAX_PATH, initPath);
-
-	if (path[0] == TEXT('\n'))
-	{
-		GetCurrentDirectory(MAX_PATH, path);
-	}
-	if (ofn.lStructSize == 0)
-	{
-		ofn.lStructSize = sizeof(OPENFILENAME);
-		ofn.hwndOwner = hWnd;
-		ofn.lpstrInitialDir = path;       // 初期フォルダ位置
-		ofn.lpstrFile = file;       // 選択ファイル格納
-		ofn.nMaxFile = MAX_PATH;
-		ofn.lpstrDefExt = TEXT(ext);
-		ofn.lpstrFilter = TEXT(filter);
-		ofn.lpstrTitle = TEXT(title);
-		ofn.Flags = OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
-	}
-	bool result = GetOpenFileName(&ofn);
-	SetCurrentDirectory(initPath);
-	loadFilePath = file;
-	return result;
-}
-
-void MapCtrl::SaveMapData(const std::string& saveFilePath)
-{
-	FILE* fp = nullptr;
-	fopen_s(&fp, saveFilePath.c_str(), "wb");
-
-	// マップサイズの書き込み
-	auto mapSize = GetMapSize();
-	fwrite(&mapSize, sizeof(mapSize), 1, fp);
-
-	// マップチップの書き込み
-	for (const auto& mapChipVec : _mapDataVec2)
-	{
-		fwrite(mapChipVec.data(), sizeof(MapData), mapChipVec.size(), fp);
-	}
-
-	fclose(fp);
+	assert(_map);
+	return _map;
 }

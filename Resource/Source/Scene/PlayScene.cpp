@@ -6,10 +6,10 @@
 #include "../System/FileSystem.h"
 #include "../Game/Camera.h"
 #include "../Game/MapCtrl.h"
-#include "MapEditScene.h"
 #include "UI/PreparationUI.h"
 #include "SaveData.h"
 #include "Fade.h"
+#include "Map.h"
 
 #include "Charactor.h"
 
@@ -35,13 +35,13 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctr
 	debug = true;
 	_turnCnt = 0;
 
-	_mapCtrl = make_unique<MapCtrl>(_charactors);
+	_mapCtrl = make_unique<MapCtrl>(mapId, _charactors);
 	_camera = make_unique<Camera>(Rect(Vector2Int(), wsize));
 	_fade = make_unique<Fade>();
 	_turnChangeAnim = make_unique<TurnChangeAnim>();
 
-	//_playerCommander = make_unique<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera, _turnCnt);
-	_playerCommander = make_unique<EnemyCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
+	_playerCommander = make_unique<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera, _turnCnt);
+	//_playerCommander = make_unique<EnemyCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
 
 	_enemyCommander = make_unique<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy, *_camera);
 
@@ -50,7 +50,6 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctr
 	auto mapSize = _mapCtrl->GetMapSize() * _mapCtrl->GetChipSize();
 	_camera->SetLimitRect(Rect(mapSize.ToVector2Int() * 0.5, mapSize));
 
-	_mapCtrl->LoadMap(mapId);
 	_mapCtrl->CreateCharactor(ctrl, _effects, *_camera);
 
 	_dyingCharItr = _charactors.end();
@@ -131,12 +130,6 @@ void PlayScene::Update(const Input & input)
 
 	if (debug)
 	{
-	}
-
-	if (input.GetButtonDown(0, "F1"))
-	{
-		_controller.ChangeScene(make_shared<MapEditScene>(_controller));
-		return;
 	}
 
 
@@ -336,7 +329,7 @@ bool PlayScene::CharactorDyingUpdate(const Input& input)
 		else
 		{
 			// ƒQ[ƒ€ƒNƒŠƒA
-			Application::Instance().GetSaveData().Save(_charactors, _mapCtrl->GetMapID());
+			Application::Instance().GetSaveData().Save(_charactors, _mapCtrl->GetMap()->GetMapID());
 			_uniqueUpdater = &PlayScene::GameClearUpdate;
 			_uniqueDrawer = &PlayScene::GameClearDraw;
 			return true;
@@ -403,7 +396,7 @@ bool PlayScene::FadeUpdate(const Input& input)
 
 void PlayScene::PreparationDraw(const Camera& camera)
 {
-	_mapCtrl->Draw(*_camera, false);
+	_mapCtrl->Draw(*_camera);
 
 	_preparationUI->BeginDraw();
 

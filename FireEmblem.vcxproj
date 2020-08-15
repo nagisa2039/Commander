@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Resource\Source\Game\Map.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\MoneyUI.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\UIList\CharactorListItem.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\UIList\CharactorList.cpp" />
@@ -33,7 +34,6 @@
     <ClCompile Include="Resource\Source\Game\Charactor.cpp" />
     <ClCompile Include="Resource\Source\Game\Commander.cpp" />
     <ClCompile Include="Resource\Source\Game\DataBase.cpp" />
-    <ClCompile Include="Resource\Source\Game\EditCursor.cpp" />
     <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\ArrowEffect.cpp" />
     <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\BattleEffect.cpp" />
     <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\MagicEffect.cpp" />
@@ -79,7 +79,6 @@
     <ClCompile Include="Resource\Source\Game\Warrior.cpp" />
     <ClCompile Include="Resource\Source\Game\WeaponData.cpp" />
     <ClCompile Include="Resource\Source\Scene\BattleScene.cpp" />
-    <ClCompile Include="Resource\Source\Scene\MapEditScene.cpp" />
     <ClCompile Include="Resource\Source\Scene\MapSelectScene.cpp" />
     <ClCompile Include="Resource\Source\Scene\PlayScene.cpp" />
     <ClCompile Include="Resource\Source\Scene\Scene.cpp" />
@@ -102,6 +101,7 @@
     <ClCompile Include="Resource\Source\Scene\ShopScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Resource\Source\Game\Map.h" />
     <ClInclude Include="Resource\Source\Game\UI\MoneyUI.h" />
     <ClInclude Include="Resource\Source\Game\UI\UIList\CharactorListItem.h" />
     <ClInclude Include="Resource\Source\Game\UI\UIList\CharactorList.h" />
@@ -117,7 +117,6 @@
     <ClInclude Include="Resource\Source\Game\CharactorType.h" />
     <ClInclude Include="Resource\Source\Game\Commander.h" />
     <ClInclude Include="Resource\Source\Game\DataBase.h" />
-    <ClInclude Include="Resource\Source\Game\EditCursor.h" />
     <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\ArrowEffect.h" />
     <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\BattleEffect.h" />
     <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\MagicEffect.h" />
@@ -274,6 +273,7 @@
       <AdditionalIncludeDirectories>Resource\Source\System;Resource\Source\Utility;Resource\Source\Scene;Resource\Source\Game;$(DXLIB_DIR)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

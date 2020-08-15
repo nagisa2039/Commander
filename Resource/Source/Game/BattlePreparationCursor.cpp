@@ -2,6 +2,7 @@
 #include "Input.h"
 #include "Camera.h"
 #include "MapCtrl.h"
+#include "Map.h"
 #include "Application.h"
 #include "Charactor.h"
 #include "FileSystem.h"
@@ -83,7 +84,7 @@ void BattlePreparationCursor::Update(const Input& input)
 
 void BattlePreparationCursor::Select()
 {
-	auto charactorChips = _mapCtrl.GetCharactorChipInf(_mapPos);
+	auto charactorChips = _mapCtrl.GetMap()->GetCharactorChipInf(_mapPos);
 	auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
 
 	if(charactorChips.team != Team::player || charactorChips.type == CharactorType::max)return;
@@ -155,7 +156,8 @@ void BattlePreparationCursor::Draw()
 void BattlePreparationCursor::DrawSortieMass()
 {
 	auto offset = _camera.GetCameraOffset();
-	for (const auto& mapDataVec : _mapCtrl.GetMapData())
+
+	for (const auto& mapDataVec : _mapCtrl.GetMap()->GetMapData())
 	{
 		for (const auto& mapData : mapDataVec)
 		{

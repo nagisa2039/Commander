@@ -15,6 +15,7 @@
 #include "Charactor.h"
 #include "TerrainInf.h"
 #include "MenuTopInf.h"
+#include "Map.h"
 
 using namespace std;
 
@@ -126,7 +127,8 @@ void PlayerUI::AddBattlePre()
 		return;
 	}
 
-	_battlePre = make_shared<BattlePrediction>(*self, *charactor, nullptr, attackStartPos, _mapCtrl.GetMapData(attackStartPos).mapChip);
+	_battlePre = make_shared<BattlePrediction>(*self, *charactor, nullptr, attackStartPos, 
+		_mapCtrl.GetMap()->GetMapData(attackStartPos).mapChip);
 }
 
 void PlayerUI::ClearBattlePre()

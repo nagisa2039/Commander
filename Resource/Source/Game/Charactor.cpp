@@ -16,6 +16,7 @@
 #include "Effect/CorsorTarget.h"
 #include "DataBase.h"
 #include "SaveData.h"
+#include "Map.h"
 
 using namespace std;
 
@@ -241,7 +242,7 @@ const Status& Charactor::GetStatus() const
 BattleStatus Charactor::GetBattleStatus() const
 {
 	const auto& dataBase = Application::Instance().GetDataBase();
-	const auto& mapChipData = dataBase.GetMapChipData(_mapCtrl.GetMapData(GetMapPos()).mapChip);
+	const auto& mapChipData = dataBase.GetMapChipData(_mapCtrl.GetMap()->GetMapData(GetMapPos()).mapChip);
 	const auto& weaponData = dataBase.GetWeaponData(_status.weaponId);
 
 	return BattleStatus(_status, weaponData, mapChipData.defense, mapChipData.avoidance);
@@ -484,7 +485,7 @@ void Charactor::DrawRoute(const Vector2Int& targetPos)
 
 bool Charactor::StartTerrainEffect()
 {
-	auto mapChipData = Application::Instance().GetDataBase().GetMapChipData(_mapCtrl.GetMapData(GetMapPos()).mapChip);
+	auto mapChipData = Application::Instance().GetDataBase().GetMapChipData(_mapCtrl.GetMap()->GetMapData(GetMapPos()).mapChip);
 
 	// Œø‰Ê‚È‚µ
 	if (mapChipData.recovery == 0)return false;
@@ -854,7 +855,7 @@ Team Charactor::GetTeam() const
 bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 {
 	_moveDirList.clear();
-	if (!_mapCtrl.CheckMapDataRange(mapPos))
+	if (!_mapCtrl.GetMap()->CheckMapDataRange(mapPos))
 	{
 		MoveEnd(false);
 		return false;

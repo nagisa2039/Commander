@@ -1,4 +1,5 @@
 #pragma once
+#include "CharactorType.h"
 
 enum class Map_Chip
 {
@@ -17,4 +18,10 @@ enum class Map_Chip
 	fort,
 	lava,
 	max
+};
+
+struct MapData
+{
+	Map_Chip mapChip;
+	CharactorChipInf charactorChip;
 };

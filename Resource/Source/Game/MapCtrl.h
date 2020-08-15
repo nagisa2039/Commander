@@ -5,7 +5,6 @@
 #include "MapChip.h"
 #include <memory>
 #include "Astar.h"
-#include "CharactorType.h"
 #include <functional>
 #include "DataBase.h"
 #include <windows.h>
@@ -14,19 +13,15 @@ class Camera;
 class Charactor;
 class SceneController;
 class Effect;
+class Map;
 
 class MapCtrl
 {
 private:
-
-	struct MapData
-	{
-		Map_Chip mapChip;
-		CharactorChipInf charactorChip;
-	};
-
-	std::vector<std::vector<MapData>> _mapDataVec2;			// マップデータ
 	std::unique_ptr<Astar> _astar;
+	std::shared_ptr<Map> _map;
+
+	int _warSituationH;
 
 	std::vector<std::shared_ptr<Charactor>>& _charactors;
 
@@ -34,56 +29,25 @@ private:
 	std::array<std::function<void(const CharactorChipInf&, const Status&, SceneController&, std::vector<std::shared_ptr<Effect>>&, Camera&)>,
 		static_cast<size_t>(CharactorType::max)> _charactorCreateFuncs;
 
-	int _mapFloorH;
-	int _mapChipH;
-	int _warSituationH;
-
-	int _mapId;
-
-	const std::string imageFolderPath;
-
-	void DrawToMapFloorScreen();
-	void DrawToMapChipScreen();
-
-	bool FileSave(const HWND hWnd, const char* ext, const char* filter, const char* title, std::string& saveFilePath);
-	bool FileLoad(const HWND hWnd, const char* ext, const char* filter, const char* title, std::string& loadFilePath);
-	void SaveMapData(const std::string& saveFilePath);
-	bool LoadMapData(const std::string& filePath);
-
-	// 指定したマスがマップの変更可能な範囲化を調べる
-	bool CheckMapPosPutRange(const Vector2Int& mapPos); 
-
 	template<typename T>
 	inline void CreateCharactor(const CharactorChipInf& characotChipInf, const Status& initStatus,
 		SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
 
 public:
-	MapCtrl(std::vector<std::shared_ptr<Charactor>>& charactors);
+	MapCtrl(const int mapId, std::vector<std::shared_ptr<Charactor>>& charactors);
 	~MapCtrl();
 
-	void Draw(const Camera& camera, const bool edit = false);
+	void Draw(const Camera& camera);
 
 	bool DrawSortieMass(const Vector2Int& offset, const CharactorChipInf& charactorChipInf, const unsigned int color = 0x00ffff, const unsigned int frameColor = 0x0000ff);
-
-	Size GetChipSize()const;
-	Size GetMapSize()const;
 
 	// そのマスにいるキャラクターを返す
 	Charactor* GetMapPosChar(const Vector2Int mapPos)const;
 
-	bool SetMapChip(const Vector2Int& mapPos, const Map_Chip mapChip);
-	bool DrawMapChip(const Vector2Int& mapPos, const Map_Chip mapChip, const Vector2Int& offset = Vector2Int(0,0));
-
-	const std::vector<std::vector<MapData>>& GetMapData()const;
-	CharactorChipInf GetCharactorChipInf(const Vector2Int& mapPos)const;
-	bool SetCharactorChip(const CharactorChipInf& charactorChipInf);
-	bool DrawCharactorChip(const CharactorChipInf& charactorChipInf, const Vector2Int& offset = Vector2Int(0,0));
+	const Size& GetChipSize()const;
+	const Size& GetMapSize()const;
 
 	void CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
-
-	bool SaveMap();
-	bool LoadMap(const int mapId);
-	bool LoadMap();
 
 	// 移動可能なマスを探す
 	void RouteSearch(Charactor& charactor);
@@ -95,9 +59,6 @@ public:
 	Vector2Int SearchMovePos(Charactor& charactor, Vector2Int& targetCnt);
 
 	void CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, const Team team);
-
-	// 指定した座標のMapDataを取得する
-	MapData GetMapData(const Vector2Int& mapPos)const;
 
 	// 戦況確認用の画像を生成する(更新する)
 	void CreateWarSituation()const;
@@ -117,14 +78,10 @@ public:
 	// 指定した集団のmoveActiveを変更
 	void SetGroupActive(const unsigned int groupNum, const bool active);
 
-	// 指定したマスがマップの範囲内かを返す
-	bool CheckMapDataRange(const Vector2Int& mapPos);
-
 	// キャラクターの配列を取得
 	const std::vector<std::shared_ptr<Charactor>>& GetCharacots()const;
 
-	// 現在のマップIDを返す
-	const int GetMapID()const;
+	const std::shared_ptr<Map>& GetMap()const;
 };
 
 template<typename T>

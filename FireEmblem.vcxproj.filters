@@ -105,9 +105,6 @@
     <ClCompile Include="Resource\Source\Scene\SceneController.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Scene\MapEditScene.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Source\Game\MapCtrl.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
@@ -130,9 +127,6 @@
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\Actor.cpp">
-      <Filter>ソース ファイル\Game\Actor</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Game\EditCursor.cpp">
       <Filter>ソース ファイル\Game\Actor</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\MapCursor.cpp">
@@ -330,6 +324,9 @@
     <ClCompile Include="Resource\Source\Game\UI\MoneyUI.cpp">
       <Filter>ソース ファイル\Game\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Game\Map.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -390,9 +387,6 @@
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\Actor.h">
-      <Filter>ヘッダー ファイル\Game\Actor</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Game\EditCursor.h">
       <Filter>ヘッダー ファイル\Game\Actor</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\MapCursor.h">
@@ -582,6 +576,9 @@
       <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\SaveDataCharactor.h">
+      <Filter>ヘッダー ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Map.h">
       <Filter>ヘッダー ファイル\Game</Filter>
     </ClInclude>
   </ItemGroup>

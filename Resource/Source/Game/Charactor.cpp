@@ -864,7 +864,6 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 	// 同じマスに移動 || 移動アニメーション中
 	if (mapPos == GetMapPos() || _isMoveAnim)return false;
 
-
 	auto oneLineResutlList = CreateResultPosList(mapPos);
 	_onelineListCnt = static_cast<int>(oneLineResutlList.size());
 	if (oneLineResutlList.size() <= 0)return false;

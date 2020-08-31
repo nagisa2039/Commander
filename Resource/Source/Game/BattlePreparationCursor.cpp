@@ -14,9 +14,14 @@
 
 using namespace std;
 
+namespace
+{
+	constexpr int NONE_SELECT = -1;
+}
+
 BattlePreparationCursor::BattlePreparationCursor(MapCtrl& mapCtrl, Camera& camera):MapCursor(mapCtrl, camera)
 {
-	_selectChar = nullptr;
+	_selectMapPos = Vector2Int(NONE_SELECT, NONE_SELECT);
 	_end = false;
 
 	_exRateTrack = std::make_unique<Track<float>>(true);
@@ -85,39 +90,34 @@ void BattlePreparationCursor::Update(const Input& input)
 void BattlePreparationCursor::Select()
 {
 	auto charactorChips = _mapCtrl.GetMap()->GetCharactorChipInf(_mapPos);
-	auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
 
-	if(charactorChips.team != Team::player || charactorChips.type == CharactorType::max)return;
+	if(charactorChips.team != Team::player/* || charactorChips.type == CharactorType::max*/)return;
 
 	// キャラクターの選択
-	if (_selectChar == nullptr)
+	if (_selectMapPos.x == NONE_SELECT)
 	{
-		if (charactor == nullptr)return;
-
-		_selectChar = charactor;
+		_selectMapPos = _mapPos;
 		return;
 	}
 
 	// 選択解除
-	if (_selectChar == charactor)
+	if (_selectMapPos == _mapPos)
 	{
-		_selectChar = nullptr;
+		_selectMapPos.x = NONE_SELECT;
 		return;
 	}
 
-	// 空きマスなら
-	if (charactor == nullptr)
-	{
-		if (charactorChips.team != Team::player)return;
+	auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
+	auto selectcharactor = _mapCtrl.GetMapPosChar(_selectMapPos);
 
-		// 選択キャラをセット
-		_selectChar->InitmapPos(charactorChips.mapPos);
-	}
-	else
+	//キャラクターがいれば入れ替え
+	if (charactor != nullptr)
 	{
-		// 選択キャラをそのマスにいるキャラと入れ替える
-		charactor->InitmapPos(_selectChar->GetMapPos());
-		_selectChar->InitmapPos(_mapPos);
+		charactor->InitmapPos(_selectMapPos);
+	}
+	if(selectcharactor != nullptr)
+	{
+		selectcharactor->InitmapPos(_mapPos);
 	}
 
 	// 移動したのでルートの再検索
@@ -125,7 +125,7 @@ void BattlePreparationCursor::Select()
 	{
 		charactor->RouteSearch();
 	}
-	_selectChar = nullptr;
+	_selectMapPos.x = NONE_SELECT;
 }
 
 void BattlePreparationCursor::Draw()
@@ -163,7 +163,7 @@ void BattlePreparationCursor::DrawSortieMass()
 		{
 			if (mapData.charactorChip.team != Team::player)continue;
 
-			if (_selectChar != nullptr && mapData.charactorChip.mapPos == _selectChar->GetMapPos())
+			if (mapData.charactorChip.mapPos == _selectMapPos)
 			{
 				_mapCtrl.DrawSortieMass(offset, mapData.charactorChip, 0xffff00, 0xffff00);
 			}

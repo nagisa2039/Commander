@@ -84,7 +84,7 @@ void MapCtrl::Draw(const Camera& camera)
 
 bool MapCtrl::DrawSortieMass(const Vector2Int& offset, const CharactorChipInf& charactorChipInf, const unsigned int color, const unsigned int frameColor)
 {
-	if (charactorChipInf.team != Team::player || charactorChipInf.type == CharactorType::max)return false;
+	if (charactorChipInf.team != Team::player/* || charactorChipInf.type == CharactorType::max*/)return false;
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 192);
 	auto chipSize = _map->GetChipSize();
 	Vector2Int leftup = offset + charactorChipInf.mapPos * chipSize;
@@ -119,9 +119,9 @@ Charactor* MapCtrl::GetMapPosChar(const Vector2Int mapPos)const
 void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 {
 	auto& dataBase = Application::Instance().GetDataBase();
-	auto& saveData = Application::Instance().GetSaveData();
-	auto charactorDataVec = saveData.GetCharactorDataVec();
-	auto itr = charactorDataVec.begin();
+	//auto& saveData = Application::Instance().GetSaveData();
+	//auto charactorDataVec = saveData.GetCharactorDataVec();
+	//auto itr = charactorDataVec.begin();
 
 	for (const auto& mapDataVec : _map->GetMapData())
 	{
@@ -129,7 +129,12 @@ void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr
 		{
 			if (mapData.charactorChip.type == CharactorType::max || mapData.charactorChip.team == Team::max) continue;
 
-			if (mapData.charactorChip.team == Team::player)
+			auto initStatus = dataBase.GetLevelInitStatus(mapData.charactorChip.level, mapData.charactorChip.type);
+			initStatus.weaponId = mapData.charactorChip.weaponId;
+			_charactorCreateFuncs[static_cast<size_t>(mapData.charactorChip.type)](mapData.charactorChip,
+				initStatus, ctrl, effects, camera);
+
+			/*if (mapData.charactorChip.team == Team::player)
 			{
 				if (itr == charactorDataVec.end()) continue;
 
@@ -141,14 +146,11 @@ void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr
 			}
 			else
 			{
-				auto initStatus = dataBase.GetLevelInitStatus(mapData.charactorChip.level, mapData.charactorChip.type);
-				initStatus.weaponId = mapData.charactorChip.weaponId;
-				_charactorCreateFuncs[static_cast<size_t>(mapData.charactorChip.type)](mapData.charactorChip, 
-					initStatus, ctrl, effects, camera);
-			}
+				
+			}*/
 		}
 	}
-	saveData.SetWaitCharactorDataVec(charactorDataVec);
+	//saveData.SetWaitCharactorDataVec(charactorDataVec);
 }
 
 void MapCtrl::RouteSearch(Charactor& charactor)

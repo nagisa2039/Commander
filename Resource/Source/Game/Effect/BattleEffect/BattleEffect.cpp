@@ -10,15 +10,16 @@ unsigned int  BattleEffect::AddDamage()
 	auto selfBattleStatus = _self.GetCharacotr().GetBattleStatus();
 	auto targetBattleStatus = _target.GetCharacotr().GetBattleStatus();
 	_critical = selfBattleStatus.GetCritical(targetBattleStatus) > rand() % 100;
-	_target.SetDamageType(BattleCharactor::damageType::critical);
 	int damage = 0;
 	if (selfBattleStatus.CheckHeal())
 	{
 		damage = -selfBattleStatus.GetRecover();
+		_target.SetDamageType(BattleCharactor::damageType::none);
 	}
 	else
 	{
 		damage = selfBattleStatus.GetDamage(targetBattleStatus) * (_critical ? 3 : 1);
+		_target.SetDamageType(_critical ? BattleCharactor::damageType::critical : BattleCharactor::damageType::damage);
 	}
 
 	char damageText[10];

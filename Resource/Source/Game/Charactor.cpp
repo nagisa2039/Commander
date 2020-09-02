@@ -192,10 +192,23 @@ void Charactor::DrawMovableMass(const uint8_t alpha) const
 			Vector2Int mapPos = resultPosList.begin()->mapPos;
 			Rect box(offset + (mapPos * chipSize.ToVector2Int() + chipSize * 0.5) + -1, chipSize);
 
+			const int HEAL_SCR_X = 64;
+			const int ATTACK_SCR_X = 32;
 			int scrX = 0;
-			if (!CheckMapPos(mapPos, false))
+			auto charactor = _mapCtrl.GetMapPosChar(mapPos);
+			auto mapPosMassCnt = CheckMapPos(mapPos);
+
+			if (heal && mapPosMassCnt.y > 0 && charactor && charactor->GetHurtPoint() > 0)
 			{
-				scrX = heal ? 64 : 32;
+				scrX = HEAL_SCR_X;
+			}
+			else
+			{
+				// ˆÚ“®ƒ}ƒX‚ª‚È‚¯‚ê‚Î
+				if (mapPosMassCnt.x <= 0)
+				{
+					scrX = heal ? HEAL_SCR_X : ATTACK_SCR_X;
+				}
 			}
 			box.DrawRectGraph(Vector2Int(scrX, 0), Size(32, 32), graphH);
 
@@ -562,19 +575,17 @@ Status Charactor::GetLevelUpStatus()
 	return status;
 }
 
-bool Charactor::CheckMapPos(const Vector2Int mapPos, const bool attack) const
+Vector2Int Charactor::CheckMapPos(const Vector2Int& mapPos) const
 {
+	Vector2Int ret(0,0);
 	for (const auto& resutlPos : _resultPosListVec2[mapPos.y][mapPos.x])
 	{
-		if (resutlPos.attack == attack)
-		{
-			return true;
-		}
+		resutlPos.attack ? ret.y++ : ret.x++;
 	}
-	return false;
+	return ret;
 }
 
-std::list<Astar::ResultPos> Charactor::CreateResultPosList(const Vector2Int mapPos) const
+std::list<Astar::ResultPos> Charactor::CreateResultPosList(const Vector2Int& mapPos) const
 {
 	std::list<Astar::ResultPos> routeList;
 	routeList.clear();

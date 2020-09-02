@@ -377,5 +377,5 @@ void BattleCharactor::AddGivenDamage(const unsigned int value)
 
 std::shared_ptr<Effect> BattleCharactor::CreateMissEffect(const Vector2Int& effectPos)
 {
-	return make_shared<MissEffect>(effectPos, _camera);
+	return make_shared<PopupText>("MISS!", effectPos, _camera, false);
 }

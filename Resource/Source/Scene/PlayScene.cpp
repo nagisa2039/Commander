@@ -336,6 +336,7 @@ bool PlayScene::CharactorDyingUpdate(const Input& input)
 		}
 	}
 
+	_mapCtrl->AllCharactorRouteSearch();
 	_uniqueUpdater = _uniqueUpdaterOld;
 	return true;
 }

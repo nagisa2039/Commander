@@ -119,10 +119,10 @@ protected:
 
 	void CharactorDataInit(const CharactorType& type, const uint8_t& level);
 
-	// 指定した座標に対象のマスがあるか調べる
-	bool CheckMapPos(const Vector2Int mapPos, const bool attack)const;
+	// 指定した座標に何のマスがあるか調べる	x=移動マス y=攻撃マス
+	Vector2Int CheckMapPos(const Vector2Int& mapPos)const;
 	// 指定したマスまでのResultPosListを取得する
-	std::list<Astar::ResultPos> CreateResultPosList(const Vector2Int mapPos)const;
+	std::list<Astar::ResultPos> CreateResultPosList(const Vector2Int& mapPos)const;
 	// resultPosListからMoveDirListを作成する
 	void CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosList);
 

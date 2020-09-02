@@ -241,7 +241,7 @@ void BattleScene::Update(const Input& input)
 
 void BattleScene::StartExpUpdate()
 {
-	if (_leftBC.GetCharacotr().GetTeam() == Team::player)
+	/*if (_leftBC.GetCharacotr().GetTeam() == Team::player)
 	{
 		_expUI = make_shared<Experience>(_leftBC, _rightBC.GetCharacotr().GetIsDying(), nullptr);
 		_updater = &BattleScene::ExpUpdate;
@@ -252,7 +252,7 @@ void BattleScene::StartExpUpdate()
 		_expUI = make_shared<Experience>(_rightBC, _leftBC.GetCharacotr().GetIsDying(), nullptr);
 		_updater = &BattleScene::ExpUpdate;
 		return;
-	}
+	}*/
 	_updater = &BattleScene::SceneEndAnim;
 }
 

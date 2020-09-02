@@ -19,7 +19,7 @@ private:
 		start,	//　戦闘開始
 		placement,	// 配置換え
 		warsituation,	// 戦況確認
-		shop,		// 店
+		//shop,		// 店
 		back,
 		max
 	};

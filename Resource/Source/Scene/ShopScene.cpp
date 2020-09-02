@@ -9,9 +9,9 @@ using namespace std;
 
 ShopScene::ShopScene(SceneController& controller):Scene(controller)
 {
-	_charactorList = make_shared<CharactorList>(Vector2Int(200, 100), 
+	/*_charactorList = make_shared<CharactorList>(Vector2Int(200, 100), 
 		Application::Instance().GetSaveData().GetCharactorDataVec(), &_uiDeque);
-	_uiDeque.push_front(_charactorList);
+	_uiDeque.push_front(_charactorList);*/
 }
 
 ShopScene::~ShopScene()

@@ -40,11 +40,17 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller)
 	}
 	assert(_contentPosVec.size() > 0);
 
-	auto& charactorDataVec = Application::Instance().GetSaveData().GetCharactorDataVec();
+	/*auto& charactorDataVec = Application::Instance().GetSaveData().GetCharactorDataVec();
 	assert(charactorDataVec.size() > 0);
 	for (const auto& charactorData : charactorDataVec)
 	{
 		_mapSelectCharactors.emplace_back(make_unique<MapSelectCharactor>(*_camera, charactorData.charType));
+		(*_mapSelectCharactors.rbegin())->SetPos(_contentPosVec.at(_selectIdx).ToVector2());
+		(*_mapSelectCharactors.rbegin())->SetTargetPos(_contentPosVec.at(_selectIdx));
+	}*/
+	for (int charType = 0; charType < static_cast<int>(CharactorType::max); ++charType)
+	{
+		_mapSelectCharactors.emplace_back(make_unique<MapSelectCharactor>(*_camera, static_cast<CharactorType>(charType)));
 		(*_mapSelectCharactors.rbegin())->SetPos(_contentPosVec.at(_selectIdx).ToVector2());
 		(*_mapSelectCharactors.rbegin())->SetTargetPos(_contentPosVec.at(_selectIdx));
 	}

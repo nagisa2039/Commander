@@ -5,7 +5,7 @@
 #include "SaveData.h"
 
 MoneyUI::MoneyUI(const Vector2Int& pos, std::deque<std::shared_ptr<UI>>* uiDeque)
-	:UI(uiDeque), _money(Application::Instance().GetSaveData().GetMoney())
+	:UI(uiDeque), _money(/*Application::Instance().GetSaveData().GetMoney()*/0)
 {
 	_drawRect = {pos, Size(200, 40)};
 	_isOpen = true;

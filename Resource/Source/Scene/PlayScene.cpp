@@ -329,7 +329,7 @@ bool PlayScene::CharactorDyingUpdate(const Input& input)
 		else
 		{
 			// ƒQ[ƒ€ƒNƒŠƒA
-			Application::Instance().GetSaveData().Save(_charactors, _mapCtrl->GetMap()->GetMapID());
+			Application::Instance().GetSaveData().Save(/*_charactors, */_mapCtrl->GetMap()->GetMapID());
 			_uniqueUpdater = &PlayScene::GameClearUpdate;
 			_uniqueDrawer = &PlayScene::GameClearDraw;
 			return true;
@@ -570,7 +570,7 @@ void PlayScene::PushShopScene()
 
 void PlayScene::CharactorDataUpdate()
 {
-	int idx = 0;
+	/*int idx = 0;
 	for (auto& charactorData : Application::Instance().GetSaveData().GetCharactorDataVec())
 	{
 		for (int i = idx; i < _charactors.size(); i++)
@@ -583,5 +583,5 @@ void PlayScene::CharactorDataUpdate()
 		}
 	}
 
-	_mapCtrl->AllCharactorRouteSearch();
+	_mapCtrl->AllCharactorRouteSearch();*/
 }

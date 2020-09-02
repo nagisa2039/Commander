@@ -17,7 +17,7 @@ void WeaponList::Decision()
 
 void WeaponList::Buy()
 {
-	auto& saveData = Application::Instance().GetSaveData();
+	/*auto& saveData = Application::Instance().GetSaveData();
 	_weaponId = GetWeaponId();
 	auto money = saveData.GetMoney();
 	auto price = Application::Instance().GetDataBase().GetWeaponData(_weaponId).price;
@@ -28,7 +28,7 @@ void WeaponList::Buy()
 		_func();
 
 		saveData.SetMoney(money - price);
-	}
+	}*/
 }
 
 void WeaponList::Back()

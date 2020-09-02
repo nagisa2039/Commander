@@ -129,7 +129,7 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 	_itemInfTable[static_cast<size_t>(Item::start)].name		= "戦闘開始";
 	_itemInfTable[static_cast<size_t>(Item::placement)].name	= "マップ・配置";
 	_itemInfTable[static_cast<size_t>(Item::warsituation)].name = "戦況確認";
-	_itemInfTable[static_cast<size_t>(Item::shop)].name			= "購入";
+	//_itemInfTable[static_cast<size_t>(Item::shop)].name			= "購入";
 	_itemInfTable[static_cast<size_t>(Item::back)].name			= "退却";
 
 	_itemInfTable[static_cast<size_t>(Item::start)].func = [&]()
@@ -144,10 +144,10 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 	{
 		_uiDeque->emplace_front(make_shared<WarSituation>(_uiDeque, _mapCtrl));
 	};
-	_itemInfTable[static_cast<size_t>(Item::shop)].func = [&]()
+	/*_itemInfTable[static_cast<size_t>(Item::shop)].func = [&]()
 	{
 		_playScene.PushShopScene();
-	};
+	};*/
 	_itemInfTable[static_cast<size_t>(Item::back)].func = [&]()
 	{
 		_uiDeque->emplace_front(make_shared<CheckWindow>("退却しますか？", _uiDeque, [&](){BackMapSelect();}));

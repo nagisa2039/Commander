@@ -11,12 +11,13 @@ protected:
 	std::vector<std::shared_ptr<Effect>>& _effects;
 	BattleCharactor& _self;
 	BattleCharactor& _target; 
-	bool _critical;
+	const bool _critical;
 
 	unsigned int AddDamage();
 
 public:
-	BattleEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera, bool cameraActive = false);
+	BattleEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, 
+		bool critical, Camera& camera, bool cameraActive = false);
 	~BattleEffect();
 
 	virtual void Update(const Input& input)override;

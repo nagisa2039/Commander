@@ -4,7 +4,8 @@ class RecoverEffect :
 	public BattleEffect
 {
 public:
-	RecoverEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
+	RecoverEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, 
+		bool critical,Camera& camera);
 	~RecoverEffect();
 };
 

@@ -17,6 +17,8 @@ private:
 	bool _end;
 	bool _reverse;
 
+	void (Track::* _updater)();
+
 public:
 
 	inline Track(const bool loop = false)
@@ -26,16 +28,34 @@ public:
 		_loop = loop;
 		_end = false;
 		_reverse = false;
+
+		_updater = &Track::InitUpdate;
 	}
 
 	inline ~Track()
 	{
 	}
 
-	inline void Update()
+	inline void InitUpdate()
+	{
+		auto fuc = [](const key& l, const key& r)
+		{
+			return l.first < r.first;
+		};
+		std::sort(_keys.begin(), _keys.end(), fuc);
+		NormalUpdate();
+		_updater = &Track::NormalUpdate;
+	}
+
+	inline void NormalUpdate()
 	{
 		_frame++;
 		_end = _frame >= _keys.rbegin()->first;
+	}
+
+	inline void Update()
+	{
+		(this->*_updater)();
 	}
 
 	inline void Reset()
@@ -48,12 +68,6 @@ public:
 	{
 		_keys.emplace_back(std::make_pair(frame, value));
 
-		auto fuc = [](const key& l, const key& r)
-		{
-			return l.first < r.first;
-		};
-
-		std::sort(_keys.begin(), _keys.end(), fuc);
 	}
 
 	inline void ClearKey()

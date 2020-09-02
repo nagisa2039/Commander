@@ -3,8 +3,9 @@
 #include "Charactor.h"
 #include "BattleCharactor.h"
 
-RecoverEffect::RecoverEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
-	:BattleEffect(self, target, effects, camera)
+RecoverEffect::RecoverEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, 
+	bool critical, Camera& camera)
+	:BattleEffect(self, target, effects, critical, camera)
 {
 	_pos = _target.GetCenterPos().ToVector2();
 	

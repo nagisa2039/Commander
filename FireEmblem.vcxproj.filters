@@ -327,6 +327,9 @@
     <ClCompile Include="Resource\Source\Game\Map.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Game\CutIn.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -376,9 +379,6 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Utility\Dir.h">
       <Filter>ヘッダー ファイル\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Game\Team.h">
-      <Filter>ヘッダー ファイル\Game</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\Animator.h">
       <Filter>ヘッダー ファイル\Game</Filter>
@@ -580,6 +580,15 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\Map.h">
       <Filter>ヘッダー ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\CutIn.h">
+      <Filter>ヘッダー ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Utility\Tool.h">
+      <Filter>ヘッダー ファイル\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Team.h">
+      <Filter>ヘッダー ファイル\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

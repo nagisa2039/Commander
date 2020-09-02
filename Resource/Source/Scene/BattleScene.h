@@ -12,6 +12,7 @@ class Camera;
 class Effect;
 class Charactor;
 class BattleCharactor;
+class CutIn;
 
 class BattleScene :
 	public Scene
@@ -19,6 +20,7 @@ class BattleScene :
 private:
 	BattleCharactor& _leftBC;
 	BattleCharactor& _rightBC;
+
 
 	const Size _screenSize;
 	int _screenH;
@@ -30,6 +32,8 @@ private:
 	Vector2Int _startPos;
 	float _floatY;
 	bool _pursuit;	// í«åÇîªíËÇçsÇ¡ÇΩÇ©
+
+	std::shared_ptr<CutIn> _cutIn;
 
 	std::unique_ptr<Track<float>> _exRateTL;
 	std::unique_ptr<Track<float>> _brightTL;	// âÊñ çÇìx
@@ -62,5 +66,5 @@ public:
 	void DrawFloor(Vector2Int& screenCenter);
 
 	std::vector<std::shared_ptr<Effect>>& GetEffectVec();
+	void SetCutIn(std::shared_ptr<CutIn> c);
 };
-

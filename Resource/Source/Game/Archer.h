@@ -20,5 +20,5 @@ public:
 	ArcherBC(Charactor& charactor, const int imageHandle, Camera& camera);
 	~ArcherBC();
 
-	std::shared_ptr<Effect> CreateAttackEffect(std::vector<std::shared_ptr<Effect>>& effects)override final;
+	std::shared_ptr<Effect> CreateAttackEffect(std::vector<std::shared_ptr<Effect>>& effects, const bool critical)override final;
 };

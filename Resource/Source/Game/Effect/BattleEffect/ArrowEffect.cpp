@@ -8,8 +8,9 @@
 #include <vector>
 #include <memory>
 
-ArrowEffect::ArrowEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
-	: BattleEffect(self, target, effects, camera)
+ArrowEffect::ArrowEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, 
+	bool critical, Camera& camera)
+	: BattleEffect(self, target, effects, critical, camera)
 {
 	_delete = false;
 	_animator->SetImage("Resource/Image/Effect/arrow.png");

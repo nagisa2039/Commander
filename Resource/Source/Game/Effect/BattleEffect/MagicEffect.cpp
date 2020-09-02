@@ -3,8 +3,9 @@
 #include "Charactor.h"
 #include "BattleCharactor.h"
 
-MagicEffect::MagicEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
-	:BattleEffect(self, target, effects, camera)
+MagicEffect::MagicEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, 
+	bool critical, Camera& camera)
+	:BattleEffect(self, target, effects, critical, camera)
 {
 	_pos = _target.GetCenterPos().ToVector2();
 	_animator->SetImage("Resource/Image/Effect/magicEffect.png");

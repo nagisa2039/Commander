@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Resource\Source\Game\CutIn.cpp" />
     <ClCompile Include="Resource\Source\Game\Map.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\MoneyUI.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\UIList\CharactorListItem.cpp" />
@@ -101,6 +102,7 @@
     <ClCompile Include="Resource\Source\Scene\ShopScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Resource\Source\Game\CutIn.h" />
     <ClInclude Include="Resource\Source\Game\Map.h" />
     <ClInclude Include="Resource\Source\Game\UI\MoneyUI.h" />
     <ClInclude Include="Resource\Source\Game\UI\UIList\CharactorListItem.h" />
@@ -185,6 +187,7 @@
     <ClInclude Include="Resource\Source\Game\UI\SelectPen.h" />
     <ClInclude Include="Resource\Source\Scene\ShopScene.h" />
     <ClInclude Include="Resource\Source\Game\SaveDataCharactor.h" />
+    <ClInclude Include="Resource\Source\Utility\Tool.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -55,7 +55,7 @@ MageBC::~MageBC()
 {
 }
 
-std::shared_ptr<Effect> MageBC::CreateAttackEffect(std::vector<std::shared_ptr<Effect>>& effects)
+std::shared_ptr<Effect> MageBC::CreateAttackEffect(std::vector<std::shared_ptr<Effect>>& effects, const bool critical)
 {
-	return make_shared<MagicEffect>(*this, *_targetChar, effects, _camera);
+	return make_shared<MagicEffect>(*this, *_targetChar, effects, critical, _camera);
 }

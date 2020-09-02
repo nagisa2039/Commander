@@ -10,6 +10,8 @@
 #include "Effect/MissEffect.h"
 #include "Effect/FlyText.h"
 #include "SoundLoader.h"
+#include "CutIn.h"
+#include "Tool.h"
 
 using namespace std;
 
@@ -37,7 +39,25 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 	{
 		_hpDotMaskH = LoadMask("Resource/Image/Battle/hpDotMask.png");
 	}
-	_damageType = damageType::none;
+	_gaveDamageType = damageType::none;
+	_receiveDamageType = damageType::none;
+
+	_attackEffectFuncs[Size_t(damageType::none)] = [this](BattleScene& battleScene, const Vector2Int center)
+	{
+		battleScene.GetEffectVec().emplace_back(CreateMissEffect(center)); 
+	};
+
+	_attackEffectFuncs[Size_t(damageType::damage)] = [this](BattleScene& battleScene, const Vector2Int center)
+	{
+		_attackEffect = CreateAttackEffect(battleScene.GetEffectVec(), false);
+		battleScene.GetEffectVec().emplace_back(_attackEffect);
+	};
+
+	_attackEffectFuncs[Size_t(damageType::critical)] = [this](BattleScene& battleScene, const Vector2Int center)
+	{
+		_attackEffect = CreateAttackEffect(battleScene.GetEffectVec(), true);
+		battleScene.GetEffectVec().emplace_back(_attackEffect);
+	};
 }
 
 BattleCharactor::~BattleCharactor()
@@ -61,34 +81,9 @@ void BattleCharactor::AnimUpdate()
 	_animator->Update();
 }
 
-void BattleCharactor::AttackUpdate(BattleScene& battleScene)
+void BattleCharactor::Update(BattleScene& battleScene)
 {
-	_attackAnimX->Update();
-	auto dir = _dir == Dir::left ? 1 : -1;
-	_pos = _startPos + Vector2(static_cast<float>(_attackAnimX->GetValue() * dir), 0);
-
-	if (_attackAnimX->GetFrame() == 15)
-	{
-		if (_targetChar != nullptr)
-		{
-			// 攻撃
-			auto selfBattleStatus = _selfChar.GetBattleStatus();
-			auto targetBattleStatus = _targetChar->GetCharacotr().GetBattleStatus();
-
-			auto targetCenterPos = _targetChar->GetCenterPos();
-
-			// 命中判定
-			if (!selfBattleStatus.CheckHeal() && selfBattleStatus.GetHit(targetBattleStatus) <= rand() % 100)
-			{
-				// 外れ
-				battleScene.GetEffectVec().emplace_back(CreateMissEffect(targetCenterPos));
-				return;
-			}
-
-			_attackEffect = CreateAttackEffect(battleScene.GetEffectVec());
-			battleScene.GetEffectVec().emplace_back(_attackEffect);
-		}
-	}
+	(this->*_updater)(battleScene);
 }
 
 void BattleCharactor::Draw()
@@ -163,6 +158,22 @@ void BattleCharactor::UIDraw()
 	DrawName(teamString, nameWindowRect, fileSystem, fontHandle);
 }
 
+void BattleCharactor::NormalUpdate(BattleScene& battleScene)
+{
+	_attackAnimX->Update();
+	auto dir = _dir == Dir::left ? 1 : -1;
+	_pos = _startPos + Vector2(static_cast<float>(_attackAnimX->GetValue() * dir), 0);
+
+	if (_attackAnimX->GetFrame() == 15)
+	{
+		_attackEffectFuncs[Size_t(_gaveDamageType)](battleScene, _targetChar->GetCenterPos());
+	}
+}
+
+void BattleCharactor::CutInUpdate(BattleScene& battleScene)
+{
+}
+
 void BattleCharactor::DrawName(const char* teamString, Rect& nameWindowRect, FileSystem& fileSystem, int fontHandle)
 {
 	char path[_MAX_PATH];
@@ -231,9 +242,9 @@ void BattleCharactor::DrawHP(Rect& windowRect, int fontHandle)
 	// 被ダメージ時の揺れ用オフセット
 	Vector2Int hpBerOffset(0,0);
 	Vector2Int hpNumOffset(0,0);
-	if (_damageType == damageType::damage || _damageType == damageType::critical)
+	if (_receiveDamageType == damageType::damage || _receiveDamageType == damageType::critical)
 	{
-		int range = _damageType == damageType::damage ? 3 : 8;
+		int range = _receiveDamageType == damageType::damage ? 3 : 8;
 		hpBerOffset = Vector2Int(rand() % range, rand() % range);
 		hpNumOffset = Vector2Int(rand() % range, rand() % range);
 	}
@@ -274,12 +285,38 @@ void BattleCharactor::DrawWeaponName(FileSystem& fileSystem, Rect& weaponNameRec
 	DrawStringToHandle(weaponNameRect.center, Anker::center, 0xffffff, choplin30, str);
 }
 
-void BattleCharactor::StartAttackAnim()
+void BattleCharactor::StartAttackAnim(BattleScene& battleScene)
 {
 	_animHealth = _selfChar.GetStatus().health;
 	_attackAnimX->Reset();
-}
 
+	assert(_targetChar);
+
+	auto selfBattleStatus = _selfChar.GetBattleStatus();
+	auto targetBattleStatus = _targetChar->GetCharacotr().GetBattleStatus();
+
+	// 命中判定
+	_gaveDamageType = damageType::damage;
+	_updater = &BattleCharactor::NormalUpdate;
+	bool heal = selfBattleStatus.CheckHeal();
+	bool hit = Hit(selfBattleStatus.GetHit(targetBattleStatus));
+	if (!heal)
+	{
+		if (hit)
+		{
+			if (Hit(selfBattleStatus.GetCritical(targetBattleStatus)))
+			{
+				_gaveDamageType = damageType::critical;
+				_updater = &BattleCharactor::NormalUpdate;
+				battleScene.SetCutIn(make_unique<CutIn>(_selfChar.GetCharactorType(), _selfChar.GetTeam(), _dir));
+			}
+		}
+		else
+		{
+			_gaveDamageType = damageType::none;
+		}
+	}
+}
 bool BattleCharactor::GetAttackAnimEnd()
 {
 	return _attackAnimX->GetEnd() && (_attackEffect == nullptr || _attackEffect->GetDelete());
@@ -332,7 +369,7 @@ BattleCharactor* BattleCharactor::GetTargetBattleCharactor()
 
 BattleCharactor::damageType BattleCharactor::GetDamageType() const
 {
-	return _damageType;
+	return _receiveDamageType;
 }
 
 void BattleCharactor::SetStartPos(const Vector2& startPos)
@@ -362,7 +399,7 @@ void BattleCharactor::SetTargetCharactor(BattleCharactor* target)
 
 void BattleCharactor::SetDamageType(const damageType dt)
 {
-	_damageType = dt;
+	_receiveDamageType = dt;
 }
 
 void BattleCharactor::SetGivenDamage(const unsigned int value)

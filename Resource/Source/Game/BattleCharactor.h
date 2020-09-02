@@ -3,6 +3,8 @@
 #include "Dir.h"
 #include <memory>
 #include <string>
+#include <array>
+#include <functional>
 #include "TimeLine.h"
 
 class Animator;
@@ -18,9 +20,9 @@ class BattleCharactor
 public:
 	enum class damageType
 	{
-		none,		// 攻撃を受けていない
-		damage,		// 攻撃を受けている
-		critical,	// 会心攻撃を受けている
+		none,		// 当たっていない
+		damage,		// 当てた
+		critical,	// 会心攻撃を当てた
 		max
 	};
 
@@ -41,16 +43,30 @@ protected:
 	uint8_t _animHealth;
 	int _animHealthCnt;
 
+	damageType _gaveDamageType;	// 攻撃当たり判定用
+	using attackEffectFunc_t = std::function<void(BattleScene&, const Vector2Int&)>;
+	std::array<attackEffectFunc_t, static_cast<size_t>(damageType::max)> _attackEffectFuncs;
+
 	unsigned int _givenDamage;	// 与えたダメージ
 
 	static int _hpDotMaskH;
 
-	damageType _damageType;
+	damageType _receiveDamageType;
+
+	void(BattleCharactor::* _updater)(BattleScene&);
+
+	void NormalUpdate(BattleScene& battleScene);
+	void CutInUpdate(BattleScene& battleScene);
 
 	void DrawName(const char* teamString, Rect& nameWindowRect, FileSystem& fileSystem, int fontHandle);
 	void DrawParameter(const char* teamString, Rect& windowRect, FileSystem& fileSystem, Rect& paramWindowRect);
 	void DrawHP(Rect& windowRect, int fontHandle);
 	void DrawWeaponName(FileSystem& fileSystem, Rect& weaponNameRect);
+
+	// 攻撃エフェクトの作成
+	virtual std::shared_ptr<Effect> CreateAttackEffect(std::vector<std::shared_ptr<Effect>>& effects, bool critical) = 0;
+	// 攻撃外れエフェクトの作成
+	std::shared_ptr<Effect> CreateMissEffect(const Vector2Int& effectPos);
 
 public:
 	BattleCharactor(Charactor& charactor, const int imageHandle, Camera& camera);
@@ -58,14 +74,14 @@ public:
 
 	virtual void Init(const Vector2& startPos, const Dir dir, BattleCharactor* target);
 
-	virtual void AnimUpdate();
-	virtual void AttackUpdate(BattleScene& battleScene);
+	void AnimUpdate();
+	void Update(BattleScene& battleScene);
 	virtual void Draw();
 
 	virtual void UIAnimUpdate();
 	virtual void UIDraw();
 
-	void StartAttackAnim();
+	void StartAttackAnim(BattleScene& battleScene);
 	bool GetAttackAnimEnd();
 
 	void StartHPAnim();
@@ -88,9 +104,5 @@ public:
 	void SetGivenDamage(const unsigned int value);
 	void AddGivenDamage(const unsigned int value);
 
-	// 攻撃エフェクトの作成
-	virtual std::shared_ptr<Effect> CreateAttackEffect(std::vector<std::shared_ptr<Effect>>& effects) = 0;
-	// 攻撃外れエフェクトの作成
-	std::shared_ptr<Effect> CreateMissEffect(const Vector2Int& effectPos);
 };
 

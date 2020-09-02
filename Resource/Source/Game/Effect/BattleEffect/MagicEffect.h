@@ -4,7 +4,8 @@ class MagicEffect :
 	public BattleEffect
 {
 public:
-	MagicEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
+	MagicEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, 
+		bool critical, Camera& camera);
 	~MagicEffect();
 };
 

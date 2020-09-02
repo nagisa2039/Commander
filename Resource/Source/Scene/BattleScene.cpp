@@ -11,6 +11,7 @@
 #include "BattleCharactor.h"
 #include "UI/Experience.h"
 #include "SoundLoader.h"
+#include "CutIn.h"
 
 using namespace std;
 
@@ -18,7 +19,7 @@ void BattleScene::SceneStartAnim(const Input& input)
 {
 	if (_exRateTL->GetEnd())
 	{
-		_leftBC.StartAttackAnim();
+		_leftBC.StartAttackAnim(*this);
 		_updater = &BattleScene::LeftTurn;
 	}
 }
@@ -35,7 +36,7 @@ void BattleScene::SceneEndAnim(const Input& input)
 
 void BattleScene::LeftTurn(const Input& input)
 {
-	_leftBC.AttackUpdate(*this);
+	_leftBC.Update(*this);
 	if (_leftBC.GetAttackAnimEnd())
 	{
 		_rightBC.StartHPAnim();
@@ -72,7 +73,7 @@ void BattleScene::LeftHPAnim(const Input& input)
 
 void BattleScene::RightTurn(const Input& input)
 {
-	_rightBC.AttackUpdate(*this);
+	_rightBC.Update(*this);
 	if (_rightBC.GetAttackAnimEnd())
 	{
 		_leftBC.StartHPAnim();
@@ -110,7 +111,7 @@ void BattleScene::RightHPAnim(const Input& input)
 		auto mapPosSub = _leftBC.GetCharacotr().GetMapPos() - _rightBC.GetCharacotr().GetMapPos();
 		if (_rightBC.GetCharacotr().GetAttackRange().Hit(abs(mapPosSub.x) + abs(mapPosSub.y)) && !_rightBC.GetCharacotr().GetBattleStatus().CheckHeal())
 		{
-			_rightBC.StartAttackAnim();
+			_rightBC.StartAttackAnim(*this);
 			_updater = &BattleScene::RightTurn;
 		}
 		else
@@ -138,7 +139,7 @@ bool BattleScene::PursuitAttack(const bool rightAttack)
 	auto rightBattleStatus = _rightBC.GetCharacotr().GetBattleStatus();
 	if (leftBattleStatus.CheckPursuit(rightBattleStatus))
 	{
-		_leftBC.StartAttackAnim();
+		_leftBC.StartAttackAnim(*this);
 		_updater = &BattleScene::LeftTurn;
 		_pursuit = true;
 		return true;
@@ -147,7 +148,7 @@ bool BattleScene::PursuitAttack(const bool rightAttack)
 	{
 		if (rightAttack && rightBattleStatus.CheckPursuit(leftBattleStatus))
 		{
-			_rightBC.StartAttackAnim();
+			_rightBC.StartAttackAnim(*this);
 			_updater = &BattleScene::RightTurn;
 			_pursuit = true;
 			return true;
@@ -224,6 +225,16 @@ void BattleScene::Update(const Input& input)
 	_leftBC.AnimUpdate();
 	_rightBC.AnimUpdate();
 
+	if (_cutIn)
+	{
+		_cutIn->Update();
+		if (_cutIn->GetEnd())
+		{
+			_cutIn = nullptr;
+		}
+		return;
+	}
+
 	(this->*_updater)(input);
 
 	if (_effects.size() > 0)
@@ -282,6 +293,11 @@ void BattleScene::Draw(void)
 		_expUI->Draw();
 	}
 
+	if (_cutIn)
+	{
+		_cutIn->Draw();
+	}
+
 	auto wsize = Application::Instance().GetWindowSize();
 	auto exRateValue = _exRateTL->GetValue();
 
@@ -317,4 +333,9 @@ void BattleScene::DrawFloor(Vector2Int& screenCenter)
 std::vector<std::shared_ptr<Effect>>& BattleScene::GetEffectVec()
 {
 	return _effects;
+}
+
+void BattleScene::SetCutIn(std::shared_ptr<CutIn> c)
+{
+	_cutIn = c;
 }

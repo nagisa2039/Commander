@@ -9,7 +9,6 @@ unsigned int  BattleEffect::AddDamage()
 {
 	auto selfBattleStatus = _self.GetCharacotr().GetBattleStatus();
 	auto targetBattleStatus = _target.GetCharacotr().GetBattleStatus();
-	_critical = selfBattleStatus.GetCritical(targetBattleStatus) > rand() % 100;
 	int damage = 0;
 	if (selfBattleStatus.CheckHeal())
 	{
@@ -34,10 +33,10 @@ unsigned int  BattleEffect::AddDamage()
 	return selfBattleStatus.CheckHeal() ? 0 : damage;
 }
 
-BattleEffect::BattleEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera, bool cameraActive)
-	: Effect(self.GetCenterPos(), camera, cameraActive), _effects(effects), _self(self), _target(target)
+BattleEffect::BattleEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, 
+	bool critical, Camera& camera, bool cameraActive)
+	: Effect(self.GetCenterPos(), camera, cameraActive), _effects(effects), _self(self), _target(target), _critical(critical)
 {
-	_critical = false;
 }
 
 BattleEffect::~BattleEffect()

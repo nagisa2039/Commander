@@ -8,7 +8,7 @@ class ItemWindow :
     public UI
 {
 private:
-    static int _windowH;
+    int _windowH;
 
     void DrawToWindow();
 

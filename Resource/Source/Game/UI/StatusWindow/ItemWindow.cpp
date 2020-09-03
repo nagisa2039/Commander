@@ -12,8 +12,6 @@ namespace
 	constexpr unsigned int WINDOW_SIZE_H = 250;
 }
 
-int ItemWindow::_windowH = -1;
-
 void ItemWindow::DrawToWindow()
 {
 	int currentScreen = GetDrawScreen();
@@ -25,7 +23,7 @@ void ItemWindow::DrawToWindow()
 	Rect rect = Rect(rectSize.ToVector2Int()*0.5f, rectSize);
 	rect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/statusWindow1.png"));
 
-	auto itemSize = Size(rect.size.w, 40);
+	/*auto itemSize = Size(rect.size.w, 40);
 
 	std::string itemNames[] = { "傷薬", "凄い傷薬", "ボロの釣り竿", "探検セット" };
 
@@ -36,17 +34,14 @@ void ItemWindow::DrawToWindow()
 		Rect(center, itemSize).DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/itemFrame.png"));
 		DrawStringToHandle(center, Anker::center, 0xffffff, choplin30, itemName.c_str());
 		center.y += itemSize.h;
-	}
+	}*/
 
 	SetDrawScreen(currentScreen);
 }
 
 ItemWindow::ItemWindow(std::deque<std::shared_ptr<UI>>* uiDeque):UI(uiDeque)
 {
-	if (_windowH == -1)
-	{
-		_windowH = MakeScreen(WINDOW_SIZE_W, WINDOW_SIZE_H, true);
-	}
+	_windowH = Application::Instance().GetFileSystem().MakeScreen("item_window", Size(WINDOW_SIZE_W, WINDOW_SIZE_H), true);
 	DrawToWindow();
 }
 

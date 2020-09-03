@@ -30,7 +30,7 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctr
 	_charactors.reserve(30);
 
 	auto wsize = Application::Instance().GetWindowSize();
-	_gameH = MakeScreen(wsize.w, wsize.h, true);
+	_gameH = Application::Instance().GetFileSystem().MakeScreen("play_scene_screen", wsize, true);
 
 	debug = true;
 	_turnCnt = 0;
@@ -123,7 +123,7 @@ PlayScene::~PlayScene()
 void PlayScene::Update(const Input & input)
 {
 	// デバッグ
-	if (input.GetButtonDown(0, "debug"))
+	if (input.GetButtonDown("debug"))
 	{
 		debug = !debug;
 	}
@@ -346,7 +346,7 @@ bool PlayScene::GameClearUpdate(const Input& input)
 	_clearAnimTrack->Update();
 	if (!_clearAnimTrack->GetEnd())return true;
 
-	if(input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
+	if(input.GetButtonDown("ok"))
 	{
 		StartFadeOut(&PlayScene::ChnageMapSelect);
 		return false;
@@ -357,7 +357,7 @@ bool PlayScene::GameClearUpdate(const Input& input)
 
 bool PlayScene::GameOverUpdate(const Input& input)
 {
-	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
+	if (input.GetButtonDown("ok"))
 	{
 		StartFadeOut(&PlayScene::ChnageMapSelect);
 		return false;

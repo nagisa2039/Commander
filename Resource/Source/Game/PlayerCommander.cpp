@@ -18,7 +18,7 @@ void PlayerCommander::NormalUpdate(const Input& input)
 {
 	CursorMove(input);
 
-	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok") || input.GetButtonDown(0, "mouseLeft"))
+	if (input.GetButtonDown("ok"))
 	{
 		auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
 		if (charactor != nullptr)
@@ -63,7 +63,7 @@ void PlayerCommander::SelectUpdate(const Input& input)
 		moveMenu->Open();
 	}
 
-	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok") || input.GetButtonDown(0, "mouseLeft"))
+	if (input.GetButtonDown("ok"))
 	{
 		auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
 		if (charactor != nullptr)
@@ -92,7 +92,7 @@ void PlayerCommander::SelectUpdate(const Input& input)
 		}
 	}
 
-	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back") || input.GetButtonDown(0, "mouseRight"))
+	if (input.GetButtonDown("back"))
 	{
 		MoveCancel();
 		SelectCharactor(nullptr, false);
@@ -153,7 +153,7 @@ void PlayerCommander::TerrainEffectUpdate(const Input& input)
 
 void PlayerCommander::BattlePredictionUpdate(const Input& input)
 {
-	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok") || input.GetButtonDown(0, "mouseLeft"))
+	if (input.GetButtonDown("ok"))
 	{
 		// í“¬‚ðs‚¤	‘I‘ð’†‚ÌƒLƒƒƒ‰‚ª‚¢‚é‚È‚çˆÚ“®
 		if (_selectChar->GetCanMove())
@@ -163,7 +163,7 @@ void PlayerCommander::BattlePredictionUpdate(const Input& input)
 		}
 	}
 
-	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back") || input.GetButtonDown(0, "mouseRight"))
+	if (input.GetButtonDown("back"))
 	{
 		BackBattalePrediction();
 		return;

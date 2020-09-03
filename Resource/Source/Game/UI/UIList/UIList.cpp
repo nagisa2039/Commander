@@ -4,6 +4,8 @@
 #include "UIList.h"
 #include "UIListItem.h"
 #include "../SelectPen.h"
+#include "Application.h"
+#include "FileSystem.h"
 
 namespace
 {
@@ -95,14 +97,14 @@ void UIList::MouseMove(const Input& input)
 			}
 		}
 
-		if (input.GetButtonDown(0, "mouseLeft"))
+		if (input.GetButtonDown("ok"))
 		{
 			Decision();
 			return;
 		}
 	}
 
-	if (input.GetButtonDown(0, "mouseRight"))
+	if (input.GetButtonDown("back"))
 	{
 		Back();
 		return;
@@ -118,13 +120,13 @@ void UIList::MouseMove(const Input& input)
 
 void UIList::KeybordMove(const Input& input)
 {
-	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
+	if (input.GetButtonDown("ok"))
 	{
 		Decision();
 		return;
 	}
 
-	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
+	if (input.GetButtonDown("back"))
 	{
 		Back();
 		return;
@@ -132,7 +134,7 @@ void UIList::KeybordMove(const Input& input)
 
 	bool move = false;
 	int moveCnt = -1;
-	if (input.GetButton(0, "up") || input.GetButtonDown(1, "up")
+	if (input.GetButton("up")
 		&& _itemIdx + moveCnt > 0)
 	{
 		move = true;
@@ -144,7 +146,7 @@ void UIList::KeybordMove(const Input& input)
 		}
 	}
 	moveCnt = 1;
-	if (input.GetButton(0, "down") || input.GetButtonDown(1, "down")
+	if (input.GetButton("down")
 		&& _itemIdx + moveCnt < _listItems.size())
 	{
 		move = true;
@@ -189,7 +191,7 @@ void UIList::ListItemInit(const Vector2Int& leftup)
 		item->SetPos(Vector2Int(_viewportRect.center.x, item->GetRect().center.y));
 	}
 
-	_listWindowH = MakeScreen(rectSize.w, rectSize.h, true);
+	_listWindowH = Application::Instance().GetFileSystem().MakeScreen("list_window", rectSize, true);
 	_selectPen = std::make_unique<SelectPen>(nullptr);
 
 	int initIdx = 0;

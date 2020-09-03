@@ -5,179 +5,127 @@
 
 using namespace std;
 
-bool operator<(const PeripheralInfo& lval, const PeripheralInfo& rval)
-{
-	if (lval.periNo == rval.periNo)
-	{
-		return lval.code < rval.code;
-	}
-	return lval.periNo < rval.periNo;
-}
-
-bool operator==(const PeripheralInfo & lval, const PeripheralInfo & rval)
-{
-	return (lval.code == rval.code && lval.periNo == rval.periNo);
-}
-
-bool operator!=(const PeripheralInfo & lval, const PeripheralInfo & rval)
-{
-	return !(lval.code == rval.code && lval.periNo == rval.periNo);
-}
-
 Input::Input()
 {
-	_lastMousePos = Vector2Int();
-}
+	_currentInputStateIdx = 0;
 
+	_InputState = {};
+	_keystate = {};
+
+	_mouseState = {};
+	_padState = {};
+
+	_mousePosOld = {};
+	_mousePos = {};
+
+	// ゲームパッド
+	_peripheralInfFuncs[static_cast<size_t>(PeripheralType::gamepad)] = [this](const string& cmd, const int code)
+	{
+		_InputState[_currentInputStateIdx][cmd]|= static_cast<bool>(code & _padState[_currentInputStateIdx]);
+	};
+
+	// キーボード
+	_peripheralInfFuncs[static_cast<size_t>(PeripheralType::keybord)] = [this](const string& cmd, const int code)
+	{
+		_InputState[_currentInputStateIdx][cmd] |= static_cast<bool>(_keystate[_currentInputStateIdx][code]);
+	};
+
+	// マウス
+	_peripheralInfFuncs[static_cast<size_t>(PeripheralType::mouse)] = [this](const string& cmd, const int code)
+	{
+		_InputState[_currentInputStateIdx][cmd] |= static_cast<bool>(code & _mouseState[_currentInputStateIdx]);
+	};
+}
 
 Input::~Input()
 {
 }
 
-int Input::GetConnectPadCnt(void) const
-{
-	return GetJoypadNum();
-}
-
-void Input::SetPlayerCnt(const int pcount)
-{
-	// 0ならキーボード分の1を入れる
-	playerCnt = pcount <= 0 ? 1 : pcount;
-	playerCnt = 2;
-
-	// キー情報格納用変数をプレイヤー分格納
-	_inputTbl.resize(playerCnt);
-	_currentInputState.resize(playerCnt);
-	_lastInputState.resize(playerCnt);
-	_padState.resize(playerCnt);
-	_currentXInputState.resize(playerCnt);
-	_lastXInputState.resize(playerCnt);
-}
-
 void Input::Update(void)
 {
+	_mousePosOld = _mousePos;
+	_currentInputStateIdx = GetNextInputBufferIndex();
+
 	// キーボードの入力状態更新
-	_lastKeystate = _keystate;
-	GetHitKeyStateAll(_keystate.data());
+	GetHitKeyStateAll(_keystate[_currentInputStateIdx].data());
 
 	// マウスの入力情報更新
-	_lastMouseState = _mouseState;
-	_mouseState = GetMouseInput();
-
-	_lastMousePos = _mousePos;
+	_mouseState[_currentInputStateIdx] = GetMouseInput();
 	GetMousePoint(&_mousePos.x, &_mousePos.y);
 
-	_lastXInputState = _currentXInputState;
+	_padState[_currentInputStateIdx] = GetJoypadInputState(DX_INPUT_PAD1);
 
-	// 接続数分回す
-	for (int j = 0; j < GetJoypadNum(); j++)
+	// 状態のリセット
+	for (auto& state : _InputState[_currentInputStateIdx])
 	{
-		// 各パッドの入力状態更新
-		_padState[j] = GetJoypadInputState(DX_INPUT_PAD1 + j);
-		XINPUT_STATE xinputSate;
-		GetJoypadXInputState(DX_INPUT_PAD1 + j, &xinputSate);
-		memcpy_s(&_currentXInputState[j], sizeof(_currentXInputState[j]), &xinputSate, sizeof(_currentXInputState[j]));
+		state.second = false;
 	}
 
-	// 入力の状態更新
-	_lastInputState = _currentInputState;
-
-	// プレイヤー数分回す
-	for (int pno = 0; pno < static_cast<int>(_inputTbl.size());pno++)
+	// pair = <コマンド文字列, PeripheralInfo(code = 入力コード, periNo = 入力機器番号)>
+	for (auto pair : _inputTbl)
 	{
-		// 状態のリセット
-		for (auto& state : _currentInputState[pno])
+		for (int i = 0; i < pair.second.size();++i)
 		{
-			state.second = false;
-		}
-
-		// pair = <コマンド文字列, PeripheralInfo(code = 入力コード, periNo = 入力機器番号)>
-		for (auto pair : _inputTbl[pno])
-		{
-			if (pair.second.periNo == 0)
-			{
-				// キーボード
-				_currentInputState[pno][pair.first] |= static_cast<bool>(_keystate[pair.second.code]);
-			}
-			else if (pair.second.periNo == 5)
-			{
-				// マウス
-				_currentInputState[pno][pair.first] |= static_cast<bool>(pair.second.code & _mouseState);
-			}
-			else
-			{
-				// ゲームパッド
-				_currentInputState[pno][pair.first] |= static_cast<bool>(pair.second.code & _padState[pair.second.periNo - 1]);
-			}
+			_peripheralInfFuncs[i](pair.first, pair.second[i]);
 		}
 	}
-
 }
 
-void Input::AddCommand(int pno, std::string cmd, int periNo, int code)
+void Input::AddCommand(const std::string& cmd, const Input::PeripheralType perType, const int code)
 {
-	_inputTbl[pno].emplace(cmd, PeripheralInfo(periNo,code));				// コマンドに対する入力を設定
-	_inputMap.emplace(PeripheralInfo(periNo,code), make_pair(pno, cmd));	// 入力に対するプレイヤー番号とコマンドを設定
+	if (!_inputTbl.contains(cmd))
+	{
+		_inputTbl[cmd] = {0,0,0};
+	}
+	_inputTbl[cmd][static_cast<size_t>(perType)] = code;
 
 	// 押下情報を初期化
-	_currentInputState[pno][cmd]	= false;
-	_lastInputState[pno][cmd]		= false;
+	for (auto& inputState : _InputState)
+	{
+		inputState[cmd] = false;
+	}
 }
 
-bool Input::GetButton(int pno, std::string cmd) const
+bool Input::GetButton(const std::string& cmd) const
 {
 	// 範囲外制御
-	if (!CheckCommand(pno, cmd))
+	if (!CheckCommand(cmd))
 	{
 		return false;
 	}
 
-	return _currentInputState[pno].at(cmd);
+	return CurrentInput(cmd);
 }
 
-bool Input::GetButtonDown(int pno, std::string cmd) const
+bool Input::GetButtonDown(const std::string& cmd) const
 {
 	// 範囲外制御
-	if (!CheckCommand(pno, cmd))
+	if (!CheckCommand(cmd))
+	{
+		assert(0);
+		return false;
+	}
+
+	return CurrentInput(cmd) && !LastInput(cmd);
+}
+
+bool Input::GetButtonUp(const std::string& cmd) const
+{
+	// 範囲外制御
+	if (!CheckCommand(cmd))
 	{
 		return false;
 	}
 
-	bool currnt = _currentInputState[pno].at(cmd);
-	bool last = _lastInputState[pno].at(cmd);
-
-	return currnt && !last;
+	return !CurrentInput(cmd) && LastInput(cmd);
 }
 
-bool Input::GetButtonUp(int pno, std::string cmd) const
+bool Input::CheckCommand(const std::string& cmd) const
 {
-	// 範囲外制御
-	if (!CheckCommand(pno, cmd))
-	{
-		return false;
-	}
+	size_t lastIdx = GetLastInputBufferIndex();
 
-	bool currnt = _currentInputState[pno].at(cmd);
-	bool last = _lastInputState[pno].at(cmd);
-
-	return !currnt && last;
-}
-
-std::vector<std::map<std::string, bool>> Input::GetCurrnetInputState(void) const
-{
-	return _currentInputState;
-}
-
-int Input::GetPlayerCnt(void) const
-{
-	return playerCnt;
-}
-
-bool Input::CheckCommand(int pno, std::string cmd) const
-{
-	assert(pno < static_cast<int>(_inputTbl.size()));
-	return (_currentInputState[pno].find(cmd)	!= _currentInputState[pno].end()
-		 && _lastInputState[pno].find(cmd)		!= _lastInputState[pno].end());
+	return (_InputState[_currentInputStateIdx].contains(cmd)
+		&& _InputState[lastIdx].contains(cmd));
 }
 
 const Vector2Int& Input::GetMousePos()const
@@ -185,37 +133,125 @@ const Vector2Int& Input::GetMousePos()const
 	return _mousePos;
 }
 
-const Vector2Int Input::GetMouseMove() const
-{
-	return _mousePos - _lastMousePos;
-}
-
 bool Input::GetButton(const char keycode)const
 {
-	return _keystate[keycode];
+	return _keystate[_currentInputStateIdx][keycode];
 }
 
 bool Input::GetButtonDown(const char keycode)const
 {
-	return _keystate[keycode] && !_lastKeystate[keycode];
+	size_t lastIdx = (_currentInputStateIdx - 1 + INPUT_RECORD_SIZE) % INPUT_RECORD_SIZE;
+	return _keystate[_currentInputStateIdx][keycode] && !_keystate[lastIdx][keycode];
 }
 
 bool Input::GetButtonUp(const char keycode)const
 {
-	return !_keystate[keycode] && _lastKeystate[keycode];
+	size_t lastIdx = (_currentInputStateIdx - 1 + INPUT_RECORD_SIZE) % INPUT_RECORD_SIZE;
+	return !_keystate[_currentInputStateIdx][keycode] && _keystate[lastIdx][keycode];
 }
 
-bool Input::GetXInputButtonDown(const int padNum, const int keycode) const
+bool Input::GetAnyMouseInput() const
 {
-	return _currentXInputState[padNum-1].Buttons[keycode] && !(_lastXInputState[padNum-1].Buttons[keycode]);
+	return static_cast<bool>(_mouseState[_currentInputStateIdx]) || GetMouseMove() != Vector2Int(0,0);
 }
 
-bool Input::GetAnyKeybordInput()const
+bool Input::GetAnyKeybordInput() const
 {
-	return CheckHitKeyAll(DX_CHECKINPUT_KEY);
+	return DxLib::CheckHitKeyAll(DX_CHECKINPUT_KEY);
 }
 
-bool Input::GetAnyMouseInput()const
+bool Input::GetAnyPadInput() const
 {
-	return CheckHitKeyAll(DX_CHECKINPUT_MOUSE);
+	return static_cast<bool>(_padState[_currentInputStateIdx]);
+}
+
+Vector2Int Input::GetMouseMove() const
+{
+	return _mousePos - _mousePosOld;
+}
+
+const std::map<std::string, std::array<int, static_cast<size_t>(Input::PeripheralType::max)>>& Input::GetInputTable() const
+{
+	return _inputTbl;
+}
+
+void Input::SetRowInputTable(const std::map<std::string, std::array<int, static_cast<size_t>(PeripheralType::max)>>& rowInputTable) const
+{
+	_inputTbl = rowInputTable;
+}
+
+bool Input::ChangeCommand(const std::string& cmd, const PeripheralType perType, const int code)const
+{
+	if (!_inputTbl.contains(cmd))
+	{
+		return false;
+	}
+
+	_inputTbl[cmd][static_cast<size_t>(perType)] = code;
+	return true;
+}
+
+size_t Input::GetNextInputBufferIndex()const
+{
+	return (_currentInputStateIdx + 1) % INPUT_RECORD_SIZE;
+}
+
+size_t Input::GetLastInputBufferIndex()const
+{
+	return (_currentInputStateIdx - 1 + INPUT_RECORD_SIZE) % INPUT_RECORD_SIZE;
+}
+
+const bool& Input::CurrentInput(const std::string& cmd)const
+{
+	return _InputState[_currentInputStateIdx].at(cmd);
+}
+
+const bool& Input::LastInput(const std::string& cmd)const
+{
+	return _InputState[GetLastInputBufferIndex()].at(cmd);
+}
+
+std::array<char, 256> Input::GetKeybordState() const
+{
+	return _keystate[_currentInputStateIdx];
+}
+
+std::array<char, 256> Input::GetKeybordDownState() const
+{
+	auto downState = std::array<char, INPUT_KEY_SIZE>();
+	auto lastIdx = GetLastInputBufferIndex();
+	for (int i = 0; i < INPUT_KEY_SIZE; ++i)
+	{
+		bool current = static_cast<bool>(_keystate[_currentInputStateIdx][i]);
+		bool last = static_cast<bool>(_keystate[lastIdx][i]);
+		downState[i] = static_cast<char>(current && !last);
+	}
+	return downState;
+}
+
+int Input::GetPadState() const
+{
+	return _padState[_currentInputStateIdx];
+}
+
+int Input::GetPadDownState() const
+{
+	int downState = 0;
+	auto lastIdx = GetLastInputBufferIndex();
+	for (int i = 0; i < sizeof(downState) * 8; ++i)
+	{
+		auto bit = 1 << i;
+		bool current = static_cast<bool>(_padState[_currentInputStateIdx] & bit);
+		bool last = static_cast<bool>(_padState[lastIdx] & bit);
+		if (current && !last)
+		{
+			downState |= bit;
+		}
+	}
+	return downState;
+}
+
+int Input::GetMouseState() const
+{
+	return _mouseState[_currentInputStateIdx];
 }

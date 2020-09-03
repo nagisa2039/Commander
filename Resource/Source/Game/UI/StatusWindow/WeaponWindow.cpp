@@ -15,13 +15,12 @@ namespace
 
 WeaponWindow::WeaponWindow(const uint8_t weaponId, std::deque<std::shared_ptr<UI>>* uiDeque):UI(uiDeque)
 {
-	_windowH = MakeScreen(WINDOW_SIZE_W, WINDOW_SIZE_H, true);
+	_windowH = Application::Instance().GetFileSystem().MakeScreen("weapon_window", Size(WINDOW_SIZE_W, WINDOW_SIZE_H), true);
 	SetWeaponId(weaponId);
 }
 
 WeaponWindow::~WeaponWindow()
 {
-	DeleteGraph(_windowH);
 }
 
 Size WeaponWindow::GetSize() const

@@ -335,9 +335,11 @@ const std::vector<SaveDataCharactor> DataBase::GetSaveDataCharactors() const
 
 void DataBase::CharactorData::DrawIcon(const Rect& rect, const Team team)const
 {
+	SetDrawMode(DX_DRAWMODE_NEAREST);
 	stringstream ss;
 	ss << imagePath << "_" << (Team::player == team ? "player" : "enemy") << ".png";
 	rect.DrawRectGraph(Vector2Int(32, 0), Size(32, 32),
 		Application::Instance().GetFileSystem().GetImageHandle(ss.str().c_str()));
+	SetDrawMode(DX_DRAWMODE_BILINEAR);
 	
 }

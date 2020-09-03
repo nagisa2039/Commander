@@ -11,12 +11,9 @@
 
 using namespace std;
 
-int StatusWindow::_windowH = -1;
-
 void StatusWindow::NormalUpdate(const Input& input)
 {
-	if (input.GetButtonDown(0, "status") || input.GetButtonDown(0, "back")
-		|| input.GetButtonDown(1, "status") || input.GetButtonDown(1, "back"))
+	if (input.GetButtonDown("status") || input.GetButtonDown("back"))
 	{
 		_updater = &StatusWindow::ScaleUpdate;
 		_animTrack->SetReverse(true);
@@ -57,10 +54,8 @@ StatusWindow::StatusWindow(std::deque<std::shared_ptr<UI>>* uiDeque, const Chara
 
 	_updater = &StatusWindow::ScaleUpdate;
 
-	if (_windowH == -1)
-	{
-		_windowH = MakeScreen(_sideWindowSize.w *2+ _centerWindowSize.w, _sideWindowSize.h*2, true);
-	}
+	_windowH = Application::Instance().GetFileSystem().
+		MakeScreen("status_window", Size(_sideWindowSize.w *2+ _centerWindowSize.w, _sideWindowSize.h*2), true);
 }
 
 StatusWindow::~StatusWindow()

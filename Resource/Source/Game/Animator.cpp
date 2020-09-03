@@ -75,7 +75,11 @@ void Animator::Draw(const Vector2Int& pos, Size size)
 	}
 
 	auto rect = GetAnimRect();
+
+
+	SetDrawMode(DX_DRAWMODE_NEAREST);
 	DrawRectRotaGraph(pos.x + size.w/2, pos.y + size.h/2, rect.Left(), rect.Top(), rect.Width(), rect.Height(), size.w / static_cast<float>(rect.Width()), 0.0f, _imageH, true, _reverseY);
+	SetDrawMode(DX_DRAWMODE_BILINEAR);
 }
 
 void Animator::AddAnim(const std::string& animName, const AnimInfo& animInfo)

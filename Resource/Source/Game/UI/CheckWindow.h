@@ -14,7 +14,7 @@ protected:
 	std::string _messageStr;
 	std::unique_ptr<Track<float>> _exRateTrack;
 	std::unique_ptr<Track<float>> _selectExRateTrack;
-	static int _messageImageH;
+	int _messageImageH;
 
 	void DrawToWindow();
 
@@ -48,8 +48,8 @@ private:
 	};
 	Select _select;
 	std::function<void()> _func;
-	static int _yesImageH;
-	static int _noImageH;
+	int _yesImageH;
+	int _noImageH;
 
 	Rect _yesSelectRect;
 	Rect _noSelectRect;

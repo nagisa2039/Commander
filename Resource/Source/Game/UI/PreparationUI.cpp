@@ -45,10 +45,10 @@ void PreparationUI::OpenUpdate(const Input& input)
 		_selectExRateTrack->Reset();
 	};
 
-	if(input.GetAnyMouseInput() || input.GetMouseMove() != Vector2Int(0,0))
+	if(input.GetAnyMouseInput())
 	{
 		auto mouseRect = Rect(input.GetMousePos(), Size(1,1));
-		auto click = input.GetButtonDown(0, "mouseLeft");
+		auto click = input.GetButtonDown("ok");
 		for (int idx = 0; idx < _itemInfTable.size(); ++idx)
 		{
 			if (Rect(_itemInfTable[idx].pos, _itemSize).IsHit(mouseRect))
@@ -61,35 +61,35 @@ void PreparationUI::OpenUpdate(const Input& input)
 				break;
 			}
 		}
-		if (input.GetButtonDown(0, "mouseRight"))
+		if (input.GetButtonDown("back"))
 		{
 			_itemInfTable[static_cast<size_t>(Item::back)].func();
 		}
 		return;
 	}
 
-	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
+	if (input.GetButtonDown("ok"))
 	{
 		Close(true);
 		return;
 	}
 
 	_selectExRateTrack->Update();
-	if (input.GetButtonDown(0, "up") || input.GetButtonDown(1, "up"))
+	if (input.GetButtonDown("up"))
 	{
 		if (_selectItem > static_cast<Item>(0))
 		{
 			select(static_cast<Item>(static_cast<int>(_selectItem) - 1));
 		}
 	}
-	if (input.GetButtonDown(0, "down") || input.GetButtonDown(1, "down"))
+	if (input.GetButtonDown("down"))
 	{
 		if (_selectItem < static_cast<Item>(static_cast<int>(Item::max) - 1))
 		{
 			select(static_cast<Item>(static_cast<int>(_selectItem) + 1));
 		}
 	}
-	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
+	if (input.GetButtonDown("back"))
 	{
 		_itemInfTable[static_cast<size_t>(Item::back)].func();
 	}
@@ -155,19 +155,24 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 
 	const int spaceY = 120;
 	int currentScreen = GetDrawScreen();
+	auto& fileSystem = Application::Instance().GetFileSystem();
 	Vector2Int currentDrawPos = screenCenter - Vector2Int(0, static_cast<int>((static_cast<int>(Item::max)-1) / 2.0f * spaceY));
-	int windowH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/window0.png");
+	int windowH = fileSystem.GetImageHandle("Resource/Image/UI/window0.png");
 	GetGraphSize(windowH, _itemSize);
-	int fontH = Application::Instance().GetFileSystem().GetFontHandle("choplin40edge");
-	for (auto& itemInf : _itemInfTable)
+	int fontH = fileSystem.GetFontHandle("choplin40edge");
+	for (int i = 0;auto& itemInf : _itemInfTable)
 	{
 		itemInf.pos = currentDrawPos;
 		currentDrawPos.y += spaceY;
-		itemInf.graphH = MakeScreen(_itemSize.w, _itemSize.h, true);
+
+		char buf[32];
+		sprintf_s(buf, 32, "preparation_item_%d", i);
+		itemInf.graphH = fileSystem.MakeScreen(buf, _itemSize, true);
 		SetDrawScreen(itemInf.graphH);
 		ClsDrawScreen();
 		DrawGraph(0,0, windowH, true);
 		DrawStringToHandle(_itemSize.ToVector2Int()*0.5f, Anker::center, 0xffffff, fontH, itemInf.name.c_str());
+		i++;
 	}
 	SetDrawScreen(currentScreen);
 
@@ -190,11 +195,6 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 
 PreparationUI::~PreparationUI()
 {
-	for (auto& item : _itemInfTable)
-	{
-		DeleteGraph(item.graphH);
-		item.graphH = -1;
-	}
 }
 
 void PreparationUI::Update(const Input& input)

@@ -1,12 +1,14 @@
 #pragma once
 #include <memory>
 #include<map>
-#include "Loader.h"
 #include <string>
 #include <windows.h>
 
 class SoundLoader;
 class FontLoader;
+class ImageLoader;
+
+struct Size;
 
 class FileSystem
 {
@@ -14,16 +16,16 @@ private:
 	FileSystem(const FileSystem&) = delete;
 	FileSystem& operator=(const FileSystem&) = delete;
 
-	std::map<std::string,std::shared_ptr<Loader>>_loaders;
+	std::shared_ptr<ImageLoader> _imageLoader;
 	std::shared_ptr<FontLoader> _fontLoader;
 	std::shared_ptr<SoundLoader> _soundLoder;
 
 public:
 	FileSystem();
 	~FileSystem();
-	bool Load(const char* path, Data& data);
 
 	int GetImageHandle(const char* path);
+	int MakeScreen(const char* name, const Size& screenSize, const bool alpha = false);
 
 	bool FontInit(LPCTSTR fontFile, LPCTSTR fontName, std::string useName, int fontSize, int fontThick, bool edgeFlag, bool italic);
 	int GetFontHandle(std::string fontUseName);

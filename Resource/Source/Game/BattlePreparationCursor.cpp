@@ -55,17 +55,17 @@ void BattlePreparationCursor::Update(const Input& input)
 	{
 		CursorMove(input);
 
-		if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok") || input.GetButtonDown(0, "mouseLeft"))
+		if (input.GetButtonDown("ok"))
 		{
 			Select();
 		}
 
-		if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back") || input.GetButtonDown(0, "mouseRight"))
+		if (input.GetButtonDown("back"))
 		{
 			_end = true;
 		}
 
-		if (input.GetButtonDown(0, "status") || input.GetButtonDown(1, "status"))
+		if (input.GetButtonDown("status"))
 		{
 			auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
 			if (charactor == nullptr)return;

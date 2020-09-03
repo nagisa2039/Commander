@@ -1,3 +1,4 @@
+#include <Dxlib.h>
 #include "CutIn.h"
 #include "Application.h"
 #include "DataBase.h"
@@ -53,9 +54,12 @@ void CutIn::Draw()
 		Size(charSize.w, Lerp(0, charSize.h, animValue)));
 	int srcY = (_dir == Dir::left ? SRC_RECT_SIZE*2 : SRC_RECT_SIZE);
 	int h = Lerp(0, SRC_CUT_HEIGHT, animValue);
+
+	SetDrawMode(DX_DRAWMODE_NEAREST);
 	charRect.DrawRectGraph(
 		Vector2Int(SRC_RECT_SIZE + SRC_RECT_SIZE/2 - (SRC_CUT_HEIGHT/2), srcY + SRC_CUT_HEIGHT /2 - h/2), 
 		Size(SRC_CUT_HEIGHT, h), _graphH);
+	SetDrawMode(DX_DRAWMODE_BILINEAR);
 }
 
 bool CutIn::GetEnd() const

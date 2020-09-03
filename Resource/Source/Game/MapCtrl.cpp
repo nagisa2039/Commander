@@ -33,7 +33,8 @@ MapCtrl::MapCtrl(const int mapId, std::vector<std::shared_ptr<Charactor>>& chara
 	_map = make_shared<Map>(mapId);
 
 	auto& mapSize = _map->GetMapSize();
-	_warSituationH = MakeScreen(WAR_SITUATION_CHIP_SIZE * mapSize.w, WAR_SITUATION_CHIP_SIZE * mapSize.h, true);
+	_warSituationH = Application::Instance().GetFileSystem().
+		MakeScreen("war_situation", mapSize * WAR_SITUATION_CHIP_SIZE, true);
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::swordman)] = 
 		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
@@ -74,7 +75,6 @@ MapCtrl::MapCtrl(const int mapId, std::vector<std::shared_ptr<Charactor>>& chara
 
 MapCtrl::~MapCtrl()
 {
-	DeleteGraph(_warSituationH);
 }
 
 void MapCtrl::Draw(const Camera& camera)

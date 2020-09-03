@@ -34,7 +34,7 @@ private:struct
 	};
 	std::array<drawData, static_cast<size_t>(Item::max)> _drawDatas;
 
-	static int _windowStatusH;
+	int _windowStatusH;
 
 	BattleCharactor& _battleChar;
 	uint8_t _currentExp;

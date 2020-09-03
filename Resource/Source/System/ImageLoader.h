@@ -12,6 +12,7 @@ public:
 	ImageLoader();
 	~ImageLoader();
 	bool Load(const char* path, Data& data)override; 
+	int MakeScreen(const char* name, const Size& screenSize, bool alpha = false);
 	void Unload(const char* path)override;
 };
 

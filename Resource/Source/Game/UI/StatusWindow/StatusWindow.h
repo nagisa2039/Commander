@@ -21,7 +21,7 @@ private:
 	void NormalUpdate(const Input& input);
 	void ScaleUpdate(const Input& input);
 
-	static int _windowH;
+	int _windowH;
 
 	Size _sideWindowSize;
 	Size _centerWindowSize;

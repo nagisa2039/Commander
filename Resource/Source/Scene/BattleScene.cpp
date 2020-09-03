@@ -178,7 +178,8 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 	_camera = make_shared<Camera>(Rect(cameraPos, wsize));
 	_camera->SetPos(Vector3((cameraPos).ToVector2()));
 
-	_screenH = MakeScreen(_screenSize.w, _screenSize.h, true);
+	_screenH = Application::Instance().GetFileSystem().
+		MakeScreen("battle_scene_screen", _screenSize, true);
 
 	_effects.clear();
 

@@ -8,10 +8,6 @@
 
 using namespace std;
 
-int PopupWindow::_messageImageH = -1;
-int CheckWindow::_yesImageH = -1;
-int CheckWindow::_noImageH = -1;
-
 PopupWindow::PopupWindow(const std::string& messageStr, std::deque<std::shared_ptr<UI>>* uiDeque)
 	:_messageStr(messageStr), UI(uiDeque)
 {
@@ -27,14 +23,11 @@ PopupWindow::PopupWindow(const std::string& messageStr, std::deque<std::shared_p
 	_updater	= &PopupWindow::ScalingUpdate;
 	_drawer		= &PopupWindow::ScalingDraw;
 
-	if (_messageImageH == -1)
-	{
-		int messageH = Application::Instance().GetFileSystem().
-			GetImageHandle("Resource/Image/UI/checkWindow.png");
-		Size messageSize;
-		GetGraphSize(messageH, messageSize);
-		_messageImageH = MakeScreen(messageSize.w, messageSize.h, true);
-	}
+	int messageH = Application::Instance().GetFileSystem().
+		GetImageHandle("Resource/Image/UI/checkWindow.png");
+	Size messageSize;
+	GetGraphSize(messageH, messageSize);
+	_messageImageH = Application::Instance().GetFileSystem().MakeScreen("check_window", messageSize, true);
 
 	DrawToWindow();
 }
@@ -133,12 +126,10 @@ CheckWindow::CheckWindow(const std::string& messageStr, std::deque<std::shared_p
 	_noSelectRect	= Rect(Vector2Int((wsize.w + offsetX) / 2, drawY), selectSize);
 
 	_select = Select::yes;
-	if (_yesImageH == -1)
-	{
-		_yesImageH	= MakeScreen(selectSize.w, selectSize.h, true);
-		_noImageH	= MakeScreen(selectSize.w, selectSize.h, true);
-	}
 
+	auto& fileSystem = Application::Instance().GetFileSystem();
+	_yesImageH	= fileSystem.MakeScreen("check_window_yes", selectSize, true);
+	_noImageH	= fileSystem.MakeScreen("check_window_no", selectSize, true);;
 
 	DrawToSelectImage();
 }
@@ -149,7 +140,8 @@ CheckWindow::~CheckWindow()
 
 void CheckWindow::NormalUpdate(const Input& input)
 {
-	bool click = input.GetButtonDown(0, "mouseLeft");
+	_selectExRateTrack->Update();
+	bool click = input.GetButtonDown("ok");
 	auto mouseRect = Rect(input.GetMousePos(), Size(1, 1));
 
 	auto decision = [this]() 
@@ -176,39 +168,42 @@ void CheckWindow::NormalUpdate(const Input& input)
 		_selectExRateTrack->Reset();
 	};
 
-	if (_yesSelectRect.IsHit(mouseRect))
+	if (input.GetAnyMouseInput())
 	{
-		select(Select::yes);
-		if (click)
+		if (_yesSelectRect.IsHit(mouseRect))
 		{
-			decision();
-			return;
+			select(Select::yes);
+			if (click)
+			{
+				decision();
+				return;
+			}
 		}
-	}
-	if (_noSelectRect.IsHit(mouseRect))
-	{
-		select(Select::no);
-		if (click)
+		if (_noSelectRect.IsHit(mouseRect))
 		{
-			back();
-			return;
+			select(Select::no);
+			if (click)
+			{
+				back();
+				return;
+			}
 		}
+		return;
 	}
 
-	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
+	if (input.GetButtonDown("ok"))
 	{
 		decision();
 		return;
 	}
 
-	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back") || input.GetButtonDown(0, "mouseRight"))
+	if (input.GetButtonDown("back"))
 	{
 		back();
 		return;
 	}
 
-	_selectExRateTrack->Update();
-	if (input.GetButtonDown(0, "left") || input.GetButtonDown(1, "left"))
+	if (input.GetButtonDown("left"))
 	{
 		if (_select > Select::yes)
 		{
@@ -217,7 +212,7 @@ void CheckWindow::NormalUpdate(const Input& input)
 		}
 	}
 
-	if (input.GetButtonDown(0, "right") || input.GetButtonDown(1, "right"))
+	if (input.GetButtonDown("right"))
 	{
 		if (_select < Select::no)
 		{
@@ -269,7 +264,7 @@ void CheckWindow::NormalDraw()
 
 void MessageWindow::NormalUpdate(const Input& input)
 {
-	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok") || input.GetButtonDown(0, "mouseLeft"))
+	if (input.GetButtonDown("ok"))
 	{
 		_exRateTrack->Reset();
 		_exRateTrack->SetReverse(true);
@@ -278,7 +273,7 @@ void MessageWindow::NormalUpdate(const Input& input)
 		return;
 	}
 
-	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
+	if (input.GetButtonDown("back"))
 	{
 		_exRateTrack->Reset();
 		_exRateTrack->SetReverse(true);

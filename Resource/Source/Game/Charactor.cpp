@@ -460,7 +460,9 @@ void Charactor::AddDamage(const int damage)
 
 void Charactor::DrawCharactorIcon(const Rect& drawRect)const
 {
+	SetDrawMode(DX_DRAWMODE_NEAREST);
 	DrawRectExtendGraph(drawRect.Left(), drawRect.Top(), drawRect.Right(), drawRect.Botton(), 32, 0, 32, 32, _animator->GetImageH(), true);
+	SetDrawMode(DX_DRAWMODE_BILINEAR);
 }
 
 void Charactor::DrawRoute(const Vector2Int& targetPos)

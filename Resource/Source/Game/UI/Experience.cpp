@@ -23,8 +23,6 @@ namespace
 	constexpr unsigned int NUM_GRAPH_SIZE = 128;
 }
 
-int Experience::_windowStatusH = -1;
-
 using namespace std;
 
 void Experience::WaitUpdate(const Input& input)
@@ -46,7 +44,7 @@ void Experience::WaitUpdate(const Input& input)
 void Experience::ExpBerUpdate(const Input& input)
 {
 	bool skip = false;
-	if (input.GetButtonDown(0, "ok"))
+	if (input.GetButtonDown("ok"))
 	{
 		_itemAnimCnt = ITEM_ANIM_MAX;
 		skip = true;
@@ -69,10 +67,6 @@ void Experience::ExpBerUpdate(const Input& input)
 	// レベルアップ
 	if (_currentExp >= _maxExp)
 	{
-		if (_windowStatusH == -1)
-		{
-			_windowStatusH = MakeScreen(STATUS_ITEM_SIZE_W * STATUS_ROW_CNT, _drawDatas.size() / STATUS_ROW_CNT * STATUS_ITEM_SIZE_H, true);
-		}
 
 		auto& charactor = _battleChar.GetCharacotr();
 		auto startStatus = charactor.GetStartStatus();
@@ -143,7 +137,7 @@ void Experience::LevelUpUpdate(const Input& input)
 void Experience::StatusUpdate(const Input& input)
 {
 	_itemAnimCnt++;
-	if (input.GetButtonDown(0, "ok"))
+	if (input.GetButtonDown("ok"))
 	{
 		_itemAnimCnt = ITEM_ANIM_MAX;
 	}
@@ -339,6 +333,9 @@ Experience::Experience(BattleCharactor& battleChar, const bool kill, std::deque<
 	_levlAnimTrack = make_unique<Track<float>>();
 	_levlAnimTrack->AddKey(0, 0.0f);
 	_levlAnimTrack->AddKey(60, 1.0f);
+
+	_windowStatusH = Application::Instance().GetFileSystem().
+		MakeScreen("exp", Size(STATUS_ITEM_SIZE_W * STATUS_ROW_CNT, _drawDatas.size() / STATUS_ROW_CNT * STATUS_ITEM_SIZE_H), true);
 }
 
 Experience::~Experience()

@@ -14,8 +14,7 @@ std::string GetExtension(const char* path)
 
 FileSystem::FileSystem()
 {
-	_loaders["bmp"] = _loaders["png"] = _loaders["jpg"] = make_shared<ImageLoader>();
-
+	_imageLoader = make_shared<ImageLoader>();
 	_fontLoader = make_shared<FontLoader>();
 	_soundLoder = make_shared<SoundLoader>();
 }
@@ -25,18 +24,16 @@ FileSystem::~FileSystem()
 {
 }
 
-bool FileSystem::Load(const char * path, Data & data)
-{
-	//auto convertPath = GetFilePath(path);
-	auto ext = GetExtension(path);
-	return _loaders[ext]->Load(path,data);
-}
-
 int FileSystem::GetImageHandle(const char * path)
 {
 	ImageData imageData;
-	Load(path,imageData);
+	_imageLoader->Load(path,imageData);
 	return imageData.GetHandle();
+}
+
+int FileSystem::MakeScreen(const char* name, const Size& screenSize, const bool alpha)
+{
+	return _imageLoader->MakeScreen(name, screenSize, alpha);
 }
 
 bool FileSystem::FontInit(LPCTSTR fontFile, LPCTSTR fontName, std::string useName, int fontSize, int fontThick, bool edgeFlag, bool italic)

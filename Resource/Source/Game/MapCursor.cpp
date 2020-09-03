@@ -14,7 +14,7 @@ void MapCursor::KeybordMove(const Input& input)
 
 	auto Move = [&](const std::string& key, const Vector2Int& move)
 	{
-		if (input.GetButton(0, key))
+		if (input.GetButton(key))
 		{
 			if (_moveItv > 0)
 			{
@@ -85,7 +85,7 @@ void MapCursor::MouseMove(const Input& input)
 
 void MapCursor::CursorMove(const Input& input)
 {
-	if (input.GetAnyMouseInput() || input.GetMouseMove() != Vector2Int(0,0))
+	if (input.GetAnyMouseInput())
 	{
 		ChangeMouseInput();
 	}
@@ -111,7 +111,7 @@ void MapCursor::ChangeMouseInput()
 bool MapCursor::PutCheck(const Input& input, const std::string& key)
 {
 	_putItv--;
-	if (input.GetButton(0, key))
+	if (input.GetButton(key))
 	{
 		if (_putItv <= 0)
 		{

@@ -109,10 +109,10 @@ void Menu::Decision()
 void Menu::OpenUpdate(const Input& input)
 {
 	_selectPen->Update(input);
-	if (input.GetAnyMouseInput() || input.GetMouseMove() != Vector2Int(0,0))
+	if (input.GetAnyMouseInput())
 	{
 		auto mouseRect = Rect(input.GetMousePos(), Size(1, 1));
-		auto click = input.GetButtonDown(0, "mouseLeft");
+		auto click = input.GetButtonDown("ok");
 		for (int idx = 0; idx < _contentInfs.size(); ++idx)
 		{
 			if (Rect(_contentInfs[idx].centerPos, _contentSize).IsHit(mouseRect))
@@ -125,29 +125,29 @@ void Menu::OpenUpdate(const Input& input)
 				break;
 			}
 		}
-		if (input.GetButtonDown(0, "mouseRight"))
+		if (input.GetButtonDown("back"))
 		{
 			Back();
 		}
 		return;
 	}
 
-	if (input.GetButtonDown(0, "back") || input.GetButtonDown(1, "back"))
+	if (input.GetButtonDown("back"))
 	{
 		Back();
 	}
 
-	if (input.GetButtonDown(0, "ok") || input.GetButtonDown(1, "ok"))
+	if (input.GetButtonDown("ok"))
 	{
 		Decision();
 	}
 
-	if ((input.GetButtonDown(0, "up") || input.GetButtonDown(1, "up")) && _selectContent > 0)
+	if ((input.GetButtonDown("up")) && _selectContent > 0)
 	{
 		_selectContent = _selectContent - 1;
 	}
 
-	if ((input.GetButtonDown(0, "down") || input.GetButtonDown(1, "down")) && _selectContent < _contentList.size() - 1)
+	if (input.GetButtonDown("down") && _selectContent < _contentList.size() - 1)
 	{
 		_selectContent = _selectContent + 1;
 	}

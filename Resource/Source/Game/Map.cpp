@@ -118,13 +118,13 @@ Map::Map(const int mapId)
 	:_mapId(mapId), _mapSize(MAP_CHIP_CNT_W, MAP_CHIP_CNT_H), _chipSize(CHIP_SIZE_W, CHIP_SIZE_H),
 	imageFolderPath("Resource/Image/MapChip/")
 {
-	_mapGraphHandle = MakeScreen(_mapSize.w * _chipSize.w, _mapSize.h * _chipSize.h, true);
+	_mapGraphHandle = Application::Instance().GetFileSystem().
+		MakeScreen("map", _mapSize * _chipSize, true);
 	assert(LoadMapData());
 }
 
 Map::~Map()
 {
-	DeleteGraph(_mapGraphHandle);
 }
 
 void Map::Draw(const Camera& camera)

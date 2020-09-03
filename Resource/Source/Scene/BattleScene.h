@@ -13,6 +13,7 @@ class Effect;
 class Charactor;
 class BattleCharactor;
 class CutIn;
+class PlayScene;
 
 class BattleScene :
 	public Scene
@@ -28,6 +29,7 @@ private:
 
 	std::vector<std::shared_ptr<Effect>> _effects;
 	std::shared_ptr<UI> _expUI;
+	PlayScene* _playScene;
 
 	Vector2Int _startPos;
 	float _floatY;

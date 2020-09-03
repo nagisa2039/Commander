@@ -5,6 +5,8 @@
 #include "DxLibUtility.h"
 #include "FileSystem.h"
 #include <DxLib.h>
+#include "SceneController.h"
+#include "PlayScene.h"
 
 using namespace std;
 
@@ -48,10 +50,20 @@ WarSituation::WarSituation(std::deque<std::shared_ptr<UI>>* uiDeque, const MapCt
 
 	_updater = &WarSituation::ScalingUpdate;
 	_mapCtrl.CreateWarSituation();
+
+	_playScene = &dynamic_cast<PlayScene&>(Application::Instance().GetSceneController().GetCurrentScene());
+	if (_playScene)
+	{
+		_playScene->SetFilter(PlayScene::FilterType::gauss);
+	}
 }
 
 WarSituation::~WarSituation()
 {
+	if (_playScene)
+	{
+		_playScene->SetFilter(PlayScene::FilterType::none);
+	}
 }
 
 void WarSituation::Update(const Input& input)

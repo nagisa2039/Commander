@@ -12,6 +12,7 @@
 #include "UI/Experience.h"
 #include "SoundLoader.h"
 #include "CutIn.h"
+#include "PlayScene.h"
 
 using namespace std;
 
@@ -183,6 +184,9 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 
 	_effects.clear();
 
+	_playScene = &dynamic_cast<PlayScene&>(Application::Instance().GetSceneController().GetCurrentScene());
+	assert(_playScene);
+	_playScene->SetFilter(PlayScene::FilterType::gauss);
 
 	_floatY = _screenSize.h / 2.0f;
 	auto screenCenter = _screenSize.ToVector2Int() * 0.5f;
@@ -215,6 +219,7 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 
 BattleScene::~BattleScene()
 {
+	_playScene->SetFilter(PlayScene::FilterType::none);
 }
 
 void BattleScene::Update(const Input& input)

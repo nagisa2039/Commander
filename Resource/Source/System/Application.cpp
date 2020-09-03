@@ -58,6 +58,12 @@ const AnkerCalculation& Application::GetAnkerCalculation() const
 	return *_ankerCalculation;
 }
 
+SceneController& Application::GetSceneController() const
+{
+	assert(_sceneController);
+	return *_sceneController;
+}
+
 double Application::GetDeltaTime() const
 {
 	return static_cast<double>(_end.QuadPart - _start.QuadPart) / static_cast<double>(_freq.QuadPart);

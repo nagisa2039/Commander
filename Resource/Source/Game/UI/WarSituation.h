@@ -3,6 +3,7 @@
 #include "TimeLine.h"
 #include <memory>
 
+class PlayScene;
 class MapCtrl;
 
 class WarSituation :
@@ -13,6 +14,7 @@ private:
 	std::unique_ptr<Track<float>> _exRate;
 	void(WarSituation::* _updater)(const Input& input);
 	bool _end;
+	PlayScene* _playScene;
 
 	void ScalingUpdate(const Input& input);
 	void NormalUpdate(const Input& input);

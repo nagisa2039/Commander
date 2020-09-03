@@ -64,7 +64,8 @@ public:
 
 	FileSystem& GetFileSystem();
 	const AnkerCalculation& GetAnkerCalculation()const;
-	
+	SceneController& GetSceneController()const;
+ 	
 	double GetDeltaTime()const;
 	unsigned int GetFPS()const;
 
@@ -88,6 +89,5 @@ private:
 	LARGE_INTEGER _freq;
 	LARGE_INTEGER _start;
 	LARGE_INTEGER _end;
-
 };
 

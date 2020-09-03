@@ -48,3 +48,9 @@ void SceneController::PopScene(void)
 	assert(_scene.size() > 0);
 	_scene.pop_front();
 }
+
+Scene& SceneController::GetCurrentScene()
+{
+	assert(_scene.size() > 0);
+	return *_scene.front();
+}

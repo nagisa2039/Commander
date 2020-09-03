@@ -5,6 +5,7 @@
 class Charactor;
 class WeaponWindow;
 class ItemWindow;
+class PlayScene;
 
 class StatusWindow :
 	public UI
@@ -25,6 +26,7 @@ private:
 
 	Size _sideWindowSize;
 	Size _centerWindowSize;
+	PlayScene* _playScene;
 
 	void DrawToWindowScreen();
 	void DrawIcon(const Rect& iconRect);

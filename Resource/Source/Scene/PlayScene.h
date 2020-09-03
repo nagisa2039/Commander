@@ -2,12 +2,14 @@
 #include <memory>
 #include <list>
 #include <vector>
+#include <array>
 #include "Scene.h"
 #include "../Utility/Geometry.h"
 #include "../Game/Team.h"
 #include <list>
 #include <string>
 #include "TimeLine.h"
+#include <functional>
 
 class Charactor;
 class MapCtrl;
@@ -22,6 +24,13 @@ class Fade;
 class PlayScene :
 	public Scene
 {
+public:
+	enum class FilterType
+	{
+		none,
+		gauss,
+		max
+	};
 private:
 	bool debug;
 	int _gameH;
@@ -48,12 +57,16 @@ private:
 	std::unique_ptr<Fade> _fade;
 	void(PlayScene::* _fadeEndFunc)();
 
+	FilterType _filterType;
+	std::array<std::function<void()>, static_cast<size_t>(FilterType::max)> _filterFuncs;
+
 	// 場面ごとの更新を行う関数ポインタ playSceneを継続するかを返す
-	bool(PlayScene::*_uniqueUpdater)(const Input& input);
-	bool(PlayScene::* _uniqueUpdaterOld)(const Input& input);
+	bool(PlayScene::*_updater)(const Input& input);
+	bool(PlayScene::* _updaterOld)(const Input& input);
 
 	// 場面ごとの更新を行う関数ポインタ
-	void(PlayScene::* _uniqueDrawer)(const Camera& camera);
+	void(PlayScene::* _drawer)(const Camera& camera);
+	void(PlayScene::* _UIDrawer)();
 
 	void StartPlayerTurn();
 	void StartEnemyTurn();
@@ -83,6 +96,10 @@ private:
 	void GameClearDraw(const Camera& camera);
 	void FadeDraw(const Camera& camera);
 
+	void PreparationUIDraw();
+	void PlayerUIDraw();
+	void NoneUIDraw();
+
 	// Fade終了時に実行する関数
 	void ChnageMapSelect();
 	void ChangePreparation();
@@ -104,4 +121,6 @@ public:
 
 	// ショップなどで装備品などが変更されたときに呼ぶ
 	void CharactorDataUpdate();
+
+	void SetFilter(const FilterType type);
 };

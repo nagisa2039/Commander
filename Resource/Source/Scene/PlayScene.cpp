@@ -20,6 +20,7 @@
 #include "TurnChangeAnim.h"
 #include "MapSelectScene.h"
 #include "ShopScene.h"
+#include "Tool.h"
 
 using namespace std;
 
@@ -82,10 +83,17 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctr
 	_clearAnimTrack->AddKey(0, 0.0f);
 	_clearAnimTrack->AddKey(30, 1.0f);
 
-	_uniqueUpdater = &PlayScene::PreparationUpdate;
-	_uniqueDrawer = &PlayScene::PreparationDraw;
+	_updater = &PlayScene::PreparationUpdate;
+	_drawer = &PlayScene::PreparationDraw;
+	_UIDrawer = &PlayScene::PreparationUIDraw;
+	_UIDrawer = &PlayScene::PreparationUIDraw;
 
 	StartFadeIn(&PlayScene::ChangePreparation);
+
+	_filterType = FilterType::none;
+	_filterFuncs[Size_t(FilterType::none)] = []() {};
+	_filterFuncs[Size_t(FilterType::gauss)] = [&graphH = _gameH]() 
+	{GraphFilter(graphH, DX_GRAPH_FILTER_GAUSS, 16, 1000); };
 
 	//// ピクセルシェーダーバイナリコードの読み込み
 	//pshandle = LoadPixelShader("Resource/Source/Shader/HPBer.cso");
@@ -134,7 +142,7 @@ void PlayScene::Update(const Input & input)
 
 
 	_camera->Update();
-	if (!(this->*_uniqueUpdater)(input))
+	if (!(this->*_updater)(input))
 	{
 		return;
 	}
@@ -172,8 +180,9 @@ bool PlayScene::TurnChengeUpdate(const Input& input)
 	{
 		if (_turnChangeAnim->GetCurrentTeam() == Team::player)
 		{
-			_uniqueUpdater = &PlayScene::PlayerTurnUpdate;
-			_uniqueDrawer = &PlayScene::PlayerTurnDraw;
+			_updater = &PlayScene::PlayerTurnUpdate;
+			_drawer = &PlayScene::PlayerTurnDraw;
+			_UIDrawer = &PlayScene::PlayerUIDraw;
 			if (_turnCnt == 1)
 			{
 				_playerCommander->StartNormalUpdate();
@@ -185,8 +194,9 @@ bool PlayScene::TurnChengeUpdate(const Input& input)
 		}
 		else
 		{
-			_uniqueUpdater = &PlayScene::EnemyTurnUpdate;
-			_uniqueDrawer = &PlayScene::EnemyTurnDraw;
+			_updater = &PlayScene::EnemyTurnUpdate;
+			_drawer = &PlayScene::EnemyTurnDraw;
+			_UIDrawer = &PlayScene::NoneUIDraw;
 			if (_turnCnt == 1)
 			{
 				_enemyCommander->StartNormalUpdate();
@@ -226,8 +236,8 @@ bool PlayScene::CharactorUpdate(const Input& input)
 		if ((*itr)->GetIsDying())
 		{
 			_dyingCharItr = itr;
-			_uniqueUpdaterOld = _uniqueUpdater;
-			_uniqueUpdater = &PlayScene::CharactorDyingUpdate;
+			_updaterOld = _updater;
+			_updater = &PlayScene::CharactorDyingUpdate;
 		}
 	}
 	return true;
@@ -242,13 +252,14 @@ void PlayScene::StartPlayerTurn()
 		return;
 	}
 
-	_uniqueUpdater = &PlayScene::TurnChengeUpdate;
-	_uniqueDrawer = &PlayScene::TurnChengeDraw;
+	_updater = &PlayScene::TurnChengeUpdate;
+	_drawer = &PlayScene::TurnChengeDraw;
+	_UIDrawer = &PlayScene::NoneUIDraw;
 	_turnChangeAnim->TurnStart(Team::player);
 	_enemyCommander->TurnReset();
 	_playerCommander->TurnReset();
 
-	_uniqueUpdaterOld = _uniqueUpdater;
+	_updaterOld = _updater;
 
 	_camera->ClearTargetActor();
 	_camera->AddTargetActor(&*_playerCommander);
@@ -258,13 +269,14 @@ void PlayScene::StartPlayerTurn()
 
 void PlayScene::StartEnemyTurn()
 {
-	_uniqueUpdater = &PlayScene::TurnChengeUpdate;
-	_uniqueDrawer = &PlayScene::TurnChengeDraw;
+	_updater = &PlayScene::TurnChengeUpdate;
+	_drawer = &PlayScene::TurnChengeDraw;
+	_UIDrawer = &PlayScene::NoneUIDraw;
 	_turnChangeAnim->TurnStart(Team::enemy);
 	_enemyCommander->TurnReset();
 	_playerCommander->TurnReset();
 
-	_uniqueUpdaterOld = _uniqueUpdater;
+	_updaterOld = _updater;
 
 	_camera->ClearTargetActor();
 	_camera->AddTargetActor(&*_enemyCommander);
@@ -330,14 +342,14 @@ bool PlayScene::CharactorDyingUpdate(const Input& input)
 		{
 			// ゲームクリア
 			Application::Instance().GetSaveData().Save(/*_charactors, */_mapCtrl->GetMap()->GetMapID());
-			_uniqueUpdater = &PlayScene::GameClearUpdate;
-			_uniqueDrawer = &PlayScene::GameClearDraw;
+			_updater = &PlayScene::GameClearUpdate;
+			_drawer = &PlayScene::GameClearDraw;
 			return true;
 		}
 	}
 
 	_mapCtrl->AllCharactorRouteSearch();
-	_uniqueUpdater = _uniqueUpdaterOld;
+	_updater = _updaterOld;
 	return true;
 }
 
@@ -369,16 +381,18 @@ void PlayScene::StartFadeIn(void (PlayScene::* funcP)(), const unsigned int colo
 {
 	_fade->StartFadeIn(color);
 	_fadeEndFunc = funcP;
-	_uniqueUpdater = &PlayScene::FadeUpdate;
-	_uniqueDrawer = &PlayScene::FadeDraw;
+	_updater = &PlayScene::FadeUpdate;
+	_drawer = &PlayScene::FadeDraw;
+	_UIDrawer = &PlayScene::NoneUIDraw;
 }
 
 void PlayScene::StartFadeOut(void (PlayScene::* funcP)(), const unsigned int color)
 {
 	_fade->StartFadeOut(color);
 	_fadeEndFunc = funcP;
-	_uniqueUpdater = &PlayScene::FadeUpdate;
-	_uniqueDrawer = &PlayScene::FadeDraw;
+	_updater = &PlayScene::FadeUpdate;
+	_drawer = &PlayScene::FadeDraw;
+	_UIDrawer = &PlayScene::NoneUIDraw;
 }
 
 bool PlayScene::FadeUpdate(const Input& input)
@@ -409,8 +423,6 @@ void PlayScene::PreparationDraw(const Camera& camera)
 	{
 		effect->Draw();
 	}
-
-	(*_preparationDeque.begin())->Draw();
 }
 
 void PlayScene::TurnChengeDraw(const Camera& camera)
@@ -441,8 +453,6 @@ void PlayScene::PlayerTurnDraw(const Camera& camera)
 	{
 		effect->Draw();
 	}
-	// プレイヤーCursorの描画
-	_playerCommander->Draw();
 }
 
 void PlayScene::EnemyTurnDraw(const Camera& camera)
@@ -517,6 +527,21 @@ void PlayScene::FadeDraw(const Camera& camera)
 	_fade->Draw();
 }
 
+void PlayScene::PreparationUIDraw()
+{
+	(*_preparationDeque.begin())->Draw();
+}
+
+void PlayScene::PlayerUIDraw()
+{
+	// プレイヤーCursorの描画
+	_playerCommander->Draw();
+}
+
+void PlayScene::NoneUIDraw()
+{
+}
+
 void PlayScene::ChnageMapSelect()
 {
 	_controller.ChangeScene(make_shared<MapSelectScene>(_controller));
@@ -524,14 +549,16 @@ void PlayScene::ChnageMapSelect()
 
 void PlayScene::ChangePreparation()
 {
-	_uniqueUpdater = &PlayScene::PreparationUpdate;
-	_uniqueDrawer = &PlayScene::PreparationDraw;
+	_updater = &PlayScene::PreparationUpdate;
+	_drawer = &PlayScene::PreparationDraw;
+	_UIDrawer = &PlayScene::PreparationUIDraw;
 }
 
 void PlayScene::ChangeGameOver()
 {
-	_uniqueUpdater = &PlayScene::GameOverUpdate;
-	_uniqueDrawer = &PlayScene::GameOverDraw;
+	_updater = &PlayScene::GameOverUpdate;
+	_drawer = &PlayScene::GameOverDraw;
+	_UIDrawer = &PlayScene::NoneUIDraw;
 	_fadeEndFunc = nullptr;
 }
 
@@ -541,10 +568,14 @@ void PlayScene::Draw(void)
 	SetDrawScreen(_gameH);
 	ClsDrawScreen();
 
-	(this->*_uniqueDrawer)(*_camera);
+	(this->*_drawer)(*_camera);
 	SetDrawScreen(DX_SCREEN_BACK);
 
+	_filterFuncs[Size_t(_filterType)]();
+
 	DrawGraph(0, 0, _gameH, true);
+
+	(this->*_UIDrawer)();
 
 	//// 使用するピクセルシェーダーをセット
 	//SetUsePixelShader(pshandle);
@@ -584,4 +615,9 @@ void PlayScene::CharactorDataUpdate()
 	}
 
 	_mapCtrl->AllCharactorRouteSearch();*/
+}
+
+void PlayScene::SetFilter(const FilterType type)
+{
+	_filterType = type;
 }

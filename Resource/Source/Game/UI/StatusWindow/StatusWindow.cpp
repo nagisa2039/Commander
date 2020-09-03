@@ -8,6 +8,8 @@
 #include "Input.h"
 #include "WeaponWindow.h"
 #include "ItemWindow.h"
+#include "SceneController.h"
+#include "PlayScene.h"
 
 using namespace std;
 
@@ -56,10 +58,20 @@ StatusWindow::StatusWindow(std::deque<std::shared_ptr<UI>>* uiDeque, const Chara
 
 	_windowH = Application::Instance().GetFileSystem().
 		MakeScreen("status_window", Size(_sideWindowSize.w *2+ _centerWindowSize.w, _sideWindowSize.h*2), true);
+
+	_playScene = &dynamic_cast<PlayScene&>(Application::Instance().GetSceneController().GetCurrentScene());
+	if (_playScene)
+	{
+		_playScene->SetFilter(PlayScene::FilterType::gauss);
+	}
 }
 
 StatusWindow::~StatusWindow()
 {
+	if (_playScene)
+	{
+		_playScene->SetFilter(PlayScene::FilterType::none);
+	}
 }
 
 void StatusWindow::Update(const Input& input)

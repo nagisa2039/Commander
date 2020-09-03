@@ -29,5 +29,10 @@ public:
 
 	// シーンのポップ
 	void PopScene(void);
+
+	/// <summary>
+	/// 現在のシーン参照の取得
+	/// </summary>
+	Scene& GetCurrentScene();
 };
 

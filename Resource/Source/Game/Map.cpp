@@ -120,7 +120,7 @@ Map::Map(const int mapId)
 {
 	_mapGraphHandle = Application::Instance().GetFileSystem().
 		MakeScreen("map", _mapSize * _chipSize, true);
-	assert(LoadMapData());
+	LoadMapData();
 }
 
 Map::~Map()

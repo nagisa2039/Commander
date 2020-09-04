@@ -16,7 +16,6 @@ private:
 
 	std::vector<std::vector<MapData>> _mapDataVec2;			// マップデータ
 
-	int _mapFloorH;
 	int _mapGraphHandle;
 
 	const std::string imageFolderPath;

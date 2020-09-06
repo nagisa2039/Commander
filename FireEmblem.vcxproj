@@ -100,6 +100,7 @@
     <ClCompile Include="Resource\Source\Game\UI\UIList\WeaponListItem.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\SelectPen.cpp" />
     <ClCompile Include="Resource\Source\Scene\ShopScene.cpp" />
+    <ClCompile Include="Resource\Source\Scene\TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Game\CutIn.h" />
@@ -188,6 +189,7 @@
     <ClInclude Include="Resource\Source\Scene\ShopScene.h" />
     <ClInclude Include="Resource\Source\Game\SaveDataCharactor.h" />
     <ClInclude Include="Resource\Source\Utility\Tool.h" />
+    <ClInclude Include="Resource\Source\Scene\TitleScene.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

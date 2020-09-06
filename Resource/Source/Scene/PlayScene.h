@@ -19,7 +19,6 @@ class Effect;
 class TurnChangeAnim;
 class PreparationUI;
 class UI;
-class Fade;
 
 class PlayScene :
 	public Scene
@@ -54,7 +53,6 @@ private:
 
 	std::unique_ptr<Track<float>> _clearAnimTrack;
 
-	std::unique_ptr<Fade> _fade;
 	void(PlayScene::* _fadeEndFunc)();
 
 	FilterType _filterType;
@@ -116,6 +114,9 @@ public:
 
 	void Update(const Input& input) override final;
 	void Draw(void) override final;
+
+	void On()override;
+	void Off()override;
 
 	void PushShopScene();
 

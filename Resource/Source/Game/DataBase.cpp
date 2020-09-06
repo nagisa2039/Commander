@@ -196,9 +196,10 @@ DataBase::DataBase()
 	{
 		vector<vector<string>> data;
 		ReadData("Resource/DataBase/map.data", data);
-		for (int idx = 1; idx < data.size(); ++idx)
+		_mapDataTable.resize(data.size());
+		for (int idx = 1;auto& mapData : _mapDataTable)
 		{
-			_mapDataTable.emplace_back(MapData(data[idx][1], data[idx][2]));
+			mapData = MapData(data[idx][1], data[idx][2],data[idx][3]);
 		}
 	}
 
@@ -258,7 +259,7 @@ int DataBase::GetCharactorImageHandle(const CharactorType charactorType, const T
 {
 	char str[256];
 	sprintf_s(str, 256, "%s%s", GetCharactorData(charactorType).imagePath.c_str(), team == Team::player ? "_player.png" : "_enemy.png");
-	return Application::Instance().GetFileSystem().GetImageHandle(str);
+	return ImageHandle(str);
 }
 
 const DataBase::CharactorData& DataBase::GetCharactorData(const CharactorType charactorType) const
@@ -338,8 +339,8 @@ void DataBase::CharactorData::DrawIcon(const Rect& rect, const Team team)const
 	SetDrawMode(DX_DRAWMODE_NEAREST);
 	stringstream ss;
 	ss << imagePath << "_" << (Team::player == team ? "player" : "enemy") << ".png";
-	rect.DrawRectGraph(Vector2Int(32, 0), Size(32, 32),
-		Application::Instance().GetFileSystem().GetImageHandle(ss.str().c_str()));
+	auto handle = ImageHandle(ss.str().c_str());
+	rect.DrawRectGraph(Vector2Int(32, 0), Size(32, 32), handle);
 	SetDrawMode(DX_DRAWMODE_BILINEAR);
 	
 }

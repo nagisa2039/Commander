@@ -33,7 +33,7 @@ void TerrainInf::Draw()
 
 	// “y‘ä‚Ì•`‰æ
 	Vector2Int space(0, 20);
-	auto& fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = FileSystem::Instance();
 	auto graphH = fileSystem.GetImageHandle("Resource/Image/UI/terrainNameFrame.png");
 	Size graphSize;
 	GetGraphSize(graphH, graphSize);

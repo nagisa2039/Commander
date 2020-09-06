@@ -7,7 +7,6 @@
 class Input;
 struct Vector2Int;
 class SceneController;
-class FileSystem;
 class DataBase;
 class SaveData;
 class AnkerCalculation;
@@ -40,8 +39,6 @@ public:
 	// アプリケーションを初期化する
 	bool Initialize();
 
-	void FontSetUp();
-
 	void KeySetUp();
 
 	// アプリケーションを実行する
@@ -62,7 +59,6 @@ public:
 
 	SaveData& GetSaveData();
 
-	FileSystem& GetFileSystem();
 	const AnkerCalculation& GetAnkerCalculation()const;
 	SceneController& GetSceneController()const;
  	
@@ -76,7 +72,6 @@ private:
 
 	std::unique_ptr<Input> _input;
 	std::unique_ptr<SceneController> _sceneController;
-	std::unique_ptr<FileSystem> _fileSystem;
 
 	std::vector<Vector2Int> _poss;
 

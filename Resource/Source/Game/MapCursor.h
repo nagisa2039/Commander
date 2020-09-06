@@ -19,6 +19,7 @@ protected:
 
 	int _moveItv;	// “ü—Íó•t‚Ü‚Å‚ÌƒtƒŒ[ƒ€”
 	int _moveItvCurrentMax;
+	int _moveSEH;
 	const int _moveItvMax;
 
 	int _putItv;

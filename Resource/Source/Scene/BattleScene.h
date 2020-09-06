@@ -35,6 +35,8 @@ private:
 	float _floatY;
 	bool _pursuit;	// ’ÇŒ‚”»’è‚ğs‚Á‚½‚©
 
+	int _bgmH;
+
 	std::shared_ptr<CutIn> _cutIn;
 
 	std::unique_ptr<Track<float>> _exRateTL;

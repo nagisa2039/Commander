@@ -17,7 +17,7 @@ void MoneyUI::Update(const Input& input)
 
 void MoneyUI::Draw()
 {
-	auto& fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = FileSystem::Instance();
 	_drawRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/window0.png"));
 
 	int fontH = fileSystem.GetFontHandle("choplin30");

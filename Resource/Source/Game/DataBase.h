@@ -70,8 +70,10 @@ private:
 	{
 		std::string name;
 		std::string fileName;
-		MapData() :name(""), fileName("") {};
-		MapData(const std::string& na, const std::string& pa) :name(na), fileName(pa) {};
+		std::string bgmName;
+		MapData() :name(""), fileName(""), bgmName(""){};
+		MapData(const std::string& na, const std::string& pa, const std::string& bn) 
+			:name(na), fileName(pa), bgmName(bn) {};
 	};
 
 	DataBase(const DataBase&) = delete;

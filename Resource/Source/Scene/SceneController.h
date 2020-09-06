@@ -4,12 +4,14 @@
 
 class Scene;
 class Input;
+class Fade;
 
 class SceneController
 {
 
 private:
 	std::deque<std::shared_ptr<Scene>> _scene;
+	std::shared_ptr<Fade> _fade;
 
 public:
 	SceneController();
@@ -34,5 +36,11 @@ public:
 	/// 現在のシーン参照の取得
 	/// </summary>
 	Scene& GetCurrentScene();
+
+	/// <summary>
+	/// シーン遷移フェード
+	/// </summary>
+	/// <returns></returns>
+	Fade& GetFade();
 };
 

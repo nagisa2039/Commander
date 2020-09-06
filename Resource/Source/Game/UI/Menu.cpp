@@ -194,7 +194,7 @@ void Menu::CloseDraw()
 
 void Menu::OpenAnimDraw()
 {
-	auto menuFrameH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/menuFrame.png");
+	auto menuFrameH = ImageHandle("Resource/Image/UI/menuFrame.png");
 	Size menuFrameSize;
 	GetGraphSize(menuFrameH, menuFrameSize);
 
@@ -212,7 +212,7 @@ void Menu::OpenAnimDraw()
 void Menu::CloseAnimDraw()
 {
 	auto wsize = Application::Instance().GetWindowSize();
-	auto menuFrameH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/menuFrame.png");
+	auto menuFrameH = ImageHandle("Resource/Image/UI/menuFrame.png");
 	Size menuFrameSize;
 	GetGraphSize(menuFrameH, menuFrameSize);
 
@@ -229,7 +229,7 @@ void Menu::CloseAnimDraw()
 
 void Menu::DrawContent(const Vector2Int& drawCenterPos, const unsigned int idx)
 {
-	auto& fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = FileSystem::Instance();
 	int choplin30 = fileSystem.GetFontHandle("choplin30edge");
 	auto menuFrameH = fileSystem.GetImageHandle("Resource/Image/UI/menuFrame.png");
 	Rect(drawCenterPos, _contentSize).DrawGraph(menuFrameH);

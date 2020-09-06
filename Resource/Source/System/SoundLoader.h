@@ -19,6 +19,8 @@ public:
 	bool PlayBGM(const int handle, const bool playTop = true);
 	bool PlaySE(const char* path);
 	bool PlaySE(const int handle);
-	bool StopSound();
+
+	bool StopSound(const int handle);
+	bool StopAllSound();
 };
 

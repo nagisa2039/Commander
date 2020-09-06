@@ -6,6 +6,7 @@
 #include "DataBase.h"
 #include "Camera.h"
 #include "DxLibUtility.h"
+#include "SoundLoader.h"
 
 namespace
 {
@@ -45,7 +46,7 @@ bool Map::DrawMapChip(const Vector2Int& mapPos, const Map_Chip mapChip, const Ve
 {
 	auto drawData = Application::Instance().GetDataBase().GetMapChipData(mapChip).drawData;
 
-	auto graphH = Application::Instance().GetFileSystem().GetImageHandle((imageFolderPath + drawData.path).c_str());
+	auto graphH = ImageHandle((imageFolderPath + drawData.path).c_str());
 	DrawRectExtendGraph(offset.x + _chipSize.w * mapPos.x, offset.y + _chipSize.h * mapPos.y,
 		offset.x + _chipSize.w * mapPos.x + _chipSize.w, offset.y + _chipSize.h * mapPos.y + _chipSize.h,
 		drawData.leftup.x, drawData.leftup.y, drawData.size.w, drawData.size.h,
@@ -71,7 +72,7 @@ const Size& Map::GetMapSize() const
 
 bool Map::LoadMapData()
 {
-	auto mapData = Application::Instance().GetDataBase().GetMapData(_mapId);
+	auto& mapData = Application::Instance().GetDataBase().GetMapData(_mapId);
 	std::stringstream ss;
 	ss << "Resource/Map/" << mapData.fileName;
 
@@ -118,9 +119,12 @@ Map::Map(const int mapId)
 	:_mapId(mapId), _mapSize(MAP_CHIP_CNT_W, MAP_CHIP_CNT_H), _chipSize(CHIP_SIZE_W, CHIP_SIZE_H),
 	imageFolderPath("Resource/Image/MapChip/")
 {
-	_mapGraphHandle = Application::Instance().GetFileSystem().
-		MakeScreen("map", _mapSize * _chipSize, true);
+	auto& fileSystem = FileSystem::Instance();
+	_mapGraphHandle = fileSystem.MakeScreen("map", _mapSize * _chipSize, true);
 	LoadMapData();
+
+	auto& mapData = Application::Instance().GetDataBase().GetMapData(_mapId);
+	_bgmH = fileSystem.GetSoundHandle(mapData.bgmName.c_str());
 }
 
 Map::~Map()
@@ -138,6 +142,16 @@ bool Map::CheckMapPosPutRange(const Vector2Int& mapPos)
 	int frameNum = 0;
 	return mapPos.y >= frameNum && mapPos.y < static_cast<int>(MAP_CHIP_CNT_H - frameNum)
 		&& mapPos.x >= frameNum && mapPos.x < static_cast<int>(MAP_CHIP_CNT_W - frameNum);
+}
+
+void Map::StartBGM()
+{
+	SoundL.PlayBGM(_bgmH);
+}
+
+void Map::StopBGM()
+{
+	SoundL.StopSound(_bgmH);
 }
 
 const std::vector<std::vector<MapData>>& Map::GetMapData() const

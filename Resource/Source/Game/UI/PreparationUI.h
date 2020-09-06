@@ -38,6 +38,7 @@ private:
 	PlayScene& _playScene;
 	Camera& _camera;
 	MapCtrl& _mapCtrl;
+	int _bgmH;
 
 	bool _execution;
 	/// <summary>
@@ -57,6 +58,8 @@ private:
 	void OpenUpdate(const Input& input);
 	void CloseAnimUpdate(const Input& input);
 	void OpenAnimUpdate(const Input& input);
+
+	void CloseEnd();
 
 public:
 	PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& camera, MapCtrl& mapCtrl, PlayScene& playScene);

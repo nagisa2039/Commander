@@ -191,7 +191,7 @@ void UIList::ListItemInit(const Vector2Int& leftup)
 		item->SetPos(Vector2Int(_viewportRect.center.x, item->GetRect().center.y));
 	}
 
-	_listWindowH = Application::Instance().GetFileSystem().MakeScreen("list_window", rectSize, true);
+	_listWindowH = FileSystem::Instance().MakeScreen("list_window", rectSize, true);
 	_selectPen = std::make_unique<SelectPen>(nullptr);
 
 	int initIdx = 0;

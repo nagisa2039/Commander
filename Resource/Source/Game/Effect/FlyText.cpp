@@ -29,12 +29,12 @@ FlyText::FlyText(const string& str, const Vector2Int& pos, const int lifeCnt,
 
 	if (critical)
 	{
-		_fontHandle = Application::Instance().GetFileSystem().GetFontHandle("choplin80edge");
+		_fontHandle = FontHandle("choplin80edge");
 		_color = 0xdddd00;
 	}
 	else
 	{
-		_fontHandle = Application::Instance().GetFileSystem().GetFontHandle("choplin60edge");
+		_fontHandle = FontHandle("choplin60edge");
 		_color = 0xffffff;
 	}
 }
@@ -80,12 +80,12 @@ PopupText::PopupText(const std::string& str, const Vector2Int& pos, Camera& came
 
 	if (critical)
 	{
-		_fontHandle = Application::Instance().GetFileSystem().GetFontHandle("choplin80edge");
+		_fontHandle = FontHandle("choplin80edge");
 		_color = 0xdddd00;
 	}
 	else
 	{
-		_fontHandle = Application::Instance().GetFileSystem().GetFontHandle("choplin60edge");
+		_fontHandle = FontHandle("choplin60edge");
 		_color = 0xffffff;
 	}
 

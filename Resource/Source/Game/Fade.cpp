@@ -25,9 +25,9 @@ void Fade::Update()
 
 void Fade::Draw()
 {
-	if (_fadeTrack->GetEnd())return;
-
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(255 * _fadeTrack->GetValue()));
+	auto value = _fadeTrack->GetValue();
+	if (value <= 0.0f)return;
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(255 * value));
 	DrawBox(Vector2Int(0,0), Application::Instance().GetWindowSize().ToVector2Int(), _fadeColor);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }

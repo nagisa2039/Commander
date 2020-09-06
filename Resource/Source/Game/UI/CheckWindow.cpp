@@ -23,11 +23,10 @@ PopupWindow::PopupWindow(const std::string& messageStr, std::deque<std::shared_p
 	_updater	= &PopupWindow::ScalingUpdate;
 	_drawer		= &PopupWindow::ScalingDraw;
 
-	int messageH = Application::Instance().GetFileSystem().
-		GetImageHandle("Resource/Image/UI/checkWindow.png");
+	int messageH = ImageHandle("Resource/Image/UI/checkWindow.png");
 	Size messageSize;
 	GetGraphSize(messageH, messageSize);
-	_messageImageH = Application::Instance().GetFileSystem().MakeScreen("check_window", messageSize, true);
+	_messageImageH = FileSystem::Instance().MakeScreen("check_window", messageSize, true);
 
 	DrawToWindow();
 }
@@ -94,7 +93,7 @@ void PopupWindow::DrawToWindow()
 
 	Size space(50, 10);
 
-	auto& fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = FileSystem::Instance();
 	int messageH = fileSystem.GetImageHandle("Resource/Image/UI/checkWindow.png");
 	Size messageSize;
 	GetGraphSize(_messageImageH, messageSize);
@@ -114,7 +113,7 @@ CheckWindow::CheckWindow(const std::string& messageStr, std::deque<std::shared_p
 
 	Size messageSize;
 	GetGraphSize(_messageImageH, messageSize);
-	int selectH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/checkWindowSelect.png");
+	int selectH = ImageHandle("Resource/Image/UI/checkWindowSelect.png");
 	Size selectSize;
 	GetGraphSize(selectH, selectSize);
 
@@ -127,7 +126,7 @@ CheckWindow::CheckWindow(const std::string& messageStr, std::deque<std::shared_p
 
 	_select = Select::yes;
 
-	auto& fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = FileSystem::Instance();
 	_yesImageH	= fileSystem.MakeScreen("check_window_yes", selectSize, true);
 	_noImageH	= fileSystem.MakeScreen("check_window_no", selectSize, true);;
 
@@ -226,7 +225,7 @@ void CheckWindow::DrawToSelectImage()
 {
 	int currentScreen = GetDrawScreen();
 
-	auto& fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = FileSystem::Instance();
 	int selectH = fileSystem.GetImageHandle("Resource/Image/UI/checkWindowSelect.png");
 	Size selectSize;
 	GetGraphSize(selectH, selectSize);

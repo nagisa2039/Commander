@@ -17,6 +17,7 @@
 #include "DataBase.h"
 #include "SaveData.h"
 #include "Map.h"
+#include "SoundLoader.h"
 
 using namespace std;
 
@@ -48,6 +49,7 @@ void Charactor::BattaleStartUpdate(const Input& input)
 
 void Charactor::BattaleStart(Charactor* charactor)
 {
+	StopMoveAnim();
 	_mapCtrl.SetGroupActive(_groupNum, true);
 	_mapCtrl.SetGroupActive(charactor->GetGroupNum(), true);
 
@@ -179,7 +181,7 @@ void Charactor::DrawMovableMass(const uint8_t alpha) const
 {
 	auto offset = _camera.GetCameraOffset();
 	auto chipSize = _mapCtrl.GetChipSize();
-	int graphH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/Battle/movableMass.png");
+	int graphH = ImageHandle("Resource/Image/Battle/movableMass.png");
 	bool heal = Application::Instance().GetDataBase().GetWeaponData(_status.weaponId).GetTypeData().heal;
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
@@ -411,13 +413,19 @@ void Charactor::MoveEnd(const bool canMove, const bool removeCamera)
 		_status.move = _startStatus.move;
 	}
 	_canMove = canMove;
-	_isMoveAnim = false;
+	StopMoveAnim();
 	if (removeCamera)
 	{
 		_camera.PopTargetActor();
 	}
 
 	_mapCtrl.AllCharactorRouteSearch();
+}
+
+void Charactor::StopMoveAnim()
+{
+	_isMoveAnim = false;
+	SoundL.StopSound(_mouveSEH);
 }
 
 void Charactor::RouteSearch()
@@ -488,7 +496,7 @@ void Charactor::DrawRoute(const Vector2Int& targetPos)
 		DrawLine(startPos, endPos, 0xffff00, 10);
 		if (begin)
 		{
-			auto arrowH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/arrow.png");
+			auto arrowH = ImageHandle("Resource/Image/UI/arrow.png");
 			Size arrowSize;
 			GetGraphSize(arrowH, arrowSize);
 			DrawRotaGraph(startPos, chipSize.w / static_cast<float>(arrowSize.w), _dirTable[dir_idx].angle, arrowH, true);
@@ -789,6 +797,7 @@ Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team t
 
 	_rigid = 0;
 	_moveStandby = false;
+	_mouveSEH = SoundHandle("Resource/Sound/SE/dash.mp3");
 
 	auto mapSize = _mapCtrl.GetMapSize();
 	_resultPosListVec2.resize(mapSize.h);
@@ -883,7 +892,15 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 
 	CreateMoveDirList(oneLineResutlList);
 
-	_isMoveAnim = _moveDirList.size() > 0;
+	if (_moveDirList.size() > 0)
+	{
+		_isMoveAnim = true;
+		SoundL.PlaySE(_mouveSEH);
+	}
+	else
+	{
+		_isMoveAnim = false;
+	}
 
 	_status.move = /*max(_status.move - oneLineResutlList.begin()->moveCnt, 0);*/0;
 

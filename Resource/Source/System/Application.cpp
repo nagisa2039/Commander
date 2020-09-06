@@ -48,11 +48,6 @@ SaveData& Application::GetSaveData()
 	return *_saveData;
 }
 
-FileSystem& Application::GetFileSystem()
-{
-	return *_fileSystem;
-}
-
 const AnkerCalculation& Application::GetAnkerCalculation() const
 {
 	return *_ankerCalculation;
@@ -92,16 +87,11 @@ bool Application::Initialize()
 	SetWindowText("Commander");
 	SetDrawMode(DX_DRAWMODE_BILINEAR);
 
-	_fileSystem = make_unique<FileSystem>();
-
 	// inputの初期化
 	_input = make_unique<Input>();
 
 	// コマンドの登録
 	KeySetUp();
-
-	// フォント読込
-	FontSetUp();
 
 	_sceneController = make_unique<SceneController>();
 	//_sceneController->ChangeScene(make_unique<PlayScene>(*_sceneController));
@@ -116,29 +106,6 @@ bool Application::Initialize()
 	QueryPerformanceCounter(&_end);
 
 	return true;
-}
-
-void Application::FontSetUp()
-{
-	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin20", 20, 1, false, false);
-	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin30", 30, 1, false, false);
-	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin40", 40, 1, false, false);
-	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin50", 50, 1, false, false);
-	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin60", 60, 1, false, false);
-	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin70", 70, 1, false, false);
-	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin80", 80, 1, false, false);
-	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin100", 100, 1, false, false);
-	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin200", 200, 1, false, false);
-
-	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin20edge", 20, 1, true, false);
-	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin30edge", 30, 1, true, false);
-	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin40edge", 40, 1, true, false);
-	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin50edge", 50, 1, true, false);
-	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin60edge", 60, 1, true, false);
-	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin70edge", 70, 1, true, false);
-	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin80edge", 80, 1, true, false);
-	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin100edge", 100, 1, true, false);
-	_fileSystem->FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin200edge", 200, 1, true, false);
 }
 
 void Application::KeySetUp()

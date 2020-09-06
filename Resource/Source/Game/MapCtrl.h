@@ -81,7 +81,7 @@ public:
 	// キャラクターの配列を取得
 	const std::vector<std::shared_ptr<Charactor>>& GetCharacots()const;
 
-	const std::shared_ptr<Map>& GetMap()const;
+	std::shared_ptr<Map> GetMap()const;
 };
 
 template<typename T>

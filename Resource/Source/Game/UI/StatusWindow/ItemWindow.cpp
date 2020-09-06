@@ -17,7 +17,7 @@ void ItemWindow::DrawToWindow()
 	int currentScreen = GetDrawScreen();
 	SetDrawScreen(_windowH);
 
-	auto & fileSystem = Application::Instance().GetFileSystem();
+	auto & fileSystem = FileSystem::Instance();
 
 	auto rectSize = GetSize();
 	Rect rect = Rect(rectSize.ToVector2Int()*0.5f, rectSize);
@@ -41,7 +41,7 @@ void ItemWindow::DrawToWindow()
 
 ItemWindow::ItemWindow(std::deque<std::shared_ptr<UI>>* uiDeque):UI(uiDeque)
 {
-	_windowH = Application::Instance().GetFileSystem().MakeScreen("item_window", Size(WINDOW_SIZE_W, WINDOW_SIZE_H), true);
+	_windowH = FileSystem::Instance().MakeScreen("item_window", Size(WINDOW_SIZE_W, WINDOW_SIZE_H), true);
 	DrawToWindow();
 }
 

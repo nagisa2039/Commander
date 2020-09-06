@@ -241,13 +241,13 @@ void Experience::LevelUpDraw()
 
 void Experience::DrawLevel(const Vector2Int& levelUpCenter, const Status& status)
 {
-	auto& fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = FileSystem::Instance();
 	DrawRotaGraph(levelUpCenter + Vector2Int(0, -40), 1.0f, 0.0f, fileSystem.GetImageHandle("Resource/Image/UI/levelUp.png"), true);
 
 	float animVel = _levlAnimTrack->GetValue();
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(animVel * 255));
 
-	auto fontH = Application::Instance().GetFileSystem().GetFontHandle("choplin50edge");
+	auto fontH = fileSystem.GetFontHandle("choplin50edge");
 	uint8_t level = _battleChar.GetCharacotr().GetStartStatus().level + _addStatus.level;
 	DrawStringToHandle(levelUpCenter, Anker::center, 0xffff00, Lerp(5.0f, 1.0f, animVel), fontH, "%d", level);
 
@@ -256,15 +256,16 @@ void Experience::DrawLevel(const Vector2Int& levelUpCenter, const Status& status
 
 void Experience::DrawToStatusWindow()
 {
+	auto& fileSystem = FileSystem::Instance();
 	int drawDataCnt = static_cast<int>(_drawDatas.size());
-	auto fontH = Application::Instance().GetFileSystem().GetFontHandle("choplin30edge");
+	auto fontH = fileSystem.GetFontHandle("choplin30edge");
 
 	int currentScreen = GetDrawScreen();
 	SetDrawScreen(_windowStatusH);
 	auto itemSize = Size(STATUS_ITEM_SIZE_W, STATUS_ITEM_SIZE_H);
 	auto statusDrawRectSize = Size(itemSize.w * STATUS_ROW_CNT, (drawDataCnt + 1) / STATUS_ROW_CNT * itemSize.h);
 	auto statusDrawRect = Rect(statusDrawRectSize.ToVector2Int() * 0.5f, statusDrawRectSize);
-	statusDrawRect.DrawGraph(Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/statusWindow2.png"));
+	statusDrawRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/statusWindow2.png"));
 
 	Rect itemRect = Rect(Vector2Int(0, 0), itemSize);
 	for (int idx = 0; idx < drawDataCnt; idx++)
@@ -334,7 +335,7 @@ Experience::Experience(BattleCharactor& battleChar, const bool kill, std::deque<
 	_levlAnimTrack->AddKey(0, 0.0f);
 	_levlAnimTrack->AddKey(60, 1.0f);
 
-	_windowStatusH = Application::Instance().GetFileSystem().
+	_windowStatusH = FileSystem::Instance().
 		MakeScreen("exp", Size(STATUS_ITEM_SIZE_W * STATUS_ROW_CNT, _drawDatas.size() / STATUS_ROW_CNT * STATUS_ITEM_SIZE_H), true);
 }
 

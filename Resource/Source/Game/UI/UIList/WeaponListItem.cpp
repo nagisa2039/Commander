@@ -27,7 +27,7 @@ void WeaponListItem::Draw(const Vector2Int& offset)
 	auto drawRect = Rect(rect.center + offset, rect.size);
 	drawRect.Draw(0xffffff);
 
-	auto choplin30 = Application::Instance().GetFileSystem().GetFontHandle("choplin30edge");
+	auto choplin30 = FontHandle("choplin30edge");
 
 	const int offsetX = 10;
 	int drawX = drawRect.Left() + offsetX;

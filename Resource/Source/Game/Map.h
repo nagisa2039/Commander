@@ -17,6 +17,7 @@ private:
 	std::vector<std::vector<MapData>> _mapDataVec2;			// マップデータ
 
 	int _mapGraphHandle;
+	int _bgmH;
 
 	const std::string imageFolderPath;
 
@@ -25,6 +26,7 @@ private:
 
 	// 指定したマスがマップの変更可能な範囲化を調べる
 	bool CheckMapPosPutRange(const Vector2Int& mapPos);
+
 
 public:
 	Map(const int mapId);
@@ -45,5 +47,8 @@ public:
 
 	// 指定したマスがマップの範囲内かを返す
 	bool CheckMapDataRange(const Vector2Int& mapPos)const;
+
+	void StartBGM();
+	void StopBGM();
 };
 

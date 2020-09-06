@@ -7,7 +7,6 @@
 
 class Camera;
 class MapSelectCharactor;
-class Fade;
 
 class MapSelectScene :
     public Scene
@@ -23,7 +22,6 @@ private:
 	unsigned int _charactorIdx;
 
 	int _dir;
-	std::unique_ptr<Fade> _fade;
 	bool _goPlayScene;
 	
 	bool _debug;

@@ -258,10 +258,6 @@ void PlayerCommander::BattleStart()
 	_uniqueUpdater = &PlayerCommander::BattaleUpdate;
 }
 
-void PlayerCommander::CursorMoveMoment()
-{
-}
-
 PlayerCommander::PlayerCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera, const unsigned char& turnCnt):
 	Commander(charactors, mapCtrl, ctrlTeam, camera)
 {
@@ -296,7 +292,7 @@ void PlayerCommander::Draw()
 {
 	auto chipSize = _mapCtrl.GetChipSize();
 	auto offset = _camera.GetCameraOffset();
-	auto handle = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/MapChip/cursor.png");
+	auto handle = ImageHandle("Resource/Image/MapChip/cursor.png");
 	Size graphSize;
 	GetGraphSize(handle, graphSize);
 

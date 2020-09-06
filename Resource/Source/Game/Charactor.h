@@ -65,6 +65,7 @@ protected:
 	bool _moveActive;	// true@‚ ‚é’ö“x‹ß‚Ã‚¢‚Ä‚¢‚½‚ç“®‚­		false UŒ‚”ÍˆÍ“à‚É“ü‚Á‚½‚ç“®‚­
 	unsigned int _groupNum;	// W’c”Ô†
 
+	int _mouveSEH;	// ˆÚ“®‚ÌSE 
 	int _moveSpeed;
 	bool _isSelect;
 	Dir _dir;
@@ -178,6 +179,8 @@ public:
 	void MoveDecision();
 
 	void MoveEnd(const bool canMove = false, bool removeCamera = true);
+
+	void StopMoveAnim();
 
 	void RouteSearch();
 	void TurnReset();

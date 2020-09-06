@@ -31,6 +31,7 @@ void CharactorListItem::Draw(const Vector2Int& offset)
 	int drawX = drawRect.Left() + offsetX;
 
 	auto& dataBase_charactorData = Application::Instance().GetDataBase().GetCharactorData(_charactorData.charType);
+	auto& fileSystem = FileSystem::Instance();
 
 	// キャラアイコンの描画
 	auto charIconSize = Size(drawRect.size.h * 0.9f, drawRect.size.h * 0.9f);
@@ -38,11 +39,11 @@ void CharactorListItem::Draw(const Vector2Int& offset)
 	sprintf_s(charIconPath, 256, "%s_player.png", dataBase_charactorData.imagePath.c_str());
 
 	Rect(Vector2Int(drawX + charIconSize.w / 2, drawRect.center.y), charIconSize).DrawRectGraph(Vector2Int(32, 0), Size(32,32),
-		Application::Instance().GetFileSystem().GetImageHandle(charIconPath));
+		fileSystem.GetImageHandle(charIconPath));
 	drawX += charIconSize.w + offsetX;
 
 	// 名前の描画
-	int choplin30 = Application::Instance().GetFileSystem().GetFontHandle("choplin30edge");
+	int choplin30 = fileSystem.GetFontHandle("choplin30edge");
 	DrawStringToHandle(Vector2Int(drawX, drawRect.center.y), Anker::leftcenter, 
 		GetIsSelect() ? 0xff0000 : 0xffffff, choplin30, dataBase_charactorData.name.c_str());
 }

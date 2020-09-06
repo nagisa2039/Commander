@@ -27,7 +27,7 @@ void SelectPen::Draw()
 
 void SelectPen::Draw(const Vector2Int& pos)
 {
-	auto& fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = FileSystem::Instance();
 	auto penH = fileSystem.GetImageHandle("Resource/Image/UI/quillPen.png");
 	Size penSize;
 	GetGraphSize(penH, penSize);

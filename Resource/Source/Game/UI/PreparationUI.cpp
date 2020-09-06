@@ -11,6 +11,7 @@
 #include "CheckWindow.h"
 #include "DxLib.h"
 #include "../Scene/PlayScene.h"
+#include "SoundLoader.h"
 
 using namespace std;
 
@@ -103,9 +104,8 @@ void PreparationUI::CloseAnimUpdate(const Input& input)
 		if (_execution)
 		{
 			_itemInfTable[static_cast<size_t>(_selectItem)].func();
+			CloseEnd();
 		}
-		_updater = &PreparationUI::CloseUpdate;
-		_isOpen = false;
 	}
 }
 
@@ -119,10 +119,17 @@ void PreparationUI::OpenAnimUpdate(const Input& input)
 	}
 }
 
+void PreparationUI::CloseEnd()
+{
+	_updater = &PreparationUI::CloseUpdate;
+	_isOpen = false;
+}
+
 PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& camera, MapCtrl& mapCtrl, PlayScene& playScene)
 	:UI(uiDeque), _mapCtrl(mapCtrl), _camera(camera), _playScene(playScene)
 {
 	assert(_uiDeque != nullptr);
+	_isOpen = false;
 	_updater = &PreparationUI::CloseUpdate;
 	auto screenCenter = Application::Instance().GetWindowSize().ToVector2Int() * 0.5f;
 
@@ -135,6 +142,7 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 	_itemInfTable[static_cast<size_t>(Item::start)].func = [&]()
 	{
 		_delete = true;
+		SoundL.StopSound(_bgmH);
 	}; 
 	_itemInfTable[static_cast<size_t>(Item::placement)].func = [&]()
 	{
@@ -143,6 +151,7 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 	_itemInfTable[static_cast<size_t>(Item::warsituation)].func = [&]()
 	{
 		_uiDeque->emplace_front(make_shared<WarSituation>(_uiDeque, _mapCtrl));
+		SoundL.StopSound(_bgmH);
 	};
 	/*_itemInfTable[static_cast<size_t>(Item::shop)].func = [&]()
 	{
@@ -151,11 +160,12 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 	_itemInfTable[static_cast<size_t>(Item::back)].func = [&]()
 	{
 		_uiDeque->emplace_front(make_shared<CheckWindow>("ëﬁãpÇµÇ‹Ç∑Ç©ÅH", _uiDeque, [&](){BackMapSelect();}));
+		SoundL.StopSound(_bgmH);
 	};
 
 	const int spaceY = 120;
 	int currentScreen = GetDrawScreen();
-	auto& fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = FileSystem::Instance();
 	Vector2Int currentDrawPos = screenCenter - Vector2Int(0, static_cast<int>((static_cast<int>(Item::max)-1) / 2.0f * spaceY));
 	int windowH = fileSystem.GetImageHandle("Resource/Image/UI/window0.png");
 	GetGraphSize(windowH, _itemSize);
@@ -191,6 +201,9 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 	_selectExRateTrack->AddKey(0, 0.9);
 	_selectExRateTrack->AddKey(15, 1.0f);
 	_selectExRateTrack->AddKey(30, 0.9);
+
+	_bgmH = SoundHandle("Resource/Sound/BGM/preparation.mp3");
+	SoundL.PlayBGM(_bgmH);
 }
 
 PreparationUI::~PreparationUI()
@@ -238,6 +251,7 @@ void PreparationUI::Open(const bool animation)
 	{
 		_updater = &PreparationUI::OpenUpdate;
 		_animTrack->End();
+		_isOpen = true;
 	}
 }
 
@@ -256,8 +270,7 @@ void PreparationUI::Close(const bool animation)
 	}
 	else
 	{
-		_updater = &PreparationUI::CloseUpdate;
-		_animTrack->End();
+		CloseEnd();
 	}
 	_updater = &PreparationUI::CloseAnimUpdate;
 }

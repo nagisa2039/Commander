@@ -17,8 +17,33 @@ FileSystem::FileSystem()
 	_imageLoader = make_shared<ImageLoader>();
 	_fontLoader = make_shared<FontLoader>();
 	_soundLoder = make_shared<SoundLoader>();
+
+	FontSetUp();
 }
 
+
+void FileSystem::FontSetUp()
+{
+	FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin20", 20, 1, false, false);
+	FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin30", 30, 1, false, false);
+	FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin40", 40, 1, false, false);
+	FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin50", 50, 1, false, false);
+	FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin60", 60, 1, false, false);
+	FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin70", 70, 1, false, false);
+	FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin80", 80, 1, false, false);
+	FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin100", 100, 1, false, false);
+	FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin200", 200, 1, false, false);
+
+	FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin20edge", 20, 1, true, false);
+	FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin30edge", 30, 1, true, false);
+	FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin40edge", 40, 1, true, false);
+	FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin50edge", 50, 1, true, false);
+	FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin60edge", 60, 1, true, false);
+	FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin70edge", 70, 1, true, false);
+	FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin80edge", 80, 1, true, false);
+	FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin100edge", 100, 1, true, false);
+	FontInit("Resource/Font/Choplin.ttf", "Choplin", "choplin200edge", 200, 1, true, false);
+}
 
 FileSystem::~FileSystem()
 {

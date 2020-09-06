@@ -13,7 +13,9 @@ public:
 	// シーンの更新を行う
 	// @param input 入力オブジェクト
 	virtual void Update(const Input& input) = 0;
-
 	virtual void Draw(void) = 0;
+
+	virtual void On() {};
+	virtual void Off() {};
 };
 

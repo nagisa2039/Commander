@@ -103,9 +103,7 @@ void BattleCharactor::UIAnimUpdate()
 	if (_animHealthCnt++ % 3 == 0)
 	{
 		_animHealth += _animHealth > statusHp ? -1 : 1;
-
-		auto& soundLoader = Application::Instance().GetFileSystem().GetSoundLoader();
-		soundLoader.PlaySE("Resource/Sound/SE/select01.mp3");
+		SoundL.PlaySE("Resource/Sound/SE/hp_se.mp3");
 	}
 }
 
@@ -113,7 +111,7 @@ void BattleCharactor::UIDraw()
 {
 	auto wsize = Application::Instance().GetWindowSize();
 	auto teamColor  = GetTeamColorBattle(_selfChar.GetTeam());
-	auto& fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = FileSystem::Instance();
 
 	auto fontHandle = fileSystem.GetFontHandle("choplin40edge");
 	

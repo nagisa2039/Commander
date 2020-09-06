@@ -4,6 +4,8 @@
 #include "Camera.h"
 #include "MapCtrl.h"
 #include "../Utility/Input.h"
+#include "SoundLoader.h"
+#include "FileSystem.h"
 
 using namespace std;
 
@@ -139,6 +141,8 @@ MapCursor::MapCursor(MapCtrl& mapCtrl, Camera& camera):_mapCtrl(mapCtrl), _moveI
 	_putItv = 0;
 	_putItvCurrentMax = _putItvMax;
 
+	_moveSEH = SoundHandle("Resource/Sound/SE/cursor.mp3");
+
 	ChangeKeybordInput();
 }
 
@@ -163,4 +167,5 @@ Vector2 MapCursor::GetCenterPos() const
 
 void MapCursor::CursorMoveMoment()
 {
+	SoundL.PlaySE(_moveSEH);
 }

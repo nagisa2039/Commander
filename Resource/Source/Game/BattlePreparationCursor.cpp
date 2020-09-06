@@ -133,7 +133,7 @@ void BattlePreparationCursor::Draw()
 	auto chipSize = _mapCtrl.GetChipSize();
 	auto offset = _camera.GetCameraOffset();
 	
-	auto handle = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/MapChip/cursor.png");
+	auto handle = ImageHandle("Resource/Image/MapChip/cursor.png");
 	Size graphSize;
 	GetGraphSize(handle, graphSize);
 

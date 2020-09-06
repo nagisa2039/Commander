@@ -17,7 +17,7 @@ Animator::~Animator()
 
 void Animator::SetImage(const char * path)
 {
-	_imageH = Application::Instance().GetFileSystem().GetImageHandle(path);
+	_imageH = ImageHandle(path);
 	GetGraphSize(_imageH, &_imageSize.w, &_imageSize.h);
 }
 

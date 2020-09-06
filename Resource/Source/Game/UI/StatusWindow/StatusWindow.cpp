@@ -56,7 +56,7 @@ StatusWindow::StatusWindow(std::deque<std::shared_ptr<UI>>* uiDeque, const Chara
 
 	_updater = &StatusWindow::ScaleUpdate;
 
-	_windowH = Application::Instance().GetFileSystem().
+	_windowH = FileSystem::Instance().
 		MakeScreen("status_window", Size(_sideWindowSize.w *2+ _centerWindowSize.w, _sideWindowSize.h*2), true);
 
 	_playScene = &dynamic_cast<PlayScene&>(Application::Instance().GetSceneController().GetCurrentScene());
@@ -95,9 +95,7 @@ void StatusWindow::DrawToWindowScreen()
 	ClsDrawScreen();
 
 	auto wsize = Application::Instance().GetWindowSize();
-
-	auto& fileSystem = Application::Instance().GetFileSystem();
-
+	auto& fileSystem = FileSystem::Instance();
 
 	Rect iconRect(_sideWindowSize.ToVector2Int() * 0.5f, _sideWindowSize);
 	Rect levelRect(iconRect.center + Vector2Int(0, _sideWindowSize.h), _sideWindowSize);
@@ -118,13 +116,13 @@ void StatusWindow::DrawToWindowScreen()
 
 void StatusWindow::DrawIcon(const Rect& iconRect)
 {
-	iconRect.DrawGraph(Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/statusWindow1.png"));
+	iconRect.DrawGraph(ImageHandle("Resource/Image/UI/statusWindow1.png"));
 	_charactor.DrawCharactorIcon(iconRect);
 }
 
 void StatusWindow::DrawBaseInf(const Rect& levelRect)
 {
-	auto& fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = FileSystem::Instance();
 	levelRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/statusWindow1.png"));
 
 	Size contentSize(250, 250 / 4);
@@ -177,7 +175,7 @@ void StatusWindow::DrawBaseInf(const Rect& levelRect)
 
 void StatusWindow::DrawBattleStatus(const Rect& battleStatusRect)
 {
-	auto& fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = FileSystem::Instance();
 	battleStatusRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/statusWindow2.png"));
 
 	auto choplin30 = fileSystem.GetFontHandle("choplin30edge");
@@ -244,7 +242,7 @@ void StatusWindow::DrawBattleStatus(const Rect& battleStatusRect)
 
 void StatusWindow::DrawStatus(const Rect& statusRect)
 {
-	auto& fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = FileSystem::Instance();
 	statusRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/statusWindow2.png"));
 
 	auto choplin30 = fileSystem.GetFontHandle("choplin30edge");

@@ -11,7 +11,7 @@ using namespace std;
 MenuTopInf::MenuTopInf(const MapCtrl& mapCtrl, const unsigned char& turnCnt, std::deque<std::shared_ptr<UI>>* uiDeque)
 	: UI(uiDeque), _mapCtrl(mapCtrl), _turnCnt(turnCnt)
 {
-	auto& fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = FileSystem::Instance();
 	int nameFrameH = fileSystem.GetImageHandle("Resource/Image/UI/mapNameFrame.png");
 	int turnCntFrameH = fileSystem.GetImageHandle("Resource/Image/UI/turnCntFrame.png");
 
@@ -40,7 +40,7 @@ void MenuTopInf::Update(const Input& input)
 
 void MenuTopInf::Draw()
 {
-	auto& fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = FileSystem::Instance();
 	int nameFrameH = fileSystem.GetImageHandle("Resource/Image/UI/mapNameFrame.png");
 	int turnCntFrameH = fileSystem.GetImageHandle("Resource/Image/UI/turnCntFrame.png");
 	int choplin20 = fileSystem.GetFontHandle("choplin20edge");

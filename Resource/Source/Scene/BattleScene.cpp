@@ -163,8 +163,7 @@ bool BattleScene::PursuitAttack(const bool rightAttack)
 
 void BattleScene::End()
 {
-	auto& soundLoader = Application::Instance().GetFileSystem().GetSoundLoader();
-	soundLoader.StopSound();
+	SoundL.StopAllSound();
 
 	_leftBC.GetCharacotr().MoveEnd();
 	_controller.PopScene();
@@ -179,7 +178,7 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 	_camera = make_shared<Camera>(Rect(cameraPos, wsize));
 	_camera->SetPos(Vector3((cameraPos).ToVector2()));
 
-	_screenH = Application::Instance().GetFileSystem().
+	_screenH = FileSystem::Instance().
 		MakeScreen("battle_scene_screen", _screenSize, true);
 
 	_effects.clear();
@@ -212,14 +211,16 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 	_updater = &BattleScene::SceneStartAnim;
 
 	_expUI.reset();
-
-	auto& soundLoader = Application::Instance().GetFileSystem().GetSoundLoader();
-	soundLoader.PlayBGM("Resource/Sound/BGM/game_maoudamashii_3_theme11b.mp3", true);
+	
+	auto& soundLoader = SoundL;
+	_bgmH = soundLoader.GetSoundHandle("Resource/Sound/BGM/battle.mp3");
+	soundLoader.PlayBGM(_bgmH);
 }
 
 BattleScene::~BattleScene()
 {
 	_playScene->SetFilter(PlayScene::FilterType::none);
+	SoundL.StopSound(_bgmH);
 }
 
 void BattleScene::Update(const Input& input)
@@ -325,12 +326,12 @@ void BattleScene::DrawFloor(Vector2Int& screenCenter)
 	auto mapPosSub = _leftBC.GetCharacotr().GetMapPos() - _rightBC.GetCharacotr().GetMapPos();
 	if (abs(mapPosSub.x) + abs(mapPosSub.y) <= 1)
 	{
-		int floorH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/Battle/floor_big.png");
+		int floorH = ImageHandle("Resource/Image/Battle/floor_big.png");
 		DrawRotaGraph(Vector2Int(screenCenter.x, static_cast<int>(_floatY)), 1.0, 0.0, floorH, true);
 	}
 	else
 	{
-		int floorH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/Battle/floor_small.png");
+		int floorH = ImageHandle("Resource/Image/Battle/floor_small.png");
 		DrawRotaGraph(_leftBC.GetStartPos(), 1.0, 0.0, floorH, true);
 		DrawRotaGraph(_rightBC.GetStartPos(), 1.0, 0.0, floorH, true);
 	}

@@ -64,7 +64,7 @@ void BattlePrediction::Draw()
 
 	Size iconSize(200, 200);
 	int drawY = windowRect.Top() + iconSize.h/2 + 50;
-	auto& fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = FileSystem::Instance();
 	int fontH = fileSystem.GetFontHandle("choplin20edge");
 	_selfCharactor.DrawCharactorIcon(	Rect(Vector2Int(windowRect.center.x - iconSize.w / 2, drawY), iconSize));
 	_targetCharactor.DrawCharactorIcon(	Rect(Vector2Int(windowRect.center.x + iconSize.w / 2, drawY), iconSize));
@@ -148,7 +148,7 @@ void BattlePrediction::Draw()
 			DrawContent("à–óÕ", selfBattleStatus.GetDamage(targetBattleStatus), 
 				targetBattleStatus.GetDamage(selfBattleStatus), selfColor, targetColor);
 		}
-		auto& fileSystem = Application::Instance().GetFileSystem();
+		auto& fileSystem = FileSystem::Instance();
 		int tag_playerHandle = fileSystem.GetImageHandle("Resource/Image/UI/tag_player.png");
 		int tag_enemyHandle = fileSystem.GetImageHandle("Resource/Image/UI/tag_enemy.png");
 		Size graphSize;
@@ -184,7 +184,7 @@ void BattlePrediction::DrawHPBer(int& drawY, const Rect& windowRect, bool rightA
 	Size hpSize(200, 30);
 	Size hpOutSize(250, 50);
 	drawY += hpOutSize.h / 2;
-	auto& FileSystem = Application::Instance().GetFileSystem();
+	auto& FileSystem = FileSystem::Instance();
 	auto fukidashiH = FileSystem.GetImageHandle("Resource/Image/UI/fukidashi.png");
 	Size fukisashiSize;
 	GetGraphSize(fukidashiH, fukisashiSize);
@@ -245,7 +245,7 @@ void BattlePrediction::DrawHPBer(int& drawY, const Rect& windowRect, bool rightA
 	
 	// çÄñ⁄ñºï\é¶
 	auto center = Vector2Int(windowRect.center.x, drawY);
-	DrawRotaGraph(center, 1.1, 0.0f, Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/window3.png"), true);
+	DrawRotaGraph(center, 1.1, 0.0f, ImageHandle("Resource/Image/UI/window3.png"), true);
 	DrawStringToHandle(center, Anker::center, 0xffffff, fontH, "HP");
 	drawY += hpOutSize.h / 2;
 }

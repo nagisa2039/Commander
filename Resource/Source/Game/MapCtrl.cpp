@@ -33,7 +33,7 @@ MapCtrl::MapCtrl(const int mapId, std::vector<std::shared_ptr<Charactor>>& chara
 	_map = make_shared<Map>(mapId);
 
 	auto& mapSize = _map->GetMapSize();
-	_warSituationH = Application::Instance().GetFileSystem().
+	_warSituationH = FileSystem::Instance().
 		MakeScreen("war_situation", mapSize * WAR_SITUATION_CHIP_SIZE, true);
 
 	_charactorCreateFuncs[static_cast<size_t>(CharactorType::swordman)] = 
@@ -444,7 +444,7 @@ const std::vector<std::shared_ptr<Charactor>>& MapCtrl::GetCharacots() const
 	return _charactors;
 }
 
-const std::shared_ptr<Map>& MapCtrl::GetMap() const
+std::shared_ptr<Map> MapCtrl::GetMap()const
 {
 	assert(_map);
 	return _map;

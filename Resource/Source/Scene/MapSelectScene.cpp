@@ -24,8 +24,6 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller)
 	_moveStartTrack->AddKey(0, 0);
 	_moveStartTrack->AddKey(10, 0);
 
-	_fade = make_unique<Fade>();
-	_fade->StartFadeIn();
 	_goPlayScene = false;
 
 	_selectIdx = 0;
@@ -62,6 +60,8 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller)
 	_charactorIdx = 0;
 
 	_debug = true;
+
+	_controller.GetFade().StartFadeIn();
 }
 
 MapSelectScene::~MapSelectScene()
@@ -70,8 +70,7 @@ MapSelectScene::~MapSelectScene()
 
 void MapSelectScene::Update(const Input& input)
 {
-	_fade->Update();
-	if (!_fade->GetEnd())return;
+	if (!_controller.GetFade().GetEnd())return;
 
 	if (_goPlayScene)
 	{
@@ -81,7 +80,7 @@ void MapSelectScene::Update(const Input& input)
 
 	if (input.GetButtonDown("ok"))
 	{
-		_fade->StartFadeOut();
+		_controller.GetFade().StartFadeOut();
 		_goPlayScene = true;
 		return;
 	}
@@ -176,7 +175,7 @@ void MapSelectScene::Draw()
 
 	Size contentSize = Size(300, 200);
 	auto mapDataVec = Application::Instance().GetDataBase().GetMapDataTable();
-	int fontH = Application::Instance().GetFileSystem().GetFontHandle("choplin40edge");
+	int fontH = FontHandle("choplin40edge");
 	auto mapNum = _debug ? _contentPosVec.size() : Application::Instance().GetSaveData().GetMapNum();
 	for (size_t idx = 0; idx < mapDataVec.size(); idx++)
 	{
@@ -199,6 +198,4 @@ void MapSelectScene::Draw()
 	{
 		(*rItr)->Draw();
 	}
-
-	_fade->Draw();
 }

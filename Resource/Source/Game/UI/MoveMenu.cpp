@@ -63,7 +63,7 @@ void MoveMenu::OpenUpdate(const Input& input)
 MoveMenu::MoveMenu(std::deque<std::shared_ptr<UI>>* uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl)
 	:Menu(uiDeque, playerCom, mapCtrl)
 {
-	auto menuFrameH = Application::Instance().GetFileSystem().GetImageHandle("Resource/Image/UI/menuFrame.png");
+	auto menuFrameH = ImageHandle("Resource/Image/UI/menuFrame.png");
 	Init(static_cast<size_t>(Content::max), menuFrameH);
 
 	_contentInfs[static_cast<size_t>(Content::battle)].name = "êÌì¨";

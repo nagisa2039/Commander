@@ -15,7 +15,7 @@ namespace
 
 WeaponWindow::WeaponWindow(const uint8_t weaponId, std::deque<std::shared_ptr<UI>>* uiDeque):UI(uiDeque)
 {
-	_windowH = Application::Instance().GetFileSystem().MakeScreen("weapon_window", Size(WINDOW_SIZE_W, WINDOW_SIZE_H), true);
+	_windowH = FileSystem::Instance().MakeScreen("weapon_window", Size(WINDOW_SIZE_W, WINDOW_SIZE_H), true);
 	SetWeaponId(weaponId);
 }
 
@@ -51,7 +51,7 @@ void WeaponWindow::DrawToWindow()
 	auto rectSize = GetSize();
 	Rect rect = Rect(rectSize.ToVector2Int()*0.5f, rectSize);
 
-	auto& fileSystem = Application::Instance().GetFileSystem();
+	auto& fileSystem = FileSystem::Instance();
 	rect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/statusWindow1.png"));
 
 	auto choplin30 = fileSystem.GetFontHandle("choplin30edge");

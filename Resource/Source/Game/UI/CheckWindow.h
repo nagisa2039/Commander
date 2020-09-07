@@ -56,6 +56,8 @@ private:
 
 	void NormalUpdate(const Input& input)override;
 
+	void StartClose();
+
 	void DrawToSelectImage();
 	void Closed()override;
 

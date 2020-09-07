@@ -22,6 +22,6 @@ enum class Map_Chip
 
 struct MapData
 {
-	Map_Chip mapChip;
+	Map_Chip mapChip = Map_Chip::none;
 	CharactorChipInf charactorChip;
 };

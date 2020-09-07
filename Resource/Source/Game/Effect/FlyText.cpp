@@ -91,7 +91,7 @@ PopupText::PopupText(const std::string& str, const Vector2Int& pos, Camera& came
 
 	Size strSize;
 	int line = 0;
-	GetDrawStringSizeToHandle(&strSize.w, &strSize.h, &line, str.c_str(), str.size(), _fontHandle);
+	GetDrawStringSizeToHandle(&strSize.w, &strSize.h, &line, str.c_str(), static_cast<int>(str.size()), _fontHandle);
 
 	auto GetNumSize = [](const char num, const int fontH, Size& out)
 	{

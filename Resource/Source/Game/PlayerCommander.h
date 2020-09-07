@@ -14,6 +14,12 @@ private:
 	std::unique_ptr<PlayerUI> _playerUI;
 	bool _backMapSelect;
 
+	/// <summary>
+	/// SE
+	/// </summary>
+	int _okH;
+	int _canselH;
+
 	void(PlayerCommander::* _uniqueUpdater)(const Input& input);
 
 	// _mapPos‚ª_selectChar‚Ìs“®”ÍˆÍ“à‰È‚ÌŠm”F

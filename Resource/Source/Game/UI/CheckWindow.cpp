@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "DxLibUtility.h"
 #include "PlayerCommander.h"
+#include "SoundLoader.h"
 
 using namespace std;
 
@@ -22,6 +23,7 @@ PopupWindow::PopupWindow(const std::string& messageStr, std::deque<std::shared_p
 
 	_updater	= &PopupWindow::ScalingUpdate;
 	_drawer		= &PopupWindow::ScalingDraw;
+	SoundL.PlaySE("Resource/Sound/SE/pin.mp3");
 
 	int messageH = ImageHandle("Resource/Image/UI/checkWindow.png");
 	Size messageSize;
@@ -145,24 +147,28 @@ void CheckWindow::NormalUpdate(const Input& input)
 
 	auto decision = [this]() 
 	{
-		_exRateTrack->Reset();
-		_exRateTrack->SetReverse(true);
-		_updater = &CheckWindow::ScalingUpdate;
-		_drawer = &CheckWindow::ScalingDraw;
+		if (_select == Select::yes)
+		{
+			SoundL.PlaySE("Resource/Sound/SE/ok2.mp3");
+		}
+		else
+		{
+			SoundL.PlaySE("Resource/Sound/SE/cancel2.mp3");
+		}
+		StartClose();
 	};
 
 	auto back = [this]()
-	{	
-		_exRateTrack->Reset();
-		_exRateTrack->SetReverse(true);
-		_updater = &CheckWindow::ScalingUpdate;
-		_drawer = &CheckWindow::ScalingDraw;
+	{
+		SoundL.PlaySE("Resource/Sound/SE/cancel2.mp3");
+		StartClose();
 		_select = Select::no;
 	};
 
 	auto select = [this](const Select select)
 	{
 		if (_select == select)return;
+		SoundL.PlaySE("Resource/Sound/SE/cursor.mp3");
 		_select = select;
 		_selectExRateTrack->Reset();
 	};
@@ -204,21 +210,21 @@ void CheckWindow::NormalUpdate(const Input& input)
 
 	if (input.GetButtonDown("left"))
 	{
-		if (_select > Select::yes)
-		{
-			_select = static_cast<Select>(static_cast<int>(_select) - 1);
-			_selectExRateTrack->Reset();
-		}
+		select(Select::yes);
 	}
 
 	if (input.GetButtonDown("right"))
 	{
-		if (_select < Select::no)
-		{
-			_select = static_cast<Select>(static_cast<int>(_select) + 1);
-			_selectExRateTrack->Reset();
-		}
+		select(Select::no);
 	}
+}
+
+void CheckWindow::StartClose()
+{
+	_exRateTrack->Reset();
+	_exRateTrack->SetReverse(true);
+	_updater = &CheckWindow::ScalingUpdate;
+	_drawer = &CheckWindow::ScalingDraw;
 }
 
 void CheckWindow::DrawToSelectImage()

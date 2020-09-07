@@ -6,8 +6,8 @@ using namespace std;
 
 void Astar::ResetSerchPosVec2D(const std::vector<std::vector<MapData>>& mapData)
 {
-	int mapDataSizeY = mapData.size();
-	int mapDataSizeX = mapData[0].size();
+	auto mapDataSizeY = mapData.size();
+	auto mapDataSizeX = mapData[0].size();
 	_searchPosVec2Move.resize(mapDataSizeY);
 	_searchPosVec2Attack.resize(mapDataSizeY);
 	for (int i = 0; i < mapDataSizeY; ++i)

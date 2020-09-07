@@ -11,6 +11,7 @@
 #include "UI/PlayerUI.h"
 #include "UI/MoveMenu.h"
 #include "UI/StatusWindow/StatusWindow.h"
+#include "SoundLoader.h"
 
 using namespace std;
 
@@ -20,6 +21,7 @@ void PlayerCommander::NormalUpdate(const Input& input)
 
 	if (input.GetButtonDown("ok"))
 	{
+		SoundL.PlaySE(_okH);
 		auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
 		if (charactor != nullptr)
 		{
@@ -63,8 +65,10 @@ void PlayerCommander::SelectUpdate(const Input& input)
 		moveMenu->Open();
 	}
 
+	auto& soundLoader = SoundL;
 	if (input.GetButtonDown("ok"))
 	{
+		soundLoader.PlaySE(_okH);
 		auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
 		if (charactor != nullptr)
 		{
@@ -94,6 +98,7 @@ void PlayerCommander::SelectUpdate(const Input& input)
 
 	if (input.GetButtonDown("back"))
 	{
+		soundLoader.PlaySE(_canselH);
 		MoveCancel();
 		SelectCharactor(nullptr, false);
 		return;
@@ -172,6 +177,7 @@ void PlayerCommander::BattlePredictionUpdate(const Input& input)
 
 void PlayerCommander::BackBattalePrediction()
 {
+	SoundL.PlaySE(_canselH);
 	_playerUI->ClearBattlePre();
 	_uniqueUpdater = &PlayerCommander::SelectUpdate;
 }
@@ -256,6 +262,16 @@ void PlayerCommander::BattleStart()
 	_camera.AddTargetActor(_selectChar);
 	_selectChar->MoveMapPos(_mapPos);
 	_uniqueUpdater = &PlayerCommander::BattaleUpdate;
+	if (_selectChar->GetTeam() == _mapCtrl.GetMapPosChar(_mapPos)->GetTeam())
+	{
+		// âÒïú
+		SoundL.PlaySE("Resource/Sound/SE/healStart.mp3");
+	}
+	else
+	{
+		// çUåÇ
+		SoundL.PlaySE("Resource/Sound/SE/battleStart.mp3");
+	}
 }
 
 PlayerCommander::PlayerCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera, const unsigned char& turnCnt):
@@ -266,6 +282,10 @@ PlayerCommander::PlayerCommander(std::vector<std::shared_ptr<Charactor>>& charac
 	_uniqueUpdater = &PlayerCommander::TerrainEffectUpdate;
 
 	_backMapSelect = false;
+
+	auto& soundLoader = SoundL;
+	_okH = soundLoader.GetSoundHandle("Resource/Sound/SE/ok.mp3");
+	_canselH = soundLoader.GetSoundHandle("Resource/Sound/SE/cancel.mp3");
 }
 
 PlayerCommander::~PlayerCommander()

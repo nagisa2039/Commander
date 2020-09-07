@@ -144,9 +144,9 @@ bool Map::CheckMapPosPutRange(const Vector2Int& mapPos)
 		&& mapPos.x >= frameNum && mapPos.x < static_cast<int>(MAP_CHIP_CNT_W - frameNum);
 }
 
-void Map::StartBGM()
+void Map::StartBGM(const int volume)
 {
-	SoundL.PlayBGM(_bgmH);
+	SoundL.PlayBGM(_bgmH, volume);
 }
 
 void Map::StopBGM()

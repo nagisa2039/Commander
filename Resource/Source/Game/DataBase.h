@@ -26,13 +26,13 @@ public:
 
 	struct MapChipData
 	{
-		DrawData drawData;
-		int moveCost;
-		int defense;
-		int avoidance;
-		int recovery;
-		std::string name;
-		unsigned int simpleColor;
+		DrawData drawData = {};
+		int moveCost = 0;
+		int defense = 0;
+		int avoidance = 0;
+		int recovery = 0;
+		std::string name ="";
+		unsigned int simpleColor=0;
 	};
 
 private:
@@ -40,7 +40,7 @@ private:
 	struct CharactorData
 	{
 		std::string name;
-		uint8_t weaponType;
+		uint8_t weaponType = 0;
 		Status initialStatus;
 		Status statusGrowRate;
 		std::string imagePath;

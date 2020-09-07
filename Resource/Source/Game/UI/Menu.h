@@ -18,7 +18,11 @@ protected:
 	const MapCtrl& _mapCtrl;
 
 	Size _contentSize;
-	size_t _selectContent;
+	size_t _selectIdx;
+
+	int _openSEH;
+	int _closeSEH;
+	int _moveSEH;
 
 	std::unique_ptr<Track<float>> _openAnimTrack;
 	std::unique_ptr<Track<float>> _closeAnimTrack;

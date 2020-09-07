@@ -65,7 +65,7 @@ void UIList::MouseMove(const Input& input)
 			auto add = idx - _itemIdx;
 
 			// ã‰º‚ÌÛ‚É‚ ‚é
-			if (_drawCnt + add >= _drawItemMax - 1 || _drawCnt + add <= 0)
+			if (_drawCnt + add >= static_cast<int>(_drawItemMax - 1) || _drawCnt + add <= 0)
 			{
 				sideOver = true;
 				if (_inputCnt >= _inputItv)
@@ -147,7 +147,7 @@ void UIList::KeybordMove(const Input& input)
 	}
 	moveCnt = 1;
 	if (input.GetButton("down")
-		&& _itemIdx + moveCnt < _listItems.size())
+		&& static_cast<size_t>(_itemIdx) + moveCnt < _listItems.size())
 	{
 		move = true;
 		if (_inputCnt >= _inputItv)
@@ -264,7 +264,7 @@ void UIList::SetItemIdx(const int nextIdx)
 
 		if (add > 0)
 		{
-			if (_drawCnt + add >= _drawItemMax - 1)
+			if (_drawCnt + add >= static_cast<int>(_drawItemMax - 1))
 			{
 				if (_itemIdx >= _listItems.size() - 1)
 				{

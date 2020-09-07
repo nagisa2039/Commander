@@ -29,7 +29,7 @@ private:
 		std::string name;
 		Vector2Int pos;
 		std::function<void(void)> func;
-		int graphH;
+		int graphH = -1;
 	};
 
 	Size _itemSize;
@@ -38,6 +38,15 @@ private:
 	PlayScene& _playScene;
 	Camera& _camera;
 	MapCtrl& _mapCtrl;
+
+	/// <summary>
+	/// SEhandleån
+	/// </summary>
+	int _openH;
+	int _closeH;
+	int _moveH;
+	int _okH;
+	int _canselH;
 	int _bgmH;
 
 	bool _execution;

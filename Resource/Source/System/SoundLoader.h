@@ -15,10 +15,10 @@ public:
 
 	int GetSoundHandle(const char* path);
 
-	bool PlayBGM(const char* path, const bool playTop = true);
-	bool PlayBGM(const int handle, const bool playTop = true);
-	bool PlaySE(const char* path);
-	bool PlaySE(const int handle);
+	bool PlayBGM(const char* path, const int volume = 255, const bool playTop = true);
+	bool PlayBGM(const int handle, const int volume = 255, const bool playTop = true);
+	bool PlaySE(const char* path, const int volume = 255);
+	bool PlaySE(const int handle, const int volume = 255);
 
 	bool StopSound(const int handle);
 	bool StopAllSound();

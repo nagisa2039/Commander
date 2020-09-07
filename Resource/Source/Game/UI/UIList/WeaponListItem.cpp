@@ -32,7 +32,7 @@ void WeaponListItem::Draw(const Vector2Int& offset)
 	const int offsetX = 10;
 	int drawX = drawRect.Left() + offsetX;
 
-	int sizeH = rect.size.h * 0.8f;
+	int sizeH = static_cast<int>(rect.size.h * 0.8f);
 	weaponData.GetTypeData().DrawWeaponIcon(Rect(Vector2Int(drawX + sizeH /2, drawRect.center.y), Size(sizeH, sizeH)));
 	drawX += (sizeH + offsetX);
 

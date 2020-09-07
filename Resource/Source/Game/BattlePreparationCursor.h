@@ -17,6 +17,8 @@ private:
 	Vector2Int _selectMapPos;	// 選択中のマップ座標  xが負の値の時は未選択
 	std::unique_ptr<Track<float>> _exRateTrack;
 	bool _end;
+	int _okH;
+	int _canselH;
 
 	void Select();
 

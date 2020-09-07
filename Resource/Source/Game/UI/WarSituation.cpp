@@ -7,6 +7,7 @@
 #include <DxLib.h>
 #include "SceneController.h"
 #include "PlayScene.h"
+#include "SoundLoader.h"
 
 using namespace std;
 
@@ -32,6 +33,7 @@ void WarSituation::NormalUpdate(const Input& input)
 {
 	if (input.GetButtonDown("back") || input.GetButtonDown("ok"))
 	{
+		SoundL.PlaySE("Resource/Sound/SE/select06.mp3");
 		_end = true;
 		_exRate->SetReverse(true);
 		_exRate->Reset();
@@ -56,6 +58,8 @@ WarSituation::WarSituation(std::deque<std::shared_ptr<UI>>* uiDeque, const MapCt
 	{
 		_playScene->SetFilter(PlayScene::FilterType::gauss);
 	}
+
+	SoundL.PlaySE("Resource/Sound/SE/select05.mp3");
 }
 
 WarSituation::~WarSituation()

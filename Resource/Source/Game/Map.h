@@ -48,7 +48,7 @@ public:
 	// 指定したマスがマップの範囲内かを返す
 	bool CheckMapDataRange(const Vector2Int& mapPos)const;
 
-	void StartBGM();
+	void StartBGM(const int volume = 255);
 	void StopBGM();
 };
 

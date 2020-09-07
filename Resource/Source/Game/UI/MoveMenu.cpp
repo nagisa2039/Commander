@@ -108,7 +108,10 @@ void MoveMenu::SetContent(const std::list<Vector2Int>& attackPosList)
 	_contentList.clear();
 	for (int idx = 0; idx != static_cast<size_t>(Content::max); idx++)
 	{
-		if (idx == static_cast<size_t>(Content::battle) && _attackPosList.size() <= 0)continue;
+		if (idx == static_cast<size_t>(Content::battle) && _attackPosList.size() <= 0)
+		{
+			continue;
+		}
 		_contentList.emplace_back(idx);
 	}
 

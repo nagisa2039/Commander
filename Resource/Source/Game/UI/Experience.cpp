@@ -179,6 +179,7 @@ int Experience::GetNextDrawIdx()
 			return i;
 		}
 	}
+	return 0;
 }
 
 void Experience::End()
@@ -272,7 +273,7 @@ void Experience::DrawToStatusWindow()
 	{
 		if (idx % (drawDataCnt / STATUS_ROW_CNT) == 0)
 		{
-			itemRect.center = Vector2Int(statusDrawRect.Left() + itemSize.w * (idx / (drawDataCnt / STATUS_ROW_CNT) + 0.5f),
+			itemRect.center = Vector2Int(statusDrawRect.Left() + static_cast<int>(itemSize.w * (idx / (drawDataCnt / STATUS_ROW_CNT) + 0.5f)),
 				statusDrawRect.Top() + itemSize.h / 2);
 		}
 		int space = 20;
@@ -336,7 +337,7 @@ Experience::Experience(BattleCharactor& battleChar, const bool kill, std::deque<
 	_levlAnimTrack->AddKey(60, 1.0f);
 
 	_windowStatusH = FileSystem::Instance().
-		MakeScreen("exp", Size(STATUS_ITEM_SIZE_W * STATUS_ROW_CNT, _drawDatas.size() / STATUS_ROW_CNT * STATUS_ITEM_SIZE_H), true);
+		MakeScreen("exp", Size(STATUS_ITEM_SIZE_W * STATUS_ROW_CNT, static_cast<int>(_drawDatas.size() / STATUS_ROW_CNT) * STATUS_ITEM_SIZE_H), true);
 }
 
 Experience::~Experience()

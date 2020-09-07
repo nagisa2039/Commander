@@ -10,6 +10,7 @@
 #include "ItemWindow.h"
 #include "SceneController.h"
 #include "PlayScene.h"
+#include "SoundLoader.h"
 
 using namespace std;
 
@@ -17,6 +18,7 @@ void StatusWindow::NormalUpdate(const Input& input)
 {
 	if (input.GetButtonDown("status") || input.GetButtonDown("back"))
 	{
+		SoundL.PlaySE("Resource/Sound/SE/select06.mp3");
 		_updater = &StatusWindow::ScaleUpdate;
 		_animTrack->SetReverse(true);
 		_animTrack->Reset();
@@ -55,6 +57,7 @@ StatusWindow::StatusWindow(std::deque<std::shared_ptr<UI>>* uiDeque, const Chara
 	_centerWindowSize = Size(450, 250);
 
 	_updater = &StatusWindow::ScaleUpdate;
+	SoundL.PlaySE("Resource/Sound/SE/select05.mp3");
 
 	_windowH = FileSystem::Instance().
 		MakeScreen("status_window", Size(_sideWindowSize.w *2+ _centerWindowSize.w, _sideWindowSize.h*2), true);

@@ -33,22 +33,22 @@ namespace
 	}
 }
 
-bool DataBase::ReadData(const char* path, std::vector<std::vector<std::string>>& out)
+bool DataBase::ReadData(const char* path, std::vector<std::vector<std::string>>& outstrVec2)
 {
 	int fileH = FileRead_open(path);
 	assert(fileH != 0);
 
 	unsigned int lineCnt;
 	FileRead_read(&lineCnt, sizeof(lineCnt), fileH);
-	out.resize(lineCnt);
+	outstrVec2.resize(lineCnt);
 
-	for (int lineNum = 0; lineNum < lineCnt; ++lineNum)
+	for (auto& outstr : outstrVec2)
 	{
 		unsigned int contentCnt;
 		FileRead_read(&contentCnt, sizeof(contentCnt), fileH);
-		out[lineNum].resize(contentCnt);
+		outstr.resize(contentCnt);
 
-		for (int contentNum = 0; contentNum < contentCnt; ++contentNum)
+		for (auto& out : outstr)
 		{
 			std::wstring content;
 			unsigned int strLen;
@@ -58,7 +58,7 @@ bool DataBase::ReadData(const char* path, std::vector<std::vector<std::string>>&
 			FileRead_read(&content[0],
 				sizeof(content[0]) * strLen, fileH);
 
-			out[lineNum][contentNum] = WStringToString(content);
+			out = WStringToString(content);
 		}
 	}
 	FileRead_close(fileH);
@@ -96,17 +96,21 @@ DataBase::DataBase()
 
 			// 初期ステータス
 			int initSbeginIdx = 3;
+			auto To_uint8_t = [&data,idx](const int& targetIdx)
+			{
+				return atoi(data[idx][static_cast<int>(targetIdx)].c_str());
+			};
 			charactorData.initialStatus = 
-				Status(1, atoi(data[idx][initSbeginIdx].c_str()), atoi(data[idx][initSbeginIdx+1].c_str()), atoi(data[idx][initSbeginIdx+2].c_str()),
-					atoi(data[idx][initSbeginIdx+3].c_str()), atoi(data[idx][initSbeginIdx+4].c_str()), atoi(data[idx][initSbeginIdx+5].c_str()),
-					atoi(data[idx][initSbeginIdx+6].c_str()), atoi(data[idx][initSbeginIdx+7].c_str()), atoi(data[idx][initSbeginIdx+8].c_str()));
+				Status(1, To_uint8_t(initSbeginIdx), To_uint8_t(initSbeginIdx+1), To_uint8_t(initSbeginIdx+2),
+					To_uint8_t(initSbeginIdx+3), To_uint8_t(initSbeginIdx+4), To_uint8_t(initSbeginIdx+5),
+					To_uint8_t(initSbeginIdx+6), To_uint8_t(initSbeginIdx+7), To_uint8_t(initSbeginIdx+8));
 		
 			// ステータス成長率
 			int growSbeginIdx = 12;
 			charactorData.statusGrowRate =
-				Status(1, atoi(data[idx][growSbeginIdx].c_str()), atoi(data[idx][growSbeginIdx + 1].c_str()), atoi(data[idx][growSbeginIdx + 2].c_str()),
-					atoi(data[idx][growSbeginIdx + 3].c_str()), atoi(data[idx][growSbeginIdx + 4].c_str()), atoi(data[idx][growSbeginIdx + 5].c_str()),
-					atoi(data[idx][growSbeginIdx + 6].c_str()), atoi(data[idx][growSbeginIdx + 7].c_str()), 0);
+				Status(1, To_uint8_t(growSbeginIdx), To_uint8_t(growSbeginIdx + 1), To_uint8_t(growSbeginIdx + 2),
+					To_uint8_t(growSbeginIdx + 3), To_uint8_t(growSbeginIdx + 4), To_uint8_t(growSbeginIdx + 5),
+					To_uint8_t(growSbeginIdx + 6), To_uint8_t(growSbeginIdx + 7), 0);
 
 			// キャラクター画像パス
 			charactorData.imagePath = data[idx][20];
@@ -187,7 +191,7 @@ DataBase::DataBase()
 			_attributeRateTable[y].resize(_attributeDataTable.size());
 			for (size_t x = 0; x < _attributeDataTable.size(); x++)
 			{
-				_attributeRateTable[y][x] = static_cast<float>(atof(data[y+1][x + 1].c_str()));
+				_attributeRateTable[y][x] = static_cast<float>(atof(data[static_cast<size_t>(y)+1][x + 1].c_str()));
 			}
 		}
 	}
@@ -211,7 +215,7 @@ DataBase::DataBase()
 		for (int idx = 1; idx < data.size(); ++idx)
 		{
 			WeaponTypeData wt = { data[idx][1], data[idx][2] != "",
-				data[idx][3] != "", atoi(data[idx][4].c_str()), data[idx][5] };
+				data[idx][3] != "", static_cast<uint8_t>(atoi(data[idx][4].c_str())), data[idx][5] };
 			_weaponTypeDataTable.emplace_back(wt);
 		}
 	}
@@ -224,9 +228,10 @@ DataBase::DataBase()
 		for (int idx = 1; idx < data.size(); ++idx)
 		{
 			WeaponData wd = {
-				atoi(data[idx][1].c_str()), data[idx][2],
-				atoi(data[idx][3].c_str()),	atoi(data[idx][4].c_str()), atoi(data[idx][5].c_str()), atoi(data[idx][6].c_str()),
-				Range(atoi(data[idx][7].c_str()), atoi(data[idx][8].c_str())), atoi(data[idx][9].c_str())};
+				static_cast<uint8_t>(atoi(data[idx][1].c_str())), data[idx][2],
+				static_cast<uint8_t>(atoi(data[idx][3].c_str())), static_cast<uint8_t>(atoi(data[idx][4].c_str())),
+				static_cast<uint8_t>(atoi(data[idx][5].c_str())), static_cast<uint8_t>(atoi(data[idx][6].c_str())),
+				Range(atoi(data[idx][7].c_str()), atoi(data[idx][8].c_str())), static_cast<unsigned int>(atoi(data[idx][9].c_str()))};
 			_weaponDataTable.emplace_back(wd);
 		}
 	}

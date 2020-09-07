@@ -134,7 +134,8 @@ void MapSelectScene::CursorMove(const Input& input)
 	float range = 0.1f;
 	if (input.GetButton("right") || mousePos.x >= wsize.w*(1.0f - range))
 	{
-		if (_selectIdx < _contentPosVec.size() - 1 && _selectIdx + 1 <= (_debug ? _contentPosVec.size() : Application::Instance().GetSaveData().GetMapNum()))
+		if (_selectIdx < _contentPosVec.size() - 1 
+			&& static_cast<size_t>(_selectIdx) + 1 <= (_debug ? _contentPosVec.size() : Application::Instance().GetSaveData().GetMapNum()))
 		{
 			_dir = -1;
 			successorMove();

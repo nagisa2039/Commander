@@ -302,11 +302,13 @@ void BattleCharactor::StartAttackAnim(BattleScene& battleScene)
 	{
 		if (hit)
 		{
-			if (Hit(selfBattleStatus.GetCritical(targetBattleStatus)))
+			//if (Hit(selfBattleStatus.GetCritical(targetBattleStatus)))
 			{
 				_gaveDamageType = damageType::critical;
-				_updater = &BattleCharactor::NormalUpdate;
-				battleScene.SetCutIn(make_unique<CutIn>(_selfChar.GetCharactorType(), _selfChar.GetTeam(), _dir));
+				_updater = &BattleCharactor::CutInUpdate;
+				battleScene.SetCutIn(make_unique<CutIn>(
+					_selfChar.GetCharactorType(), _selfChar.GetTeam(), _dir, [this]() 
+					{_updater = &BattleCharactor::NormalUpdate;}));
 			}
 		}
 		else

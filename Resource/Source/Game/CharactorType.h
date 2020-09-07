@@ -21,7 +21,7 @@ struct CharactorChipInf
 	unsigned int groupNum;
 	CharactorType type;
 	Team team;
-	bool active;
+	bool active = false;
 
 	uint8_t weaponId;	// •Ší
 

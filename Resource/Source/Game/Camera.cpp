@@ -15,23 +15,23 @@ void Camera::LooseFollow()
 	auto targetPos = (*_targets.begin())->GetCenterPos();
 	int space = 50;
 
-	int subX = targetPos.x - _pos.x;
-	if (subX != 0)
+	float subX = targetPos.x - _pos.x;
+	if (subX != 0.0f)
 	{
-		int absX = abs(subX);
-		int lenX = _rect.size.w / 2 - space;
-		int signX = subX / absX;
+		float absX = abs(subX);
+		float lenX = static_cast<float>(_rect.size.w / 2 - space);
+		float signX = subX / absX;
 		if (absX > lenX)
 		{
 			_pos.x = targetPos.x - lenX * signX;
 		}
 	}
-	int subY = targetPos.y - _pos.y;
-	if (subY != 0)
+	float subY = targetPos.y - _pos.y;
+	if (subY != 0.0f)
 	{
-		int absY = abs(subY);
-		int lenY = _rect.size.h / 2 - space;
-		int signY = subY / absY;
+		float absY = abs(subY);
+		float lenY = static_cast<float>(_rect.size.h / 2 - space);
+		float signY = subY / absY;
 		if (absY > lenY)
 		{
 			_pos.y = targetPos.y - lenY * signY;
@@ -46,7 +46,7 @@ Camera::Camera(const Rect& rect) :_rect(rect)
 	// size.w == 0 ÇÕêßå¿Ç»Çµ
 	_limitRect.size.w = 0;
 
-	_follower = &Camera::NormalFollow;
+	_follower = &Camera::LooseFollow;
 }
 
 Camera::~Camera()
@@ -79,26 +79,9 @@ void Camera::Update()
 	if (_limitRect.Width() != 0)
 	{
 		// îÕàÕêßå‰
-		if (_rect.Left() < _limitRect.Left())
-		{
-			_rect.center.x = _limitRect.Left() + _rect.Width() / 2;
-			_pos.x = static_cast<float>(_rect.center.x);
-		}
-		if (_rect.Right() > _limitRect.Right())
-		{
-			_rect.center.x = _limitRect.Right() - _rect.Width() / 2;
-			_pos.x = static_cast<float>(_rect.center.x);
-		}
-		if (_rect.Top() < _limitRect.Top())
-		{
-			_rect.center.y = _limitRect.Top() + _rect.Height() / 2;
-			_pos.y = static_cast<float>(_rect.center.y);
-		}
-		if (_rect.Botton() > _limitRect.Botton())
-		{
-			_rect.center.y = _limitRect.Botton() - _rect.Height() / 2;
-			_pos.y = static_cast<float>(_rect.center.y);
-		}
+		_rect.center = Clamp(_rect.center, 
+			Vector2Int(_limitRect.Left()  + _rect.Width() / 2, _limitRect.Top() + _rect.Height() / 2),
+			Vector2Int(_limitRect.Right() - _rect.Width() / 2, _limitRect.Botton() - _rect.Height() / 2));
 	}
 }
 

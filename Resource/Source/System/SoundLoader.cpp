@@ -12,7 +12,7 @@ void SoundLoader::Unload(const char* path)
 
 int SoundLoader::GetSoundHandle(const char* path)
 {
-	if (_table.find(path) != _table.end())
+	if (_table.contains(path))
 	{
 		return _table[path];
 	}
@@ -24,23 +24,25 @@ int SoundLoader::GetSoundHandle(const char* path)
 	return handle;
 }
 
-bool SoundLoader::PlayBGM(const char* path, const bool playTop)
+bool SoundLoader::PlayBGM(const char* path, const int volume, const bool playTop)
 {
-	return PlayBGM(GetSoundHandle(path), playTop);
+	return PlayBGM(GetSoundHandle(path), volume, playTop);
 }
 
-bool SoundLoader::PlayBGM(const int handle, const bool playTop)
+bool SoundLoader::PlayBGM(const int handle, const int volume, const bool playTop)
 {
+	ChangeVolumeSoundMem(volume, handle);
 	return PlaySoundMem(handle, DX_PLAYTYPE_LOOP, playTop) != -1;
 }
 
-bool SoundLoader::PlaySE(const char* path)
+bool SoundLoader::PlaySE(const char* path, const int volume)
 {
-	return PlaySE(GetSoundHandle(path));
+	return PlaySE(GetSoundHandle(path), volume);
 }
 
-bool SoundLoader::PlaySE(const int handle)
+bool SoundLoader::PlaySE(const int handle, const int volume)
 {
+	ChangeVolumeSoundMem(volume, handle);
 	return PlaySoundMem(handle, DX_PLAYTYPE_BACK, true) != -1;
 }
 

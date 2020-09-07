@@ -4,13 +4,14 @@
 #include "Application.h"
 #include "FileSystem.h"
 #include "SelectPen.h"
+#include "SoundLoader.h"
 
 using namespace std;
 
 Menu::Menu(std::deque<std::shared_ptr<UI>>* uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl)
 	: _playerCommander(playerCom), _mapCtrl(mapCtrl), UI(uiDeque)
 {
-	_selectContent = 0;
+	_selectIdx = 0;
 }
 
 void Menu::Init(const size_t contentNum, const int frameH)
@@ -43,6 +44,10 @@ void Menu::Init(const size_t contentNum, const int frameH)
 	_updater = &Menu::CloseUpdate;
 	_drawer = &Menu::CloseDraw;
 	_isOpen = false;
+	auto& soundLoader = SoundL;
+	_openSEH = soundLoader.GetSoundHandle("Resource/Sound/SE/menu_open.mp3");
+	_closeSEH = soundLoader.GetSoundHandle("Resource/Sound/SE/menu_close.mp3");
+	_moveSEH = soundLoader.GetSoundHandle("Resource/Sound/SE/cursor.mp3");
 }
 
 Menu::~Menu()
@@ -66,6 +71,7 @@ void Menu::Open(bool animation)
 	_isOpen = true;
 	if (animation)
 	{
+		SoundL.PlaySE(_closeSEH);
 		_updater = &Menu::OpenAnimUpdate;
 		_drawer = &Menu::OpenAnimDraw;
 	}
@@ -75,7 +81,7 @@ void Menu::Open(bool animation)
 		_drawer = &Menu::OpenDraw;
 	}
 	_openAnimTrack->Reset();
-	_selectContent = 0;
+	_selectIdx = 0;
 }
 
 void Menu::Close(bool animation)
@@ -84,6 +90,7 @@ void Menu::Close(bool animation)
 
 	if (animation)
 	{
+		SoundL.PlaySE(_closeSEH);
 		_updater = &Menu::CloseAnimUpdate;
 		_drawer = &Menu::CloseAnimDraw;
 	}
@@ -103,7 +110,7 @@ void Menu::Back()
 
 void Menu::Decision()
 {
-	_contentInfs[_contentList[_selectContent]].func();
+	_contentInfs[_contentList[_selectIdx]].func();
 }
 
 void Menu::OpenUpdate(const Input& input)
@@ -113,11 +120,15 @@ void Menu::OpenUpdate(const Input& input)
 	{
 		auto mouseRect = Rect(input.GetMousePos(), Size(1, 1));
 		auto click = input.GetButtonDown("ok");
-		for (int idx = 0; idx < _contentInfs.size(); ++idx)
+		for (int idx = 0; idx < _contentList.size(); ++idx)
 		{
 			if (Rect(_contentInfs[idx].centerPos, _contentSize).IsHit(mouseRect))
 			{
-				_selectContent = idx;
+				if (_selectIdx != idx)
+				{
+					SoundL.PlaySE(_moveSEH);
+					_selectIdx = idx;
+				}
 				if (click)
 				{
 					Decision();
@@ -142,14 +153,16 @@ void Menu::OpenUpdate(const Input& input)
 		Decision();
 	}
 
-	if ((input.GetButtonDown("up")) && _selectContent > 0)
+	if ((input.GetButtonDown("up")) && _selectIdx > 0)
 	{
-		_selectContent = _selectContent - 1;
+		SoundL.PlaySE(_moveSEH);
+		_selectIdx = _selectIdx - 1;
 	}
 
-	if (input.GetButtonDown("down") && _selectContent < _contentList.size() - 1)
+	if (input.GetButtonDown("down") && _selectIdx < _contentList.size() - 1)
 	{
-		_selectContent = _selectContent + 1;
+		SoundL.PlaySE(_moveSEH);
+		_selectIdx = _selectIdx + 1;
 	}
 }
 
@@ -182,10 +195,10 @@ void Menu::OpenDraw()
 {
 	for (int idx = 0; idx < _contentList.size(); idx++)
 	{
-		DrawContent(_contentInfs[idx].centerPos, _contentList[idx]);
+		DrawContent(_contentInfs[idx].centerPos, idx);
 	}
 
-	_selectPen->Draw(_contentInfs[_selectContent].centerPos - Vector2Int(_contentSize.w/2, 0));
+	_selectPen->Draw(_contentInfs[_selectIdx].centerPos - Vector2Int(_contentSize.w/2, 0));
 }
 
 void Menu::CloseDraw()
@@ -205,7 +218,7 @@ void Menu::OpenAnimDraw()
 
 	for (int idx = 0; idx < _contentList.size(); idx++)
 	{
-		DrawContent(GetCenterPos(idx), _contentList[idx]);
+		DrawContent(GetCenterPos(idx), idx);
 	}
 }
 
@@ -223,7 +236,7 @@ void Menu::CloseAnimDraw()
 
 	for (int idx = 0; idx < _contentList.size(); idx++)
 	{
-		DrawContent(GetCenterPos(idx), _contentList[idx]);
+		DrawContent(GetCenterPos(idx), idx);
 	}
 }
 
@@ -233,5 +246,5 @@ void Menu::DrawContent(const Vector2Int& drawCenterPos, const unsigned int idx)
 	int choplin30 = fileSystem.GetFontHandle("choplin30edge");
 	auto menuFrameH = fileSystem.GetImageHandle("Resource/Image/UI/menuFrame.png");
 	Rect(drawCenterPos, _contentSize).DrawGraph(menuFrameH);
-	DrawStringToHandle(drawCenterPos, Anker::center, 0xffffff, choplin30, _contentInfs[idx].name.c_str());
+	DrawStringToHandle(drawCenterPos, Anker::center, 0xffffff, choplin30, _contentInfs[_contentList[idx]].name.c_str());
 }

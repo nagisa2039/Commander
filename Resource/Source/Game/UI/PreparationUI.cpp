@@ -40,8 +40,11 @@ void PreparationUI::OpenUpdate(const Input& input)
 {
 	if (_backMapSelect)return;
 
-	auto select = [this](const Item item)
+	auto& soundLoader = SoundL;
+	auto select = [this, soundLoader](const Item item)
 	{
+		if (_selectItem == item)return;
+		SoundL.PlaySE(_moveH);
 		_selectItem = item;
 		_selectExRateTrack->Reset();
 	};
@@ -57,6 +60,7 @@ void PreparationUI::OpenUpdate(const Input& input)
 				select(static_cast<Item>(idx));
 				if (click)
 				{
+					soundLoader.PlaySE(_okH);
 					Close(true);
 				}
 				break;
@@ -64,6 +68,7 @@ void PreparationUI::OpenUpdate(const Input& input)
 		}
 		if (input.GetButtonDown("back"))
 		{
+			soundLoader.PlaySE(_canselH);
 			_itemInfTable[static_cast<size_t>(Item::back)].func();
 		}
 		return;
@@ -71,6 +76,7 @@ void PreparationUI::OpenUpdate(const Input& input)
 
 	if (input.GetButtonDown("ok"))
 	{
+		soundLoader.PlaySE(_okH);
 		Close(true);
 		return;
 	}
@@ -92,6 +98,7 @@ void PreparationUI::OpenUpdate(const Input& input)
 	}
 	if (input.GetButtonDown("back"))
 	{
+		soundLoader.PlaySE(_canselH);
 		_itemInfTable[static_cast<size_t>(Item::back)].func();
 	}
 }
@@ -151,7 +158,6 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 	_itemInfTable[static_cast<size_t>(Item::warsituation)].func = [&]()
 	{
 		_uiDeque->emplace_front(make_shared<WarSituation>(_uiDeque, _mapCtrl));
-		SoundL.StopSound(_bgmH);
 	};
 	/*_itemInfTable[static_cast<size_t>(Item::shop)].func = [&]()
 	{
@@ -160,7 +166,6 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 	_itemInfTable[static_cast<size_t>(Item::back)].func = [&]()
 	{
 		_uiDeque->emplace_front(make_shared<CheckWindow>("ëﬁãpÇµÇ‹Ç∑Ç©ÅH", _uiDeque, [&](){BackMapSelect();}));
-		SoundL.StopSound(_bgmH);
 	};
 
 	const int spaceY = 120;
@@ -198,11 +203,15 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 	_backMapSelect = false;
 
 	_selectExRateTrack = make_unique<Track<float>>(true);
-	_selectExRateTrack->AddKey(0, 0.9);
+	_selectExRateTrack->AddKey(0, 0.9f);
 	_selectExRateTrack->AddKey(15, 1.0f);
-	_selectExRateTrack->AddKey(30, 0.9);
+	_selectExRateTrack->AddKey(30, 0.9f);
 
-	_bgmH = SoundHandle("Resource/Sound/BGM/preparation.mp3");
+	auto& soundLoader = SoundL;
+	_bgmH = soundLoader.GetSoundHandle("Resource/Sound/BGM/preparation.mp3");
+	_openH = soundLoader.GetSoundHandle("Resource/Sound/SE/menu_open.mp3");
+	_closeH = soundLoader.GetSoundHandle("Resource/Sound/SE/menu_close.mp3");
+	_moveH = soundLoader.GetSoundHandle("Resource/Sound/SE/cursor.mp3");
 	SoundL.PlayBGM(_bgmH);
 }
 
@@ -244,6 +253,7 @@ void PreparationUI::Open(const bool animation)
 	_animTrack->SetReverse(false);
 	if (animation)
 	{
+		SoundL.PlaySE(_openH);
 		_updater = &PreparationUI::OpenAnimUpdate;
 		_animTrack->Reset();
 	}
@@ -257,14 +267,15 @@ void PreparationUI::Open(const bool animation)
 
 void PreparationUI::Close(const bool animation)
 {
-	_execution = true;
 	if (_updater == &PreparationUI::CloseAnimUpdate || _updater == &PreparationUI::CloseUpdate)
 	{
 		return;
 	}
+	_execution = true;
 	_animTrack->SetReverse(true);
 	if (animation)
 	{
+		SoundL.PlaySE(_closeH);
 		_updater = &PreparationUI::CloseAnimUpdate;
 		_animTrack->Reset();
 	}
@@ -277,6 +288,7 @@ void PreparationUI::Close(const bool animation)
 
 void PreparationUI::BackMapSelect()
 {
+	SoundL.StopSound(_bgmH);
 	_backMapSelect = true;
 }
 

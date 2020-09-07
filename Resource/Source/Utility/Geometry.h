@@ -42,6 +42,7 @@ Vector2Int operator*(const Vector2Int& lval, const Size& rval);
 Vector2Int operator*(const Vector2Int& lval, const Vector2& rval);
 
 Vector2Int Lerp(const Vector2Int& start, const Vector2Int& end, const float parsent);
+Vector2Int Clamp(const Vector2Int& in, const Vector2Int& min, const Vector2Int& max);
 
 struct Vector2
 {
@@ -142,7 +143,12 @@ Vector3 RotateVector(const Vector3& baseVector, const Vector3& rotate);
 
 Vector3 XMVECTORtoVec3(DirectX::XMVECTOR& vec);
 
-float Lerp(const float lval, const float rval, const float parsent);
+template <typename T>
+inline T Lerp(const T lval, const T rval, const float parsent)
+{
+	return static_cast<T>(lval + (rval - lval) * parsent);
+}
+
 DirectX::XMFLOAT2 Lerp(const DirectX::XMFLOAT2 lval, const DirectX::XMFLOAT2 rval, const float parsent);
 
 // éOäpå`ÇÃñ êœÇÃéZèo

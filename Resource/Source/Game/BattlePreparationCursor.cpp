@@ -11,6 +11,7 @@
 #include "UI/TerrainInf.h"
 #include "UI/StatusInfomation.h"
 #include "UI/StatusWindow/StatusWindow.h"
+#include "SoundLoader.h"
 
 using namespace std;
 
@@ -32,6 +33,10 @@ BattlePreparationCursor::BattlePreparationCursor(MapCtrl& mapCtrl, Camera& camer
 	_terrainInf = make_shared<TerrainInf>(nullptr, _mapCtrl, _mapPos);
 	_statusInf = make_shared<StatusInf>(nullptr, _mapCtrl, _mapPos);
 	_statusWindow.reset();
+
+	auto& soundLoader = SoundL;
+	_okH = soundLoader.GetSoundHandle("Resource/Sound/SE/ok.mp3");
+	_canselH = soundLoader.GetSoundHandle("Resource/Sound/SE/cancel.mp3");
 }
 
 BattlePreparationCursor::~BattlePreparationCursor()
@@ -55,13 +60,16 @@ void BattlePreparationCursor::Update(const Input& input)
 	{
 		CursorMove(input);
 
+		auto& soundLoader = SoundL;
 		if (input.GetButtonDown("ok"))
 		{
+			soundLoader.PlaySE(_okH);
 			Select();
 		}
 
 		if (input.GetButtonDown("back"))
 		{
+			soundLoader.PlaySE(_canselH);
 			_end = true;
 		}
 
@@ -138,7 +146,8 @@ void BattlePreparationCursor::Draw()
 	GetGraphSize(handle, graphSize);
 
 	DrawRectRotaGraph(offset + _mapPos * chipSize + chipSize * 0.5, Vector2Int(0, 0), graphSize,
-		_exRateTrack->GetValue() * (chipSize.w / static_cast<float>(graphSize.w)), 0.0f, handle);
+		static_cast<double>(_exRateTrack->GetValue() * (chipSize.w / static_cast<float>(graphSize.w))), 
+		0.0f, handle);
 
 	auto dequeDraw = [](std::shared_ptr<UI> ui)
 	{

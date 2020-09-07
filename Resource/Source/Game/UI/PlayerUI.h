@@ -13,7 +13,6 @@ class MoveMenu;
 class StatusInf;
 class TerrainInf;
 class StatusWindow;
-class BattlePrediction;
 
 class PlayerUI
 {

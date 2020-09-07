@@ -164,6 +164,11 @@ Vector2Int Lerp(const Vector2Int& start, const Vector2Int& end, const float pars
 	return start + (end - start) * parsent;
 }
 
+Vector2Int Clamp(const Vector2Int& in, const Vector2Int& min, const Vector2Int& max)
+{
+	return Vector2Int(std::clamp(in.x, min.x, max.x), std::clamp(in.y, min.y, max.y));
+}
+
 float Dot(const Vector2 & lval, const Vector2 & rval)
 {
 	return lval.x * rval.x + lval.y * rval.y;
@@ -592,11 +597,6 @@ Vector3 XMVECTORtoVec3(DirectX::XMVECTOR & vec)
 	DirectX::XMFLOAT3 f3;
 	DirectX::XMStoreFloat3(&f3, vec);
 	return Vector3(f3.x, f3.y, f3.z);
-}
-
-float Lerp(const float lval, const float rval, const float parsent)
-{
-	return lval + (rval - lval) * parsent;
 }
 
 DirectX::XMFLOAT2 Lerp(const DirectX::XMFLOAT2 lval, const DirectX::XMFLOAT2 rval, const float parsent)

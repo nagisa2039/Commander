@@ -6,6 +6,7 @@
 #include <Dxlib.h>
 #include "DxLibUtility.h"
 #include "DataBase.h"
+#include "SoundLoader.h"
 
 int BattlePrediction::GetChengePoint(const Dir& dir, bool rightAttack, BattleStatus& selfStatus, BattleStatus& targetStatus)
 {
@@ -42,6 +43,8 @@ BattlePrediction::BattlePrediction(const Charactor& self, const Charactor& targe
 	_hpAnimTrack->AddKey(0,0.0f);
 	_hpAnimTrack->AddKey(60, 1.0f);
 	_hpAnimTrack->AddKey(120, 0.0f);
+
+	SoundL.PlaySE("Resource/Sound/SE/select05.mp3");
 }
 
 BattlePrediction::~BattlePrediction()
@@ -213,7 +216,7 @@ void BattlePrediction::DrawHPBer(int& drawY, const Rect& windowRect, bool rightA
 		float affter = affterHealth / static_cast<float>(self.GetStartStatus().health);
 
 		Size subSize(static_cast<int>(hpSize.w * (abs(before - affter)) + 2), hpSize.h);
-		float sing = (dir == Dir::left ? -1 : 1);
+		float sing = (dir == Dir::left ? -1.0f : 1.0f);
 		float sizeRate = (before + affter) / 2.0f * sing;
 		drawPos = GetDrawPos(Vector2Int(windowRect.center.x + static_cast<int>(sizeRate * hpSize.w), drawY), subSize, Anker::center);
 
@@ -225,7 +228,8 @@ void BattlePrediction::DrawHPBer(int& drawY, const Rect& windowRect, bool rightA
 		// écÇËHPÇÃêÅÇ´èoÇµï\é¶
 		if (chengePoint != 0)
 		{
-			Vector2Int fukidashiDrawPos = drawPos + Vector2Int(subSize.w * (dir == Dir::left ? 1 : 0), -fukisashiSize.h / 2 - fukisashiSize.h/5 * hpAnimValue);
+			Vector2Int fukidashiDrawPos = drawPos + Vector2Int(subSize.w * (dir == Dir::left ? 1 : 0), 
+				-fukisashiSize.h / 2 - static_cast<int>(fukisashiSize.h/5 * hpAnimValue));
 			DrawRotaGraph(fukidashiDrawPos, fukidashiScale, 0.0f, fukidashiH, true);
 			DrawStringToHandle(fukidashiDrawPos, Anker::center, 0x000000, choplin30, "%d", affterHealth);
 		}

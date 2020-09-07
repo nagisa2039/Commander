@@ -74,7 +74,6 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctr
 	_preparationUI = make_shared<PreparationUI>(&_preparationDeque, *_camera, *_mapCtrl, *this);
 	_preparationDeque.emplace_back(_preparationUI);
 
-	_preparationUI->Open(true);
 	Vector2 cameraPos2D = (cursorMapPos * _mapCtrl->GetChipSize()).ToVector2();
 	_camera->SetPos(Vector3(cameraPos2D.x, cameraPos2D.y, 0));
 
@@ -551,6 +550,8 @@ void PlayScene::ChangePreparation()
 	_updater = &PlayScene::PreparationUpdate;
 	_drawer = &PlayScene::PreparationDraw;
 	_UIDrawer = &PlayScene::PreparationUIDraw;
+
+	_preparationUI->Open(true);
 }
 
 void PlayScene::ChangeGameOver()

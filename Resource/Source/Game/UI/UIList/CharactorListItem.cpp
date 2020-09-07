@@ -34,7 +34,7 @@ void CharactorListItem::Draw(const Vector2Int& offset)
 	auto& fileSystem = FileSystem::Instance();
 
 	// キャラアイコンの描画
-	auto charIconSize = Size(drawRect.size.h * 0.9f, drawRect.size.h * 0.9f);
+	auto charIconSize = Size(static_cast<int>(drawRect.size.h * 0.9f), static_cast<int>(drawRect.size.h * 0.9f));
 	char charIconPath[256];
 	sprintf_s(charIconPath, 256, "%s_player.png", dataBase_charactorData.imagePath.c_str());
 

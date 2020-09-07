@@ -2,11 +2,14 @@
 #include <array>
 #include <string>
 #include <vector>
+#include <memory>
 #include "../Utility/Geometry.h"
 #include "Team.h"
 #include "MapChip.h"
 #include "WeaponData.h"
 #include "SaveDataCharactor.h"
+
+class BattleEffectFactory;
 
 class DataBase
 {
@@ -95,6 +98,8 @@ private:
 
 	std::vector<SaveDataCharactor> _saveDataCharactors;	// セーブデータ生成用
 
+	std::unique_ptr<BattleEffectFactory> _battleEffectFactory;
+
 	bool ReadData(const char* path, std::vector<std::vector<std::string>>& out);
 
 public:
@@ -137,5 +142,10 @@ public:
 
 	// 初期のセーブデータ作成用配列の取得
 	const std::vector<SaveDataCharactor> GetSaveDataCharactors()const;
+
+	/// <summary>
+	/// 攻撃エフェクト生成クラスを取得
+	/// </summary>
+	const BattleEffectFactory& GetBattleEffectFactory()const;
 };
 

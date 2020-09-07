@@ -4,6 +4,7 @@
 #include <Dxlib.h>
 #include "../System/Application.h"
 #include "../System/FileSystem.h"
+#include "Effect/BattleEffect/BattleEffectFactory.h"
 
 using namespace std;
 
@@ -63,11 +64,14 @@ bool DataBase::ReadData(const char* path, std::vector<std::vector<std::string>>&
 	}
 	FileRead_close(fileH);
 
+	assert(outstrVec2.size() > 0);
 	return true;
 }
 
 DataBase::DataBase()
 {
+	_battleEffectFactory = std::make_unique<BattleEffectFactory>();
+
 	auto split = [](const string& input, const char delimiter, vector<string>& output)
 	{
 		istringstream stream(input);
@@ -224,14 +228,16 @@ DataBase::DataBase()
 	{
 		vector<vector<string>> data;
 		ReadData("Resource/DataBase/weapon.data", data);
+		data.erase(data.begin());
 		_weaponDataTable.reserve(data.size());
-		for (int idx = 1; idx < data.size(); ++idx)
+		for (const auto& d : data)
 		{
 			WeaponData wd = {
-				static_cast<uint8_t>(atoi(data[idx][1].c_str())), data[idx][2],
-				static_cast<uint8_t>(atoi(data[idx][3].c_str())), static_cast<uint8_t>(atoi(data[idx][4].c_str())),
-				static_cast<uint8_t>(atoi(data[idx][5].c_str())), static_cast<uint8_t>(atoi(data[idx][6].c_str())),
-				Range(atoi(data[idx][7].c_str()), atoi(data[idx][8].c_str())), static_cast<unsigned int>(atoi(data[idx][9].c_str()))};
+				static_cast<uint8_t>(atoi(d[1].c_str())), d[2],
+				static_cast<uint8_t>(atoi(d[3].c_str())), static_cast<uint8_t>(atoi(d[4].c_str())),
+				static_cast<uint8_t>(atoi(d[5].c_str())), static_cast<uint8_t>(atoi(d[6].c_str())),
+				Range(atoi(d[7].c_str()), atoi(d[8].c_str())), static_cast<unsigned int>(atoi(d[9].c_str())), 
+				static_cast<BattleEffectType>(atoi(d[10].c_str()))};
 			_weaponDataTable.emplace_back(wd);
 		}
 	}
@@ -337,6 +343,12 @@ const std::vector<WeaponData>& DataBase::GetWeaponDataTable() const
 const std::vector<SaveDataCharactor> DataBase::GetSaveDataCharactors() const
 {
 	return _saveDataCharactors;
+}
+
+const BattleEffectFactory& DataBase::GetBattleEffectFactory() const
+{
+	assert(_battleEffectFactory);
+	return *_battleEffectFactory;
 }
 
 void DataBase::CharactorData::DrawIcon(const Rect& rect, const Team team)const

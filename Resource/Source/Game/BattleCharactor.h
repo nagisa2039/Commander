@@ -63,30 +63,24 @@ protected:
 	void DrawHP(Rect& windowRect, int fontHandle);
 	void DrawWeaponName(FileSystem& fileSystem, Rect& weaponNameRect);
 
-	// 攻撃エフェクトの作成
-	virtual std::shared_ptr<Effect> CreateAttackEffect(std::vector<std::shared_ptr<Effect>>& effects, bool critical) = 0;
-	// 攻撃外れエフェクトの作成
-	std::shared_ptr<Effect> CreateMissEffect(const Vector2Int& effectPos);
-
 public:
 	BattleCharactor(Charactor& charactor, const int imageHandle, Camera& camera);
 	~BattleCharactor();
 
-	virtual void Init(const Vector2& startPos, const Dir dir, BattleCharactor* target);
+	void Init(const Vector2& startPos, const Dir dir, BattleCharactor* target);
 
 	void AnimUpdate();
 	void Update(BattleScene& battleScene);
-	virtual void Draw();
+	void Draw();
 
-	virtual void UIAnimUpdate();
-	virtual void UIDraw();
+	void UIAnimUpdate();
+	void UIDraw();
 
 	void StartAttackAnim(BattleScene& battleScene);
 	bool GetAttackAnimEnd();
 
 	void StartHPAnim();
 	bool GetHPAnimEnd();
-
 
 	Size GetSize()const;
 	Vector2Int GetCenterPos()const;
@@ -103,6 +97,5 @@ public:
 	void SetDamageType(const damageType dt);
 	void SetGivenDamage(const unsigned int value);
 	void AddGivenDamage(const unsigned int value);
-
 };
 

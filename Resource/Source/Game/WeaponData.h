@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "Geometry.h"
+#include "Effect/BattleEffect/BattleEffectType.h"
 
 struct WeaponTypeData
 {
@@ -23,6 +24,7 @@ struct WeaponData
 	uint8_t weight;
 	Range range;
 	unsigned int price;
+	BattleEffectType effectType;
 	
 	std::string GetRengeString()const;
 	const WeaponTypeData& GetTypeData()const;

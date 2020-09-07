@@ -4,6 +4,7 @@
 #include "Application.h"
 #include "FileSystem.h"
 #include "DxLibUtility.h"
+#include "SoundLoader.h"
 #include <DxLib.h>
 
 using namespace std;
@@ -35,6 +36,8 @@ TurnChangeAnim::TurnChangeAnim()
 	_alphaTL->Reset();
 	_exrateTL->Reset();
 	_angleTL->Reset();
+
+	_seH = SoundHandle("Resource/Sound/SE/sceneswitch2.mp3");
 }
 
 TurnChangeAnim::~TurnChangeAnim()
@@ -98,6 +101,8 @@ void TurnChangeAnim::TurnStart(const Team team)
 	_alphaTL->Reset();
 	_exrateTL->Reset();
 	_angleTL->Reset();
+
+	SoundL.PlaySE(_seH);
 }
 
 bool TurnChangeAnim::GetAnimEnd() const

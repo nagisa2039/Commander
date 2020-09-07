@@ -25,13 +25,7 @@ private:
 
 	std::vector<std::shared_ptr<Charactor>>& _charactors;
 
-	// CharactorType‚É‘Î‰ž‚µ‚½CharactorƒNƒ‰ƒX‚ð_charactors‚É’Ç‰Á‚·‚é
-	std::array<std::function<void(const CharactorChipInf&, const Status&, SceneController&, std::vector<std::shared_ptr<Effect>>&, Camera&)>,
-		static_cast<size_t>(CharactorType::max)> _charactorCreateFuncs;
-
-	template<typename T>
-	inline void CreateCharactor(const CharactorChipInf& characotChipInf, const Status& initStatus,
-		SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
+void CreateCharactor(const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
 
 public:
 	MapCtrl(const int mapId, std::vector<std::shared_ptr<Charactor>>& charactors);
@@ -84,11 +78,3 @@ public:
 	std::shared_ptr<Map> GetMap()const;
 };
 
-template<typename T>
-inline void MapCtrl::CreateCharactor(const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
-{
-	auto charactor = make_shared<T>(characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
-	charactor->SetMoveActive(characotChipInf.active);
-	charactor->InitStatus(initStatus);
-	_charactors.emplace_back(charactor);
-}

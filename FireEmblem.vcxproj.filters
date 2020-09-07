@@ -150,26 +150,11 @@
     <ClCompile Include="Resource\Source\Game\TurnChangeAnim.cpp">
       <Filter>ソース ファイル\Game\Actor</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Game\Soldier.cpp">
-      <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Source\Game\Charactor.cpp">
-      <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Game\Warrior.cpp">
-      <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Game\Swordsman.cpp">
       <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\DataBase.cpp">
       <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Game\Archer.cpp">
-      <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Game\Mage.cpp">
-      <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\UI\UI.cpp">
       <Filter>ソース ファイル\Game\UI</Filter>
@@ -193,9 +178,6 @@
       <Filter>ソース ファイル\Game\UI</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\Status.cpp">
-      <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Game\Priest.cpp">
       <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\UI\PlayerMenu.cpp">
@@ -333,6 +315,9 @@
     <ClCompile Include="Resource\Source\Scene\TitleScene.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\BattleEffectFactory.cpp">
+      <Filter>ソース ファイル\Game\Actor\Effect\BattleEffect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -416,26 +401,11 @@
     <ClInclude Include="Resource\Source\Game\BattleCharactor.h">
       <Filter>ヘッダー ファイル\Game\Actor</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Source\Game\Soldier.h">
-      <Filter>ヘッダー ファイル\Game\Actor\Charactor</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Game\Warrior.h">
-      <Filter>ヘッダー ファイル\Game\Actor\Charactor</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Game\Swordsman.h">
-      <Filter>ヘッダー ファイル\Game\Actor\Charactor</Filter>
-    </ClInclude>
     <ClInclude Include="Resource\Source\Game\Charactor.h">
       <Filter>ヘッダー ファイル\Game\Actor\Charactor</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\DataBase.h">
       <Filter>ヘッダー ファイル\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Game\Archer.h">
-      <Filter>ヘッダー ファイル\Game\Actor\Charactor</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Game\Mage.h">
-      <Filter>ヘッダー ファイル\Game\Actor\Charactor</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\UI\UI.h">
       <Filter>ヘッダー ファイル\Game\UI</Filter>
@@ -459,9 +429,6 @@
       <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\Status.h">
-      <Filter>ヘッダー ファイル\Game\Actor\Charactor</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Game\Priest.h">
       <Filter>ヘッダー ファイル\Game\Actor\Charactor</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\CharactorType.h">
@@ -595,6 +562,12 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Scene\TitleScene.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\BattleEffectType.h">
+      <Filter>ヘッダー ファイル\Game\Actor\Effect\BattleEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\BattleEffectFactory.h">
+      <Filter>ヘッダー ファイル\Game\Actor\Effect\BattleEffect</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

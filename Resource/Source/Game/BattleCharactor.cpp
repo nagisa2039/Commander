@@ -12,6 +12,7 @@
 #include "SoundLoader.h"
 #include "CutIn.h"
 #include "Tool.h"
+#include "Effect/BattleEffect/BattleEffectFactory.h"
 
 using namespace std;
 
@@ -41,21 +42,53 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 	}
 	_gaveDamageType = damageType::none;
 	_receiveDamageType = damageType::none;
+	const Size divSize = Size(32, 32);
+	_animator->SetImageHandle(imageHandle);
+
+	int cnt = 0;
+	auto nextRectCenterOffset = [&](std::vector<Rect>& animRectVec, int cnt)
+	{
+		for (auto& rect : animRectVec)
+		{
+			rect.center.y += divSize.h;
+		}
+	};
+
+	std::vector<Rect> animRectVec;
+	animRectVec.clear();
+
+	animRectVec.emplace_back(Rect(Vector2Int(16, 16 + 32 * 1), divSize));
+	animRectVec.emplace_back(Rect(Vector2Int(16 + divSize.w * 2, 16 + 32 * 1), divSize));
+	_animator->AddAnim("LeftWalk", animRectVec, 30, true);
+	animRectVec.clear();
+
+	animRectVec.emplace_back(Rect(Vector2Int(16, 16 + 32 * 2), divSize));
+	animRectVec.emplace_back(Rect(Vector2Int(16 + divSize.w * 2, 16 + 32 * 2), divSize));
+	_animator->AddAnim("RightWalk", animRectVec, 30, true);
 
 	_attackEffectFuncs[Size_t(damageType::none)] = [this](BattleScene& battleScene, const Vector2Int center)
 	{
-		battleScene.GetEffectVec().emplace_back(CreateMissEffect(center)); 
+		auto& dataBase = Application::Instance().GetDataBase();
+		auto effect = dataBase.GetBattleEffectFactory().
+			CreateBattleEffect(BattleEffectType::miss, *this, *_targetChar, battleScene.GetEffectVec(), true, _camera);
+		battleScene.GetEffectVec().emplace_back(effect);
 	};
 
 	_attackEffectFuncs[Size_t(damageType::damage)] = [this](BattleScene& battleScene, const Vector2Int center)
 	{
-		_attackEffect = CreateAttackEffect(battleScene.GetEffectVec(), false);
+		auto& dataBase = Application::Instance().GetDataBase();
+		auto type = dataBase.GetWeaponData(_selfChar.GetStatus().weaponId).effectType;
+		_attackEffect = dataBase.GetBattleEffectFactory().
+			CreateBattleEffect(type, *this, *_targetChar, battleScene.GetEffectVec(), false, _camera);
 		battleScene.GetEffectVec().emplace_back(_attackEffect);
 	};
 
 	_attackEffectFuncs[Size_t(damageType::critical)] = [this](BattleScene& battleScene, const Vector2Int center)
 	{
-		_attackEffect = CreateAttackEffect(battleScene.GetEffectVec(), true);
+		auto& dataBase = Application::Instance().GetDataBase();
+		auto type = dataBase.GetWeaponData(_selfChar.GetStatus().weaponId).effectType;
+		_attackEffect = dataBase.GetBattleEffectFactory().
+			CreateBattleEffect(type, *this, *_targetChar, battleScene.GetEffectVec(), true, _camera);
 		battleScene.GetEffectVec().emplace_back(_attackEffect);
 	};
 }
@@ -302,7 +335,7 @@ void BattleCharactor::StartAttackAnim(BattleScene& battleScene)
 	{
 		if (hit)
 		{
-			//if (Hit(selfBattleStatus.GetCritical(targetBattleStatus)))
+			if (Hit(selfBattleStatus.GetCritical(targetBattleStatus)))
 			{
 				_gaveDamageType = damageType::critical;
 				_updater = &BattleCharactor::CutInUpdate;
@@ -410,9 +443,4 @@ void BattleCharactor::SetGivenDamage(const unsigned int value)
 void BattleCharactor::AddGivenDamage(const unsigned int value)
 {
 	_givenDamage += value;
-}
-
-std::shared_ptr<Effect> BattleCharactor::CreateMissEffect(const Vector2Int& effectPos)
-{
-	return make_shared<PopupText>("MISS!", effectPos, _camera, false);
 }

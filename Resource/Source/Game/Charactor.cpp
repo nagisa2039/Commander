@@ -18,6 +18,7 @@
 #include "SaveData.h"
 #include "Map.h"
 #include "SoundLoader.h"
+#include "BattleCharactor.h"
 
 using namespace std;
 
@@ -765,7 +766,8 @@ void Charactor::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosLi
 	}
 }
 
-Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team team, const unsigned int groupNum, MapCtrl& mapCtrl, SceneController& ctrl,
+Charactor::Charactor(const CharactorType type, const uint8_t level, const Vector2Int& mapPos, 
+	const Team team, const unsigned int groupNum, MapCtrl& mapCtrl, SceneController& ctrl,
 	std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 	: _team(team), _groupNum(groupNum), _mapCtrl(mapCtrl), _controller(ctrl), _effects(effects), Actor(camera)
 {
@@ -808,6 +810,9 @@ Charactor::Charactor(const uint8_t level, const Vector2Int& mapPos, const Team t
 
 	_targetCnt = Vector2Int(0, 0);
 	_onelineListCnt = 0;
+
+	CharactorDataInit(type, level);
+	_battleC = make_shared<BattleCharactor>(*this, _animator->GetImageH(), _camera);
 }
 
 Charactor::~Charactor()

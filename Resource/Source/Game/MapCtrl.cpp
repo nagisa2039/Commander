@@ -9,13 +9,6 @@
 #include <algorithm>
 #include "SaveData.h"
 
-#include "Swordsman.h"
-#include "Warrior.h"
-#include "Soldier.h"
-#include "Mage.h"
-#include "Archer.h"
-#include "Priest.h"
-
 #include "SceneController.h"
 #include "Effect/Effect.h"
 #include "Map.h"
@@ -27,6 +20,14 @@ namespace
 	constexpr unsigned int WAR_SITUATION_CHIP_SIZE = 20;
 }
 
+void MapCtrl::CreateCharactor(const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
+{
+	auto charactor = make_shared<Charactor>(characotChipInf.type, characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
+	charactor->SetMoveActive(characotChipInf.active);
+	charactor->InitStatus(initStatus);
+	_charactors.emplace_back(charactor);
+}
+
 MapCtrl::MapCtrl(const int mapId, std::vector<std::shared_ptr<Charactor>>& charactors) : _charactors(charactors)
 {
 	_astar = make_unique<Astar>();
@@ -35,42 +36,6 @@ MapCtrl::MapCtrl(const int mapId, std::vector<std::shared_ptr<Charactor>>& chara
 	auto& mapSize = _map->GetMapSize();
 	_warSituationH = FileSystem::Instance().
 		MakeScreen("war_situation", mapSize * WAR_SITUATION_CHIP_SIZE, true);
-
-	_charactorCreateFuncs[static_cast<size_t>(CharactorType::swordman)] = 
-		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
-	{
-		CreateCharactor<Swordsman>(characotChipInf, initStatus, ctrl, effects, camera);
-	};
-
-	_charactorCreateFuncs[static_cast<size_t>(CharactorType::soldier)] =
-		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
-	{
-		CreateCharactor<Soldier>(characotChipInf, initStatus, ctrl, effects, camera);
-	};
-
-	_charactorCreateFuncs[static_cast<size_t>(CharactorType::warrior)] =
-		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
-	{
-		CreateCharactor<Warrior>(characotChipInf, initStatus, ctrl, effects, camera);
-	};
-
-	_charactorCreateFuncs[static_cast<size_t>(CharactorType::mage)] =
-		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
-	{
-		CreateCharactor<Mage>(characotChipInf, initStatus, ctrl, effects, camera);
-	};
-
-	_charactorCreateFuncs[static_cast<size_t>(CharactorType::archer)] =
-		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
-	{
-		CreateCharactor<Archer>(characotChipInf, initStatus, ctrl, effects, camera);
-	};
-
-	_charactorCreateFuncs[static_cast<size_t>(CharactorType::priest)] =
-		[&](const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
-	{
-		CreateCharactor<Priest>(characotChipInf, initStatus, ctrl, effects, camera);
-	};
 }
 
 MapCtrl::~MapCtrl()
@@ -131,8 +96,7 @@ void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr
 
 			auto initStatus = dataBase.GetLevelInitStatus(mapData.charactorChip.level, mapData.charactorChip.type);
 			initStatus.weaponId = mapData.charactorChip.weaponId;
-			_charactorCreateFuncs[static_cast<size_t>(mapData.charactorChip.type)](mapData.charactorChip,
-				initStatus, ctrl, effects, camera);
+			CreateCharactor(mapData.charactorChip, initStatus, ctrl, effects, camera);
 
 			/*if (mapData.charactorChip.team == Team::player)
 			{

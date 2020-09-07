@@ -19,6 +19,7 @@ private:
 	Team _currentTeam;
 	std::array<TeamInf, static_cast<size_t>(Team::max)> teamInfs;
 	bool _animEnd;
+	int _seH;
 
 	std::unique_ptr<Track<float>> _exrateTL;
 	std::unique_ptr<Track<float>> _alphaTL;

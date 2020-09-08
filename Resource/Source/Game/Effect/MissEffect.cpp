@@ -3,6 +3,8 @@
 #include "DxLibUtility.h"
 #include "Application.h"
 #include "FileSystem.h"
+#include "SoundLoader.h"
+#include "DataBase.h"
 
 MissEffect::MissEffect(const Vector2Int& pos, Camera& camera): Effect(pos, camera)
 {
@@ -34,4 +36,12 @@ void MissEffect::Draw()
 	GetDrawFormatStringSizeToHandle(&strSize.w, &strSize.h, &line, fontH, str);
 	auto drawPos = GetDrawPos(_pos.ToVector2Int() + Vector2Int(0, static_cast<int>(_animPosYTrack->GetValue())), strSize, Anker::center);
 	DrawFormatStringToHandle(drawPos.x, drawPos.y, 0xffffff, fontH, str);
+}
+
+PopupMissEffect::PopupMissEffect(const Vector2Int& pos, Camera& camera, bool cameraActive, bool critical)
+	: PopupText("MISS!", pos, camera, cameraActive, critical)
+{
+	auto& dataBase = Application::Instance().GetDataBase();
+	auto efkPath = dataBase.GetBattleEffectData(BattleEffectType::miss).seName;
+	SoundL.PlaySE(efkPath.c_str());
 }

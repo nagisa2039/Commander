@@ -74,6 +74,6 @@ public:
 		Camera& camera, bool cameraActive, bool critical = false);
 	~PopupText() = default;
 
-	void Update(const Input& input)override final;
-	void Draw()override final;
+	void Update(const Input& input)override;
+	void Draw()override;
 };

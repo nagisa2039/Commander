@@ -50,7 +50,6 @@ void BattleScene::LeftHPAnim(const Input& input)
 	_leftBC.UIAnimUpdate();
 	if (_leftBC.GetHPAnimEnd())
 	{
-		_leftBC.SetDamageType(BattleCharactor::damageType::none);
 		// éÄÇÒÇ≈Ç¢ÇΩÇÁèIÇÌÇÈ
 		if (_leftBC.GetCharacotr().GetIsDying())
 		{

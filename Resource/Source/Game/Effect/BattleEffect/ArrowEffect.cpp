@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Charactor.h"
 #include "BattleCharactor.h"
+#include "FileSystem.h"
 #include <vector>
 #include <memory>
 

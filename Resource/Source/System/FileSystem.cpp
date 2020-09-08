@@ -76,9 +76,19 @@ int FileSystem::GetSoundHandle(const char* path)
 	return _soundLoder->GetSoundHandle(path);
 }
 
+ImageLoader& FileSystem::GetImageLoader()
+{
+	return *_imageLoader;
+}
+
 SoundLoader& FileSystem::GetSoundLoader()
 {
 	return *_soundLoder;
+}
+
+FontLoader& FileSystem::GetFontLoader()
+{
+	return *_fontLoader;
 }
 
 std::string FileSystem::GetFolderPass(std::string path)

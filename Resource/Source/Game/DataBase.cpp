@@ -203,7 +203,7 @@ DataBase::DataBase()
 	// mapDataTableÇÃì«Ç›çûÇ›
 	{
 		vector<vector<string>> data;
-		ReadData("Resource/DataBase/map.data", data);
+		ReadData("Resource/DataBase/Map.data", data);
 		_mapDataTable.resize(data.size());
 		for (int idx = 1;auto& mapData : _mapDataTable)
 		{
@@ -214,7 +214,7 @@ DataBase::DataBase()
 	// weaponTypeDataTableÇÃì«Ç›çûÇ›
 	{
 		vector<vector<string>> data;
-		ReadData("Resource/DataBase/weaponType.data", data);
+		ReadData("Resource/DataBase/WeaponType.data", data);
 
 		for (int idx = 1; idx < data.size(); ++idx)
 		{
@@ -227,7 +227,7 @@ DataBase::DataBase()
 	// weaponDataTableÇÃì«Ç›çûÇ›
 	{
 		vector<vector<string>> data;
-		ReadData("Resource/DataBase/weapon.data", data);
+		ReadData("Resource/DataBase/Weapon.data", data);
 		data.erase(data.begin());
 		_weaponDataTable.reserve(data.size());
 		for (const auto& d : data)
@@ -253,6 +253,19 @@ DataBase::DataBase()
 			auto status = GetLevelInitStatus(atoi(data[idx][2].c_str()), charactorType);
 			status.weaponId = atoi(data[idx][3].c_str());
 			_saveDataCharactors.emplace_back(charactorType, status);
+		}
+	}
+
+	// BattleEffectDataÇÃì«Ç›çûÇ›
+	{
+		vector<vector<string>> data;
+		ReadData("Resource/DataBase/BattleEffect.data", data);
+		data.erase(data.begin());
+		_battleEffectDataTable.reserve(data.size());
+		for (const auto& d : data)
+		{
+			_battleEffectDataTable.emplace_back(BattleEffectData
+				{d[1], d[2]});
 		}
 	}
 }
@@ -349,6 +362,11 @@ const BattleEffectFactory& DataBase::GetBattleEffectFactory() const
 {
 	assert(_battleEffectFactory);
 	return *_battleEffectFactory;
+}
+
+const DataBase::BattleEffectData& DataBase::GetBattleEffectData(const BattleEffectType type) const
+{
+	return _battleEffectDataTable[static_cast<size_t>(type)];
 }
 
 void DataBase::CharactorData::DrawIcon(const Rect& rect, const Team team)const

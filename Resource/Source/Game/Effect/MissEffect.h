@@ -1,6 +1,6 @@
 #pragma once
-#include "Effect.h"
 #include "TimeLine.h"
+#include "FlyText.h"
 #include <memory>
 
 class MissEffect :
@@ -17,3 +17,11 @@ public:
 	void Draw()override;
 };
 
+class PopupMissEffect :
+	public PopupText
+{
+public:
+	PopupMissEffect(const Vector2Int& pos,
+		Camera& camera, bool cameraActive, bool critical = false);
+	~PopupMissEffect() = default;
+};

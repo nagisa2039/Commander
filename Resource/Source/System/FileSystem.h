@@ -40,7 +40,10 @@ public:
 	int GetFontHandle(std::string fontUseName);
 
 	int GetSoundHandle(const char* path);
+
+	ImageLoader& GetImageLoader();
 	SoundLoader& GetSoundLoader();
+	FontLoader& GetFontLoader();
 
 	static std::string GetFolderPass(std::string);
 	static std::string GetFilePath(const std::string path, const bool reverse = false);
@@ -50,4 +53,6 @@ public:
 #define SoundHandle(X) FileSystem::Instance().GetSoundHandle(X)
 #define FontHandle(X)  FileSystem::Instance().GetFontHandle(X)
 
+#define ImageL	FileSystem::Instance().GetImageLoader()
 #define SoundL	FileSystem::Instance().GetSoundLoader()
+#define FontL	FileSystem::Instance().GetFontLoader()

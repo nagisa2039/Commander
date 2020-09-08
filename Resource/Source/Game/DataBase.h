@@ -79,6 +79,12 @@ private:
 			:name(na), fileName(pa), bgmName(bn) {};
 	};
 
+	struct BattleEffectData
+	{
+		std::string name;
+		std::string seName;
+	};
+
 	DataBase(const DataBase&) = delete;
 	DataBase& operator=(const DataBase&) = delete;
 
@@ -98,6 +104,7 @@ private:
 
 	std::vector<SaveDataCharactor> _saveDataCharactors;	// セーブデータ生成用
 
+	std::vector<BattleEffectData> _battleEffectDataTable;
 	std::unique_ptr<BattleEffectFactory> _battleEffectFactory;
 
 	bool ReadData(const char* path, std::vector<std::vector<std::string>>& out);
@@ -147,5 +154,10 @@ public:
 	/// 攻撃エフェクト生成クラスを取得
 	/// </summary>
 	const BattleEffectFactory& GetBattleEffectFactory()const;
+
+	/// <summary>
+	/// BattleEffectDataの取得
+	/// </summary>
+	const BattleEffectData& GetBattleEffectData(const BattleEffectType type)const;
 };
 

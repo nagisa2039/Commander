@@ -5,7 +5,7 @@
 #include "SlashingEffect.h"
 #include "MagicEffect.h"
 #include "RecoverEffect.h"
-#include "Effect/FlyText.h"
+#include "../MissEffect.h"
 
 #include "BattleCharactor.h"
 #include "Camera.h"
@@ -30,7 +30,10 @@ BattleEffectFactory::BattleEffectFactory()
 
 	_createBattleEffectFuncs[Size_t(BattleEffectType::miss)] = [](BattleCharactor& self, BattleCharactor& target,
 		std::vector<std::shared_ptr<Effect>>& effects, bool critical, Camera& camera, bool cameraActive)
-	{return std::make_shared<PopupText>("MISS!", target.GetCenterPos(), camera, false); };
+	{
+		/*return std::make_shared<PopupText>("MISS!", target.GetCenterPos(), camera, false);*/
+		return std::make_shared<PopupMissEffect>(target.GetCenterPos(), camera, false);
+	};
 }
 
 std::shared_ptr<Effect> BattleEffectFactory::CreateBattleEffect(const BattleEffectType type, BattleCharactor& self, BattleCharactor& target,

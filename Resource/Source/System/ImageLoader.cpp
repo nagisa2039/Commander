@@ -40,6 +40,22 @@ bool ImageLoader::Load(const char * path, Data & data)
 	}
 }
 
+int ImageLoader::LoadMask(const char* path)
+{
+	if (_table.contains(path))
+	{
+		return _table[path];
+	}
+	else
+	{
+		int handle = DxLib::LoadMask(path);
+		assert(handle != -1);
+		_table[path] = handle;
+		return handle;
+	}
+	return -1;
+}
+
 int ImageLoader::MakeScreen(const char* name, const Size& screenSize, bool alpha)
 {
 	if (!_table.contains(name))

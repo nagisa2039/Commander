@@ -37,7 +37,8 @@ protected:
 	Size _size;
 	std::shared_ptr<Animator> _animator;
 
-	std::unique_ptr<Track<int>> _attackAnimX;
+	std::unique_ptr<Track_i> _attackAnimX;
+	std::unique_ptr<Track_i> _waitT;
 	std::shared_ptr<Effect> _attackEffect;
 
 	uint8_t _animHealth;
@@ -49,14 +50,18 @@ protected:
 
 	unsigned int _givenDamage;	// ó^Ç¶ÇΩÉ_ÉÅÅ[ÉW
 
-	static int _hpDotMaskH;
+	int _hpDotMaskH;
 
 	damageType _receiveDamageType;
 
 	void(BattleCharactor::* _updater)(BattleScene&);
+	void(BattleCharactor::* _waitNextUpdater)(BattleScene&);	// waitÇÃéüÇÃupdate
 
+	void WaitUpdate(BattleScene& battleScene);
 	void NormalUpdate(BattleScene& battleScene);
 	void CutInUpdate(BattleScene& battleScene);
+
+	void WaitStart(void(BattleCharactor::* nextUpdate)(BattleScene&));
 
 	void DrawName(const char* teamString, Rect& nameWindowRect, FileSystem& fileSystem, int fontHandle);
 	void DrawParameter(const char* teamString, Rect& windowRect, FileSystem& fileSystem, Rect& paramWindowRect);

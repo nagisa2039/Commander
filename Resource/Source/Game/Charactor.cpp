@@ -136,6 +136,7 @@ void Charactor::Move()
 		auto charactor = _mapCtrl.GetMapPosChar(it->mapPos);
 		if (charactor != nullptr)
 		{
+			SoundL.StopSound(_mouveSEH);
 			if (_team == Team::player)
 			{
 				BattaleStart(charactor);

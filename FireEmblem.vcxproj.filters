@@ -150,9 +150,6 @@
     <ClCompile Include="Resource\Source\Game\TurnChangeAnim.cpp">
       <Filter>ソース ファイル\Game\Actor</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Game\Charactor.cpp">
-      <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Source\Game\DataBase.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
@@ -176,9 +173,6 @@
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\UI\BattlePrediction.cpp">
       <Filter>ソース ファイル\Game\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Game\Status.cpp">
-      <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\UI\PlayerMenu.cpp">
       <Filter>ソース ファイル\Game\UI</Filter>
@@ -317,6 +311,12 @@
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\BattleEffectFactory.cpp">
       <Filter>ソース ファイル\Game\Actor\Effect\BattleEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\Charactor.cpp">
+      <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Source\Game\Status.cpp">
+      <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

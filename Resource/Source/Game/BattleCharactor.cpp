@@ -13,10 +13,9 @@
 #include "CutIn.h"
 #include "Tool.h"
 #include "Effect/BattleEffect/BattleEffectFactory.h"
+#include "ImageLoader.h"
 
 using namespace std;
-
-int BattleCharactor::_hpDotMaskH = -1;
 
 BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Camera& camera)
 	: _selfChar(charactor), _size(128, 128), _camera(camera)
@@ -36,10 +35,8 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 
 	_givenDamage = 0;
 
-	if (_hpDotMaskH == -1)
-	{
-		_hpDotMaskH = LoadMask("Resource/Image/Battle/hpDotMask.png");
-	}
+	_hpDotMaskH = ImageL.LoadMask("Resource/Image/Battle/hpDotMask.png");
+
 	_gaveDamageType = damageType::none;
 	_receiveDamageType = damageType::none;
 	const Size divSize = Size(32, 32);
@@ -65,6 +62,12 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 	animRectVec.emplace_back(Rect(Vector2Int(16, 16 + 32 * 2), divSize));
 	animRectVec.emplace_back(Rect(Vector2Int(16 + divSize.w * 2, 16 + 32 * 2), divSize));
 	_animator->AddAnim("RightWalk", animRectVec, 30, true);
+
+	_waitT = make_unique<Track<int>>();
+	_waitT->AddKey(0, 0);
+	_waitT->AddKey(60, 0);
+
+	_waitNextUpdater = &BattleCharactor::NormalUpdate;
 
 	_attackEffectFuncs[Size_t(damageType::none)] = [this](BattleScene& battleScene, const Vector2Int center)
 	{
@@ -130,12 +133,18 @@ void BattleCharactor::UIAnimUpdate()
 	uint8_t statusHp = _selfChar.GetStatus().health;
 	if (statusHp == _animHealth)
 	{
+		_waitT->Update();
 		return;
 	}
 
 	if (_animHealthCnt++ % 3 == 0)
 	{
-		_animHealth += _animHealth > statusHp ? -1 : 1;
+		int sub = statusHp - _animHealth;
+		_animHealth += sub /abs(sub);
+		if (statusHp == _animHealth)
+		{
+			_receiveDamageType = damageType::none;
+		}
 		SoundL.PlaySE("Resource/Sound/SE/hp_se.mp3");
 	}
 }
@@ -189,6 +198,15 @@ void BattleCharactor::UIDraw()
 	DrawName(teamString, nameWindowRect, fileSystem, fontHandle);
 }
 
+void BattleCharactor::WaitUpdate(BattleScene& battleScene)
+{
+	_waitT->Update();
+	if (_waitT->GetEnd())
+	{
+		_updater = _waitNextUpdater;
+	}
+}
+
 void BattleCharactor::NormalUpdate(BattleScene& battleScene)
 {
 	_attackAnimX->Update();
@@ -203,6 +221,12 @@ void BattleCharactor::NormalUpdate(BattleScene& battleScene)
 
 void BattleCharactor::CutInUpdate(BattleScene& battleScene)
 {
+}
+
+void BattleCharactor::WaitStart(void(BattleCharactor::* nextUpdate)(BattleScene&))
+{
+	_updater = &BattleCharactor::WaitUpdate;
+	_waitNextUpdater = nextUpdate;
 }
 
 void BattleCharactor::DrawName(const char* teamString, Rect& nameWindowRect, FileSystem& fileSystem, int fontHandle)
@@ -319,6 +343,7 @@ void BattleCharactor::DrawWeaponName(FileSystem& fileSystem, Rect& weaponNameRec
 void BattleCharactor::StartAttackAnim(BattleScene& battleScene)
 {
 	_animHealth = _selfChar.GetStatus().health;
+	_waitT->Reset();
 	_attackAnimX->Reset();
 
 	assert(_targetChar);
@@ -326,43 +351,50 @@ void BattleCharactor::StartAttackAnim(BattleScene& battleScene)
 	auto selfBattleStatus = _selfChar.GetBattleStatus();
 	auto targetBattleStatus = _targetChar->GetCharacotr().GetBattleStatus();
 
-	// ñΩíÜîªíË
 	_gaveDamageType = damageType::damage;
-	_updater = &BattleCharactor::NormalUpdate;
 	bool heal = selfBattleStatus.CheckHeal();
-	bool hit = Hit(selfBattleStatus.GetHit(targetBattleStatus));
-	if (!heal)
+	if (heal)
 	{
-		if (hit)
+		WaitStart(&BattleCharactor::NormalUpdate);
+		return;
+	}
+
+	// ñΩíÜîªíË
+	if (Hit(selfBattleStatus.GetHit(targetBattleStatus)))
+	{
+		// âÔêSîªíË
+		if (Hit(selfBattleStatus.GetCritical(targetBattleStatus)))
 		{
-			if (Hit(selfBattleStatus.GetCritical(targetBattleStatus)))
-			{
-				_gaveDamageType = damageType::critical;
-				_updater = &BattleCharactor::CutInUpdate;
-				battleScene.SetCutIn(make_unique<CutIn>(
-					_selfChar.GetCharactorType(), _selfChar.GetTeam(), _dir, [this]() 
-					{_updater = &BattleCharactor::NormalUpdate;}));
-			}
+			_gaveDamageType = damageType::critical;
+			_updater = &BattleCharactor::CutInUpdate;
+			battleScene.SetCutIn(make_unique<CutIn>(
+				_selfChar.GetCharactorType(), _selfChar.GetTeam(), _dir, [this]() 
+				{WaitStart(&BattleCharactor::NormalUpdate);}));
+			return;
 		}
-		else
-		{
-			_gaveDamageType = damageType::none;
-		}
+		WaitStart(&BattleCharactor::NormalUpdate);
+	}
+	else
+	{
+		_gaveDamageType = damageType::none;
+		WaitStart(&BattleCharactor::NormalUpdate);
 	}
 }
 bool BattleCharactor::GetAttackAnimEnd()
 {
-	return _attackAnimX->GetEnd() && (_attackEffect == nullptr || _attackEffect->GetDelete());
+	return _attackAnimX->GetEnd()
+		&& (_attackEffect == nullptr || _attackEffect->GetDelete());
 }
 
 void BattleCharactor::StartHPAnim()
 {
+	_waitT->Reset();
 	_animHealthCnt = 0;
 }
 
 bool BattleCharactor::GetHPAnimEnd()
 {
-	return _animHealth == _selfChar.GetStatus().health;
+	return _waitT->GetEnd();
 }
 
 Size BattleCharactor::GetSize() const

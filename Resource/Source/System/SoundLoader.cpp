@@ -48,7 +48,13 @@ bool SoundLoader::PlaySE(const int handle, const int volume)
 
 bool SoundLoader::StopSound(const int handle)
 {
-	return StopSoundMem(handle) != -1;
+	int play = CheckSoundMem(handle);
+	if (play == 1)
+	{
+		StopSoundMem(handle);
+		return false;
+	}
+	assert(play != -1);
 }
 
 bool SoundLoader::StopAllSound()

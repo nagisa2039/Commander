@@ -7,14 +7,71 @@
 #include <Dxlib.h>
 #include "FileSystem.h"
 #include "PlayScene.h"
+#include "TitleScene.h"
 #include "SaveData.h"
 #include "MapSelectCharactor.h"
 #include "Fade.h"
 #include "SoundLoader.h"
+#include "Map.h"
 
 using namespace std;
 
-MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller)
+void MapSelectScene::NormalUpdate(const Input& input)
+{
+	bool click = input.GetMouseInput(MOUSE_INPUT_LEFT);
+	bool debug = input.GetButton("debug");
+
+	if (click)
+	{
+		auto& mousePos = input.GetMousePos();
+		auto offset = _camera->GetCameraOffset();
+		int mapnum = Application::Instance().GetSaveData().GetMapNum();
+		for (int i = 0; const auto & pos : _contentPosVec)
+		{
+			if (Rect(pos + offset, _contentSize).IsHit(Rect(mousePos, Size(1, 1)))
+				&& i <= mapnum)
+			{
+				_selectIdx = i;
+				Decide(debug);
+				return;
+			}
+			i++;
+		}
+	}
+	else if (input.GetButtonDown("ok"))
+	{
+		Decide(debug);
+		return;
+	}
+
+	if (input.GetButtonDown("back"))
+	{
+		_controller.GetFade().StartFadeOut();
+		_updater = &MapSelectScene::FadeUpdate;
+		_fadeEndFunc = [&controller = _controller]()
+		{controller.ChangeScene(make_shared<TitleScene>(controller)); };
+		return;
+	}
+
+	MoveUpdate(input);
+
+	for (auto& mapSelectCharactor : _mapSelectCharactors)
+	{
+		mapSelectCharactor->Update(input);
+	}
+	_camera->Update();
+}
+
+void MapSelectScene::FadeUpdate(const Input& input)
+{
+	if (_controller.GetFade().GetEnd())
+	{
+		_fadeEndFunc();
+		return;
+	}
+}
+
+MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller), _contentSize(300,200)
 {
 	auto screenSize = Application::Instance().GetWindowSize();
 	auto screenCenter = screenSize.ToVector2Int() * 0.5f;
@@ -24,8 +81,8 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller)
 	_moveStartTrack->AddKey(0, 0);
 	_moveStartTrack->AddKey(10, 0);
 
-	_goPlayScene = false;
-
+	_updater = &MapSelectScene::FadeUpdate;
+	_fadeEndFunc = [&updater = _updater]() {updater = &MapSelectScene::NormalUpdate; };
 	_selectIdx = 0;
 
 	_contentPosVec.clear();
@@ -59,39 +116,30 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller)
 	_dir = 1;
 	_charactorIdx = 0;
 
-	_debug = true;
+	_debug = false;
 
 	_controller.GetFade().StartFadeIn();
+
+	_bgmH = SoundHandle("Resource/Sound/BGM/mapSelect.mp3");
+	SoundL.PlayBGM(_bgmH);
 }
 
 MapSelectScene::~MapSelectScene()
 {
+	SoundL.StopSound(_bgmH);
 }
 
 void MapSelectScene::Update(const Input& input)
 {
-	if (!_controller.GetFade().GetEnd())return;
+	(this->*_updater)(input);
+}
 
-	if (_goPlayScene)
-	{
-		_controller.ChangeScene(make_shared<PlayScene>(_controller, _selectIdx));
-		return;
-	}
-
-	if (input.GetButtonDown("ok"))
-	{
-		_controller.GetFade().StartFadeOut();
-		_goPlayScene = true;
-		return;
-	}
-
-	MoveUpdate(input);
-
-	for (auto& mapSelectCharactor : _mapSelectCharactors)
-	{
-		mapSelectCharactor->Update(input);
-	}
-	_camera->Update();
+void MapSelectScene::Decide(const bool degub)
+{
+	_controller.GetFade().StartFadeOut();
+	_updater = &MapSelectScene::FadeUpdate;
+	_fadeEndFunc = [&coontroller = _controller, selectIdx = _selectIdx, degub]()
+		{coontroller.ChangeScene(make_shared<PlayScene>(coontroller, selectIdx, degub)); };
 }
 
 void MapSelectScene::MoveUpdate(const Input& input)
@@ -132,7 +180,7 @@ void MapSelectScene::CursorMove(const Input& input)
 	auto& mousePos = input.GetMousePos();
 	auto wsize = Application::Instance().GetWindowSize();
 	float range = 0.1f;
-	if (input.GetButton("right") || mousePos.x >= wsize.w*(1.0f - range))
+	if (input.GetButton("right") ||mousePos.x >= wsize.w*(1.0f - range))
 	{
 		if (_selectIdx < _contentPosVec.size() - 1 
 			&& static_cast<size_t>(_selectIdx) + 1 <= (_debug ? _contentPosVec.size() : Application::Instance().GetSaveData().GetMapNum()))
@@ -174,25 +222,30 @@ void MapSelectScene::Draw()
 	auto wsize = Application::Instance().GetWindowSize();
 	DrawBox(Vector2Int(0,0), wsize.ToVector2Int(), 0x364364);
 
-	Size contentSize = Size(300, 200);
-	auto mapDataVec = Application::Instance().GetDataBase().GetMapDataTable();
+	auto& mapDataVec = Application::Instance().GetDataBase().GetMapDataTable();
 	int fontH = FontHandle("choplin40edge");
 	auto mapNum = _debug ? _contentPosVec.size() : Application::Instance().GetSaveData().GetMapNum();
-	for (size_t idx = 0; idx < mapDataVec.size(); idx++)
+	auto& cameraRect = _camera->GetRect();
+	for (size_t idx = 0; auto& map : mapDataVec)
 	{
-		auto contentRect = Rect(_contentPosVec[idx], contentSize);
+		auto contentRect = Rect(_contentPosVec[idx], _contentSize);
 
-		if (!contentRect.IsHit(_camera->GetRect())) continue;
+		if (!contentRect.IsHit(cameraRect))
+		{
+			idx++;
+			continue;
+		}
 
 		if (idx > mapNum)
 		{
 			SetDrawBright(64,64,64);
 		}
-		contentRect.Draw(offset, 0xffffff);
-		contentRect.Draw(offset, 0x000000, false);
+		contentRect.DrawGraph(map->GetMapGraphH(), offset);
+		//contentRect.Draw(offset, 0x000000, false);
 
-		DrawStringToHandle(offset + contentRect.center, Anker::center, 0xffffff, fontH, mapDataVec[idx].name.c_str());
+		DrawStringToHandle(offset + contentRect.center, Anker::center, 0xffffff, fontH, map->GetName().c_str());
 		SetDrawBright(255, 255, 255);
+		idx++;
 	}
 
 	for (auto rItr = _mapSelectCharactors.rbegin(); rItr != _mapSelectCharactors.rend(); rItr++)

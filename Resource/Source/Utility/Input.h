@@ -132,4 +132,5 @@ public:
 	bool GetAnyPadInput()const;
 
 	Vector2Int GetMouseMove()const;
+	bool GetMouseInput(const unsigned int checkInput)const;
 };

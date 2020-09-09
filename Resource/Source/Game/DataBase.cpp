@@ -5,6 +5,7 @@
 #include "../System/Application.h"
 #include "../System/FileSystem.h"
 #include "Effect/BattleEffect/BattleEffectFactory.h"
+#include "Map.h"
 
 using namespace std;
 
@@ -70,6 +71,14 @@ bool DataBase::ReadData(const char* path, std::vector<std::vector<std::string>>&
 
 DataBase::DataBase()
 {
+}
+
+DataBase::~DataBase()
+{
+}
+
+void DataBase::Init()
+{
 	_battleEffectFactory = std::make_unique<BattleEffectFactory>();
 
 	auto split = [](const string& input, const char delimiter, vector<string>& output)
@@ -100,15 +109,15 @@ DataBase::DataBase()
 
 			// 初期ステータス
 			int initSbeginIdx = 3;
-			auto To_uint8_t = [&data,idx](const int& targetIdx)
+			auto To_uint8_t = [&data, idx](const int& targetIdx)
 			{
 				return atoi(data[idx][static_cast<int>(targetIdx)].c_str());
 			};
-			charactorData.initialStatus = 
-				Status(1, To_uint8_t(initSbeginIdx), To_uint8_t(initSbeginIdx+1), To_uint8_t(initSbeginIdx+2),
-					To_uint8_t(initSbeginIdx+3), To_uint8_t(initSbeginIdx+4), To_uint8_t(initSbeginIdx+5),
-					To_uint8_t(initSbeginIdx+6), To_uint8_t(initSbeginIdx+7), To_uint8_t(initSbeginIdx+8));
-		
+			charactorData.initialStatus =
+				Status(1, To_uint8_t(initSbeginIdx), To_uint8_t(initSbeginIdx + 1), To_uint8_t(initSbeginIdx + 2),
+					To_uint8_t(initSbeginIdx + 3), To_uint8_t(initSbeginIdx + 4), To_uint8_t(initSbeginIdx + 5),
+					To_uint8_t(initSbeginIdx + 6), To_uint8_t(initSbeginIdx + 7), To_uint8_t(initSbeginIdx + 8));
+
 			// ステータス成長率
 			int growSbeginIdx = 12;
 			charactorData.statusGrowRate =
@@ -190,24 +199,13 @@ DataBase::DataBase()
 		ReadData("Resource/DataBase/AttributeRate.data", data);
 
 		_attributeRateTable.resize(_attributeDataTable.size());
-		for(int y = 0; y < _attributeDataTable.size(); ++y)
+		for (int y = 0; y < _attributeDataTable.size(); ++y)
 		{
 			_attributeRateTable[y].resize(_attributeDataTable.size());
 			for (size_t x = 0; x < _attributeDataTable.size(); x++)
 			{
-				_attributeRateTable[y][x] = static_cast<float>(atof(data[static_cast<size_t>(y)+1][x + 1].c_str()));
+				_attributeRateTable[y][x] = static_cast<float>(atof(data[static_cast<size_t>(y) + 1][x + 1].c_str()));
 			}
-		}
-	}
-
-	// mapDataTableの読み込み
-	{
-		vector<vector<string>> data;
-		ReadData("Resource/DataBase/Map.data", data);
-		_mapDataTable.resize(data.size());
-		for (int idx = 1;auto& mapData : _mapDataTable)
-		{
-			mapData = MapData(data[idx][1], data[idx][2],data[idx][3]);
 		}
 	}
 
@@ -236,8 +234,8 @@ DataBase::DataBase()
 				static_cast<uint8_t>(atoi(d[1].c_str())), d[2],
 				static_cast<uint8_t>(atoi(d[3].c_str())), static_cast<uint8_t>(atoi(d[4].c_str())),
 				static_cast<uint8_t>(atoi(d[5].c_str())), static_cast<uint8_t>(atoi(d[6].c_str())),
-				Range(atoi(d[7].c_str()), atoi(d[8].c_str())), static_cast<unsigned int>(atoi(d[9].c_str())), 
-				static_cast<BattleEffectType>(atoi(d[10].c_str()))};
+				Range(atoi(d[7].c_str()), atoi(d[8].c_str())), static_cast<unsigned int>(atoi(d[9].c_str())),
+				static_cast<BattleEffectType>(atoi(d[10].c_str())) };
 			_weaponDataTable.emplace_back(wd);
 		}
 	}
@@ -265,13 +263,22 @@ DataBase::DataBase()
 		for (const auto& d : data)
 		{
 			_battleEffectDataTable.emplace_back(BattleEffectData
-				{d[1], d[2]});
+				{ d[1], d[2] });
 		}
 	}
-}
 
-DataBase::~DataBase()
-{
+	// mapDataTableの読み込み
+	{
+		vector<vector<string>> data;
+		ReadData("Resource/DataBase/Map.data", data);
+		data.erase(data.begin());
+		_mapTable.reserve(data.size());
+		for (int i = 0; auto & d : data)
+		{
+			_mapTable.emplace_back(std::make_shared<Map>(i, d[1], d[2], d[3]));
+			i++;
+		}
+	}
 }
 
 float DataBase::GetAttributeRate(const uint8_t selfAttributeId, const uint8_t targetAttributeId) const
@@ -323,14 +330,14 @@ const DataBase::AttributeData& DataBase::GetAttributeData(const uint8_t attibute
 	return _attributeDataTable[attibuteId];
 }
 
-const std::vector<DataBase::MapData>& DataBase::GetMapDataTable() const
+const std::vector<std::shared_ptr<Map>>& DataBase::GetMapDataTable() const
 {
-	return _mapDataTable;
+	return _mapTable;
 }
 
-const DataBase::MapData& DataBase::GetMapData(const unsigned int mapDataId) const
+const std::shared_ptr<Map> DataBase::GetMapData(const unsigned int mapDataId) const
 {
-	return _mapDataTable.at(mapDataId);
+	return _mapTable.at(mapDataId);
 }
 
 const WeaponTypeData& DataBase::GetWeaponTypeData(const uint8_t type) const

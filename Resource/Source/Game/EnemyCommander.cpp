@@ -69,6 +69,14 @@ void EnemyCommander::TerrainEffectUpdate(const Input& input)
 EnemyCommander::EnemyCommander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtrl& mapCtrl, const Team ctrlTeam, Camera& camera):
 	Commander(charactors, mapCtrl, ctrlTeam, camera)
 {
+	if (ctrlTeam == Team::player)
+	{
+		for (auto charactor : charactors)
+		{
+			if (ctrlTeam != charactor->GetTeam())continue;
+			charactor->SetMoveActive(true);
+		}
+	}
 	_uniqueUpdater = &EnemyCommander::TerrainEffectUpdate;
 }
 

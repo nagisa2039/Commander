@@ -31,7 +31,7 @@ void MapCtrl::CreateCharactor(const CharactorChipInf& characotChipInf, const Sta
 MapCtrl::MapCtrl(const int mapId, std::vector<std::shared_ptr<Charactor>>& charactors) : _charactors(charactors)
 {
 	_astar = make_unique<Astar>();
-	_map = make_shared<Map>(mapId);
+	_map = Application::Instance().GetDataBase().GetMapData(mapId);
 
 	auto& mapSize = _map->GetMapSize();
 	_warSituationH = FileSystem::Instance().

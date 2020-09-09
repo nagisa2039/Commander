@@ -9,7 +9,7 @@
 #include "../Scene/PlayScene.h"
 #include "../Scene/MapEditScene.h"
 #include "../Scene/PlayScene.h"
-#include "../Scene/MapSelectScene.h"
+#include "../Scene/TitleScene.h"
 #include "DataBase.h"
 #include "SaveData.h"
 #include "AnkerCalculation.h"
@@ -73,10 +73,7 @@ unsigned int Application::GetFPS()const
 bool Application::Initialize()
 {
 	_configure = make_unique<Configure>();
-	_dataBase = make_unique<DataBase>();
-	_saveData = make_unique<SaveData>();
 	_ankerCalculation = make_unique<AnkerCalculation>();
-
 	// Dxlib‚Ì‰Šú‰»
 	ChangeWindowMode(TRUE);
 	auto wSize = GetWindowSize();
@@ -87,6 +84,10 @@ bool Application::Initialize()
 	SetWindowText("Commander");
 	SetDrawMode(DX_DRAWMODE_BILINEAR);
 
+	_dataBase = make_unique<DataBase>();
+	_dataBase->Init();
+	_saveData = make_unique<SaveData>();
+
 	// input‚Ì‰Šú‰»
 	_input = make_unique<Input>();
 
@@ -96,7 +97,7 @@ bool Application::Initialize()
 	_sceneController = make_unique<SceneController>();
 	//_sceneController->ChangeScene(make_unique<PlayScene>(*_sceneController));
 	//_sceneController->ChangeScene(make_unique<MapEditScene>(*_sceneController));
-	_sceneController->ChangeScene(make_unique<MapSelectScene>(*_sceneController));
+	_sceneController->ChangeScene(make_unique<TitleScene>(*_sceneController));
 
 
 	_freq = {};
@@ -117,12 +118,14 @@ void Application::KeySetUp()
 	_input->AddCommand("left", keybord, KEY_INPUT_LEFT);
 	_input->AddCommand("pause", keybord, KEY_INPUT_P);
 	_input->AddCommand("ctrl", keybord, KEY_INPUT_LCONTROL);
-	_input->AddCommand("debug", keybord, KEY_INPUT_D);
 	_input->AddCommand("ok", keybord, KEY_INPUT_SPACE);
 	_input->AddCommand("change", keybord, KEY_INPUT_C);
 	_input->AddCommand("team", keybord, KEY_INPUT_T);
 	_input->AddCommand("back", keybord, KEY_INPUT_BACK);
 	_input->AddCommand("status", keybord, KEY_INPUT_X);
+#ifdef _DEBUG
+	_input->AddCommand("debug", keybord, KEY_INPUT_F1);
+#endif
 
 	// ƒ}ƒEƒX‚Ì“ü—Í
 	const auto mouse = Input::PeripheralType::mouse;

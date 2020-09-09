@@ -53,7 +53,7 @@ private:
 
 	std::unique_ptr<Track<float>> _clearAnimTrack;
 
-	void(PlayScene::* _fadeEndFunc)();
+	std::function<void()>_fadeEndFunc;
 
 	FilterType _filterType;
 	std::array<std::function<void()>, static_cast<size_t>(FilterType::max)> _filterFuncs;
@@ -81,8 +81,8 @@ private:
 	bool GameClearUpdate(const Input& input);
 	bool GameOverUpdate(const Input& input);
 
-	void StartFadeIn( void (PlayScene::*funcP)(), const unsigned int color = 0x000000);
-	void StartFadeOut(void (PlayScene::* funcP)(), const unsigned int color = 0x000000);
+	void StartFadeIn(std::function<void()>, const unsigned int color = 0x000000);
+	void StartFadeOut(std::function<void()>, const unsigned int color = 0x000000);
 
 	bool FadeUpdate(const Input& input);
 
@@ -109,7 +109,7 @@ private:
 	FLOAT4 _waveC;*/
 
 public:
-	PlayScene(SceneController & ctrl, const unsigned int mapId);
+	PlayScene(SceneController & ctrl, const unsigned int mapId, const bool ai = false);
 	~PlayScene();
 
 	void Update(const Input& input) override final;

@@ -10,6 +10,7 @@
 #include "SaveDataCharactor.h"
 
 class BattleEffectFactory;
+class Map;
 
 class DataBase
 {
@@ -69,16 +70,6 @@ private:
 
 	};
 
-	struct MapData
-	{
-		std::string name;
-		std::string fileName;
-		std::string bgmName;
-		MapData() :name(""), fileName(""), bgmName(""){};
-		MapData(const std::string& na, const std::string& pa, const std::string& bn) 
-			:name(na), fileName(pa), bgmName(bn) {};
-	};
-
 	struct BattleEffectData
 	{
 		std::string name;
@@ -100,7 +91,7 @@ private:
 	std::vector<WeaponTypeData> _weaponTypeDataTable;
 	std::vector<WeaponData> _weaponDataTable;
 
-	std::vector<MapData> _mapDataTable;
+	std::vector<std::shared_ptr<Map>> _mapTable;
 
 	std::vector<SaveDataCharactor> _saveDataCharactors;	// セーブデータ生成用
 
@@ -112,6 +103,8 @@ private:
 public:
 	DataBase();
 	~DataBase();
+
+	void Init();
 
 	// 属性ごとの威力倍率を取得する		GetAttributeRate(攻撃する側,	攻撃される側)
 	float GetAttributeRate(const uint8_t selfAttributeId, const uint8_t targetAttributeId)const;
@@ -135,8 +128,8 @@ public:
 	const AttributeData& GetAttributeData(const uint8_t attlebuteId)const;
 
 	// マップデータを取得する
-	const std::vector<MapData>& GetMapDataTable()const;
-	const MapData& GetMapData(const unsigned int mapDataId)const;
+	const std::vector<std::shared_ptr<Map>>& GetMapDataTable()const;
+	const std::shared_ptr<Map> GetMapData(const unsigned int mapDataId)const;
 
 	// WeaponTypeDataを取得する
 	const WeaponTypeData& GetWeaponTypeData(const uint8_t type)const;

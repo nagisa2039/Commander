@@ -59,7 +59,7 @@ void MenuTopInf::Draw()
 
 	// マップ名の描画
 	DrawStringToHandle(nameFrameRect.center, Anker::center, 0xffffff, choplin30,
-		Application::Instance().GetDataBase().GetMapData(_mapCtrl.GetMap()->GetMapID()).name.c_str());
+		Application::Instance().GetDataBase().GetMapData(_mapCtrl.GetMap()->GetMapID())->GetName().c_str());
 
 	// 経過ターン数の描画
 	DrawStringToHandle(turnCntFrameRect.center - Vector2Int(0, 15), Anker::center, 0xffffff, choplin20, "TURN");

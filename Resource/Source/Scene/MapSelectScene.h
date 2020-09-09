@@ -4,6 +4,7 @@
 #include "Geometry.h"
 #include <memory>
 #include "TimeLine.h"
+#include <functional>
 
 class Camera;
 class MapSelectCharactor;
@@ -12,9 +13,11 @@ class MapSelectScene :
     public Scene
 {
 private:
+	const Size _contentSize;
 	std::vector<Vector2Int> _contentPosVec;
 	std::unique_ptr<Camera> _camera;
 	std::vector<std::unique_ptr<MapSelectCharactor>> _mapSelectCharactors;
+	std::function<void()> _fadeEndFunc;
 
 	unsigned int _selectIdx;
 
@@ -22,15 +25,22 @@ private:
 	unsigned int _charactorIdx;
 
 	int _dir;
-	bool _goPlayScene;
+	int _bgmH;
 	
 	bool _debug;
+
+	void(MapSelectScene::* _updater)(const Input&);
+
+	void NormalUpdate(const Input& input);
+	void FadeUpdate(const Input& input);
 
 public:
 	MapSelectScene(SceneController& controller);
 	~MapSelectScene();
 
 	void Update(const Input& input)override;
+
+	void Decide(const bool debug = false);
 
 	void MoveUpdate(const Input& input);
 

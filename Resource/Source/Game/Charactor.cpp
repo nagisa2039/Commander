@@ -216,9 +216,9 @@ void Charactor::DrawMovableMass(const uint8_t alpha) const
 			}
 			box.DrawRectGraph(Vector2Int(scrX, 0), Size(32, 32), graphH);
 
-			Vector2Int leftup = offset + mapPos * chipSize.ToVector2Int();
+			//Vector2Int leftup = offset + mapPos * chipSize.ToVector2Int();
 
-			DrawFormatString(leftup.x, leftup.y, 0x000000, "%d,%d", mapPos.x, mapPos.y);
+			//DrawFormatString(leftup.x, leftup.y, 0x000000, "%d,%d", mapPos.x, mapPos.y);
 			//DrawFormatString(leftup.x, leftup.y+16, 0x000000, "Cost : %d", resultPosList.begin()->moveCnt);
 		}
 	}

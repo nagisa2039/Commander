@@ -24,7 +24,7 @@
 
 using namespace std;
 
-PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctrl), _lastTurnCnt(100)
+PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId, const bool ai):Scene(ctrl), _lastTurnCnt(100)
 {
 	_effects.clear();
 	_charactors.clear();
@@ -40,17 +40,22 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctr
 	_camera = make_unique<Camera>(Rect(Vector2Int(), wsize));
 	_turnChangeAnim = make_unique<TurnChangeAnim>();
 
-	_playerCommander = make_unique<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera, _turnCnt);
-	//_playerCommander = make_unique<EnemyCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
-
-	_enemyCommander = make_unique<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy, *_camera);
-
-	_camera->AddTargetActor(&*_playerCommander);
-
 	auto mapSize = _mapCtrl->GetMapSize() * _mapCtrl->GetChipSize();
 	_camera->SetLimitRect(Rect(mapSize.ToVector2Int() * 0.5, mapSize));
 
 	_mapCtrl->CreateCharactor(ctrl, _effects, *_camera);
+
+	if (ai)
+	{
+		_playerCommander = make_unique<EnemyCommander>(_charactors, *_mapCtrl, Team::player, *_camera);
+	}
+	else
+	{
+		_playerCommander = make_unique<PlayerCommander>(_charactors, *_mapCtrl, Team::player, *_camera, _turnCnt);
+	}
+	_enemyCommander = make_unique<EnemyCommander>(_charactors, *_mapCtrl, Team::enemy, *_camera);
+
+	_camera->AddTargetActor(&*_playerCommander);
 
 	_dyingCharItr = _charactors.end();
 
@@ -86,7 +91,7 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId):Scene(ctr
 	_UIDrawer = &PlayScene::PreparationUIDraw;
 	_UIDrawer = &PlayScene::PreparationUIDraw;
 
-	StartFadeIn(&PlayScene::ChangePreparation);
+	StartFadeIn([this]() {ChangePreparation(); });
 
 	_filterType = FilterType::none;
 	_filterFuncs[Size_t(FilterType::none)] = []() {};
@@ -160,7 +165,7 @@ bool PlayScene::PreparationUpdate(const Input& input)
 	(*_preparationDeque.begin())->Update(input);
 	if (_preparationUI->GetBackMapSelect())
 	{
-		StartFadeOut(&PlayScene::ChnageMapSelect);
+		StartFadeOut([this]() {ChnageMapSelect(); });
 		return false;
 	}
 
@@ -215,7 +220,7 @@ bool PlayScene::PlayerTurnUpdate(const Input& input)
 	CharactorUpdate(input);
 	if (_playerCommander->GetBackMapSelect())
 	{
-		StartFadeOut(&PlayScene::ChnageMapSelect);
+		StartFadeOut([this]() {ChnageMapSelect(); });
 		return false;
 	}
 
@@ -248,7 +253,7 @@ void PlayScene::StartPlayerTurn()
 	if (++_turnCnt >= _lastTurnCnt)
 	{
 		// ゲームオーバー
-		StartFadeOut(&PlayScene::ChangeGameOver);
+		StartFadeOut([this]() {ChangeGameOver(); });
 		return;
 	}
 
@@ -278,6 +283,7 @@ void PlayScene::StartEnemyTurn()
 
 	_updaterOld = _updater;
 
+	_camera->SetLooseFollow(false);
 	_camera->ClearTargetActor();
 	_camera->AddTargetActor(&*_enemyCommander);
 	_camera->SetPos(_enemyCommander->GetCenterPos());
@@ -335,7 +341,7 @@ bool PlayScene::CharactorDyingUpdate(const Input& input)
 		if (static_cast<Team>(i) == Team::player)
 		{
 			// ゲームオーバー
-			StartFadeOut(&PlayScene::ChangeGameOver);
+			StartFadeOut([this]() {ChangeGameOver(); });
 			return true;
 		}
 		else
@@ -360,7 +366,7 @@ bool PlayScene::GameClearUpdate(const Input& input)
 
 	if(input.GetButtonDown("ok"))
 	{
-		StartFadeOut(&PlayScene::ChnageMapSelect);
+		StartFadeOut([this]() {ChnageMapSelect(); });
 		return false;
 	}
 
@@ -371,13 +377,13 @@ bool PlayScene::GameOverUpdate(const Input& input)
 {
 	if (input.GetButtonDown("ok"))
 	{
-		StartFadeOut(&PlayScene::ChnageMapSelect);
+		StartFadeOut([this]() {ChnageMapSelect(); });
 		return false;
 	}
 	return true;
 }
 
-void PlayScene::StartFadeIn(void (PlayScene::* funcP)(), const unsigned int color)
+void PlayScene::StartFadeIn(std::function<void()> funcP, const unsigned int color)
 {
 	_controller.GetFade().StartFadeIn(color);
 	_fadeEndFunc = funcP;
@@ -386,7 +392,7 @@ void PlayScene::StartFadeIn(void (PlayScene::* funcP)(), const unsigned int colo
 	_UIDrawer = &PlayScene::NoneUIDraw;
 }
 
-void PlayScene::StartFadeOut(void (PlayScene::* funcP)(), const unsigned int color)
+void PlayScene::StartFadeOut(std::function<void()> funcP, const unsigned int color)
 {
 	_controller.GetFade().StartFadeOut(color);
 	_fadeEndFunc = funcP;
@@ -401,7 +407,7 @@ bool PlayScene::FadeUpdate(const Input& input)
 	{
 		if (_fadeEndFunc != nullptr)
 		{
-			(this->*_fadeEndFunc)();
+			_fadeEndFunc();
 		}
 		return false;
 	}
@@ -503,7 +509,7 @@ void PlayScene::GameClearDraw(const Camera& camera)
 
 	auto& fileSystem = FileSystem::Instance();
 	auto animValue = _clearAnimTrack->GetValue();
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(animValue * 255));
+	SetDrawBlendMode(DX_BLENDMODE_ADD, static_cast<int>(animValue * 255));
 	DrawRotaGraph(wsize.ToVector2Int() * 0.5f, 1.0f, 0.0f, fileSystem.GetImageHandle("Resource/Image/Battle/light.png"), true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
@@ -556,10 +562,11 @@ void PlayScene::ChangePreparation()
 
 void PlayScene::ChangeGameOver()
 {
-	_updater = &PlayScene::GameOverUpdate;
+	_controller.GetFade().StartFadeIn();
+	_updater = &PlayScene::FadeUpdate;
 	_drawer = &PlayScene::GameOverDraw;
 	_UIDrawer = &PlayScene::NoneUIDraw;
-	_fadeEndFunc = nullptr;
+	_fadeEndFunc = [&updater = _updater]() {updater = &PlayScene::GameOverUpdate;};
 }
 
 void PlayScene::Draw(void)

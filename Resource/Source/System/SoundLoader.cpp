@@ -52,9 +52,9 @@ bool SoundLoader::StopSound(const int handle)
 	if (play == 1)
 	{
 		StopSoundMem(handle);
-		return false;
+		return true;
 	}
-	assert(play != -1);
+	return false;
 }
 
 bool SoundLoader::StopAllSound()

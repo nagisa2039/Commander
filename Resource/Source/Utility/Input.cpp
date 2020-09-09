@@ -50,7 +50,7 @@ void Input::Update(void)
 	GetHitKeyStateAll(_keystate[_currentInputStateIdx].data());
 
 	// マウスの入力情報更新
-	_mouseState[_currentInputStateIdx] = GetMouseInput();
+	_mouseState[_currentInputStateIdx] = DxLib::GetMouseInput();
 	GetMousePoint(&_mousePos.x, &_mousePos.y);
 
 	_padState[_currentInputStateIdx] = GetJoypadInputState(DX_INPUT_PAD1);
@@ -168,6 +168,11 @@ bool Input::GetAnyPadInput() const
 Vector2Int Input::GetMouseMove() const
 {
 	return _mousePos - _mousePosOld;
+}
+
+bool Input::GetMouseInput(const unsigned int checkInput) const
+{
+	return _mouseState[_currentInputStateIdx] & checkInput;
 }
 
 const std::map<std::string, std::array<int, static_cast<size_t>(Input::PeripheralType::max)>>& Input::GetInputTable() const

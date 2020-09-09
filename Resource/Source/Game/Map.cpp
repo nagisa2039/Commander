@@ -23,11 +23,10 @@ void Map::DrawToMapScreen()
 	SetDrawScreen(_mapGraphHandle);
 	ClsDrawScreen();
 
-	int y = 0;
-	for (const auto& mapDataVec : _mapDataVec2)
+	SetDrawMode(DX_DRAWMODE_NEAREST);
+	for (int y = 0;const auto& mapDataVec : _mapDataVec2)
 	{
-		int x = 0;
-		for (const auto& mapData : mapDataVec)
+		for (int x = 0; const auto& mapData : mapDataVec)
 		{
 			DrawMapChip(Vector2Int(x, y), Map_Chip::none);
 			if (_mapDataVec2[y][x].mapChip > Map_Chip::none && _mapDataVec2[y][x].mapChip < Map_Chip::max)
@@ -38,6 +37,7 @@ void Map::DrawToMapScreen()
 		}
 		y++;
 	}
+	SetDrawMode(DX_DRAWMODE_BILINEAR);
 
 	SetDrawScreen(currentScreen);
 }
@@ -53,6 +53,16 @@ bool Map::DrawMapChip(const Vector2Int& mapPos, const Map_Chip mapChip, const Ve
 		graphH, true);
 
 	return true;
+}
+
+const std::string& Map::GetName() const
+{
+	return _name;
+}
+
+const int Map::GetMapGraphH() const
+{
+	return _mapGraphHandle;
 }
 
 const int Map::GetMapID() const
@@ -72,9 +82,8 @@ const Size& Map::GetMapSize() const
 
 bool Map::LoadMapData()
 {
-	auto& mapData = Application::Instance().GetDataBase().GetMapData(_mapId);
 	std::stringstream ss;
-	ss << "Resource/Map/" << mapData.fileName;
+	ss << "Resource/Map/" << _fileName;
 
 	FILE* fp = nullptr;
 
@@ -115,16 +124,17 @@ bool Map::LoadMapData()
 	return true;
 }
 
-Map::Map(const int mapId)
+Map::Map(const int mapId, std::string& name, std::string& fileName, std::string& bgmName)
 	:_mapId(mapId), _mapSize(MAP_CHIP_CNT_W, MAP_CHIP_CNT_H), _chipSize(CHIP_SIZE_W, CHIP_SIZE_H),
-	imageFolderPath("Resource/Image/MapChip/")
+	imageFolderPath("Resource/Image/MapChip/"), _name(name), _fileName(fileName),_bgmName(bgmName)
 {
+	std::stringstream ss;
+	ss << "map" << _mapId;
 	auto& fileSystem = FileSystem::Instance();
-	_mapGraphHandle = fileSystem.MakeScreen("map", _mapSize * _chipSize, true);
+	_mapGraphHandle = fileSystem.MakeScreen(ss.str().c_str(), _mapSize * _chipSize, true);
 	LoadMapData();
 
-	auto& mapData = Application::Instance().GetDataBase().GetMapData(_mapId);
-	_bgmH = fileSystem.GetSoundHandle(mapData.bgmName.c_str());
+	_bgmH = fileSystem.GetSoundHandle(bgmName.c_str());
 }
 
 Map::~Map()

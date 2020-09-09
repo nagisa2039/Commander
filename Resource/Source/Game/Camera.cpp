@@ -46,7 +46,7 @@ Camera::Camera(const Rect& rect) :_rect(rect)
 	// size.w == 0 ÇÕêßå¿Ç»Çµ
 	_limitRect.size.w = 0;
 
-	_follower = &Camera::LooseFollow;
+	_follower = &Camera::NormalFollow;
 }
 
 Camera::~Camera()

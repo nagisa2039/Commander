@@ -13,6 +13,7 @@ private:
 
 	Vector2 _pos;
 	Rect _limitRect;
+	Vector2 _offset;
 
 	void NormalFollow();
 	void LooseFollow();
@@ -38,5 +39,6 @@ public:
 	void SetLooseFollow(bool lose);
 
 	const Rect& GetRect()const;
+	void SetOffset(const Vector2& offset);
 };
 

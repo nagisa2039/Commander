@@ -10,9 +10,7 @@
 #include "SaveData.h"
 #include "Fade.h"
 #include "Map.h"
-
 #include "Charactor.h"
-
 #include "PlayerCommander.h"
 #include "EnemyCommander.h"
 #include "Effect/Effect.h"
@@ -21,6 +19,7 @@
 #include "MapSelectScene.h"
 #include "ShopScene.h"
 #include "Tool.h"
+#include "SoundLoader.h"
 
 using namespace std;
 
@@ -91,40 +90,13 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId, const boo
 	_UIDrawer = &PlayScene::PreparationUIDraw;
 	_UIDrawer = &PlayScene::PreparationUIDraw;
 
-	StartFadeIn([this]() {ChangePreparation(); });
 
 	_filterType = FilterType::none;
 	_filterFuncs[Size_t(FilterType::none)] = []() {};
 	_filterFuncs[Size_t(FilterType::gauss)] = [&graphH = _gameH]() 
 	{GraphFilter(graphH, DX_GRAPH_FILTER_GAUSS, 16, 1000); };
 
-	//// ピクセルシェーダーバイナリコードの読み込み
-	//pshandle = LoadPixelShader("Resource/Source/Shader/HPBer.cso");
-
-	//// 頂点データの準備
-	//Vert[0].pos = VGet(0.0f, 0.0f, 0.0f);
-	//Vert[1].pos = VGet(512.0f, 0.0f, 0.0f);
-	//Vert[2].pos = VGet(0.0f, 512.0f, 0.0f);
-	//Vert[3].pos = VGet(512.0f, 512.0f, 0.0f);
-	//Vert[0].dif = GetColorU8(255, 255, 255, 255);
-	//Vert[0].spc = GetColorU8(0, 0, 0, 0);
-	//Vert[0].u = 0.0f; Vert[0].v = 0.0f;
-	//Vert[1].u = 1.0f; Vert[1].v = 0.0f;
-	//Vert[2].u = 0.0f; Vert[2].v = 1.0f;
-	//Vert[3].u = 1.0f; Vert[3].v = 1.0f;
-	//Vert[0].su = 0.0f; Vert[0].sv = 0.0f;
-	//Vert[1].su = 1.0f; Vert[1].sv = 0.0f;
-	//Vert[2].su = 0.0f; Vert[2].sv = 1.0f;
-	//Vert[3].su = 1.0f; Vert[3].sv = 1.0f;
-	//Vert[0].rhw = 1.0f;
-	//Vert[1].rhw = 1.0f;
-	//Vert[2].rhw = 1.0f;
-	//Vert[3].rhw = 1.0f;
-	//Vert[4] = Vert[2];
-	//Vert[5] = Vert[1];
-
-	//_colorC = { 0.0f,0.0f,1.0f,1.0f };
-	//_waveC = { 0.5f, 0.0f, 0.0f, 0.0f };
+	StartFadeIn([this]() {ChangePreparation(); });
 }
 
 PlayScene::~PlayScene()
@@ -256,6 +228,8 @@ void PlayScene::StartPlayerTurn()
 		StartFadeOut([this]() {ChangeGameOver(); });
 		return;
 	}
+	GameClear();
+	return;
 
 	_updater = &PlayScene::TurnChengeUpdate;
 	_drawer = &PlayScene::TurnChengeDraw;
@@ -341,15 +315,13 @@ bool PlayScene::CharactorDyingUpdate(const Input& input)
 		if (static_cast<Team>(i) == Team::player)
 		{
 			// ゲームオーバー
-			StartFadeOut([this]() {ChangeGameOver(); });
+			GameOver();
 			return true;
 		}
 		else
 		{
 			// ゲームクリア
-			Application::Instance().GetSaveData().Save(/*_charactors, */_mapCtrl->GetMap()->GetMapID());
-			_updater = &PlayScene::GameClearUpdate;
-			_drawer = &PlayScene::GameClearDraw;
+			GameClear();
 			return true;
 		}
 	}
@@ -359,6 +331,20 @@ bool PlayScene::CharactorDyingUpdate(const Input& input)
 	return true;
 }
 
+void PlayScene::GameClear()
+{
+	Application::Instance().GetSaveData().Save(_mapCtrl->GetMap()->GetMapID(), _turnCnt);
+	_updater = &PlayScene::GameClearUpdate;
+	_drawer = &PlayScene::GameClearDraw;
+	_mapCtrl->GetMap()->StopBGM();
+	SoundL.PlaySE("Resource/Sound/SE/shakin1.mp3");
+}
+
+void PlayScene::GameOver()
+{
+	StartFadeOut([this]() {ChangeGameOver(); });
+}
+
 bool PlayScene::GameClearUpdate(const Input& input)
 {
 	_clearAnimTrack->Update();
@@ -366,7 +352,8 @@ bool PlayScene::GameClearUpdate(const Input& input)
 
 	if(input.GetButtonDown("ok"))
 	{
-		StartFadeOut([this]() {ChnageMapSelect(); });
+		SoundL.PlaySE("Resource/Sound/SE/ok2.mp3");
+		StartFadeOut([this]() {ChnageMapSelect(); }, 0, &PlayScene::GameClearDraw);
 		return false;
 	}
 
@@ -377,27 +364,28 @@ bool PlayScene::GameOverUpdate(const Input& input)
 {
 	if (input.GetButtonDown("ok"))
 	{
-		StartFadeOut([this]() {ChnageMapSelect(); });
+		SoundL.PlaySE("Resource/Sound/SE/ok2.mp3");
+		StartFadeOut([this]() {ChnageMapSelect(); }, 0, &PlayScene::GameOverDraw);
 		return false;
 	}
 	return true;
 }
 
-void PlayScene::StartFadeIn(std::function<void()> funcP, const unsigned int color)
+void PlayScene::StartFadeIn(std::function<void()> funcP, const unsigned int color, void(PlayScene::* nextDrawer)())
 {
 	_controller.GetFade().StartFadeIn(color);
 	_fadeEndFunc = funcP;
 	_updater = &PlayScene::FadeUpdate;
-	_drawer = &PlayScene::FadeDraw;
+	_drawer = nextDrawer;
 	_UIDrawer = &PlayScene::NoneUIDraw;
 }
 
-void PlayScene::StartFadeOut(std::function<void()> funcP, const unsigned int color)
+void PlayScene::StartFadeOut(std::function<void()> funcP, const unsigned int color, void(PlayScene::* nextDrawer)())
 {
 	_controller.GetFade().StartFadeOut(color);
 	_fadeEndFunc = funcP;
 	_updater = &PlayScene::FadeUpdate;
-	_drawer = &PlayScene::FadeDraw;
+	_drawer = nextDrawer;
 	_UIDrawer = &PlayScene::NoneUIDraw;
 }
 
@@ -414,7 +402,7 @@ bool PlayScene::FadeUpdate(const Input& input)
 	return true;
 }
 
-void PlayScene::PreparationDraw(const Camera& camera)
+void PlayScene::PreparationDraw()
 {
 	_mapCtrl->Draw(*_camera);
 
@@ -430,22 +418,13 @@ void PlayScene::PreparationDraw(const Camera& camera)
 	}
 }
 
-void PlayScene::TurnChengeDraw(const Camera& camera)
+void PlayScene::TurnChengeDraw()
 {
-	_mapCtrl->Draw(*_camera);
-
-	for (auto& charactor : _charactors)
-	{
-		charactor->Draw();
-	}
-	for (auto& effect : _effects)
-	{
-		effect->Draw();
-	}
+	BaseDraw();
 	_turnChangeAnim->Draw();
 }
 
-void PlayScene::PlayerTurnDraw(const Camera& camera)
+void PlayScene::PlayerTurnDraw()
 {
 	_mapCtrl->Draw(*_camera);
 
@@ -460,53 +439,24 @@ void PlayScene::PlayerTurnDraw(const Camera& camera)
 	}
 }
 
-void PlayScene::EnemyTurnDraw(const Camera& camera)
+void PlayScene::EnemyTurnDraw()
 {
-	_mapCtrl->Draw(*_camera);
-
-	for (auto& charactor : _charactors)
-	{
-		charactor->Draw();
-	}
-	for (auto& effect : _effects)
-	{
-		effect->Draw();
-	}
+	BaseDraw();
 }
 
-void PlayScene::GameOverDraw(const Camera& camera)
+void PlayScene::GameOverDraw()
 {
 	auto wsize = Application::Instance().GetWindowSize();
-	_mapCtrl->Draw(*_camera);
-
-	for (auto& charactor : _charactors)
-	{
-		charactor->Draw();
-	}
-	for (auto& effect : _effects)
-	{
-		effect->Draw();
-	}
-
+	DrawGraph(0,0,ImageHandle("Resource/Image/Battle/game_over.jpg"), false);
 	auto fontHandle = FontHandle("choplin200edge");
 	DrawStringToHandle(wsize.ToVector2Int() * 0.5f, Anker::center, 0x000088, fontHandle, "GAME OVER");
 }
 
-void PlayScene::GameClearDraw(const Camera& camera)
+void PlayScene::GameClearDraw()
 {
+	BaseDraw();
+
 	auto wsize = Application::Instance().GetWindowSize();
-
-	_mapCtrl->Draw(*_camera);
-
-	for (auto& charactor : _charactors)
-	{
-		charactor->Draw();
-	}
-	for (auto& effect : _effects)
-	{
-		effect->Draw();
-	}
-
 	auto& fileSystem = FileSystem::Instance();
 	auto animValue = _clearAnimTrack->GetValue();
 	SetDrawBlendMode(DX_BLENDMODE_ADD, static_cast<int>(animValue * 255));
@@ -517,9 +467,10 @@ void PlayScene::GameClearDraw(const Camera& camera)
 	DrawStringToHandle(wsize.ToVector2Int() * 0.5f, Anker::center, 0xffff00, fontHandle, "GAME CLEAR");
 }
 
-void PlayScene::FadeDraw(const Camera& camera)
+void PlayScene::BaseDraw()
 {
 	_mapCtrl->Draw(*_camera);
+
 	for (auto& charactor : _charactors)
 	{
 		charactor->Draw();
@@ -548,6 +499,7 @@ void PlayScene::NoneUIDraw()
 void PlayScene::ChnageMapSelect()
 {
 	_mapCtrl->GetMap()->StopBGM();
+	SoundL.StopSound(SoundHandle("Resource/Sound/BGM/game_over.mp3"));
 	_controller.ChangeScene(make_shared<MapSelectScene>(_controller));
 }
 
@@ -567,6 +519,8 @@ void PlayScene::ChangeGameOver()
 	_drawer = &PlayScene::GameOverDraw;
 	_UIDrawer = &PlayScene::NoneUIDraw;
 	_fadeEndFunc = [&updater = _updater]() {updater = &PlayScene::GameOverUpdate;};
+	SoundL.PlaySE("Resource/Sound/SE/shock1.mp3");
+	SoundL.PlayBGM("Resource/Sound/BGM/game_over.mp3");
 }
 
 void PlayScene::Draw(void)
@@ -575,7 +529,7 @@ void PlayScene::Draw(void)
 	SetDrawScreen(_gameH);
 	ClsDrawScreen();
 
-	(this->*_drawer)(*_camera);
+	(this->*_drawer)();
 	SetDrawScreen(DX_SCREEN_BACK);
 
 	_filterFuncs[Size_t(_filterType)]();

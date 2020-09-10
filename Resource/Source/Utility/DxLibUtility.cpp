@@ -56,6 +56,7 @@ void DrawStringToHandle(const Vector2Int& drawPos, const Anker anker, const unsi
 	GetDrawExtendFormatStringSizeToHandle(&strSize.w, &strSize.h, &lineCnt, 1.0, 1.0, fontHandle, str);
 	auto calPos = GetDrawPos(drawPos, strSize, anker).ToVector2();
 	DrawExtendFormatStringFToHandle(calPos.x, calPos.y, 1.0, 1.0, color, fontHandle, str);
+
 }
 
 void DrawStringToHandle(const Vector2Int& drawPos, const Anker anker, const unsigned color, const double exRate, const int fontHandle, const char* format, ...)

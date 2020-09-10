@@ -35,7 +35,7 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 
 	_givenDamage = 0;
 
-	_hpDotMaskH = ImageL.LoadMask("Resource/Image/Battle/hpDotMask.png");
+	_hpDotMaskH = ImageL.LoadMask("Resource/Image/Battle/hpDotMask.bmp");
 
 	_gaveDamageType = damageType::none;
 	_receiveDamageType = damageType::none;

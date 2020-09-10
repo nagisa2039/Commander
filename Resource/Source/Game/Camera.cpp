@@ -47,6 +47,7 @@ Camera::Camera(const Rect& rect) :_rect(rect)
 	_limitRect.size.w = 0;
 
 	_follower = &Camera::NormalFollow;
+	_offset = Vector2(0.0f, 0.0f);
 }
 
 Camera::~Camera()
@@ -117,7 +118,7 @@ void Camera::ClearTargetActor()
 Vector2Int Camera::GetCameraOffset() const
 {
 	auto wsize = Application::Instance().GetWindowSize();
-	return Vector2Int(wsize.w/2 - _rect.center.x, wsize.h/2 - _rect.center.y);
+	return Vector2Int(wsize.w/2 - _rect.center.x - _offset.x, wsize.h/2 - _rect.center.y - _offset.y);
 }
 
 void Camera::SetPos(const Vector3& pos)
@@ -138,4 +139,9 @@ void Camera::SetLooseFollow(bool lose)
 const Rect& Camera::GetRect() const
 {
 	return _rect;
+}
+
+void Camera::SetOffset(const Vector2& offset)
+{
+	_offset = offset;
 }

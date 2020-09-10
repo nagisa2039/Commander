@@ -8,34 +8,52 @@ class Charactor;
 class SaveData
 {
 private:
-	//std::vector<SaveDataCharactor> _charactorDataVec;		// キャラクターデータ(すべてのキャラクターを管理)
-	//std::vector<SaveDataCharactor> _waitCharactorDataVec;	// 待機中のキャラクターデータ(出撃したキャラクターはいない)
+	/// <summary>
+	/// 0未満なら未開放
+	/// 0なら開放済み、未クリア
+	/// 1以上ならクリアターン数
+	/// </summary>
+	std::vector<int> _clearMapDataVec;
 
-	int _mapNum;
-	//unsigned int _money;
-
-	//bool CreateSaveCharactorData(const std::vector<std::shared_ptr<Charactor>>& charactorVec);
-	bool CreateSaveData();
-	void SaveCharactorData(const int& mapNum);
+	void WriteData();
 
 public:
 	SaveData();
 	~SaveData();
 
-	bool Save(/*const std::vector<std::shared_ptr<Charactor>>& charactorVec, */const int mapNum);
+	/// <summary>
+	/// データのセーブ
+	/// </summary>
+	/// <param name="mapNum">クリアしたマップ番号</param>
+	/// <param name="turnCnt">クリアに要したターン数</param>
+	/// <returns>成否</returns>
+	bool Save(const int mapNum, const int turnCnt);
+
+	/// <summary>
+	/// セーブデータのロード
+	/// </summary>
+	/// <returns>成否</returns>
 	bool Load();
 
-	// 現在開放しているマップ番号を返す	(例 : 5なら0から4までクリアし、5を開放している)
-	int GetMapNum()const;
+	/// <summary>
+	/// セーブデータの初期化
+	/// </summary>
+	/// <returns>成否</returns>
+	bool Reset();
 
-	// 所持金を返す
-	//const unsigned int& GetMoney()const;
-	// 所持金を設定する
-	//void SetMoney(const unsigned int money);
+	/// <summary>
+	/// ステージの全開放
+	/// </summary>
+	/// <returns>成否</returns>
+	bool AllOpen();
 
-	/*const std::vector<SaveDataCharactor>& GetCharactorDataVec()const;
-	void SetWaitCharactorDataVec(const std::vector<SaveDataCharactor>& charactorDataVec);
-
-	SaveDataCharactor& GetCharactorData(const unsigned int charactorData);*/
+	/// <summary>
+	/// マップ数分のクリア状況を取得
+	/// 0未満なら未開放
+	/// 0なら開放済
+	/// 1以上ならクリアターン数
+	/// </summary>
+	/// <returns></returns>
+	const std::vector<int>& GetClearMapDataVec()const;
 };
 

@@ -10,8 +10,8 @@
 
 namespace
 {
-	constexpr unsigned int CHIP_SIZE_W = 80;
-	constexpr unsigned int CHIP_SIZE_H = 80;
+	constexpr unsigned int CHIP_SIZE_W = 64;
+	constexpr unsigned int CHIP_SIZE_H = 64;
 
 	constexpr unsigned int MAP_CHIP_CNT_W = 20;
 	constexpr unsigned int MAP_CHIP_CNT_H = 20;

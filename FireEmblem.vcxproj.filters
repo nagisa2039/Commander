@@ -318,6 +318,9 @@
     <ClCompile Include="Resource\Source\Game\Status.cpp">
       <Filter>ソース ファイル\Game\Actor\Charactor</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Source\System\AdvanceLoader.cpp">
+      <Filter>ソース ファイル\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\Scene\PlayScene.h">
@@ -568,6 +571,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\BattleEffectFactory.h">
       <Filter>ヘッダー ファイル\Game\Actor\Effect\BattleEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\System\AdvanceLoader.h">
+      <Filter>ヘッダー ファイル\System</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

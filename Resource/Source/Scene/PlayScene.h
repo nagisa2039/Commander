@@ -63,7 +63,7 @@ private:
 	bool(PlayScene::* _updaterOld)(const Input& input);
 
 	// 場面ごとの更新を行う関数ポインタ
-	void(PlayScene::* _drawer)(const Camera& camera);
+	void(PlayScene::* _drawer)();
 	void(PlayScene::* _UIDrawer)();
 
 	void StartPlayerTurn();
@@ -78,21 +78,25 @@ private:
 
 	bool CharactorDyingUpdate(const Input& input);
 
+	void GameClear();
+
+	void GameOver();
+
 	bool GameClearUpdate(const Input& input);
 	bool GameOverUpdate(const Input& input);
 
-	void StartFadeIn(std::function<void()>, const unsigned int color = 0x000000);
-	void StartFadeOut(std::function<void()>, const unsigned int color = 0x000000);
+	void StartFadeIn(std::function<void()>, const unsigned int color = 0x000000, void(PlayScene::* nextDrawer)() = &PlayScene::BaseDraw);
+	void StartFadeOut(std::function<void()>, const unsigned int color = 0x000000, void(PlayScene::* nextDrawer)() = &PlayScene::BaseDraw);
 
 	bool FadeUpdate(const Input& input);
 
-	void PreparationDraw(const Camera& camera);
-	void TurnChengeDraw(const Camera& camera);
-	void PlayerTurnDraw(const Camera& camera);
-	void EnemyTurnDraw(const Camera& camera);
-	void GameOverDraw(const Camera& camera);
-	void GameClearDraw(const Camera& camera);
-	void FadeDraw(const Camera& camera);
+	void PreparationDraw();
+	void TurnChengeDraw();
+	void PlayerTurnDraw();
+	void EnemyTurnDraw();
+	void GameOverDraw();
+	void GameClearDraw();
+	void BaseDraw();
 
 	void PreparationUIDraw();
 	void PlayerUIDraw();

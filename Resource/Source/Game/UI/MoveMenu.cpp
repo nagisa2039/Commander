@@ -33,9 +33,22 @@ void MoveMenu::Back()
 
 void MoveMenu::OpenUpdate(const Input& input)
 {
-	Menu::OpenUpdate(input);
+	if (_isBattle)
+	{
 
-	if (!_isBattle)return;
+		if (input.GetButtonDown("ok"))
+		{
+			Decision();
+			return;
+		}
+		if (input.GetButtonDown("back"))
+		{
+			Back();
+			return;
+		}
+		return;
+	}
+	Menu::OpenUpdate(input);
 
 	if (input.GetButtonDown("right"))
 	{

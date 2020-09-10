@@ -2,7 +2,6 @@
 #include <vector>
 #include <map>
 #include "../Utility/Geometry.h"
-class ImageLoader;
 
 //データ基底クラス
 class Data
@@ -12,17 +11,6 @@ public:
 	virtual bool IsAvailable()=0;
 	virtual ~Data();
 };
-
-
-//
-//using LayerdLevelData_t = std::vector<unsigned char*>;
-//class LevelData : public Data 
-//{
-//private:
-//	LayerdLevelData_t* _levelData;
-//public:
-//	LayerdLevelData_t* GetLevelData()const { return _levelData; }
-//};
 
 class Loader
 {

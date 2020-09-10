@@ -13,6 +13,7 @@ void TitleScene::NormalUpdate(const Input& input)
 	_animTrack->Update();
 	if (input.GetButtonDown("ok"))
 	{
+		SoundL.PlaySE("Resource/Sound/SE/ok2.mp3");
 		_fadeEndFunc = [&controller = _controller]() 
 		{
 			controller.ChangeScene(std::make_shared<MapSelectScene>(controller));

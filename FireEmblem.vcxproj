@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Resource\Source\System\AdvanceLoader.cpp" />
     <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\BattleEffectFactory.cpp" />
     <ClCompile Include="Resource\Source\Game\CutIn.cpp" />
     <ClCompile Include="Resource\Source\Game\Map.cpp" />
@@ -98,6 +99,7 @@
     <ClCompile Include="Resource\Source\Scene\TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Resource\Source\System\AdvanceLoader.h" />
     <ClInclude Include="Resource\Source\Game\CutIn.h" />
     <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\BattleEffectFactory.h" />
     <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\BattleEffectType.h" />

@@ -75,6 +75,8 @@ protected:
 
 	//	死亡アニメーション中
 	bool _isDying;
+	// DyingUpdateの初回のみに行いたい処理用フラグ
+	bool _beginDying;
 
 	Status _status; 
 	Status _startStatus;

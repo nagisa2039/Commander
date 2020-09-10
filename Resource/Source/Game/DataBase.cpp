@@ -2,10 +2,10 @@
 #include <fstream>
 #include <sstream>
 #include <Dxlib.h>
-#include "../System/Application.h"
-#include "../System/FileSystem.h"
 #include "Effect/BattleEffect/BattleEffectFactory.h"
+#include "FileSystem.h"
 #include "Map.h"
+#include "AdvanceLoader.h"
 
 using namespace std;
 
@@ -279,6 +279,21 @@ void DataBase::Init()
 			i++;
 		}
 	}
+
+	// advanceLoadTableÇÃì«Ç›çûÇ›
+	{
+		vector<vector<string>> dataVec2;
+		ReadData("Resource/DataBase/AdvanceLoad.data", dataVec2);
+		_advanceLoadTable.reserve(120);
+		for (const auto& dataVec : dataVec2)
+		{
+			for (const auto& data : dataVec)
+			{
+				_advanceLoadTable.emplace_back(data);
+			}
+		}
+		 std::make_unique<AdvanceLoader>();
+	}
 }
 
 float DataBase::GetAttributeRate(const uint8_t selfAttributeId, const uint8_t targetAttributeId) const
@@ -374,6 +389,11 @@ const BattleEffectFactory& DataBase::GetBattleEffectFactory() const
 const DataBase::BattleEffectData& DataBase::GetBattleEffectData(const BattleEffectType type) const
 {
 	return _battleEffectDataTable[static_cast<size_t>(type)];
+}
+
+const std::vector<std::string>& DataBase::GetAdvanceLoadTable() const
+{
+	return _advanceLoadTable;
 }
 
 void DataBase::CharactorData::DrawIcon(const Rect& rect, const Team team)const

@@ -256,6 +256,51 @@ const int Rect::Botton() const
 	return center.y + size.h/2;
 }
 
+Vector2Int Rect::Leftup()
+{
+	return Vector2Int(Left(), Top());
+}
+
+Vector2Int Rect::Leftcenter()
+{
+	return Vector2Int(Left(), center.y);
+}
+
+Vector2Int Rect::Leftdown()
+{
+	return Vector2Int(Left(), Botton());
+}
+
+Vector2Int Rect::Centerup()
+{
+	return Vector2Int(center.x, Top());
+}
+
+Vector2Int Rect::Center()
+{
+	return center;
+}
+
+Vector2Int Rect::Centerdown()
+{
+	return Vector2Int(center.x, Botton());
+}
+
+Vector2Int Rect::Rightup()
+{
+	return Vector2Int(Right(), Top());
+}
+
+Vector2Int Rect::Rightcenter()
+{
+	return Vector2Int(Right(), center.y);
+}
+
+Vector2Int Rect::Rightdown()
+{
+	return Vector2Int(Right(), Botton());
+}
+
 void Rect::Draw(unsigned int color, const bool fill)const
 {
 	int rightbuttomOffset = fill ? 0 : -1;
@@ -411,6 +456,12 @@ void Size::operator*=(const float scale)
 {
 	this->w = static_cast<int>(w * scale);
 	this->h = static_cast<int>(h * scale);
+}
+
+void Size::operator/=(const float scale)
+{
+	this->w = static_cast<int>(w / scale);
+	this->h = static_cast<int>(h / scale);
 }
 
 Vector3 Vector3::operator-(void)const

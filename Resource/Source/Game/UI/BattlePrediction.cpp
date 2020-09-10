@@ -90,24 +90,27 @@ void BattlePrediction::Draw()
 	DrawHPBer(drawY, windowRect, rightAttack, fontH);
 
 	int distance = 250;
-	auto DrawContent = [&](const char* name, const int leftValue, const int rightValue, 
+	auto DrawContent = [&](const char* name, const bool healDisplay, int leftValue, const int rightValue, 
 		const unsigned int leftColor = 0xffffff, const unsigned int rightColor = 0xffffff)
 	{
-		char str[256];
 		if (selfBattleStatus.CheckHeal())
 		{
-			sprintf_s(str, 256, "%d", leftValue);
-			DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, leftColor, fontH, str);
+			if (healDisplay)
+			{
+				DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, leftColor, fontH, "%d", leftValue);
+			}
+			else
+			{
+				DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, leftColor, fontH, "-");
+			}
 			DrawStringToHandle(Vector2Int(windowRect.center.x + distance / 2, drawY), Anker::center, 0xffffff, fontH, "-");
 		}
 		else
 		{
-			sprintf_s(str, 256, "%d", leftValue);
-			DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, leftColor, fontH, str);
+			DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, leftColor, fontH, "%d", leftValue);
 			if (rightAttack)
 			{
-				sprintf_s(str, 256, "%d", rightValue);
-				DrawStringToHandle(Vector2Int(windowRect.center.x + distance / 2, drawY), Anker::center, rightColor, fontH, str);
+				DrawStringToHandle(Vector2Int(windowRect.center.x + distance / 2, drawY), Anker::center, rightColor, fontH, "%d", rightValue);
 			}
 			else
 			{
@@ -123,7 +126,7 @@ void BattlePrediction::Draw()
 	{
 		if (selfBattleStatus.CheckHeal())
 		{
-			DrawContent("回復", selfBattleStatus.GetRecover(), targetBattleStatus.GetDamage(selfBattleStatus));
+			DrawContent("回復", true, selfBattleStatus.GetRecover(), targetBattleStatus.GetDamage(selfBattleStatus));
 			return;
 		}
 		else
@@ -148,7 +151,7 @@ void BattlePrediction::Draw()
 			unsigned int targetColor	= GetAttackColor(Application::Instance().GetDataBase().
 				GetAttributeRate(targetBattleStatus.weaponTypeData.attribute, selfBattleStatus.weaponTypeData.attribute));
 
-			DrawContent("威力", selfBattleStatus.GetDamage(targetBattleStatus), 
+			DrawContent("威力", true, selfBattleStatus.GetDamage(targetBattleStatus), 
 				targetBattleStatus.GetDamage(selfBattleStatus), selfColor, targetColor);
 		}
 		auto& fileSystem = FileSystem::Instance();
@@ -176,10 +179,10 @@ void BattlePrediction::Draw()
 	DrawContentForPower();
 	// 命中
 	drawY += 40;
-	DrawContent("命中", selfBattleStatus.GetHit(targetBattleStatus), targetBattleStatus.GetHit(selfBattleStatus));
+	DrawContent("命中", false, selfBattleStatus.GetHit(targetBattleStatus), targetBattleStatus.GetHit(selfBattleStatus));
 	// 必殺
 	drawY += 40;
-	DrawContent("必殺", selfBattleStatus.GetCritical(targetBattleStatus), targetBattleStatus.GetCritical(selfBattleStatus));
+	DrawContent("必殺", false, selfBattleStatus.GetCritical(targetBattleStatus), targetBattleStatus.GetCritical(selfBattleStatus));
 }
 
 void BattlePrediction::DrawHPBer(int& drawY, const Rect& windowRect, bool rightAttack, int fontH)
@@ -225,17 +228,17 @@ void BattlePrediction::DrawHPBer(int& drawY, const Rect& windowRect, bool rightA
 		DrawBox(drawPos, drawPos + subSize, teamColor);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
+		Size currentSize(static_cast<int>(hpSize.w * (targetBattleStatus.CheckHeal() ? before : affter)), hpSize.h);
 		// 残りHPの吹き出し表示
 		if (chengePoint != 0)
 		{
-			Vector2Int fukidashiDrawPos = drawPos + Vector2Int(subSize.w * (dir == Dir::left ? 1 : 0), 
-				-fukisashiSize.h / 2 - static_cast<int>(fukisashiSize.h/5 * hpAnimValue));
+			Vector2Int fukidashiDrawPos = Vector2Int(windowRect.center.x + currentSize.w * (static_cast<int>(dir == Dir::left)*-2+1),
+				drawY- hpSize.h/2 -fukisashiSize.h / 2 - static_cast<int>(fukisashiSize.h/5 * hpAnimValue));
 			DrawRotaGraph(fukidashiDrawPos, fukidashiScale, 0.0f, fukidashiH, true);
 			DrawStringToHandle(fukidashiDrawPos, Anker::center, 0x000000, choplin30, "%d", affterHealth);
 		}
 
 		// HPの残量
-		Size currentSize(static_cast<int>(hpSize.w * (targetBattleStatus.CheckHeal() ? before : affter)), hpSize.h);
 		drawPos = GetDrawPos(Vector2Int(windowRect.center.x, drawY), currentSize, anker);
 		DrawBox(drawPos, drawPos + currentSize, teamColor);
 

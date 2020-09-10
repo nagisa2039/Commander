@@ -5,6 +5,8 @@
 #include "DataBase.h"
 #include "Application.h"
 #include "Input.h"
+#include "SoundLoader.h"
+#include "FileSystem.h"
 
 using namespace std;
 
@@ -13,7 +15,8 @@ namespace
 	constexpr unsigned int FRONT_CHANGE_ITV = 10;
 }
 
-MapSelectCharactor::MapSelectCharactor(Camera& camera, const CharactorType& charactorType): Actor(camera)
+MapSelectCharactor::MapSelectCharactor(Camera& camera, const CharactorType& charactorType, const bool begin)
+	: Actor(camera), _begin(begin)
 {
 	_animator = make_unique<Animator>();
 	const Size divSize = Size(32, 32);
@@ -44,10 +47,13 @@ MapSelectCharactor::MapSelectCharactor(Camera& camera, const CharactorType& char
 
 	_speed = 10;
 	_isMove = false;
+
+	_moveSEH = SoundHandle("Resource/Sound/SE/dash.mp3");
 }
 
 MapSelectCharactor::~MapSelectCharactor()
 {
+	SoundL.StopSound(_moveSEH);
 }
 
 void MapSelectCharactor::Update(const Input& input)
@@ -67,6 +73,11 @@ void MapSelectCharactor::Update(const Input& input)
 	{
 		_pos = _targetPos.ToVector2();
 		_isMove = false;
+
+		if (_begin)
+		{
+			SoundL.StopSound(_moveSEH);
+		}
 		_fontChangeCnt = FRONT_CHANGE_ITV;
 		return;
 	}
@@ -92,6 +103,10 @@ void MapSelectCharactor::Draw()
 
 void MapSelectCharactor::SetTargetPos(const Vector2Int& targetPos)
 {
+	if (_begin)
+	{
+		SoundL.PlaySE(_moveSEH);
+	}
 	_isMove = true;
 	_targetPos = targetPos;
 }

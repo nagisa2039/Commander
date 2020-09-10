@@ -212,7 +212,15 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 	_expUI.reset();
 	
 	auto& soundLoader = SoundL;
-	_bgmH = soundLoader.GetSoundHandle("Resource/Sound/BGM/battle.mp3");
+	if (_leftBC.GetCharacotr().GetBattleStatus().CheckHeal()
+		&& _rightBC.GetCharacotr().GetTeam() == _leftBC.GetCharacotr().GetTeam())
+	{
+		_bgmH = soundLoader.GetSoundHandle("Resource/Sound/BGM/heal.mp3");
+	}
+	else
+	{
+		_bgmH = soundLoader.GetSoundHandle("Resource/Sound/BGM/battle.mp3");
+	}
 	soundLoader.PlayBGM(_bgmH);
 }
 

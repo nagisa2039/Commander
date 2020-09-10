@@ -98,6 +98,8 @@ private:
 	std::vector<BattleEffectData> _battleEffectDataTable;
 	std::unique_ptr<BattleEffectFactory> _battleEffectFactory;
 
+	std::vector<std::string> _advanceLoadTable;	// 事前読込するリソース名を格納
+
 	bool ReadData(const char* path, std::vector<std::vector<std::string>>& out);
 
 public:
@@ -152,5 +154,10 @@ public:
 	/// BattleEffectDataの取得
 	/// </summary>
 	const BattleEffectData& GetBattleEffectData(const BattleEffectType type)const;
+
+	/// <summary>
+	/// 事前読込するリソースパス取得
+	/// </summary>
+	const std::vector<std::string>& GetAdvanceLoadTable()const;
 };
 

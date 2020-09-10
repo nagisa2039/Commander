@@ -61,6 +61,12 @@ void Charactor::BattaleStart(Charactor* charactor)
 
 void Charactor::DyingUpdate(const Input& input)
 {
+	if (_beginDying)
+	{
+		_beginDying = false;
+
+		SoundL.PlaySE("Resource/Sound/SE/Á–Å.mp3");
+	}
 	_dyingAnimAlphaTL->Update();
 	if (_dyingAnimAlphaTL->GetEnd())
 	{
@@ -370,6 +376,7 @@ void Charactor::SetIsSelect(const bool select)
 void Charactor::SetIsDying()
 {
 	_isDying = true;
+	_beginDying = true;
 
 	_updater = &Charactor::DyingUpdate;
 	_drawer	 = &Charactor::DyingDraw;
@@ -780,6 +787,7 @@ Charactor::Charactor(const CharactorType type, const uint8_t level, const Vector
 	_canMove = true;
 	_moveActive = false;
 	_isDying = false;
+	_beginDying = false;
 
 	_animator = make_shared<Animator>();
 

@@ -170,6 +170,7 @@ struct Size
 	Vector2 ToVector2()const;
 	Size operator-(const Size& size); 
 	void operator*=(const float scale);
+	void operator/=(const float scale);
 };
 
 Size operator+(const Size& lval, const Size& rval);
@@ -196,6 +197,16 @@ struct Rect
 	const int Botton()const;
 	const int Width()const { return size.w; }
 	const int Height()const{ return size.h; }
+
+	Vector2Int Leftup();
+	Vector2Int Leftcenter();
+	Vector2Int Leftdown();
+	Vector2Int Centerup();
+	Vector2Int Center();
+	Vector2Int Centerdown();
+	Vector2Int Rightup();
+	Vector2Int Rightcenter();
+	Vector2Int Rightdown();
 
 	void Draw(const unsigned int color = 0xffffff, const bool fill = true)const;
 	void Draw(const Vector2Int& offset, const int color = 0xffffff, const bool fill = true)const;

@@ -225,11 +225,9 @@ void PlayScene::StartPlayerTurn()
 	if (++_turnCnt >= _lastTurnCnt)
 	{
 		// ゲームオーバー
-		StartFadeOut([this]() {ChangeGameOver(); });
+		GameOver();
 		return;
 	}
-	GameClear();
-	return;
 
 	_updater = &PlayScene::TurnChengeUpdate;
 	_drawer = &PlayScene::TurnChengeDraw;

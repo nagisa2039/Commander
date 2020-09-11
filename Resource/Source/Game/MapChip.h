@@ -14,9 +14,19 @@ enum class Map_Chip
 	river_corner1,
 	river_corner2,
 	river_corner3,
+	sea_side0,
+	sea_side1,
+	sea_side2,
+	sea_side3,
+	sea_corner0,
+	sea_corner1,
+	sea_corner2,
+	sea_corner3,
 	rock,
 	fort,
 	lava,
+	bridge0,
+	bridge1,
 	max
 };
 

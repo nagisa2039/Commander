@@ -123,11 +123,11 @@ void Application::KeySetUp()
 	_input->AddCommand("team", keybord, KEY_INPUT_T);
 	_input->AddCommand("back", keybord, KEY_INPUT_BACK);
 	_input->AddCommand("status", keybord, KEY_INPUT_X);
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	_input->AddCommand("debug", keybord, KEY_INPUT_D);
 	_input->AddCommand("F1", keybord, KEY_INPUT_F1);
 	_input->AddCommand("F2", keybord, KEY_INPUT_F2);
-#endif
+//#endif
 
 	// ƒ}ƒEƒX‚Ì“ü—Í
 	const auto mouse = Input::PeripheralType::mouse;

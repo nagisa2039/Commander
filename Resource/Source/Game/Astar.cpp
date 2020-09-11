@@ -192,6 +192,7 @@ bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const 
 	int dirMax = static_cast<int>(Dir::max);
 	for (auto it = seachIdxList.begin(); it != seachIdxList.end();)
 	{
+
 		Vector2Int nowPos = *it;
 
 		// 開始地点から四方向のサーチを行う

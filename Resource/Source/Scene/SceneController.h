@@ -12,6 +12,7 @@ class SceneController
 private:
 	std::deque<std::shared_ptr<Scene>> _scene;
 	std::shared_ptr<Fade> _fade;
+	bool _quick;
 
 public:
 	SceneController();

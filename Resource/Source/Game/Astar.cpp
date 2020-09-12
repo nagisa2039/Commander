@@ -1,8 +1,14 @@
 #include "Astar.h"
 #include <map>
 #include <algorithm>
+#include <windows.h>
 
 using namespace std;
+
+namespace
+{
+	constexpr int SEARCH_LIMIT_TIME = 100;
+}
 
 void Astar::ResetSerchPosVec2D(const std::vector<std::vector<MapData>>& mapData)
 {
@@ -190,9 +196,14 @@ bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const 
 	seachIdxList.emplace_front(startMapPos);
 
 	int dirMax = static_cast<int>(Dir::max);
+	auto startTime = GetTickCount();
 	for (auto it = seachIdxList.begin(); it != seachIdxList.end();)
 	{
-
+		if (GetTickCount() - startTime > SEARCH_LIMIT_TIME)
+		{
+			assert(false);
+			break;
+		}
 		Vector2Int nowPos = *it;
 
 		// 開始地点から四方向のサーチを行う
@@ -272,8 +283,15 @@ void Astar::AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, con
 	_searchPosVec2Move[startMapPos.y][startMapPos.x] = SearchPos(startMapPos, startMapPos, Astar::SearchState::search, 0);
 
 	int dirMax = static_cast<int>(Dir::max);
+	auto startTime = GetTickCount();
 	for (auto it = seachIdxList.begin(); it != seachIdxList.end();)
 	{
+		if (GetTickCount() - startTime > SEARCH_LIMIT_TIME)
+		{
+			assert(false);
+			break;
+		}
+
 		Vector2Int nowPos = *it;
 
 		// 開始地点から四方向のサーチを行う
@@ -324,6 +342,7 @@ void Astar::AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, con
 
 bool Astar::CheckMoved(const Vector2Int& checkPos, const Vector2Int& startMapPos, const Vector2Int& nowPos)
 {
+	if (startMapPos == nowPos)return false;
 	for (auto parentPos = _searchPosVec2Move[nowPos.y][nowPos.x].parentPos; parentPos != startMapPos;
 		parentPos = _searchPosVec2Move[parentPos.y][parentPos.x].parentPos)
 	{

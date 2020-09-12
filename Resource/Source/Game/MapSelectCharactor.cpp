@@ -103,12 +103,20 @@ void MapSelectCharactor::Draw()
 
 void MapSelectCharactor::SetTargetPos(const Vector2Int& targetPos)
 {
-	if (_begin)
-	{
-		SoundL.PlaySE(_moveSEH);
-	}
 	_isMove = true;
 	_targetPos = targetPos;
+	if (_begin)
+	{
+		auto vec = (_targetPos.ToVector2() - _pos);
+		if (vec.Length() <= _speed)
+		{
+			SoundL.StopSound(_moveSEH);
+		}
+		else
+		{
+			SoundL.PlaySE(_moveSEH);
+		}
+	}
 }
 
 bool MapSelectCharactor::GetIsMove() const

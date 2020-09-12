@@ -1,8 +1,11 @@
 #pragma once
 #include <functional>
+#include <vector>
 #include <memory>
 #include "Scene.h"
 #include "TimeLine.h"
+#include "CharactorType.h"
+#include "Team.h"
 
 class TitleScene :
     public Scene
@@ -11,10 +14,22 @@ private:
 	// ‰æ‘œ
 	int _bgH;
 	int _start_bksH;
+	int _titleH;
 	// BGM
 	int _bgmH;
 
-	std::shared_ptr<Track_f> _animTrack;
+	struct CharInf
+	{
+		bool active;
+		Vector2 pos;
+		Team team;
+		CharactorType type;
+		float angle;
+	};
+	std::vector<CharInf> _charInfVec;
+	std::unique_ptr<Track_f> _charCreateTrack;
+
+	std::unique_ptr<Track_f> _animTrack;
 
 	void(TitleScene::* _updater)(const Input&);
 
@@ -28,5 +43,6 @@ public:
 	~TitleScene();
 
 	void Update(const Input& input);
+	void CharactorUpdate();
 	void Draw(void);
 };

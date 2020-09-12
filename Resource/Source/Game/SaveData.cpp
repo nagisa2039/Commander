@@ -39,7 +39,7 @@ bool SaveData::Save(const int mapNum, const int turnCnt)
 	}
 	else
 	{
-		int mapCnt = _clearMapDataVec.size();
+		auto mapCnt = _clearMapDataVec.size();
 		assert(mapNum < mapCnt);
 		assert(turnCnt > 0);
 		if (_clearMapDataVec[mapNum] <= 0)
@@ -69,7 +69,7 @@ void SaveData::WriteData()
 	fopen_s(&fp, ss.str().c_str(), "wb");
 
 	// ƒ}ƒbƒv”‚Ì‘‚«ž‚Ý
-	int mapCnt = _clearMapDataVec.size();
+	int mapCnt = static_cast<int>(_clearMapDataVec.size());
 	assert(mapCnt > 0);
 	fwrite(&mapCnt, sizeof(mapCnt), 1, fp);
 
@@ -117,7 +117,7 @@ bool SaveData::Load()
 	}
 
 	int eleSize = sizeof(_clearMapDataVec[0]);
-	int eleCnt = _clearMapDataVec.size();
+	auto eleCnt = _clearMapDataVec.size();
 	fread_s(_clearMapDataVec.data(), eleSize* eleCnt,eleSize, eleCnt, fp);
 
 	fclose(fp);

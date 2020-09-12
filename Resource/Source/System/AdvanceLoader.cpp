@@ -3,6 +3,7 @@
 #include "DataBase.h"
 #include "FileSystem.h"
 #include "ImageLoader.h"
+#include <DxLib.h>
 
 AdvanceLoader::AdvanceLoader()
 {

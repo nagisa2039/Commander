@@ -1,7 +1,6 @@
 #pragma once
 #include "Actor.h"
 #include <list>
-#include "Astar.h"
 #include <array>
 #include "Dir.h"
 #include "Team.h"
@@ -9,26 +8,19 @@
 #include "TimeLine.h"
 #include "Status.h"
 #include "CharactorType.h"
+#include "Astar.h"
 
 class Animator;
 class MapCtrl;
 class SceneController;
 class Effect; 
 class BattleCharactor;
+class RouteManager;
 
 class Charactor :
 	public Actor
 {
 public:
-	struct MoveInf
-	{
-		Dir dir;
-		bool attack;
-		Vector2Int mapPos;
-
-		MoveInf() : dir(Dir::left), attack(false), mapPos(Vector2Int()) {};
-		MoveInf(const Dir d, const bool at, const Vector2Int mp) : dir(d), attack(at), mapPos(mp) {};
-	};
 
 private:
 	// 死亡時のアニメーションに使用するalpha値のタイムライン
@@ -50,15 +42,14 @@ protected:
 	Team _team;
 	MapCtrl& _mapCtrl;
 	SceneController& _controller;
-	std::vector<std::vector<std::list<Astar::ResultPos>>> _resultPosListVec2;
 	std::shared_ptr<Animator> _animator;
 	std::vector<std::shared_ptr<Effect>>& _effects;
 	std::shared_ptr<BattleCharactor> _battleC;
+	std::shared_ptr<RouteManager> _routeManager;
 
 	std::string _name;
 
 	bool _isMoveAnim;	// 移動アニメーション中
-	std::list<MoveInf> _moveDirList;
 	std::array<DirInf, static_cast<size_t>(Dir::max)> _dirTable;
 
 	bool _canMove;
@@ -122,8 +113,6 @@ protected:
 
 	void CharactorDataInit(const CharactorType& type, const uint8_t& level);
 
-	// 指定した座標に何のマスがあるか調べる	x=移動マス y=攻撃マス
-	Vector2Int CheckMapPos(const Vector2Int& mapPos)const;
 	// 指定したマスまでのResultPosListを取得する
 	std::list<Astar::ResultPos> CreateResultPosList(const Vector2Int& mapPos)const;
 	// resultPosListからMoveDirListを作成する
@@ -163,7 +152,6 @@ public:
 	bool GetIsMoveAnim()const;
 	const Range& GetAttackRange()const;
 	const std::string& GetName()const;
-	const std::list<Astar::ResultPos>& GetResutlPosList(const Vector2Int& mapPos);
 	unsigned int GetGroupNum()const;
 	const int GetHurtPoint()const;	// 最大体力から現在の体力を引いた値を返す
 	bool GetMoved()const;	// 移動済みか調べる
@@ -210,4 +198,6 @@ public:
 	bool AddExp(uint8_t exp, const uint8_t expMax);
 
 	Status GetLevelUpStatus();
+
+	const std::array<DirInf, static_cast<size_t>(Dir::max)>& GetDirTable()const;
 };

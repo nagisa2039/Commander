@@ -83,6 +83,7 @@ bool Application::Initialize()
 	SetDrawScreen(DX_SCREEN_BACK);
 	SetWindowText("Commander");
 	SetDrawMode(DX_DRAWMODE_BILINEAR);
+	SetWindowIconID(100);
 
 	_dataBase = make_unique<DataBase>();
 	_dataBase->Init();

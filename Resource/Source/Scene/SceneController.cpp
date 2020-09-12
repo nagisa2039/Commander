@@ -20,7 +20,10 @@ SceneController::~SceneController()
 
 void SceneController::SceneUpdate(const Input & input)
 {
-	_quick = input.GetButton("debug");
+	if (input.GetButtonDown("debug"))
+	{
+		_quick = !_quick;
+	}
 	for (int i = 0; i < (_quick ? 10 : 1); i++)
 	{
 		// スタックの一番上のシーンを更新

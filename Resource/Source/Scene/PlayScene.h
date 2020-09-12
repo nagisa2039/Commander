@@ -31,7 +31,7 @@ public:
 		max
 	};
 private:
-	bool debug;
+	bool _aiMode;
 	int _gameH;
 	
 	std::unique_ptr<MapCtrl> _mapCtrl;
@@ -71,6 +71,7 @@ private:
 
 	// 準備画面
 	bool PreparationUpdate(const Input& input);
+	void GameStart();
 	bool TurnChengeUpdate(const Input& input);
 	bool PlayerTurnUpdate(const Input& input);
 	bool CharactorUpdate(const Input& input);
@@ -107,11 +108,6 @@ private:
 	void ChangePreparation();
 	void ChangeGameOver();
 
-	/*int pshandle;
-	VERTEX2DSHADER Vert[6];
-	FLOAT4 _colorC;
-	FLOAT4 _waveC;*/
-
 public:
 	PlayScene(SceneController & ctrl, const unsigned int mapId, const bool ai = false);
 	~PlayScene();
@@ -123,9 +119,6 @@ public:
 	void Off()override;
 
 	void PushShopScene();
-
-	// ショップなどで装備品などが変更されたときに呼ぶ
-	void CharactorDataUpdate();
 
 	void SetFilter(const FilterType type);
 };

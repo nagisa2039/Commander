@@ -97,6 +97,7 @@
     <ClCompile Include="Resource\Source\Game\UI\SelectPen.cpp" />
     <ClCompile Include="Resource\Source\Scene\ShopScene.cpp" />
     <ClCompile Include="Resource\Source\Scene\TitleScene.cpp" />
+    <ClCompile Include="Resource\Source\Game\RouteManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Source\System\AdvanceLoader.h" />
@@ -183,6 +184,10 @@
     <ClInclude Include="Resource\Source\Game\SaveDataCharactor.h" />
     <ClInclude Include="Resource\Source\Utility\Tool.h" />
     <ClInclude Include="Resource\Source\Scene\TitleScene.h" />
+    <ClInclude Include="Resource\Source\Game\RouteManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="icon.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

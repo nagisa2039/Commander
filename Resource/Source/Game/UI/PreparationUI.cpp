@@ -32,7 +32,6 @@ void PreparationUI::CloseUpdate(const Input& input)
 	{
 		Open(true);
 		_execution = false;
-		_playScene.CharactorDataUpdate();
 	}
 }
 

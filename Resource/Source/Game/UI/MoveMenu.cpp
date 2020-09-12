@@ -35,7 +35,6 @@ void MoveMenu::OpenUpdate(const Input& input)
 {
 	if (_isBattle)
 	{
-
 		if (input.GetButtonDown("ok"))
 		{
 			Decision();
@@ -46,31 +45,30 @@ void MoveMenu::OpenUpdate(const Input& input)
 			Back();
 			return;
 		}
+		if (input.GetButtonDown("right"))
+		{
+			if (_attackPosListItr == _attackPosList.end())return;
+			_attackPosListItr++;
+			if (_attackPosListItr == _attackPosList.end())
+			{
+				_attackPosListItr = _attackPosList.begin();
+			}
+			_playerCommander.BackBattalePrediction();
+			_playerCommander.AttackPrePos(*_attackPosListItr);
+		}
+		if (input.GetButtonDown("left"))
+		{
+			if (_attackPosListItr == _attackPosList.begin())
+			{
+				_attackPosListItr = _attackPosList.end();
+			}
+			_attackPosListItr--;
+			_playerCommander.BackBattalePrediction();
+			_playerCommander.AttackPrePos(*_attackPosListItr);
+		}
 		return;
 	}
 	Menu::OpenUpdate(input);
-
-	if (input.GetButtonDown("right"))
-	{
-		if (_attackPosListItr == _attackPosList.end())return;
-		_attackPosListItr++;
-		if (_attackPosListItr == _attackPosList.end())
-		{
-			_attackPosListItr = _attackPosList.begin();
-		}
-		_playerCommander.BackBattalePrediction();
-		_playerCommander.AttackPrePos(*_attackPosListItr);
-	}
-	if (input.GetButtonDown("left"))
-	{
-		if (_attackPosListItr == _attackPosList.begin())
-		{
-			_attackPosListItr = _attackPosList.end();
-		}
-		_attackPosListItr--;
-		_playerCommander.BackBattalePrediction();
-		_playerCommander.AttackPrePos(*_attackPosListItr);
-	}
 }
 
 MoveMenu::MoveMenu(std::deque<std::shared_ptr<UI>>* uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl)
@@ -86,6 +84,8 @@ MoveMenu::MoveMenu(std::deque<std::shared_ptr<UI>>* uiDeque, PlayerCommander& pl
 	_contentInfs[static_cast<size_t>(Content::battle)].func = [&]()
 	{
 		_isBattle = true;
+		assert(_attackPosList.size() > 0);
+		_attackPosListItr = _attackPosList.begin();
 		_playerCommander.AttackPrePos(*_attackPosListItr);
 	};
 	_contentInfs[static_cast<size_t>(Content::wait)].func = [&]()
@@ -116,7 +116,7 @@ MoveMenu::~MoveMenu()
 void MoveMenu::SetContent(const std::list<Vector2Int>& attackPosList)
 {
 	_attackPosList = attackPosList;
-	_attackPosListItr = _attackPosList.begin();
+	_attackPosListItr = _attackPosList.end();
 
 	_contentList.clear();
 	for (int idx = 0; idx != static_cast<size_t>(Content::max); idx++)

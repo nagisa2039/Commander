@@ -119,17 +119,6 @@ bool PlayerCommander::CheckAttackMass()
 	auto resultPosList = _selectChar->GetResutlPosListVec2()[_mapPos.y][_mapPos.x];
 	if (resultPosList.size() <= 0) return false; 
 
-	//// 回復役なら
-	//if (Application::Instance().GetDataBase().GetWeaponData(_selectChar->GetStatus().weaponId).GetTypeData().heal)
-	//{
-	//	// ダメージを受けていないチーム内キャラクターの場所にはいかない
-	//	auto mapChar = _mapCtrl.GetMapPosChar(_mapPos);
-	//	if (mapChar && mapChar->GetTeam() == _selectChar->GetTeam() && mapChar->GetHurtPoint() <= 0)
-	//	{
-	//		return false;
-	//	}
-	//}
-
 	for (const auto& resultPos : resultPosList)
 	{
 		if (resultPos.attack)return true;

@@ -19,6 +19,7 @@
 #include "Map.h"
 #include "SoundLoader.h"
 #include "BattleCharactor.h"
+#include "RouteManager.h"
 
 using namespace std;
 
@@ -42,7 +43,7 @@ void Charactor::BattaleStartUpdate(const Input& input)
 {
 	if (!_battleStartEffect->GetDelete())return;
 
-	auto charactor = _mapCtrl.GetMapPosChar((*_moveDirList.begin()).mapPos);
+	auto charactor = _mapCtrl.GetMapPosChar((*_routeManager->GetMoveDirList().begin()).mapPos);
 	BattaleStart(charactor);
 
 	_updater = &Charactor::NormalUpdate;
@@ -102,20 +103,6 @@ void Charactor::NormalDraw()
 	DrawBox(hpLeftup + Vector2Int::One() * -1, hpRightdown + Vector2Int::One() * +1, 0xaaaaaa);
 	float berLength = max(min(static_cast<float>(_status.health) / static_cast<float>(_startStatus.health), 1.0f), 0.0f);
 	DrawBox(hpLeftup, hpLeftup + hpberSize.ToVector2Int() * Vector2(berLength, 1.0f), GetTeamColor());
-
-	//// レベルの描画
-	//DrawFormatString(drawPos.x, drawPos.y, 0x000000, "Level.%d", _status.level);
-	//// canMoveの描画
-	//drawPos.y += 16;
-	//DrawFormatString(drawPos.x, drawPos.y, 0x000000, "CanMove "+ _canMove ? "true" : "false");
-
-	//// targetCntの描画
-	//drawPos.y += 16;
-	//DrawFormatString(drawPos.x, drawPos.y, 0x000000, "InT%d", _targetCnt.x);
-	//drawPos.y += 16;
-	//DrawFormatString(drawPos.x, drawPos.y, 0x000000, "OutT%d",_targetCnt.y);
-	//drawPos.y += 16;
-	//DrawFormatString(drawPos.x, drawPos.y, 0x000000, "ollc%d", _onelineListCnt);
 }
 
 void Charactor::DyingDraw()
@@ -129,12 +116,13 @@ void Charactor::DyingDraw()
 
 void Charactor::Move()
 {
-	if ((!_isMoveAnim || _moveDirList.size() == 0))
+	auto& moveDirList = _routeManager->GetMoveDirList();
+	if ((!_isMoveAnim || moveDirList.size() == 0))
 	{
 		return;
 	}
 
-	auto it = _moveDirList.begin();
+	auto it = moveDirList.begin();
 	_dir = it->dir;
 	if (it->attack)
 	{
@@ -164,8 +152,8 @@ void Charactor::Move()
 	_pos += (_dirTable[static_cast<size_t>(it->dir)].moveVec * static_cast<float>(_moveSpeed)).ToVector2();
 	if (_pos.ToVector2Int() % _mapCtrl.GetChipSize().ToVector2Int() == Vector2Int(0, 0))
 	{
-		_moveDirList.pop_front();
-		if (_moveDirList.size() <= 0)
+		_routeManager->GetMoveDirList().pop_front();
+		if (moveDirList.size() <= 0)
 		{
 			MoveEnd(true);
 		}
@@ -183,53 +171,6 @@ unsigned int Charactor::GetTeamColor() const
 	default:
 		return 0xffffff;
 	}
-}
-
-void Charactor::DrawMovableMass(const uint8_t alpha) const
-{
-	auto offset = _camera.GetCameraOffset();
-	auto chipSize = _mapCtrl.GetChipSize();
-	int graphH = ImageHandle("Resource/Image/Battle/movableMass.png");
-	bool heal = Application::Instance().GetDataBase().GetWeaponData(_status.weaponId).GetTypeData().heal;
-
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
-	for (auto& resultPosListVec : _resultPosListVec2)
-	{
-		for (auto& resultPosList : resultPosListVec)
-		{
-			if (resultPosList.size() <= 0)continue;
-
-			Vector2Int mapPos = resultPosList.begin()->mapPos;
-			Rect box(offset + (mapPos * chipSize.ToVector2Int() + chipSize * 0.5) + -1, chipSize);
-
-			const int HEAL_SCR_X = 64;
-			const int ATTACK_SCR_X = 32;
-			int scrX = 0;
-			auto charactor = _mapCtrl.GetMapPosChar(mapPos);
-			auto mapPosMassCnt = CheckMapPos(mapPos);
-
-			if (heal && mapPosMassCnt.y > 0 && charactor && charactor->GetHurtPoint() > 0)
-			{
-				scrX = HEAL_SCR_X;
-			}
-			else
-			{
-				// 移動マスがなければ
-				if (mapPosMassCnt.x <= 0)
-				{
-					scrX = heal ? HEAL_SCR_X : ATTACK_SCR_X;
-				}
-			}
-			box.DrawRectGraph(Vector2Int(scrX, 0), Size(32, 32), graphH);
-
-			//Vector2Int leftup = offset + mapPos * chipSize.ToVector2Int();
-
-			//DrawFormatString(leftup.x, leftup.y, 0x000000, "%d,%d", mapPos.x, mapPos.y);
-			//DrawFormatString(leftup.x, leftup.y+16, 0x000000, "Cost : %d", resultPosList.begin()->moveCnt);
-		}
-	}
-
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }
 
 bool Charactor::GetIsSelect() const
@@ -306,11 +247,6 @@ const std::string& Charactor::GetName() const
 	return _name;
 }
 
-const std::list<Astar::ResultPos>& Charactor::GetResutlPosList(const Vector2Int& mapPos)
-{
-	return _resultPosListVec2[mapPos.y][mapPos.x];
-}
-
 unsigned int Charactor::GetGroupNum() const
 {
 	return _groupNum;
@@ -333,33 +269,7 @@ CharactorType Charactor::GetCharactorType() const
 
 bool Charactor::GetAttackStartPos(Vector2Int& attackStartPos, const Vector2Int& targetMapPos) const
 {
-	const auto targetChar = _mapCtrl.GetMapPosChar(targetMapPos);
-	if (!targetChar)return false;
-
-	auto& resultPosList = _resultPosListVec2[targetMapPos.y][targetMapPos.x];
-	if (resultPosList.size() <= 0)return false;
-
-	bool set = false;
-	auto targetAttackRange = targetChar->GetAttackRange();
-	auto itr = resultPosList.begin();
-	for (; itr != resultPosList.end(); itr++)
-	{
-		if (!itr->attack)continue;
-
-		set = true;
-		attackStartPos = itr->prev->mapPos;
-
-		auto sub = targetMapPos - itr->prev->mapPos;
-		int attackDistance = abs(sub.x) + abs(sub.y);
-		if (!targetAttackRange.Hit(attackDistance))
-		{
-			attackStartPos = itr->prev->mapPos;
-			return true;
-		}
-
-	}
-	
-	return set;
+	return _routeManager->GetAttackStartPos(attackStartPos, targetMapPos);
 }
 
 void Charactor::InitmapPos(const Vector2Int& mapPos)
@@ -462,7 +372,7 @@ void Charactor::SearchAndMove()
 
 std::vector<std::vector<std::list<Astar::ResultPos>>>& Charactor::GetResutlPosListVec2()
 {
-	return _resultPosListVec2;
+	return _routeManager->GetResutlPosListVec2();
 }
 
 void Charactor::AddDamage(const int damage)
@@ -484,35 +394,7 @@ void Charactor::DrawCharactorIcon(const Rect& drawRect)const
 
 void Charactor::DrawRoute(const Vector2Int& targetPos)
 {
-	if (targetPos == GetMapPos()) return;
-	if (_resultPosListVec2[targetPos.y][targetPos.x].size() <= 0)return;
-
-	bool onCharactor = _mapCtrl.GetMapPosChar(targetPos) != nullptr;
-
-	bool begin = true;
-	for (const auto& route : CreateResultPosList(targetPos))
-	{
-		if (begin && route.attack)continue;
-
-		auto offset = _camera.GetCameraOffset();
-		auto chipSize = _mapCtrl.GetChipSize();
-		size_t dir_idx = static_cast<size_t>(route.dir);
-
-		if (0 > dir_idx || dir_idx >= _dirTable.size())return;
-
-		Vector2Int endPos = offset + (route.prev == nullptr ? GetMapPos() : route.prev->mapPos) * chipSize + chipSize * 0.5f;
-		Vector2Int startPos = offset + route.mapPos * chipSize + chipSize * 0.5f;
-		DrawLine(startPos, endPos, 0xffff00, 10);
-		if (begin)
-		{
-			auto arrowH = ImageHandle("Resource/Image/UI/arrow.png");
-			Size arrowSize;
-			GetGraphSize(arrowH, arrowSize);
-			DrawRotaGraph(startPos, chipSize.w / static_cast<float>(arrowSize.w), _dirTable[dir_idx].angle, arrowH, true);
-			begin = false;
-		}
-	}
-
+	_routeManager->DrawRoute(targetPos);
 }
 
 bool Charactor::StartTerrainEffect()
@@ -543,21 +425,7 @@ bool Charactor::GetTerrainEffectEnd()
 
 std::list<Vector2Int> Charactor::GetAttackPosList() const
 {
-	std::list<Vector2Int> attackPosList;
-	attackPosList.clear();
-
-	for (const auto& resultPosListVec : _resultPosListVec2)
-	{
-		for (const auto& resultPosList : resultPosListVec)
-		{
-			for (const auto& resultPos : resultPosList)
-			{
-				if (resultPos.mapPos == GetMapPos() || _mapCtrl.GetMapPosChar(resultPos.mapPos) == nullptr) continue;
-				attackPosList.emplace_back(resultPos.mapPos);
-			}
-		}
-	}
-	return attackPosList;
+	return _routeManager->GetAttackPosList();
 }
 
 bool Charactor::AddExp(uint8_t exp, const uint8_t expMax)
@@ -594,184 +462,19 @@ Status Charactor::GetLevelUpStatus()
 	return status;
 }
 
-Vector2Int Charactor::CheckMapPos(const Vector2Int& mapPos) const
+const std::array<Charactor::DirInf, static_cast<size_t>(Dir::max)>& Charactor::GetDirTable() const
 {
-	Vector2Int ret(0,0);
-	for (const auto& resutlPos : _resultPosListVec2[mapPos.y][mapPos.x])
-	{
-		resutlPos.attack ? ret.y++ : ret.x++;
-	}
-	return ret;
+	return _dirTable;
 }
 
 std::list<Astar::ResultPos> Charactor::CreateResultPosList(const Vector2Int& mapPos) const
 {
-	std::list<Astar::ResultPos> routeList;
-	routeList.clear();
-	// 移動可能なルートが無い
-	if (_resultPosListVec2[mapPos.y][mapPos.x].size() <= 0)return routeList;
-
-	Astar::ResultPos startResultPos = *_resultPosListVec2[mapPos.y][mapPos.x].begin();
-	auto targetCharactor = _mapCtrl.GetMapPosChar(mapPos);
-	if (targetCharactor != nullptr)
-	{
-		if (GetBattleStatus().CheckHeal())
-		{
-			for (const auto& targetPos : _resultPosListVec2[mapPos.y][mapPos.x])
-			{
-				// ひとつ前のマスが自分か、空きスペースなら
-				auto prevCharactor = _mapCtrl.GetMapPosChar(targetPos.prev->mapPos);
-				if (prevCharactor == this || prevCharactor == nullptr)
-				{
-					startResultPos = targetPos;
-					break;
-				}
-			}
-		}
-		else
-		{
-			// 相手の攻撃範囲
-			auto targetRange = targetCharactor->GetAttackRange();
-			// 一方的に攻撃できる距離
-			Range criticalRange = GetAttackRange().GetCriticalRange(targetRange);
-			// 一方的に攻撃できる距離があるか
-			if (criticalRange != Range(0, 0))
-			{
-				for (const auto& targetPos : _resultPosListVec2[mapPos.y][mapPos.x])
-				{
-					// ひとつ前のマスが自分か、空きスペースなら
-					auto prevCharactor = _mapCtrl.GetMapPosChar(targetPos.prev->mapPos);
-					if (prevCharactor == this || prevCharactor == nullptr)
-					{
-						Vector2Int startPos = targetPos.prev == nullptr ? GetMapPos() : targetPos.prev->mapPos;
-						Vector2Int disVec = targetPos.mapPos - startPos;
-						unsigned int distance = abs(disVec.x) + abs(disVec.y);
-						if (criticalRange.Hit(distance))
-						{
-							startResultPos = targetPos;
-							break;
-						}
-					}
-				}
-			}
-			else
-			{
-				for (const auto& targetPos : _resultPosListVec2[mapPos.y][mapPos.x])
-				{
-					// ひとつ前のマスが自分か、空きスペースなら
-					auto prevCharactor = _mapCtrl.GetMapPosChar(targetPos.prev->mapPos);
-					if (prevCharactor == this || prevCharactor == nullptr)
-					{
-						startResultPos = targetPos;
-						break;
-					}
-				}
-			}
-		}
-	}
-	else
-	{
-		// 敵がいないマスへの移動なので移動マスを優先的に採用する
-		for (const auto& targetPos : _resultPosListVec2[mapPos.y][mapPos.x])
-		{
-			if (!targetPos.attack)
-			{
-				startResultPos = targetPos;
-				break;
-			}
-		}
-	}
-
-	routeList.emplace_back(startResultPos);
-	for (auto prev = startResultPos.prev; prev->prev != nullptr; prev = prev->prev)
-	{
-		routeList.emplace_back(*prev);
-	}
-	return routeList;
+	return _routeManager->CreateResultPosList(mapPos);
 }
 
 void Charactor::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosList)
 {
-	_moveDirList.clear();
-
-	// 攻撃開始地点に敵が居ないかを確認するためのフラグ
-	bool coverCheck = true;
-	bool reSearch = false;
-	for (auto itr = resultPosList.begin(); itr != resultPosList.end(); itr++)
-	{
-		// 移動力を超えるマスは無視する
-		if (itr->moveCnt > _status.move) continue;
-
-		if (!coverCheck)
-		{
-			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
-			continue;
-		}
-
-		if (itr->attack)
-		{
-			// 現在いるマスでもなければ攻撃開始地点にキャラクターがいる
-			if (itr->prev->mapPos != GetMapPos() && _mapCtrl.GetMapPosChar(itr->prev->mapPos) != nullptr) continue;
-
-			coverCheck = false;
-			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
-			continue;
-		}
-
-		// 移動先にキャラクターがいないなら
-		if (_mapCtrl.GetMapPosChar(itr->mapPos) == nullptr)
-		{
-			coverCheck = false;
-			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
-			continue;
-		}
-
-		// ひとつ前に空きがあるなら採用する
-		if (itr->prev != nullptr && _mapCtrl.GetMapPosChar(itr->prev->mapPos) == nullptr)
-		{
-			coverCheck = false;
-			continue;
-		}
-
-		// 移動先にほかのキャラクターがいるのでルートの再検索を行う
-		Size mapSize = _mapCtrl.GetMapSize();
-		list<Astar::ResultPos> addResultPosList;
-		addResultPosList.clear();
-
-		list<Astar::ResultPos> excludeList;
-		excludeList.clear(); 
-		auto exAddItr = itr;
-		exAddItr++;
-		for (; exAddItr != resultPosList.end(); exAddItr++)
-		{
-			excludeList.emplace_back(*exAddItr);
-		}
-
-		if (reSearch) continue;
-
-		reSearch = true;
-		if (_mapCtrl.MoveRouteSearch(itr->mapPos, max(0, min(itr->moveCnt - 1, _status.move - itr->moveCnt - 1)), addResultPosList, _team, excludeList))
-		{
-			for (const auto& addResultPos : addResultPosList)
-			{
-				_moveDirList.emplace_front(MoveInf(addResultPos.dir, addResultPos.attack, addResultPos.mapPos));
-			}
-			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
-
-			coverCheck = false;
-			continue;
-		}
-	}
-
-	if (_moveDirList.size() <= 0) return;
-
-	// 最後の要素以外のattackをfalseにする
-	auto rItr = _moveDirList.rbegin();
-	rItr++;
-	for (; rItr != _moveDirList.rend(); rItr++)
-	{
-		rItr->attack = false;
-	}
+	_routeManager->CreateMoveDirList(resultPosList);
 }
 
 Charactor::Charactor(const CharactorType type, const uint8_t level, const Vector2Int& mapPos, 
@@ -810,12 +513,9 @@ Charactor::Charactor(const CharactorType type, const uint8_t level, const Vector
 	_moveStandby = false;
 	_mouveSEH = SoundHandle("Resource/Sound/SE/dash.mp3");
 
+	_routeManager = make_shared<RouteManager>(*this, _mapCtrl, _camera);
+
 	auto mapSize = _mapCtrl.GetMapSize();
-	_resultPosListVec2.resize(mapSize.h);
-	for (auto& resultPosListVec : _resultPosListVec2)
-	{
-		resultPosListVec.resize(mapSize.w);
-	}
 
 	_targetCnt = Vector2Int(0, 0);
 	_onelineListCnt = 0;
@@ -836,6 +536,11 @@ void Charactor::Update(const Input& input)
 void Charactor::Draw()
 {
 	(this->*_drawer)();
+}
+
+void Charactor::DrawMovableMass(const uint8_t alpha) const
+{
+	_routeManager->DrawMovableMass(alpha);
 }
 
 void Charactor::InitAnim()
@@ -890,7 +595,8 @@ Team Charactor::GetTeam() const
 
 bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 {
-	_moveDirList.clear();
+	auto& moveDirList = _routeManager->GetMoveDirList();
+	moveDirList.clear();
 	if (!_mapCtrl.GetMap()->CheckMapDataRange(mapPos))
 	{
 		MoveEnd(false);
@@ -906,7 +612,7 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 
 	CreateMoveDirList(oneLineResutlList);
 
-	if (_moveDirList.size() > 0)
+	if (moveDirList.size() > 0)
 	{
 		_isMoveAnim = true;
 		SoundL.PlaySE(_mouveSEH);
@@ -916,7 +622,7 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 		_isMoveAnim = false;
 	}
 
-	_status.move = /*max(_status.move - oneLineResutlList.begin()->moveCnt, 0);*/0;
+	_status.move = 0;
 
 	return false;
 }

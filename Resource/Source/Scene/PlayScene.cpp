@@ -23,7 +23,7 @@
 
 using namespace std;
 
-PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId, const bool ai):Scene(ctrl), _lastTurnCnt(100)
+PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId, const bool ai):Scene(ctrl), _lastTurnCnt(100), _aiMode(ai)
 {
 	_effects.clear();
 	_charactors.clear();
@@ -32,7 +32,6 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId, const boo
 	auto wsize = Application::Instance().GetWindowSize();
 	_gameH = FileSystem::Instance().MakeScreen("play_scene_screen", wsize, true);
 
-	debug = true;
 	_turnCnt = 0;
 
 	_mapCtrl = make_unique<MapCtrl>(mapId, _charactors);
@@ -96,7 +95,14 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId, const boo
 	_filterFuncs[Size_t(FilterType::gauss)] = [&graphH = _gameH]() 
 	{GraphFilter(graphH, DX_GRAPH_FILTER_GAUSS, 16, 1000); };
 
-	StartFadeIn([this]() {ChangePreparation(); });
+	if (_aiMode)
+	{
+		StartFadeIn([this]() {GameStart(); });
+	}
+	else
+	{
+		StartFadeIn([this]() {ChangePreparation(); });
+	}
 }
 
 PlayScene::~PlayScene()
@@ -105,17 +111,6 @@ PlayScene::~PlayScene()
 
 void PlayScene::Update(const Input & input)
 {
-	// デバッグ
-	if (input.GetButtonDown("debug"))
-	{
-		debug = !debug;
-	}
-
-	if (debug)
-	{
-	}
-
-
 	_camera->Update();
 	if (!(this->*_updater)(input))
 	{
@@ -144,10 +139,15 @@ bool PlayScene::PreparationUpdate(const Input& input)
 	// 戦闘開始
 	if (_preparationUI->GetDelete())
 	{
-		StartPlayerTurn();
-		_mapCtrl->GetMap()->StartBGM();
+		GameStart();
 	}
 	return true;
+}
+
+void PlayScene::GameStart()
+{
+	StartPlayerTurn();
+	_mapCtrl->GetMap()->StartBGM();
 }
 
 bool PlayScene::TurnChengeUpdate(const Input& input)
@@ -331,7 +331,10 @@ bool PlayScene::CharactorDyingUpdate(const Input& input)
 
 void PlayScene::GameClear()
 {
-	Application::Instance().GetSaveData().Save(_mapCtrl->GetMap()->GetMapID(), _turnCnt);
+	if (_aiMode)
+	{
+		Application::Instance().GetSaveData().Save(_mapCtrl->GetMap()->GetMapID(), _turnCnt);
+	}
 	_updater = &PlayScene::GameClearUpdate;
 	_drawer = &PlayScene::GameClearDraw;
 	_mapCtrl->GetMap()->StopBGM();
@@ -535,27 +538,11 @@ void PlayScene::Draw(void)
 	DrawGraph(0, 0, _gameH, true);
 
 	(this->*_UIDrawer)();
-
-	//// 使用するピクセルシェーダーをセット
-	//SetUsePixelShader(pshandle);
-
-	//// 定数の設定
-	//SetPSConstF(0, _colorC);
-	//SetPSConstF(1, _waveC);
-
-	// 描画
-	//DrawPrimitive2DToShader(Vert, 6, DX_PRIMTYPE_TRIANGLELIST);
-
-	if (debug)
-	{
-	}
-
-	//DrawPSTBuffer();
 }
 
 void PlayScene::On()
 {
-	if (_preparationUI->GetDelete())
+	if (_preparationUI->GetDelete() || _aiMode)
 	{
 		_mapCtrl->GetMap()->StartBGM();
 	}
@@ -569,24 +556,6 @@ void PlayScene::Off()
 void PlayScene::PushShopScene()
 {
 	_controller.PushScene(make_shared<ShopScene>(_controller));
-}
-
-void PlayScene::CharactorDataUpdate()
-{
-	/*int idx = 0;
-	for (auto& charactorData : Application::Instance().GetSaveData().GetCharactorDataVec())
-	{
-		for (int i = idx; i < _charactors.size(); i++)
-		{
-			if (_charactors[i]->GetTeam() != Team::player)continue;
-
-			_charactors[i]->InitStatus(charactorData.status);
-			idx = i+1;
-			break;
-		}
-	}
-
-	_mapCtrl->AllCharactorRouteSearch();*/
 }
 
 void PlayScene::SetFilter(const FilterType type)

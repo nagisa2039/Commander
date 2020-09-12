@@ -20,6 +20,7 @@
 #include "ShopScene.h"
 #include "Tool.h"
 #include "SoundLoader.h"
+#include "UI/CheckWindow.h"
 
 using namespace std;
 
@@ -112,6 +113,14 @@ PlayScene::~PlayScene()
 void PlayScene::Update(const Input & input)
 {
 	_camera->Update();
+
+	for (auto& endUI : _endUIDeque)
+	{
+		endUI->Update(input);
+		return;
+	}
+	erase_if(_endUIDeque, [](const std::shared_ptr<UI>& endUI) {return endUI->GetDelete(); });
+
 	if (!(this->*_updater)(input))
 	{
 		return;
@@ -189,6 +198,8 @@ bool PlayScene::TurnChengeUpdate(const Input& input)
 
 bool PlayScene::PlayerTurnUpdate(const Input& input)
 {
+	if (BackMapSelectWindow(input))return false;
+
 	CharactorUpdate(input);
 	if (_playerCommander->GetBackMapSelect())
 	{
@@ -267,7 +278,9 @@ void PlayScene::StartEnemyTurn()
 
 bool PlayScene::EnemyTurnUpdate(const Input& input)
 {
-	CharactorUpdate(input);
+	if (BackMapSelectWindow(input))return false;
+
+	CharactorUpdate(input); 
 
 	_turnChangeAnim->Update(input);
 	if (!_turnChangeAnim->GetAnimEnd()) return true;
@@ -279,6 +292,17 @@ bool PlayScene::EnemyTurnUpdate(const Input& input)
 	}
 	_enemyCommander->Update(input);
 	return true;
+}
+
+bool PlayScene::BackMapSelectWindow(const Input& input)
+{
+	if (input.GetButtonDown("F1"))
+	{
+		_endUIDeque.emplace_back(make_shared<CheckWindow>("マップ選択に戻りますか？", &_endUIDeque,
+			[this]() {	StartFadeOut([this]() {ChnageMapSelect(); }); }));
+		return true;
+	}
+	return false;
 }
 
 bool PlayScene::CharactorDyingUpdate(const Input& input)
@@ -538,6 +562,11 @@ void PlayScene::Draw(void)
 	DrawGraph(0, 0, _gameH, true);
 
 	(this->*_UIDrawer)();
+
+	for (auto rItr = _endUIDeque.rbegin(); rItr != _endUIDeque.rend(); ++rItr)
+	{
+		(*rItr)->Draw();
+	}
 }
 
 void PlayScene::On()

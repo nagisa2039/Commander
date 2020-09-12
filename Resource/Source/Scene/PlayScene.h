@@ -48,6 +48,7 @@ private:
 	std::unique_ptr<Commander> _enemyCommander;
 	std::vector<std::shared_ptr<Effect>> _effects;
 
+	std::deque<std::shared_ptr<UI>> _endUIDeque;	// ã≠êßìIÇ…èIóπÇ∑ÇÈÇ∆Ç´ÇÃUIóp
 	std::deque<std::shared_ptr<UI>> _preparationDeque;
 	std::shared_ptr<PreparationUI> _preparationUI;
 
@@ -76,6 +77,8 @@ private:
 	bool PlayerTurnUpdate(const Input& input);
 	bool CharactorUpdate(const Input& input);
 	bool EnemyTurnUpdate(const Input& input);
+
+	bool BackMapSelectWindow(const Input& input);
 
 	bool CharactorDyingUpdate(const Input& input);
 

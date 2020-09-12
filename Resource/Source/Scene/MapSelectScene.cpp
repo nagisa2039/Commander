@@ -122,7 +122,8 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller), _
 		idx++;
 	}
 	assert(_contentPosVec.size() > 0);
-	for (int charType = 0; charType < static_cast<int>(CharactorType::max); ++charType)
+	auto charactorTypeMax = DataBase::Instance().GetCharactorDataTable().size();
+	for (unsigned int charType = 0; charType < charactorTypeMax; ++charType)
 	{
 		_mapSelectCharactors.emplace_back(make_unique<MapSelectCharactor>
 			(*_camera, static_cast<CharactorType>(charType), charType == 0));

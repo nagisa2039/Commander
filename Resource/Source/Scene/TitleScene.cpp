@@ -85,7 +85,7 @@ void TitleScene::CharactorUpdate()
 	{
 		if (!charInf.active)continue;
 		charInf.pos.y += FALL_SPEED;
-		charInf.angle += ROTATE_SPEED * DX_PI / 180.0f;
+		charInf.angle += ROTATE_SPEED * DX_PI_F / 180.0f;
 		if (charInf.pos.y >= wsize.h + 200)
 		{
 			charInf.active = false;
@@ -96,15 +96,16 @@ void TitleScene::CharactorUpdate()
 	if (_charCreateTrack->GetEnd())
 	{
 		_charCreateTrack->Reset();
+		auto charTypeMax = DataBase::Instance().GetCharactorDataTable().size();
 		for (auto& charInf : _charInfVec)
 		{
 			if (charInf.active)continue;
 
 			charInf.active = true;
 			charInf.team = static_cast<Team>(mt() % static_cast<int>(Team::max));
-			charInf.type = static_cast<CharactorType>(mt() % static_cast<int>(CharactorType::max));
+			charInf.type = static_cast<CharactorType>(mt() % charTypeMax);
 			charInf.pos = Vector2(static_cast<float>(mt() % wsize.w), -200.0);
-			charInf.angle = (mt() % 360) * DX_PI / 180.0f;
+			charInf.angle = (mt() % 360) * DX_PI_F / 180.0f;
 			break;
 		}
 	}

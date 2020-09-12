@@ -1,7 +1,6 @@
 #include <Dxlib.h>
 #include <sstream>
 #include "Map.h"
-#include "Application.h"
 #include "FileSystem.h"
 #include "DataBase.h"
 #include "Camera.h"
@@ -23,13 +22,15 @@ void Map::DrawToMapScreen()
 	SetDrawScreen(_mapGraphHandle);
 	ClsDrawScreen();
 
+	auto MapChipMax = DataBase::Instance().GetMapChipDataTable().size();
+
 	SetDrawMode(DX_DRAWMODE_NEAREST);
 	for (int y = 0;const auto& mapDataVec : _mapDataVec2)
 	{
 		for (int x = 0; const auto& mapData : mapDataVec)
 		{
-			DrawMapChip(Vector2Int(x, y), Map_Chip::none);
-			if (_mapDataVec2[y][x].mapChip > Map_Chip::none && _mapDataVec2[y][x].mapChip < Map_Chip::max)
+			DrawMapChip(Vector2Int(x, y), MAP_CHIP_NONE);
+			if (_mapDataVec2[y][x].mapChip > MAP_CHIP_NONE && _mapDataVec2[y][x].mapChip < MapChipMax)
 			{
 				DrawMapChip(Vector2Int(x, y), _mapDataVec2[y][x].mapChip);
 			}

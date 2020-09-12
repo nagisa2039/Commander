@@ -6,6 +6,6 @@ struct SaveDataCharactor
 {
 	CharactorType charType;
 	Status status;
-	SaveDataCharactor() :charType(CharactorType::max), status(Status()) {};
+	SaveDataCharactor() :charType(0), status(Status()) {};
 	SaveDataCharactor(const CharactorType ct, const Status& st) :charType(ct), status(st) {};
 };

@@ -2,17 +2,7 @@
 #include "Team.h"
 #include "Geometry.h"
 
-enum class CharactorType
-{
-	swordman,
-	soldier,
-	warrior,
-	mage,
-	archer,
-	priest,
-	max
-
-};
+using CharactorType = unsigned int;
 
 struct CharactorChipInf
 {

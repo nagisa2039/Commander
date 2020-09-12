@@ -84,37 +84,19 @@ Charactor* MapCtrl::GetMapPosChar(const Vector2Int mapPos)const
 void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 {
 	auto& dataBase = DataBase::Instance();
-	//auto& saveData = Application::Instance().GetSaveData();
-	//auto charactorDataVec = saveData.GetCharactorDataVec();
-	//auto itr = charactorDataVec.begin();
-
+	auto charactorTypeMax = dataBase.GetCharactorDataTable().size();
 	for (const auto& mapDataVec : _map->GetMapData())
 	{
 		for (const auto& mapData : mapDataVec)
 		{
-			if (mapData.charactorChip.type == CharactorType::max || mapData.charactorChip.team == Team::max) continue;
+			if (mapData.charactorChip.type == charactorTypeMax || mapData.charactorChip.team == Team::max) continue;
 
 			auto initStatus = dataBase.GetLevelInitStatus(mapData.charactorChip.level, mapData.charactorChip.type);
 			initStatus.weaponId = mapData.charactorChip.weaponId;
 			CreateCharactor(mapData.charactorChip, initStatus, ctrl, effects, camera);
 
-			/*if (mapData.charactorChip.team == Team::player)
-			{
-				if (itr == charactorDataVec.end()) continue;
-
-				auto saveData = *itr;
-				auto charactorChip = mapData.charactorChip;
-				_charactorCreateFuncs[static_cast<size_t>(saveData.charType)](mapData.charactorChip,
-					saveData.status, ctrl, effects, camera);
-				itr = charactorDataVec.erase(itr);
-			}
-			else
-			{
-				
-			}*/
 		}
 	}
-	//saveData.SetWaitCharactorDataVec(charactorDataVec);
 }
 
 void MapCtrl::RouteSearch(Charactor& charactor)

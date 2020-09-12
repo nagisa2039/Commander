@@ -30,7 +30,6 @@ private:
 	// 指定したマスがマップの変更可能な範囲化を調べる
 	bool CheckMapPosPutRange(const Vector2Int& mapPos);
 
-
 public:
 	Map(const int mapId, std::string& name, std::string& fileName, std::string& bgmName);
 	~Map();

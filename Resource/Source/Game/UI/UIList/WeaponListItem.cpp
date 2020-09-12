@@ -21,7 +21,7 @@ void WeaponListItem::Update(const Input& input)
 
 void WeaponListItem::Draw(const Vector2Int& offset)
 {
-	auto& weaponData = Application::Instance().GetDataBase().GetWeaponData(_weaponId);
+	auto& weaponData = DataBase::Instance().GetWeaponData(_weaponId);
 
 	auto& rect = GetRect();
 	auto drawRect = Rect(rect.center + offset, rect.size);

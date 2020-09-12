@@ -71,7 +71,7 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 
 	_attackEffectFuncs[Size_t(damageType::none)] = [this](BattleScene& battleScene, const Vector2Int center)
 	{
-		auto& dataBase = Application::Instance().GetDataBase();
+		auto& dataBase = DataBase::Instance();
 		auto effect = dataBase.GetBattleEffectFactory().
 			CreateBattleEffect(BattleEffectType::miss, *this, *_targetChar, battleScene.GetEffectVec(), true, _camera);
 		battleScene.GetEffectVec().emplace_back(effect);
@@ -79,7 +79,7 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 
 	_attackEffectFuncs[Size_t(damageType::damage)] = [this](BattleScene& battleScene, const Vector2Int center)
 	{
-		auto& dataBase = Application::Instance().GetDataBase();
+		auto& dataBase = DataBase::Instance();
 		auto type = dataBase.GetWeaponData(_selfChar.GetStatus().weaponId).effectType;
 		_attackEffect = dataBase.GetBattleEffectFactory().
 			CreateBattleEffect(type, *this, *_targetChar, battleScene.GetEffectVec(), false, _camera);
@@ -88,7 +88,7 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 
 	_attackEffectFuncs[Size_t(damageType::critical)] = [this](BattleScene& battleScene, const Vector2Int center)
 	{
-		auto& dataBase = Application::Instance().GetDataBase();
+		auto& dataBase = DataBase::Instance();
 		auto type = dataBase.GetWeaponData(_selfChar.GetStatus().weaponId).effectType;
 		_attackEffect = dataBase.GetBattleEffectFactory().
 			CreateBattleEffect(type, *this, *_targetChar, battleScene.GetEffectVec(), true, _camera);
@@ -336,7 +336,7 @@ void BattleCharactor::DrawHP(Rect& windowRect, int fontHandle)
 void BattleCharactor::DrawWeaponName(FileSystem& fileSystem, Rect& weaponNameRect)
 {
 	auto choplin30 = fileSystem.GetFontHandle("choplin30edge");
-	const char* str = Application::Instance().GetDataBase().GetWeaponData(GetCharacotr().GetStartStatus().weaponId).name.c_str();
+	const char* str = DataBase::Instance().GetWeaponData(GetCharacotr().GetStartStatus().weaponId).name.c_str();
 	DrawStringToHandle(weaponNameRect.center, Anker::center, 0xffffff, choplin30, str);
 }
 

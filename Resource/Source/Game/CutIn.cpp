@@ -34,7 +34,7 @@ CutIn::CutIn(const CharactorType type, const Team team, const Dir dir, std::func
 	_animCnt = 0;
 	_backImageSize = Size(640, 240);
 
-	_graphH = Application::Instance().GetDataBase().GetCharactorImageHandle(type, team);
+	_graphH = DataBase::Instance().GetCharactorImageHandle(type, team);
 	SoundL.PlaySE("Resource/Sound/SE/catin.mp3");
 	_bgH = ImageHandle("Resource/Image/Battle/cutin.png");
 }

@@ -23,7 +23,6 @@ Application::Application()
 {
 }
 
-
 Application::~Application()
 {
 }
@@ -36,11 +35,6 @@ Application::Configure & Application::GetConfigure(void)
 const Size & Application::GetWindowSize(void)
 {
 	return _configure->GetWindowSize();
-}
-
-const DataBase& Application::GetDataBase() const
-{
-	return *_dataBase;
 }
 
 SaveData& Application::GetSaveData()
@@ -59,17 +53,6 @@ SceneController& Application::GetSceneController() const
 	return *_sceneController;
 }
 
-double Application::GetDeltaTime() const
-{
-	return static_cast<double>(_end.QuadPart - _start.QuadPart) / static_cast<double>(_freq.QuadPart);
-}
-
-unsigned int Application::GetFPS()const
-{
-	auto deltaTime = GetDeltaTime();
-	return static_cast<unsigned int>(1.0 / deltaTime);
-}
-
 bool Application::Initialize()
 {
 	_configure = make_unique<Configure>();
@@ -85,8 +68,7 @@ bool Application::Initialize()
 	SetDrawMode(DX_DRAWMODE_BILINEAR);
 	SetWindowIconID(100);
 
-	_dataBase = make_unique<DataBase>();
-	_dataBase->Init();
+	DataBase::Instance().Init();
 	_saveData = make_unique<SaveData>();
 
 	// input‚Ì‰Šú‰»
@@ -99,13 +81,6 @@ bool Application::Initialize()
 	//_sceneController->ChangeScene(make_unique<PlayScene>(*_sceneController));
 	//_sceneController->ChangeScene(make_unique<MapEditScene>(*_sceneController));
 	_sceneController->ChangeScene(make_unique<TitleScene>(*_sceneController));
-
-
-	_freq = {};
-	_start = {};
-	_end = {};
-	QueryPerformanceFrequency(&_freq);
-	QueryPerformanceCounter(&_end);
 
 	return true;
 }
@@ -152,16 +127,11 @@ void Application::Run()
 {
 	while (ProcessMessage() == 0 && !CheckHitKey(KEY_INPUT_ESCAPE))
 	{
-		_start = _end;
-		QueryPerformanceCounter(&_end);
-
 		_input->Update();
 
 		ClsDrawScreen();
 
 		_sceneController->SceneUpdate(*_input);
-
-		// DrawFormatString(0,0, 0xffffff, "FPS : %d", GetFPS());
 
 		ScreenFlip();
 	}

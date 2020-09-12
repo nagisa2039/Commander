@@ -7,7 +7,6 @@
 class Input;
 struct Vector2Int;
 class SceneController;
-class DataBase;
 class SaveData;
 class AnkerCalculation;
 
@@ -55,15 +54,10 @@ public:
 	// 画面サイズを参照で返す
 	const Size& GetWindowSize(void);
 
-	const DataBase& GetDataBase()const;
-
 	SaveData& GetSaveData();
 
 	const AnkerCalculation& GetAnkerCalculation()const;
 	SceneController& GetSceneController()const;
- 	
-	double GetDeltaTime()const;
-	unsigned int GetFPS()const;
 
 private:
 	Application();
@@ -76,13 +70,8 @@ private:
 	std::vector<Vector2Int> _poss;
 
 	std::unique_ptr<Configure> _configure;
-	std::unique_ptr<DataBase> _dataBase;
 	std::unique_ptr<SaveData> _saveData;
 
 	std::unique_ptr<AnkerCalculation> _ankerCalculation;
-
-	LARGE_INTEGER _freq;
-	LARGE_INTEGER _start;
-	LARGE_INTEGER _end;
 };
 

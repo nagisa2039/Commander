@@ -240,7 +240,7 @@ void StatusWindow::DrawBattleStatus(const Rect& battleStatusRect)
 		Anker::center, 0xffffff, choplin30, "ŽË’ö");
 	DrawStringToHandle(Vector2Int(contentRect.center.x + static_cast<int>(contentRect.size.w * 0.25f), contentRect.center.y),
 		Anker::center, 0xffffff, choplin30, 
-		Application::Instance().GetDataBase().GetWeaponData(_charactor.GetStartStatus().weaponId).GetRengeString().c_str());
+		DataBase::Instance().GetWeaponData(_charactor.GetStartStatus().weaponId).GetRengeString().c_str());
 }
 
 void StatusWindow::DrawStatus(const Rect& statusRect)

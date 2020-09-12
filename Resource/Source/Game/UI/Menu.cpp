@@ -11,7 +11,24 @@ using namespace std;
 Menu::Menu(std::deque<std::shared_ptr<UI>>* uiDeque, PlayerCommander& playerCom, const MapCtrl& mapCtrl)
 	: _playerCommander(playerCom), _mapCtrl(mapCtrl), UI(uiDeque)
 {
+	_selectPen = make_unique<SelectPen>(nullptr);
+
+	_openAnimTrack = make_unique<Track<float>>();
+	_openAnimTrack->AddKey(0, 0.0f);
+	_openAnimTrack->AddKey(15, 1.0f);
+
+	_closeAnimTrack = make_unique<Track<float>>();
+	_closeAnimTrack->AddKey(0, 0.0f);
+	_closeAnimTrack->AddKey(15, 1.0f);
+
 	_selectIdx = 0;
+	_updater = &Menu::CloseUpdate;
+	_drawer = &Menu::CloseDraw;
+	_isOpen = false;
+	auto& soundLoader = SoundL;
+	_openSEH = soundLoader.GetSoundHandle("Resource/Sound/SE/menu_open.mp3");
+	_closeSEH = soundLoader.GetSoundHandle("Resource/Sound/SE/menu_close.mp3");
+	_moveSEH = soundLoader.GetSoundHandle("Resource/Sound/SE/cursor.mp3");
 }
 
 void Menu::Init(const size_t contentNum, const int frameH)
@@ -31,23 +48,6 @@ void Menu::Init(const size_t contentNum, const int frameH)
 		contentInf.centerPos = center;
 		center.y += lineSpace + _contentSize.h;
 	}
-
-	_selectPen = make_unique<SelectPen>(nullptr);
-
-	_openAnimTrack = make_unique<Track<float>>();
-	_openAnimTrack->AddKey(0, 0.0f);
-	_openAnimTrack->AddKey(15, 1.0f);
-
-	_closeAnimTrack = make_unique<Track<float>>();
-	_closeAnimTrack->AddKey(0, 0.0f);
-	_closeAnimTrack->AddKey(15, 1.0f);
-	_updater = &Menu::CloseUpdate;
-	_drawer = &Menu::CloseDraw;
-	_isOpen = false;
-	auto& soundLoader = SoundL;
-	_openSEH = soundLoader.GetSoundHandle("Resource/Sound/SE/menu_open.mp3");
-	_closeSEH = soundLoader.GetSoundHandle("Resource/Sound/SE/menu_close.mp3");
-	_moveSEH = soundLoader.GetSoundHandle("Resource/Sound/SE/cursor.mp3");
 }
 
 Menu::~Menu()

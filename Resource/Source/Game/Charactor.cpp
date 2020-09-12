@@ -93,7 +93,7 @@ void Charactor::NormalDraw()
 	float sizeRate = 0.3f;
 	auto iconRect= Rect(_camera.GetCameraOffset() + _pos.ToVector2Int() + chipSize * Vector2(sizeRate / 2.0f, sizeRate / 2.0f), 
 		(chipSize * sizeRate).ToSize());
-	Application::Instance().GetDataBase().GetWeaponData(_startStatus.weaponId).GetTypeData().DrawWeaponIcon(iconRect);
+	DataBase::Instance().GetWeaponData(_startStatus.weaponId).GetTypeData().DrawWeaponIcon(iconRect);
 
 	// HPBer‚Ì•`‰æ
 	Size hpberSize = (chipSize * Vector2(0.8f, 0.1f)).ToSize();
@@ -205,7 +205,7 @@ const Status& Charactor::GetStatus() const
 
 BattleStatus Charactor::GetBattleStatus() const
 {
-	const auto& dataBase = Application::Instance().GetDataBase();
+	const auto& dataBase = DataBase::Instance();
 	const auto& mapChipData = dataBase.GetMapChipData(_mapCtrl.GetMap()->GetMapData(GetMapPos()).mapChip);
 	const auto& weaponData = dataBase.GetWeaponData(_status.weaponId);
 
@@ -239,7 +239,7 @@ bool Charactor::GetIsMoveAnim() const
 
 const Range& Charactor::GetAttackRange() const
 {
-	return Application::Instance().GetDataBase().GetWeaponData(_startStatus.weaponId).range;
+	return DataBase::Instance().GetWeaponData(_startStatus.weaponId).range;
 }
 
 const std::string& Charactor::GetName() const
@@ -399,7 +399,7 @@ void Charactor::DrawRoute(const Vector2Int& targetPos)
 
 bool Charactor::StartTerrainEffect()
 {
-	auto mapChipData = Application::Instance().GetDataBase().GetMapChipData(_mapCtrl.GetMap()->GetMapData(GetMapPos()).mapChip);
+	auto mapChipData = DataBase::Instance().GetMapChipData(_mapCtrl.GetMap()->GetMapData(GetMapPos()).mapChip);
 
 	// Œø‰Ê‚È‚µ
 	if (mapChipData.recovery == 0)return false;
@@ -448,7 +448,7 @@ Status Charactor::GetLevelUpStatus()
 	};
 
 	Status status;
-	auto growRate = Application::Instance().GetDataBase().GetCharactorData(_charactorType).statusGrowRate;
+	auto growRate = DataBase::Instance().GetCharactorData(_charactorType).statusGrowRate;
 	status.level			= 1;
 	status.health			= calPin(growRate.health);
 	status.power			= calPin(growRate.power);
@@ -631,7 +631,7 @@ void Charactor::CharactorDataInit(const CharactorType& type, const uint8_t& leve
 {
 	_charactorType = type;
 
-	auto& dataBase = Application::Instance().GetDataBase();
+	auto& dataBase = DataBase::Instance();
 
 	auto charactorData = dataBase.GetCharactorData(_charactorType);
 	_name = charactorData.name;

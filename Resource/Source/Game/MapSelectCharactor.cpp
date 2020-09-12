@@ -20,7 +20,7 @@ MapSelectCharactor::MapSelectCharactor(Camera& camera, const CharactorType& char
 {
 	_animator = make_unique<Animator>();
 	const Size divSize = Size(32, 32);
-	_animator->SetImageHandle(Application::Instance().GetDataBase().GetCharactorImageHandle(charactorType, Team::player));
+	_animator->SetImageHandle(DataBase::Instance().GetCharactorImageHandle(charactorType, Team::player));
 
 	auto nextRectCenterOffset = [&](std::vector<Rect>& animRectVec)
 	{

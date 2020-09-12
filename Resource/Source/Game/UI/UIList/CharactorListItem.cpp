@@ -30,7 +30,7 @@ void CharactorListItem::Draw(const Vector2Int& offset)
 	const int offsetX = 10;
 	int drawX = drawRect.Left() + offsetX;
 
-	auto& dataBase_charactorData = Application::Instance().GetDataBase().GetCharactorData(_charactorData.charType);
+	auto& dataBase_charactorData = DataBase::Instance().GetCharactorData(_charactorData.charType);
 	auto& fileSystem = FileSystem::Instance();
 
 	// キャラアイコンの描画

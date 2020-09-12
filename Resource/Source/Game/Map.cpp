@@ -44,7 +44,7 @@ void Map::DrawToMapScreen()
 
 bool Map::DrawMapChip(const Vector2Int& mapPos, const Map_Chip mapChip, const Vector2Int& offset)
 {
-	auto drawData = Application::Instance().GetDataBase().GetMapChipData(mapChip).drawData;
+	auto drawData = DataBase::Instance().GetMapChipData(mapChip).drawData;
 
 	auto graphH = ImageHandle((imageFolderPath + drawData.path).c_str());
 	DrawRectExtendGraph(offset.x + _chipSize.w * mapPos.x, offset.y + _chipSize.h * mapPos.y,
@@ -182,7 +182,7 @@ CharactorChipInf Map::GetCharactorChipInf(const Vector2Int& mapPos) const
 bool Map::SetCharactorChip(const CharactorChipInf& charactorChipInf)
 {
 	// 移動不可のマスには設置できないようにする
-	if (Application::Instance().GetDataBase().GetMapChipData(_mapDataVec2[charactorChipInf.mapPos.y][charactorChipInf.mapPos.x].mapChip).moveCost < 0)
+	if (DataBase::Instance().GetMapChipData(_mapDataVec2[charactorChipInf.mapPos.y][charactorChipInf.mapPos.x].mapChip).moveCost < 0)
 	{
 		return false;
 	}

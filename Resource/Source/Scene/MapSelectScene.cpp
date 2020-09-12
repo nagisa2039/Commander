@@ -116,7 +116,7 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller), _
 	_contentPosVec.clear();
 	int idx = 0;
 	int space = 700;
-	for (const auto& mapData : Application::Instance().GetDataBase().GetMapDataTable())
+	for (const auto& mapData : DataBase::Instance().GetMapDataTable())
 	{
 		_contentPosVec.emplace_back(screenCenter + Vector2Int(space * idx, 0));
 		idx++;
@@ -250,7 +250,7 @@ void MapSelectScene::Draw()
 	//DrawBox(Vector2Int(0,0), wsize.ToVector2Int(), 0x364364);
 	DrawGraph(0,0,ImageHandle("Resource/Image/UI/mapSelectBG.jpg"), false);
 
-	auto& mapDataVec = Application::Instance().GetDataBase().GetMapDataTable();
+	auto& mapDataVec = DataBase::Instance().GetMapDataTable();
 	auto& clearMapDataVec = Application::Instance().GetSaveData().GetClearMapDataVec();
 	int fontH = FontHandle("choplin30edge");
 	int clearH = ImageHandle("Resource/Image/UI/clear.png");

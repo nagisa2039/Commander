@@ -46,7 +46,7 @@ void WeaponWindow::DrawToWindow()
 	auto currentScreen = GetDrawScreen();
 	SetDrawScreen(_windowH);
 
-	auto& weaponData = Application::Instance().GetDataBase().GetWeaponData(_weaponId);
+	auto& weaponData = DataBase::Instance().GetWeaponData(_weaponId);
 
 	auto rectSize = GetSize();
 	Rect rect = Rect(rectSize.ToVector2Int()*0.5f, rectSize);

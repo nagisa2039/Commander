@@ -117,7 +117,7 @@ void TitleScene::CharactorUpdate()
 void TitleScene::Draw(void)
 {
 	auto wsize = Application::Instance().GetWindowSize();
-	auto& dataBase = Application::Instance().GetDataBase();
+	auto& dataBase = DataBase::Instance();
 	auto drawObject = [&wsize, &charInfVec = _charInfVec, &dataBase, titleH = _titleH](const Vector2Int& offset = Vector2Int(0,0))
 	{
 		for (auto& charInf : charInfVec)

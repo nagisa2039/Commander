@@ -118,7 +118,8 @@ void Camera::ClearTargetActor()
 Vector2Int Camera::GetCameraOffset() const
 {
 	auto wsize = Application::Instance().GetWindowSize();
-	return Vector2Int(wsize.w/2 - _rect.center.x - _offset.x, wsize.h/2 - _rect.center.y - _offset.y);
+	auto offsetInt = _offset.ToVector2Int();
+	return Vector2Int(wsize.w/2 - _rect.center.x - offsetInt.x, wsize.h/2 - _rect.center.y - offsetInt.y);
 }
 
 void Camera::SetPos(const Vector3& pos)

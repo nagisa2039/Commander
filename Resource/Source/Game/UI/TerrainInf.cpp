@@ -42,7 +42,7 @@ void TerrainInf::Draw()
 	Rect terrainInfRect = Rect(Lerp(startPos, endPos, _animTrack->GetValue()), graphSize);
 	DrawGraph(terrainInfRect.Left(), terrainInfRect.Top(), graphH, true);
 
-	auto mapChipData = Application::Instance().GetDataBase().GetMapChipData( _mapCtrl.GetMap()->GetMapData(_mapPos).mapChip);
+	auto mapChipData = DataBase::Instance().GetMapChipData( _mapCtrl.GetMap()->GetMapData(_mapPos).mapChip);
 
 	int choplin40 = fileSystem.GetFontHandle("choplin40edge");
 	DrawStringToHandle(terrainInfRect.center, Anker::center, 0xffffff, choplin40, mapChipData.name.c_str());

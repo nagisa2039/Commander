@@ -17,7 +17,7 @@ AdvanceLoader::AdvanceLoader()
 	_loadFuncMap["mp3"] = _loadFuncMap["wav"] = [](const std::string& str) {SoundHandle(str.c_str());};
 	_loadFuncMap["bmp"] = [](const std::string& str) {ImageL.LoadMask(str.c_str()); };
 
-	auto& advanceLoadTable = Application::Instance().GetDataBase().GetAdvanceLoadTable();
+	auto& advanceLoadTable = DataBase::Instance().GetAdvanceLoadTable();
 	for (const auto& path : advanceLoadTable)
 	{
 		auto ext = getExt(path);

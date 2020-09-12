@@ -81,7 +81,7 @@ void SaveData::WriteData()
 
 bool SaveData::Load()
 {
-	auto& mapDatas = Application::Instance().GetDataBase().GetMapDataTable();
+	auto& mapDatas = DataBase::Instance().GetMapDataTable();
 	_clearMapDataVec.resize(mapDatas.size());
 
 	FILE* fp = nullptr;

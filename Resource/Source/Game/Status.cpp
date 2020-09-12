@@ -12,7 +12,7 @@ int BattleStatus::GetPower() const
 
 int BattleStatus::GetDamage(const BattleStatus& target)const
 {
-	const auto& dataBase = Application::Instance().GetDataBase();
+	const auto& dataBase = DataBase::Instance();
 	auto rate = dataBase.GetAttributeRate(weaponTypeData.attribute, dataBase.GetWeaponTypeDataFromWeaponId(target.status.weaponId).attribute);
 	return max( static_cast<int>((GetPower() - (weaponTypeData.magicAttack ? target.status.magic_defense : target.status.defense))  * rate) - target.defenseCorrection, 0);
 }

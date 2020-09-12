@@ -31,7 +31,7 @@ void MapCtrl::CreateCharactor(const CharactorChipInf& characotChipInf, const Sta
 MapCtrl::MapCtrl(const int mapId, std::vector<std::shared_ptr<Charactor>>& charactors) : _charactors(charactors)
 {
 	_astar = make_unique<Astar>();
-	_map = Application::Instance().GetDataBase().GetMapData(mapId);
+	_map = DataBase::Instance().GetMapData(mapId);
 
 	auto& mapSize = _map->GetMapSize();
 	_warSituationH = FileSystem::Instance().
@@ -83,7 +83,7 @@ Charactor* MapCtrl::GetMapPosChar(const Vector2Int mapPos)const
 
 void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 {
-	auto& dataBase = Application::Instance().GetDataBase();
+	auto& dataBase = DataBase::Instance();
 	//auto& saveData = Application::Instance().GetSaveData();
 	//auto charactorDataVec = saveData.GetCharactorDataVec();
 	//auto itr = charactorDataVec.begin();
@@ -124,7 +124,7 @@ void MapCtrl::RouteSearch(Charactor& charactor)
 
 	return _astar->RouteSearch(charactor.GetMapPos(), charactor.GetStatus().move, charactor.GetAttackRange(), 
 		mapVec2, charactor.GetResutlPosListVec2(), charactor.GetTeam(), 
-		Application::Instance().GetDataBase().GetWeaponTypeDataFromWeaponId(charactor.GetStatus().weaponId).heal);
+		DataBase::Instance().GetWeaponTypeDataFromWeaponId(charactor.GetStatus().weaponId).heal);
 }
 
 bool MapCtrl::MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, std::list<Astar::ResultPos>& resutlPosList, const Team team, const std::list<Astar::ResultPos>& excludeList)
@@ -268,7 +268,7 @@ Vector2Int MapCtrl::SearchMovePos(Charactor& charactor, Vector2Int& targetCnt)
 void MapCtrl::CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, const Team team)
 {
 	auto& mapData = _map->GetMapData();
-	auto& dataBase = Application::Instance().GetDataBase();
+	auto& dataBase = DataBase::Instance();
 	mapVec2.resize(mapData.size());
 	for (int y = 0; y < mapVec2.size(); y++)
 	{
@@ -295,7 +295,7 @@ void MapCtrl::CreateWarSituation()const
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 230);
 
 	auto& mapData = _map->GetMapData();
-	auto& dataBase = Application::Instance().GetDataBase();
+	auto& dataBase = DataBase::Instance();
 	auto& mapSize = _map->GetMapSize();
 
 	// マップチップの描画

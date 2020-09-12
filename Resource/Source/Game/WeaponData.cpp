@@ -18,7 +18,7 @@ std::string WeaponData::GetRengeString() const
 
 const WeaponTypeData& WeaponData::GetTypeData() const
 {
-	return Application::Instance().GetDataBase().GetWeaponTypeData(typeId);
+	return DataBase::Instance().GetWeaponTypeData(typeId);
 }
 
 void WeaponTypeData::DrawWeaponIcon(const Rect& rect) const
@@ -26,5 +26,5 @@ void WeaponTypeData::DrawWeaponIcon(const Rect& rect) const
 	auto drawRect = rect;
 	drawRect.Draw(0x000000);
 	drawRect.size *= 0.8f;
-	drawRect.Draw(Application::Instance().GetDataBase().GetAttributeData(attribute).color);
+	drawRect.Draw(DataBase::Instance().GetAttributeData(attribute).color);
 }

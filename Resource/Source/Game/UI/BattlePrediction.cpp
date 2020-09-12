@@ -73,7 +73,7 @@ void BattlePrediction::Draw()
 	_targetCharactor.DrawCharactorIcon(	Rect(Vector2Int(windowRect.center.x + iconSize.w / 2, drawY), iconSize));
 	drawY += iconSize.h / 2 + 50;
 
-	auto mapChipData		= Application::Instance().GetDataBase().GetMapChipData(_mapChip);
+	auto mapChipData		= DataBase::Instance().GetMapChipData(_mapChip);
 	auto selfBattleStatus	= _selfCharactor.GetBattleStatus();
 	selfBattleStatus.defenseCorrection	 = mapChipData.defense;
 	selfBattleStatus.avoidanceCorrection = mapChipData.avoidance;
@@ -145,10 +145,10 @@ void BattlePrediction::Draw()
 				return color;
 			};
 
-			auto& dataBase = Application::Instance().GetDataBase();
-			unsigned int selfColor		= GetAttackColor(Application::Instance().GetDataBase().
+			auto& dataBase = DataBase::Instance();
+			unsigned int selfColor		= GetAttackColor(DataBase::Instance().
 				GetAttributeRate(selfBattleStatus.weaponTypeData.attribute, targetBattleStatus.weaponTypeData.attribute));
-			unsigned int targetColor	= GetAttackColor(Application::Instance().GetDataBase().
+			unsigned int targetColor	= GetAttackColor(DataBase::Instance().
 				GetAttributeRate(targetBattleStatus.weaponTypeData.attribute, selfBattleStatus.weaponTypeData.attribute));
 
 			DrawContent("ˆÐ—Í", true, selfBattleStatus.GetDamage(targetBattleStatus), 

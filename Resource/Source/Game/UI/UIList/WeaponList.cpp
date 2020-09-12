@@ -20,7 +20,7 @@ void WeaponList::Buy()
 	/*auto& saveData = Application::Instance().GetSaveData();
 	_weaponId = GetWeaponId();
 	auto money = saveData.GetMoney();
-	auto price = Application::Instance().GetDataBase().GetWeaponData(_weaponId).price;
+	auto price = DataBase::Instance().GetWeaponData(_weaponId).price;
 
 	if (money >= price)
 	{
@@ -62,7 +62,7 @@ uint8_t WeaponList::GetWeaponId()
 WeaponList::WeaponList(const Vector2Int& leftup, uint8_t& weaponId, const uint8_t typeFilter, std::deque<std::shared_ptr<UI>>* uiDeque, std::function<void()> func)
 	:_weaponId(weaponId), _func(func), UIList(9, uiDeque)
 {
-	auto& weaponDataVec = Application::Instance().GetDataBase().GetWeaponDataTable();
+	auto& weaponDataVec = DataBase::Instance().GetWeaponDataTable();
 	for(int weaponId = 0; weaponId < weaponDataVec.size(); weaponId++)
 	{
 		// typeID分シフトしてbitfieldを作成しfilterと&演算を行う

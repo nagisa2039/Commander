@@ -39,7 +39,7 @@ BattleEffect::BattleEffect(BattleCharactor& self, BattleCharactor& target, std::
 	bool critical, Camera& camera, bool cameraActive)
 	: Effect(self.GetCenterPos(), camera, cameraActive), _effects(effects), _self(self), _target(target), _critical(critical)
 {
-	auto& dataBase = Application::Instance().GetDataBase();
+	auto& dataBase = DataBase::Instance();
 	auto& weaponData = dataBase.GetWeaponData(self.GetCharacotr().GetStatus().weaponId);
 	auto efkPath = dataBase.GetBattleEffectData(weaponData.effectType).seName;
 	SoundL.PlaySE(efkPath.c_str());

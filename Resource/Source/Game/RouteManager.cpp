@@ -31,7 +31,7 @@ void RouteManager::DrawMovableMass(const uint8_t alpha) const
 	auto offset = _camera.GetCameraOffset();
 	auto chipSize = _mapCtrl.GetChipSize();
 	int graphH = ImageHandle("Resource/Image/Battle/movableMass.png");
-	bool heal = Application::Instance().GetDataBase().GetWeaponData(_charactor.GetStartStatus().weaponId).GetTypeData().heal;
+	bool heal = DataBase::Instance().GetWeaponData(_charactor.GetStartStatus().weaponId).GetTypeData().heal;
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 	for (auto& resultPosListVec : _resultPosListVec2)

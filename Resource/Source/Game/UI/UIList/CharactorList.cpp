@@ -17,7 +17,7 @@ void CharactorList::Decision()
 
 	auto& charactorData = Application::Instance().GetSaveData().GetCharactorData(GetListIdx());
 
-	auto weaponType = 1 << Application::Instance().GetDataBase().GetCharactorData(charactorData.charType).weaponType;
+	auto weaponType = 1 << DataBase::Instance().GetCharactorData(charactorData.charType).weaponType;
 	_uiDeque->push_front(make_shared<WeaponList>(Vector2Int(rect.Left(), rect.Top()), charactorData.status.weaponId, weaponType, _uiDeque, []() {}));*/
 }
 

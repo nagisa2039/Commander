@@ -41,7 +41,7 @@ void MissEffect::Draw()
 PopupMissEffect::PopupMissEffect(const Vector2Int& pos, Camera& camera, bool cameraActive, bool critical)
 	: PopupText("MISS!", pos, camera, cameraActive, critical)
 {
-	auto& dataBase = Application::Instance().GetDataBase();
+	auto& dataBase = DataBase::Instance();
 	auto efkPath = dataBase.GetBattleEffectData(BattleEffectType::miss).seName;
 	SoundL.PlaySE(efkPath.c_str());
 }

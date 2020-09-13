@@ -91,7 +91,7 @@ void MapCursor::CursorMove(const Input& input)
 	{
 		ChangeMouseInput();
 	}
-	else if (input.GetAnyKeybordInput())
+	else if (input.GetAnyKeybordInput() || input.GetAnyPadInput())
 	{
 		ChangeKeybordInput();
 	}

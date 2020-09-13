@@ -52,7 +52,8 @@ private:
 	std::deque<std::shared_ptr<UI>> _preparationDeque;
 	std::shared_ptr<PreparationUI> _preparationUI;
 
-	std::unique_ptr<Track<float>> _clearAnimTrack;
+	std::unique_ptr<Track_f> _clearAnimTrack;
+	std::unique_ptr<Track_f> _demoAnimTrack;
 	std::unique_ptr<Track_i> _autoSceneChangeTrack;
 
 	std::function<void()>_fadeEndFunc;

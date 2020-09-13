@@ -73,10 +73,7 @@ void BattlePrediction::Draw()
 	_targetCharactor.DrawCharactorIcon(	Rect(Vector2Int(windowRect.center.x + iconSize.w / 2, drawY), iconSize));
 	drawY += iconSize.h / 2 + 50;
 
-	auto mapChipData		= DataBase::Instance().GetMapChipData(_mapChip);
 	auto selfBattleStatus	= _selfCharactor.GetBattleStatus();
-	selfBattleStatus.defenseCorrection	 = mapChipData.defense;
-	selfBattleStatus.avoidanceCorrection = mapChipData.avoidance;
 
 	auto targetBattleStatus = _targetCharactor.GetBattleStatus();
 

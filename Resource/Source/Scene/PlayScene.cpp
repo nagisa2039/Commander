@@ -103,7 +103,11 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId, const boo
 
 	if (_aiMode)
 	{
-		StartFadeIn([this]() {GameStart(); });
+		_demoAnimTrack = make_unique<Track<float>>(true);
+		_demoAnimTrack->AddKey(0, 1.0f);
+		_demoAnimTrack->AddKey(30, 0.0f);
+		_demoAnimTrack->AddKey(60, 1.0f);
+		StartFadeIn([this]() {GameStart(); }); 
 	}
 	else
 	{
@@ -118,6 +122,11 @@ PlayScene::~PlayScene()
 void PlayScene::Update(const Input & input)
 {
 	_camera->Update();
+
+	if (_aiMode)
+	{
+		_demoAnimTrack->Update();
+	}
 
 	for (auto& endUI : _endUIDeque)
 	{
@@ -583,6 +592,15 @@ void PlayScene::Draw(void)
 	DrawGraph(0, 0, _gameH, true);
 
 	(this->*_UIDrawer)();
+
+	if (_aiMode)
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(_demoAnimTrack->GetValue() * 255));
+		Rect demoRect(Vector2Int(220, 45), Size(400,50));
+		demoRect.DrawGraph(ImageHandle("Resource/Image/UI/checkWindowSelect.png"));
+		DrawStringToHandle(demoRect.center, Anker::center, 0xffffff, FontHandle("choplin20edge"), "デモプレイ中  F1で終了");
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+	}
 
 	for (auto rItr = _endUIDeque.rbegin(); rItr != _endUIDeque.rend(); ++rItr)
 	{

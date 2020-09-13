@@ -184,7 +184,8 @@ void CheckWindow::NormalUpdate(const Input& input)
 				return;
 			}
 		}
-		if (_noSelectRect.IsHit(mouseRect))
+		if (_noSelectRect.IsHit(mouseRect) || 
+			(!input.GetAnyKeybordInput() && !input.GetAnyPadInput() && input.GetButtonDown("back")))
 		{
 			select(Select::no);
 			if (click)

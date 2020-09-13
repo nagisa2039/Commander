@@ -110,7 +110,7 @@ void UIList::MouseMove(const Input& input)
 		return;
 	}
 
-	if (input.GetAnyKeybordInput())
+	if (input.GetAnyKeybordInput() || input.GetAnyPadInput())
 	{
 		_mover = &UIList::KeybordMove;
 		return;

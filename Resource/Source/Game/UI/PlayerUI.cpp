@@ -16,6 +16,7 @@
 #include "TerrainInf.h"
 #include "MenuTopInf.h"
 #include "Map.h"
+#include "RouteManager.h"
 
 using namespace std;
 
@@ -121,7 +122,7 @@ void PlayerUI::AddBattlePre()
 	}
 
 	Vector2Int attackStartPos;
-	if (!self->GetAttackStartPos(attackStartPos, targetMapPos))
+	if (!self->GetRouteManager()->GetAttackStartPos(attackStartPos, targetMapPos))
 	{
 		_battlePre.reset();
 		return;

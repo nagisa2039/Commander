@@ -211,7 +211,6 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 	_openH = soundLoader.GetSoundHandle("Resource/Sound/SE/menu_open.mp3");
 	_closeH = soundLoader.GetSoundHandle("Resource/Sound/SE/menu_close.mp3");
 	_moveH = soundLoader.GetSoundHandle("Resource/Sound/SE/cursor.mp3");
-	SoundL.PlayBGM(_bgmH);
 }
 
 PreparationUI::~PreparationUI()
@@ -283,6 +282,11 @@ void PreparationUI::Close(const bool animation)
 		CloseEnd();
 	}
 	_updater = &PreparationUI::CloseAnimUpdate;
+}
+
+void PreparationUI::StartBGM()
+{
+	SoundL.PlayBGM(_bgmH);
 }
 
 void PreparationUI::BackMapSelect()

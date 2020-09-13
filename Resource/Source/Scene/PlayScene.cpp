@@ -21,6 +21,7 @@
 #include "Tool.h"
 #include "SoundLoader.h"
 #include "UI/CheckWindow.h"
+#include "TitleScene.h"
 
 using namespace std;
 
@@ -85,6 +86,10 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId, const boo
 	_clearAnimTrack->AddKey(0, 0.0f);
 	_clearAnimTrack->AddKey(30, 1.0f);
 
+	_autoSceneChangeTrack = make_unique<Track<int>>();
+	_autoSceneChangeTrack->AddKey(0, 0);
+	_autoSceneChangeTrack->AddKey(180, 0);
+
 	_updater = &PlayScene::PreparationUpdate;
 	_drawer = &PlayScene::PreparationDraw;
 	_UIDrawer = &PlayScene::PreparationUIDraw;
@@ -141,7 +146,7 @@ bool PlayScene::PreparationUpdate(const Input& input)
 	(*_preparationDeque.begin())->Update(input);
 	if (_preparationUI->GetBackMapSelect())
 	{
-		StartFadeOut([this]() {ChnageMapSelect(); });
+		StartFadeOut([this]() {ChengeMapSelect(); });
 		return false;
 	}
 
@@ -198,12 +203,12 @@ bool PlayScene::TurnChengeUpdate(const Input& input)
 
 bool PlayScene::PlayerTurnUpdate(const Input& input)
 {
-	if (BackMapSelectWindow(input))return false;
+	if (BackSceneWindow(input))return false;
 
 	CharactorUpdate(input);
 	if (_playerCommander->GetBackMapSelect())
 	{
-		StartFadeOut([this]() {ChnageMapSelect(); });
+		StartFadeOut([this]() {ChengeMapSelect(); });
 		return false;
 	}
 
@@ -278,7 +283,7 @@ void PlayScene::StartEnemyTurn()
 
 bool PlayScene::EnemyTurnUpdate(const Input& input)
 {
-	if (BackMapSelectWindow(input))return false;
+	if (BackSceneWindow(input))return false;
 
 	CharactorUpdate(input); 
 
@@ -294,12 +299,18 @@ bool PlayScene::EnemyTurnUpdate(const Input& input)
 	return true;
 }
 
-bool PlayScene::BackMapSelectWindow(const Input& input)
+bool PlayScene::BackSceneWindow(const Input& input)
 {
 	if (input.GetButtonDown("F1"))
 	{
+		_endUIDeque.emplace_back(make_shared<CheckWindow>("タイトルに戻りますか？", &_endUIDeque,
+			[this]() {	StartFadeOut([this]() {ChengeTitle(); }); }));
+		return true;
+	}
+	if (input.GetButtonDown("F2"))
+	{
 		_endUIDeque.emplace_back(make_shared<CheckWindow>("マップ選択に戻りますか？", &_endUIDeque,
-			[this]() {	StartFadeOut([this]() {ChnageMapSelect(); }); }));
+			[this]() {	StartFadeOut([this]() {ChengeMapSelect(); }); }));
 		return true;
 	}
 	return false;
@@ -355,10 +366,11 @@ bool PlayScene::CharactorDyingUpdate(const Input& input)
 
 void PlayScene::GameClear()
 {
-	if (_aiMode)
+	if (!_aiMode)
 	{
 		Application::Instance().GetSaveData().Save(_mapCtrl->GetMap()->GetMapID(), _turnCnt);
 	}
+	_autoSceneChangeTrack->Reset();
 	_updater = &PlayScene::GameClearUpdate;
 	_drawer = &PlayScene::GameClearDraw;
 	_mapCtrl->GetMap()->StopBGM();
@@ -375,10 +387,11 @@ bool PlayScene::GameClearUpdate(const Input& input)
 	_clearAnimTrack->Update();
 	if (!_clearAnimTrack->GetEnd())return true;
 
-	if(input.GetButtonDown("ok"))
+	_autoSceneChangeTrack->Update();
+	if(input.GetButtonDown("ok") || _autoSceneChangeTrack->GetEnd())
 	{
 		SoundL.PlaySE("Resource/Sound/SE/ok2.mp3");
-		StartFadeOut([this]() {ChnageMapSelect(); }, 0, &PlayScene::GameClearDraw);
+		StartFadeOut([this]() {_aiMode ? ChengeTitle() : ChengeMapSelect(); }, 0, &PlayScene::GameClearDraw);
 		return false;
 	}
 
@@ -387,10 +400,11 @@ bool PlayScene::GameClearUpdate(const Input& input)
 
 bool PlayScene::GameOverUpdate(const Input& input)
 {
-	if (input.GetButtonDown("ok"))
+	_autoSceneChangeTrack->Update();
+	if (input.GetButtonDown("ok") || _autoSceneChangeTrack->GetEnd())
 	{
 		SoundL.PlaySE("Resource/Sound/SE/ok2.mp3");
-		StartFadeOut([this]() {ChnageMapSelect(); }, 0, &PlayScene::GameOverDraw);
+		StartFadeOut([this]() {_aiMode ? ChengeTitle() : ChengeMapSelect(); }, 0, &PlayScene::GameOverDraw);
 		return false;
 	}
 	return true;
@@ -521,10 +535,15 @@ void PlayScene::NoneUIDraw()
 {
 }
 
-void PlayScene::ChnageMapSelect()
+void PlayScene::ChengeTitle()
 {
-	_mapCtrl->GetMap()->StopBGM();
-	SoundL.StopSound(SoundHandle("Resource/Sound/BGM/game_over.mp3"));
+	SoundL.StopAllSound();
+	_controller.ChangeScene(make_shared<TitleScene>(_controller));
+}
+
+void PlayScene::ChengeMapSelect()
+{
+	SoundL.StopAllSound();
 	_controller.ChangeScene(make_shared<MapSelectScene>(_controller));
 }
 
@@ -535,6 +554,7 @@ void PlayScene::ChangePreparation()
 	_UIDrawer = &PlayScene::PreparationUIDraw;
 
 	_preparationUI->Open(true);
+	_preparationUI->StartBGM();
 }
 
 void PlayScene::ChangeGameOver()
@@ -543,6 +563,7 @@ void PlayScene::ChangeGameOver()
 	_updater = &PlayScene::FadeUpdate;
 	_drawer = &PlayScene::GameOverDraw;
 	_UIDrawer = &PlayScene::NoneUIDraw;
+	_autoSceneChangeTrack->Reset();
 	_fadeEndFunc = [&updater = _updater]() {updater = &PlayScene::GameOverUpdate;};
 	SoundL.PlaySE("Resource/Sound/SE/shock1.mp3");
 	SoundL.PlayBGM("Resource/Sound/BGM/game_over.mp3");

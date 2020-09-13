@@ -30,6 +30,7 @@ private:
 	std::unique_ptr<Track_f> _charCreateTrack;
 
 	std::unique_ptr<Track_f> _animTrack;
+	std::unique_ptr<Track_f> _demoSceneCnt;
 
 	void(TitleScene::* _updater)(const Input&);
 

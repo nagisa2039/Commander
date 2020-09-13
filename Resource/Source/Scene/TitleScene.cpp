@@ -9,6 +9,7 @@
 #include "MapSelectScene.h"
 #include "DataBase.h"
 #include "Tool.h"
+#include "PlayScene.h"
 
 namespace
 {
@@ -18,6 +19,20 @@ namespace
 
 void TitleScene::NormalUpdate(const Input& input)
 {
+	// ƒfƒ‚‚Ö‚ÌˆÚs
+	_demoSceneCnt->Update();
+	if (_demoSceneCnt->GetEnd())
+	{
+		SoundL.PlaySE("Resource/Sound/SE/ok2.mp3");
+		_fadeEndFunc = [&controller = _controller]()
+		{
+			auto mapMax = DataBase::Instance().GetMapDataTable().size();
+			controller.ChangeScene(std::make_shared<PlayScene>(controller, mt()% mapMax, true));
+		};
+		_controller.GetFade().StartFadeOut();
+		_updater = &TitleScene::FadeUpdate;
+	}
+
 	_animTrack->Update();
 	if (input.GetButtonDown("ok"))
 	{
@@ -59,6 +74,10 @@ TitleScene::TitleScene(SceneController& controller)
 	_charCreateTrack = std::make_unique<Track<float>>();
 	_charCreateTrack->AddKey(0, 0.0f);
 	_charCreateTrack->AddKey(5, 0.0f);
+
+	_demoSceneCnt = std::make_unique<Track<float>>();
+	_demoSceneCnt->AddKey(0, 0.0f);
+	_demoSceneCnt->AddKey(600, 0.0f);
 
 	_charInfVec.resize(100);
 	for (auto& charInf : _charInfVec)

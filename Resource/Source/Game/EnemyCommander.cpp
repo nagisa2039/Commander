@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "Camera.h"
 #include "MapCtrl.h"
+#include "RouteManager.h"
 #include <algorithm>
 
 using namespace std;
@@ -26,19 +27,39 @@ void EnemyCommander::NormalUpdate(const Input& input)
 		return;
 	}
 
-	// 移動可能なキャラを探す
+	auto setSelectCharactor = [this](std::shared_ptr<Charactor> charactor)
+	{
+		_selectChar = &*charactor;
+		_selectChar->SetMoveStandby(15);
+		_camera.AddTargetActor(_selectChar);
+		_mapPos = _selectChar->GetMapPos();
+		_pos = (_mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToVector2();
+	};
+	
+	// 移動可能且つ行動範囲内にターゲットがいるキャラを探す
+	std::list<std::shared_ptr<Charactor>> _movableCharList;
 	for (auto charactor : _charactors)
 	{
-		if (charactor->GetTeam() == _ctrlTeam
-			&& charactor->GetCanMove())
+		if (charactor->GetTeam() != _ctrlTeam)continue;
+
+		if (!charactor->GetCanMove())continue;
+
+		if(charactor->GetRouteManager()->CheckInRageTarget())
 		{
-			_selectChar = &*charactor;
-			_selectChar->SetMoveStandby(15);
-			_camera.AddTargetActor(_selectChar);
-			_mapPos = _selectChar->GetMapPos();
-			_pos = (_mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToVector2();
+			setSelectCharactor(charactor);
 			return;
 		}
+		else
+		{
+			_movableCharList.emplace_back(charactor);
+		}
+	}
+
+	// 移動可能なキャラクターをセットする
+	if (_movableCharList.size() > 0)
+	{
+		setSelectCharactor(_movableCharList.front());
+		return;
 	}
 
 	// 移動可能なｷｬﾗがいないので終了

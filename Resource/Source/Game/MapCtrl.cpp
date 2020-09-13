@@ -12,6 +12,7 @@
 #include "SceneController.h"
 #include "Effect/Effect.h"
 #include "Map.h"
+#include "RouteManager.h"
 
 using namespace std;
 
@@ -97,154 +98,6 @@ void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr
 
 		}
 	}
-}
-
-void MapCtrl::RouteSearch(Charactor& charactor)
-{
-	std::vector<std::vector<Astar::MapData>> mapVec2;
-	CreateMapVec(mapVec2, charactor.GetTeam());
-
-	return _astar->RouteSearch(charactor.GetMapPos(), charactor.GetStatus().move, charactor.GetAttackRange(), 
-		mapVec2, charactor.GetResutlPosListVec2(), charactor.GetTeam(), 
-		DataBase::Instance().GetWeaponTypeDataFromWeaponId(charactor.GetStatus().weaponId).heal);
-}
-
-bool MapCtrl::MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, std::list<Astar::ResultPos>& resutlPosList, const Team team, const std::list<Astar::ResultPos>& excludeList)
-{
-	if (move <= 0)return false;
-
-	std::vector<std::vector<Astar::MapData>> mapVec2;
-	CreateMapVec(mapVec2, team);
-
-	return _astar->MoveRouteSerch(startPos, move, mapVec2, resutlPosList, team, excludeList);
-}
-
-Vector2Int MapCtrl::SearchMovePos(Charactor& charactor, Vector2Int& targetCnt)
-{
-	std::vector<std::vector<Astar::MapData>> mapVec2;
-	CreateMapVec(mapVec2, charactor.GetTeam());
-	auto battleStatus = charactor.GetBattleStatus();
-
-	auto& resultPosListVec2 = charactor.GetResutlPosListVec2();
-	_astar->RouteSearch(charactor.GetMapPos(), battleStatus.status.move, battleStatus.weaponData.range,
-		mapVec2, resultPosListVec2, charactor.GetTeam(), battleStatus.CheckHeal(), charactor.GetMoveActive());
-
-	struct TargetCharactor
-	{
-		Charactor* charactor;
-		int distance;
-		Astar::ResultPos resultPos;
-
-		TargetCharactor():charactor(nullptr), distance(1), resultPos(Astar::ResultPos()){};
-		TargetCharactor(Charactor* ch, const int di, const Astar::ResultPos& rp) :charactor(ch), distance(di), resultPos(rp){};
-	};
-
-	// 範囲内の敵を格納するリスト
-	list<TargetCharactor> targetCharactorList;
-	// 派以外の敵を格納するリスト
-	list<TargetCharactor> outRangeCharactorList;
-
-	for (const auto& resultPosListVec : resultPosListVec2)
-	{
-		for (const auto& resultPosList : resultPosListVec)
-		{
-			for (const auto& resultPos : resultPosList)
-			{
-				// 攻撃マスになるまでcontinue
-				if (!resultPos.attack)
-				{
-					continue;
-				}
-
-				auto mapCharactor = GetMapPosChar(resultPos.mapPos);
-				// そのマスにキャラクターがいるか
-				if (mapCharactor == nullptr)continue;
-
-				// 探しているチームがいるか
-				if (battleStatus.CheckHeal() != (charactor.GetTeam() == mapCharactor->GetTeam()))continue;
-
-				auto mapPosSub = mapCharactor->GetMapPos() - (resultPos.prev == nullptr ? charactor.GetMapPos() : resultPos.prev->mapPos);
-				int distance = abs(mapPosSub.x) + abs(mapPosSub.y);
-
-				// 攻撃開始地点にいるキャラクター
-				auto prevChar = GetMapPosChar(resultPos.prev->mapPos);
-				// 攻撃範囲外か
-				if (resultPos.moveCnt > battleStatus.status.move || (prevChar != nullptr && prevChar != &charactor))
-				{
-					outRangeCharactorList.emplace_back(TargetCharactor(mapCharactor, distance, resultPos));
-					continue;
-				}
-
-				targetCharactorList.emplace_back(TargetCharactor(mapCharactor, distance, resultPos));
-			}
-		}
-	}
-
-	targetCnt.x = static_cast<int>(targetCharactorList.size());
-	targetCnt.y = static_cast<int>(outRangeCharactorList.size());
-
-	if (battleStatus.CheckHeal())
-	{
-		if (targetCharactorList.size() > 0)
-		{
-			// 最もダメージを受けているキャラクターを探す
-			targetCharactorList.sort([](const TargetCharactor& left, const TargetCharactor& right)
-				{
-					return left.charactor->GetHurtPoint() > right.charactor->GetHurtPoint();
-				});
-			return targetCharactorList.begin()->charactor->GetMapPos();
-		}
-
-		if (outRangeCharactorList.size() > 0)
-		{
-			// 一番近いキャラクターを採用する
-			outRangeCharactorList.sort([](const TargetCharactor& lval, const TargetCharactor& rval)
-				{
-					return lval.resultPos.moveCnt < rval.resultPos.moveCnt;
-				});
-			for (auto& targetCharactor : outRangeCharactorList)
-			{
-				if (targetCharactor.charactor->GetHurtPoint() > 0)
-				{
-					return targetCharactor.charactor->GetMapPos();
-				}
-			}
-		}
-		return Vector2Int(-1, -1);
-	}
-
-	// 選別
-	for (const auto& targetCharactor : targetCharactorList)
-	{
-		// 敵の攻撃範囲外からの攻撃か？
-		if (!targetCharactor.charactor->GetAttackRange().Hit(targetCharactor.distance))
-		{
-			return targetCharactor.charactor->GetMapPos();
-		}
-	}
-
-	// 敵の攻撃範囲外から攻撃できないので最初に見つけた敵の場所に向かう
-	if (targetCharactorList.size() > 0)
-	{
-		// 最もダメージを与えられるキャラクターを探す
-		targetCharactorList.sort([&battleStatus](const TargetCharactor& left, const TargetCharactor& right)
-		{
-			return battleStatus.GetDamage(left.charactor->GetBattleStatus()) > battleStatus.GetDamage(right.charactor->GetBattleStatus());
-		});
-		return targetCharactorList.begin()->charactor->GetMapPos();
-	}
-
-	if (outRangeCharactorList.size() > 0)
-	{
-		// 一番近いキャラクターを採用する
-		outRangeCharactorList.sort([](const TargetCharactor& lval, const TargetCharactor& rval) 
-		{
-				return lval.resultPos.moveCnt < rval.resultPos.moveCnt;
-		});
-		auto targetCharactor = *outRangeCharactorList.begin();
-		return targetCharactor.charactor->GetMapPos();
-	}
-	return Vector2Int(-1,-1);
 }
 
 void MapCtrl::CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, const Team team)
@@ -394,4 +247,9 @@ std::shared_ptr<Map> MapCtrl::GetMap()const
 {
 	assert(_map);
 	return _map;
+}
+
+Astar& MapCtrl::GetAstar()
+{
+	return *_astar;
 }

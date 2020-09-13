@@ -82,6 +82,8 @@ public:
 	void Open(const bool animation);
 	void Close(const bool animation);
 
+	void StartBGM();
+
 	// マップ選択に戻るためのフラグセット
 	void BackMapSelect();
 	// マップ選択に戻るかのフラグ取得

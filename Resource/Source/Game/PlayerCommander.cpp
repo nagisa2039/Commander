@@ -12,6 +12,7 @@
 #include "UI/MoveMenu.h"
 #include "UI/StatusWindow/StatusWindow.h"
 #include "SoundLoader.h"
+#include "RouteManager.h"
 
 using namespace std;
 
@@ -61,7 +62,7 @@ void PlayerCommander::SelectUpdate(const Input& input)
 	if (_selectChar->GetMoved())
 	{
 		auto moveMenu = _playerUI->GetMoveMenu();
-		moveMenu->SetContent(_selectChar->GetAttackPosList());
+		moveMenu->SetContent(_selectChar->GetRouteManager()->GetAttackPosList());
 		moveMenu->Open();
 	}
 
@@ -76,7 +77,7 @@ void PlayerCommander::SelectUpdate(const Input& input)
 			{
 				_selectChar->MoveDecision();
 				auto moveMenu = _playerUI->GetMoveMenu();
-				moveMenu->SetContent(_selectChar->GetAttackPosList());
+				moveMenu->SetContent(_selectChar->GetRouteManager()->GetAttackPosList());
 				moveMenu->Open();
 				return;
 			}
@@ -109,14 +110,14 @@ bool PlayerCommander::CheckMoveRange()
 {
 	if (_selectChar == nullptr) return false;
 
-	return (_selectChar->GetResutlPosListVec2()[_mapPos.y][_mapPos.x].size() > 0);
+	return (_selectChar->GetRouteManager()->GetResutlPosListVec2()[_mapPos.y][_mapPos.x].size() > 0);
 }
 
 bool PlayerCommander::CheckAttackMass()
 {
 	if (_selectChar == nullptr) return false;
 
-	auto resultPosList = _selectChar->GetResutlPosListVec2()[_mapPos.y][_mapPos.x];
+	auto resultPosList = _selectChar->GetRouteManager()->GetResutlPosListVec2()[_mapPos.y][_mapPos.x];
 	if (resultPosList.size() <= 0) return false; 
 
 	for (const auto& resultPos : resultPosList)
@@ -322,14 +323,14 @@ void PlayerCommander::DrawMovableMass()
 		auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
 		if (charactor == nullptr || !charactor->GetCanMove()) return;
 
-		charactor->DrawMovableMass(128);
+		charactor->GetRouteManager()->DrawMovableMass(128);
 	}
 	else
 	{
 		if (_selectChar->GetIsMoveAnim())return;
 
-		_selectChar->DrawMovableMass(192);
-		_selectChar->DrawRoute(_mapPos);
+		_selectChar->GetRouteManager()->DrawMovableMass(192);
+		_selectChar->GetRouteManager()->DrawRoute(_mapPos);
 	}
 }
 

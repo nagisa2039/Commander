@@ -10,7 +10,7 @@ using namespace std;
 SceneController::SceneController()
 {
 	_fade = make_shared<Fade>();
-	_quick = true;
+	_quick = false;
 }
 
 

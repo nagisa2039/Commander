@@ -53,6 +53,7 @@ private:
 	std::shared_ptr<PreparationUI> _preparationUI;
 
 	std::unique_ptr<Track<float>> _clearAnimTrack;
+	std::unique_ptr<Track_i> _autoSceneChangeTrack;
 
 	std::function<void()>_fadeEndFunc;
 
@@ -78,7 +79,7 @@ private:
 	bool CharactorUpdate(const Input& input);
 	bool EnemyTurnUpdate(const Input& input);
 
-	bool BackMapSelectWindow(const Input& input);
+	bool BackSceneWindow(const Input& input);
 
 	bool CharactorDyingUpdate(const Input& input);
 
@@ -107,7 +108,8 @@ private:
 	void NoneUIDraw();
 
 	// FadeèIóπéûÇ…é¿çsÇ∑ÇÈä÷êî
-	void ChnageMapSelect();
+	void ChengeTitle();
+	void ChengeMapSelect();
 	void ChangePreparation();
 	void ChangeGameOver();
 

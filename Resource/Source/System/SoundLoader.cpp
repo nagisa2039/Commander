@@ -31,6 +31,8 @@ bool SoundLoader::PlayBGM(const char* path, const int volume, const bool playTop
 
 bool SoundLoader::PlayBGM(const int handle, const int volume, const bool playTop)
 {
+	//Ä¶’†‚È‚ç‰½‚à‚µ‚È‚¢
+	if (CheckSoundMem(handle) == 1)return false;
 	ChangeVolumeSoundMem(volume, handle);
 	return PlaySoundMem(handle, DX_PLAYTYPE_LOOP, playTop) != -1;
 }

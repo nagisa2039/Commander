@@ -25,7 +25,7 @@ private:
 
 	std::vector<std::shared_ptr<Charactor>>& _charactors;
 
-void CreateCharactor(const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
+	void CreateCharactor(const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
 
 public:
 	MapCtrl(const int mapId, std::vector<std::shared_ptr<Charactor>>& charactors);
@@ -42,15 +42,6 @@ public:
 	const Size& GetMapSize()const;
 
 	void CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
-
-	// 移動可能なマスを探す
-	void RouteSearch(Charactor& charactor);
-
-	// 指定した移動力で行ける場所を探す
-	bool MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, std::list<Astar::ResultPos>& resultPosList, const Team team, const std::list<Astar::ResultPos>& excludeList);
-
-	// 指定キャラから視野範囲にいるキャラクターを返す
-	Vector2Int SearchMovePos(Charactor& charactor, Vector2Int& targetCnt);
 
 	void CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, const Team team);
 
@@ -75,6 +66,14 @@ public:
 	// キャラクターの配列を取得
 	const std::vector<std::shared_ptr<Charactor>>& GetCharacots()const;
 
+	/// <summary>
+	/// マップ情報の取得
+	/// </summary>
 	std::shared_ptr<Map> GetMap()const;
+
+	/// <summary>
+	/// ルート検索オブジェクトの取得
+	/// </summary>
+	Astar& GetAstar();
 };
 

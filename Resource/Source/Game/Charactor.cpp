@@ -30,7 +30,8 @@ void Charactor::NormalUpdate(const Input& input)
 		if (--_rigid > 0)return;
 
 		_moveStandby = false; 
-		SearchAndMove();
+
+		MoveMapPos(_routeManager->SearchMovePos());
 	}
 
 	Move();
@@ -267,9 +268,9 @@ CharactorType Charactor::GetCharactorType() const
 	return _charactorType;
 }
 
-bool Charactor::GetAttackStartPos(Vector2Int& attackStartPos, const Vector2Int& targetMapPos) const
+std::shared_ptr<RouteManager> Charactor::GetRouteManager()
 {
-	return _routeManager->GetAttackStartPos(attackStartPos, targetMapPos);
+	return _routeManager;
 }
 
 void Charactor::InitmapPos(const Vector2Int& mapPos)
@@ -349,7 +350,7 @@ void Charactor::StopMoveAnim()
 
 void Charactor::RouteSearch()
 {
-	_mapCtrl.RouteSearch(*this);
+	_routeManager->RouteSearch(*this);
 }
 
 void Charactor::TurnReset()
@@ -363,16 +364,6 @@ void Charactor::MoveCancel()
 	_pos = (_mapCtrl.GetChipSize().ToVector2Int() * _startMapPos).ToVector2();
 	_status.move = _startStatus.move;
 	_mapCtrl.AllCharactorRouteSearch();
-}
-
-void Charactor::SearchAndMove()
-{
-	MoveMapPos(_mapCtrl.SearchMovePos(*this, _targetCnt));
-}
-
-std::vector<std::vector<std::list<Astar::ResultPos>>>& Charactor::GetResutlPosListVec2()
-{
-	return _routeManager->GetResutlPosListVec2();
 }
 
 void Charactor::AddDamage(const int damage)
@@ -390,11 +381,6 @@ void Charactor::DrawCharactorIcon(const Rect& drawRect)const
 	SetDrawMode(DX_DRAWMODE_NEAREST);
 	DrawRectExtendGraph(drawRect.Left(), drawRect.Top(), drawRect.Right(), drawRect.Botton(), 32, 0, 32, 32, _animator->GetImageH(), true);
 	SetDrawMode(DX_DRAWMODE_BILINEAR);
-}
-
-void Charactor::DrawRoute(const Vector2Int& targetPos)
-{
-	_routeManager->DrawRoute(targetPos);
 }
 
 bool Charactor::StartTerrainEffect()
@@ -421,11 +407,6 @@ bool Charactor::StartTerrainEffect()
 bool Charactor::GetTerrainEffectEnd()
 {
 	return _terrainEffect == nullptr || _terrainEffect->GetDelete();
-}
-
-std::list<Vector2Int> Charactor::GetAttackPosList() const
-{
-	return _routeManager->GetAttackPosList();
 }
 
 bool Charactor::AddExp(uint8_t exp, const uint8_t expMax)
@@ -465,16 +446,6 @@ Status Charactor::GetLevelUpStatus()
 const std::array<Charactor::DirInf, static_cast<size_t>(Dir::max)>& Charactor::GetDirTable() const
 {
 	return _dirTable;
-}
-
-std::list<Astar::ResultPos> Charactor::CreateResultPosList(const Vector2Int& mapPos) const
-{
-	return _routeManager->CreateResultPosList(mapPos);
-}
-
-void Charactor::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosList)
-{
-	_routeManager->CreateMoveDirList(resultPosList);
 }
 
 Charactor::Charactor(const CharactorType type, const uint8_t level, const Vector2Int& mapPos, 
@@ -517,7 +488,6 @@ Charactor::Charactor(const CharactorType type, const uint8_t level, const Vector
 
 	auto mapSize = _mapCtrl.GetMapSize();
 
-	_targetCnt = Vector2Int(0, 0);
 	_onelineListCnt = 0;
 
 	CharactorDataInit(type, level);
@@ -536,11 +506,6 @@ void Charactor::Update(const Input& input)
 void Charactor::Draw()
 {
 	(this->*_drawer)();
-}
-
-void Charactor::DrawMovableMass(const uint8_t alpha) const
-{
-	_routeManager->DrawMovableMass(alpha);
 }
 
 void Charactor::InitAnim()
@@ -606,11 +571,11 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 	// 同じマスに移動 || 移動アニメーション中
 	if (mapPos == GetMapPos() || _isMoveAnim)return false;
 
-	auto oneLineResutlList = CreateResultPosList(mapPos);
+	auto oneLineResutlList = _routeManager->CreateResultPosList(mapPos);
 	_onelineListCnt = static_cast<int>(oneLineResutlList.size());
 	if (oneLineResutlList.size() <= 0)return false;
 
-	CreateMoveDirList(oneLineResutlList);
+	_routeManager->CreateMoveDirList(oneLineResutlList);
 
 	if (moveDirList.size() > 0)
 	{

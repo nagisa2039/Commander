@@ -18,6 +18,8 @@ namespace
 	constexpr int UNLOCK = 0;	// クリアしていない
 	constexpr char FILE_NAME[] = "savedata";	// セーブデータのファイル名
 	constexpr char FOLDER_NAME[] = "Resource/SaveData/";	// セーブデータのフォルダ
+
+	constexpr double VERSION = 1.0;
 }
 
 SaveData::SaveData()
@@ -68,13 +70,23 @@ void SaveData::WriteData()
 	ss << FOLDER_NAME << FILE_NAME;
 	fopen_s(&fp, ss.str().c_str(), "wb");
 
+	assert(fp != nullptr);
+
+	// バージョンの書き込み
+	fwrite(&VERSION, sizeof(VERSION), 1, fp);
+
 	// マップ数の書き込み
 	int mapCnt = static_cast<int>(_clearMapDataVec.size());
 	assert(mapCnt > 0);
 	fwrite(&mapCnt, sizeof(mapCnt), 1, fp);
 
 	// マップのクリア状況を書き込み
-	fwrite(_clearMapDataVec.data(), sizeof(_clearMapDataVec[0]), _clearMapDataVec.size(), fp);
+	auto eleSize = sizeof(_clearMapDataVec[0]);
+	fwrite(_clearMapDataVec.data(), eleSize, _clearMapDataVec.size(), fp);
+
+	// 8バイト区切りにするための詰め物
+	std::vector<uint8_t> stuffings((_clearMapDataVec.size() + 1) * eleSize % 8);
+	fwrite(stuffings.data(), sizeof(uint8_t), stuffings.size(), fp);
 
 	fclose(fp);
 }
@@ -104,6 +116,15 @@ bool SaveData::Load()
 		return false;
 	}
 
+	// セーブデータのバージョン読込の読み込み
+	double version;
+	fread_s(&version, sizeof(version), sizeof(version), 1, fp);
+	if (version != VERSION)
+	{
+		Reset();
+		return false;
+	}
+	
 	// クリアマップの読み込み
 	int mapNum;
 	fread_s(&mapNum, sizeof(mapNum), sizeof(mapNum), 1, fp);

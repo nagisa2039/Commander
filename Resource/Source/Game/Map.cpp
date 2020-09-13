@@ -14,6 +14,8 @@ namespace
 
 	constexpr unsigned int MAP_CHIP_CNT_W = 20;
 	constexpr unsigned int MAP_CHIP_CNT_H = 20;
+
+	constexpr double VERSION = 1.0;
 }
 
 void Map::DrawToMapScreen()
@@ -95,6 +97,14 @@ bool Map::LoadMapData()
 
 	if (fp == NULL)
 	{
+		return false;
+	}
+
+	double version;
+	fread_s(&version, sizeof(version), sizeof(version), 1, fp);
+	if (version != VERSION)
+	{
+		fclose(fp);
 		return false;
 	}
 

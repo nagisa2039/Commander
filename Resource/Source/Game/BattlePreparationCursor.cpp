@@ -12,6 +12,7 @@
 #include "UI/StatusInfomation.h"
 #include "UI/StatusWindow/StatusWindow.h"
 #include "SoundLoader.h"
+#include "RouteManager.h"
 
 using namespace std;
 
@@ -189,7 +190,7 @@ void BattlePreparationCursor::DrawMovableMass()
 	auto charactor = _mapCtrl.GetMapPosChar(_mapPos);
 	if (charactor == nullptr) return;
 
-	charactor->DrawMovableMass(128);
+	charactor->GetRouteManager()->DrawMovableMass(128);
 }
 
 bool BattlePreparationCursor::GetEnd() const

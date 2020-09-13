@@ -20,20 +20,17 @@ class RouteManager;
 class Charactor :
 	public Actor
 {
-public:
-
 private:
 	// 死亡時のアニメーションに使用するalpha値のタイムライン
 	std::unique_ptr<Track<float>> _dyingAnimAlphaTL;
 
-protected:
 	struct DirInf
 	{
 		Vector2Int moveVec;
 		std::string animName;
 		float angle;
 
-		DirInf() : moveVec(Vector2Int()), animName(""), angle(){};
+		DirInf() : moveVec(Vector2Int()), animName(""), angle() {};
 		DirInf(const Vector2Int& vec2Int, const std::string& animN, const float angle)
 			: moveVec(vec2Int), animName(animN), angle(angle) {};
 	};
@@ -69,7 +66,7 @@ protected:
 	// DyingUpdateの初回のみに行いたい処理用フラグ
 	bool _beginDying;
 
-	Status _status; 
+	Status _status;
 	Status _startStatus;
 
 	std::string _iconPath;	// アイコンの画像パス
@@ -85,9 +82,6 @@ protected:
 	// 硬直が無くなったら移動を開始する
 	bool _moveStandby;
 
-	// デバッグ用
-	// 範囲内の敵と範囲外の敵のカウント
-	Vector2Int _targetCnt;
 	int _onelineListCnt;
 
 	// 場面後のの更新を行う
@@ -113,11 +107,6 @@ protected:
 
 	void CharactorDataInit(const CharactorType& type, const uint8_t& level);
 
-	// 指定したマスまでのResultPosListを取得する
-	std::list<Astar::ResultPos> CreateResultPosList(const Vector2Int& mapPos)const;
-	// resultPosListからMoveDirListを作成する
-	void CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosList);
-
 public:
 	Charactor(const CharactorType type, const uint8_t level, const Vector2Int& mapPos, const Team team, const unsigned int groupNum, MapCtrl& mapCtrl, SceneController& ctrl,
 		std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
@@ -125,7 +114,6 @@ public:
 
 	virtual void Update(const Input& input)override;
 	virtual void Draw()override;
-	void DrawMovableMass(const uint8_t alpha)const;
 
 	virtual void InitAnim();
 
@@ -156,7 +144,7 @@ public:
 	const int GetHurtPoint()const;	// 最大体力から現在の体力を引いた値を返す
 	bool GetMoved()const;	// 移動済みか調べる
 	CharactorType GetCharactorType()const;
-	bool GetAttackStartPos(Vector2Int& attackPos, const Vector2Int& targetMapPos)const;
+	std::shared_ptr<RouteManager> GetRouteManager();
 
 	void InitmapPos(const Vector2Int& mapPos);
 	void SetIsSelect(const bool select);
@@ -176,23 +164,16 @@ public:
 	void TurnReset();
 	void MoveCancel();
 
-	void SearchAndMove();
-	std::vector<std::vector<std::list<Astar::ResultPos>>>& GetResutlPosListVec2();
-
 	void AddDamage(const int damage);
 
 	// キャラクターを指定したRectの範囲に描画する
 	void DrawCharactorIcon(const Rect& drawRect)const;
 
-	// 指定した座標までの経路を描画する
-	void DrawRoute(const Vector2Int& targetPos);
 
 	// ターン開始時に地形効果を受けるならtrueを返す
 	bool StartTerrainEffect();
 	bool GetTerrainEffectEnd();
 
-	// 現在の場所から攻撃できる相手の座標を返す
-	std::list<Vector2Int> GetAttackPosList()const;
 
 	// 経験値取得	レベルアップするならtrueを返す
 	bool AddExp(uint8_t exp, const uint8_t expMax);

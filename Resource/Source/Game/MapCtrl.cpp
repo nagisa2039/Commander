@@ -227,11 +227,11 @@ void MapCtrl::AllCharactorRouteSearch() const
 	}
 }
 
-void MapCtrl::SetGroupActive(const unsigned int groupNum, const bool active)
+void MapCtrl::SetGroupActive(const Team team, const unsigned int groupNum, const bool active)
 {
 	for (auto& charactor : _charactors)
 	{
-		if (charactor->GetGroupNum() == groupNum)
+		if (charactor->GetGroupNum() == groupNum && charactor->GetTeam() == team)
 		{
 			charactor->SetMoveActive(active);
 		}

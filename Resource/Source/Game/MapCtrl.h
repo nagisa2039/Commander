@@ -61,7 +61,7 @@ public:
 	void AllCharactorRouteSearch()const;
 
 	// 指定した集団のmoveActiveを変更
-	void SetGroupActive(const unsigned int groupNum, const bool active);
+	void SetGroupActive(const Team team, const unsigned int groupNum, const bool active);
 
 	// キャラクターの配列を取得
 	const std::vector<std::shared_ptr<Charactor>>& GetCharacots()const;

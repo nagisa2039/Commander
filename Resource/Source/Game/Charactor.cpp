@@ -53,8 +53,8 @@ void Charactor::BattaleStartUpdate(const Input& input)
 void Charactor::BattaleStart(Charactor* charactor)
 {
 	StopMoveAnim();
-	_mapCtrl.SetGroupActive(_groupNum, true);
-	_mapCtrl.SetGroupActive(charactor->GetGroupNum(), true);
+	_mapCtrl.SetGroupActive(_team, _groupNum, true);
+	_mapCtrl.SetGroupActive(charactor->GetTeam(), charactor->GetGroupNum(), true);
 
 	// í“¬
 	_controller.PushScene(make_shared<BattleScene>

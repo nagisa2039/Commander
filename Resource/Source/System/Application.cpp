@@ -13,11 +13,17 @@
 #include "DataBase.h"
 #include "SaveData.h"
 #include "AnkerCalculation.h"
+#include "FPSManager.h"
 
 using namespace std;
 
-constexpr auto default_window_size_wide		= 1280;
-constexpr auto default_window_size_hight	= 720;
+namespace
+{
+	constexpr auto default_window_size_wide = 1280;
+	constexpr auto default_window_size_hight = 720;
+
+	constexpr int FPS = 60;
+}
 
 Application::Application()
 {
@@ -55,6 +61,7 @@ SceneController& Application::GetSceneController() const
 
 bool Application::Initialize()
 {
+	_fpsManager.reset(new FPSManager(FPS));
 	_configure = make_unique<Configure>();
 	_ankerCalculation = make_unique<AnkerCalculation>();
 	// Dxlib‚Ì‰Šú‰»
@@ -134,6 +141,7 @@ void Application::Run()
 		_sceneController->SceneUpdate(*_input);
 
 		ScreenFlip();
+		_fpsManager->Wait();
 	}
 	DxLib_End();
 }

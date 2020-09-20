@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Resource\Source\System\FPSManager.cpp" />
     <ClCompile Include="Resource\Source\System\AdvanceLoader.cpp" />
     <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\BattleEffectFactory.cpp" />
     <ClCompile Include="Resource\Source\Game\CutIn.cpp" />
@@ -100,6 +101,7 @@
     <ClCompile Include="Resource\Source\Game\RouteManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Resource\Source\System\FPSManager.h" />
     <ClInclude Include="Resource\Source\System\AdvanceLoader.h" />
     <ClInclude Include="Resource\Source\Game\CutIn.h" />
     <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\BattleEffectFactory.h" />

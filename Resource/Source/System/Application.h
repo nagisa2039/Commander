@@ -9,6 +9,7 @@ struct Vector2Int;
 class SceneController;
 class SaveData;
 class AnkerCalculation;
+class FPSManager;
 
 // アプリケーション全体を
 // 制御するシングルトンクラス
@@ -73,5 +74,6 @@ private:
 	std::unique_ptr<SaveData> _saveData;
 
 	std::unique_ptr<AnkerCalculation> _ankerCalculation;
+	std::unique_ptr<FPSManager> _fpsManager;
 };
 

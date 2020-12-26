@@ -9,17 +9,21 @@ class Charactor;
 class MapCtrl;
 class Camera;
 
+/// <summary>
+/// 経路管理クラス
+/// </summary>
 class RouteManager
 {
 private:
+	// 移動情報
 	struct MoveInf
 	{
+		// 方向
 		Dir dir;
+		// 攻撃マスか
 		bool attack;
+		// マス数
 		Vector2Int mapPos;
-
-		MoveInf() : dir(Dir::left), attack(false), mapPos(Vector2Int()) {};
-		MoveInf(const Dir d, const bool at, const Vector2Int mp) : dir(d), attack(at), mapPos(mp) {};
 	};
 
 	std::vector<std::vector<std::list<Astar::ResultPos>>> _resultPosListVec2;

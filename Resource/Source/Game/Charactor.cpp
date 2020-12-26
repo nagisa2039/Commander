@@ -50,15 +50,15 @@ void Charactor::BattaleStartUpdate(const Input& input)
 	_updater = &Charactor::NormalUpdate;
 }
 
-void Charactor::BattaleStart(Charactor* charactor)
+void Charactor::BattaleStart(Charactor* targetCharactor)
 {
 	StopMoveAnim();
 	_mapCtrl.SetGroupActive(_team, _groupNum, true);
-	_mapCtrl.SetGroupActive(charactor->GetTeam(), charactor->GetGroupNum(), true);
+	_mapCtrl.SetGroupActive(targetCharactor->GetTeam(), targetCharactor->GetGroupNum(), true);
 
 	// 戦闘
 	_controller.PushScene(make_shared<BattleScene>
-		(GetBattleC(), charactor->GetBattleC(), _controller, _camera.GetCameraOffset()));
+		(GetBattleC(), targetCharactor->GetBattleC(), _controller, _camera.GetCameraOffset()));
 }
 
 void Charactor::DyingUpdate(const Input& input)
@@ -172,11 +172,6 @@ unsigned int Charactor::GetTeamColor() const
 	default:
 		return 0xffffff;
 	}
-}
-
-bool Charactor::GetIsSelect() const
-{
-	return _isSelect;
 }
 
 bool Charactor::GetCanMove() const
@@ -409,40 +404,6 @@ bool Charactor::GetTerrainEffectEnd()
 	return _terrainEffect == nullptr || _terrainEffect->GetDelete();
 }
 
-bool Charactor::AddExp(uint8_t exp, const uint8_t expMax)
-{
-	if (_status.exp + exp >= expMax)
-	{
-		_status.exp = (_status.exp + exp) % expMax;
-		return true;
-	}
-	_status.exp = (_status.exp + exp) % expMax;
-	return false;
-}
-
-Status Charactor::GetLevelUpStatus()
-{
-	// grawRateの格率でステータス上昇が起こるか計算
-	auto calPin = [](const uint8_t grawRate)
-	{
-		return grawRate > (rand() % 100) ? 1 : 0;
-	};
-
-	Status status;
-	auto growRate = DataBase::Instance().GetCharactorData(_charactorType).statusGrowRate;
-	status.level			= 1;
-	status.health			= calPin(growRate.health);
-	status.power			= calPin(growRate.power);
-	status.magic_power		= calPin(growRate.magic_power);
-	status.defense			= calPin(growRate.defense);
-	status.magic_defense	= calPin(growRate.magic_defense);
-	status.skill			= calPin(growRate.skill);
-	status.speed			= calPin(growRate.speed);
-	status.luck				= calPin(growRate.luck);
-
-	return status;
-}
-
 const std::array<Charactor::DirInf, static_cast<size_t>(Dir::max)>& Charactor::GetDirTable() const
 {
 	return _dirTable;
@@ -487,8 +448,6 @@ Charactor::Charactor(const CharactorType type, const uint8_t level, const Vector
 	_routeManager = make_shared<RouteManager>(*this, _mapCtrl, _camera);
 
 	auto mapSize = _mapCtrl.GetMapSize();
-
-	_onelineListCnt = 0;
 
 	CharactorDataInit(type, level);
 	_battleC = make_shared<BattleCharactor>(*this, _animator->GetImageH(), _camera);
@@ -535,10 +494,10 @@ void Charactor::InitAnim()
 
 	_animator->ChangeAnim("DownWalk");
 
-	_dirTable[static_cast<size_t>(Dir::left)]	= DirInf(Vector2Int(-1, 0), "LeftWalk",		static_cast<float>(270.0f * DX_PI / 180.0f));
-	_dirTable[static_cast<size_t>(Dir::right)]	= DirInf(Vector2Int(1, 0),	"RightWalk",	static_cast<float>(90.0f * DX_PI / 180.0f));
-	_dirTable[static_cast<size_t>(Dir::up)]		= DirInf(Vector2Int(0, -1), "UpWalk",		static_cast<float>(0.0f * DX_PI / 180.0f));
-	_dirTable[static_cast<size_t>(Dir::down)]	= DirInf(Vector2Int(0, 1),	"DownWalk",		static_cast<float>(180.0f *  DX_PI / 180.0f));
+	_dirTable[static_cast<size_t>(Dir::left)]	= { Vector2Int(-1, 0),	"LeftWalk",		static_cast<float>(270.0f * DX_PI / 180.0f) };
+	_dirTable[static_cast<size_t>(Dir::right)]	= { Vector2Int(1, 0),	"RightWalk",	static_cast<float>(90.0f  * DX_PI / 180.0f) };
+	_dirTable[static_cast<size_t>(Dir::up)]		= { Vector2Int(0, -1),	"UpWalk",		static_cast<float>(0.0f	  * DX_PI / 180.0f) };
+	_dirTable[static_cast<size_t>(Dir::down)]	= { Vector2Int(0, 1),	"DownWalk",		static_cast<float>(180.0f * DX_PI / 180.0f) };
 
 	_dir = Dir::down;
 }
@@ -560,8 +519,6 @@ Team Charactor::GetTeam() const
 
 bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 {
-	auto& moveDirList = _routeManager->GetMoveDirList();
-	moveDirList.clear();
 	if (!_mapCtrl.GetMap()->CheckMapDataRange(mapPos))
 	{
 		MoveEnd(false);
@@ -572,10 +529,10 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 	if (mapPos == GetMapPos() || _isMoveAnim)return false;
 
 	auto oneLineResutlList = _routeManager->CreateResultPosList(mapPos);
-	_onelineListCnt = static_cast<int>(oneLineResutlList.size());
 	if (oneLineResutlList.size() <= 0)return false;
 
 	_routeManager->CreateMoveDirList(oneLineResutlList);
+	auto& moveDirList = _routeManager->GetMoveDirList();
 
 	if (moveDirList.size() > 0)
 	{
@@ -589,7 +546,7 @@ bool Charactor::MoveMapPos(const Vector2Int& mapPos)
 
 	_status.move = 0;
 
-	return false;
+	return _isMoveAnim;
 }
 
 void Charactor::CharactorDataInit(const CharactorType& type, const uint8_t& level)

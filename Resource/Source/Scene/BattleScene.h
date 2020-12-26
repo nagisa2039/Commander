@@ -28,7 +28,6 @@ private:
 	std::shared_ptr<Camera> _camera;
 
 	std::vector<std::shared_ptr<Effect>> _effects;
-	std::shared_ptr<UI> _expUI;
 	PlayScene* _playScene;
 
 	Vector2Int _startPos;
@@ -50,8 +49,6 @@ private:
 
 	void RightTurn(const Input& input);
 	void RightHPAnim(const Input& input);
-
-	void ExpUpdate(const Input& input);
 
 	void(BattleScene::* _updater)(const Input& input);
 

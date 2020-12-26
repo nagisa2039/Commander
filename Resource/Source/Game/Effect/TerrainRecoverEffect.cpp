@@ -14,10 +14,3 @@ TerrainRecoverEffect::TerrainRecoverEffect(const Vector2Int& pos, Camera& camera
 TerrainRecoverEffect::~TerrainRecoverEffect()
 {
 }
-
-void TerrainRecoverEffect::Draw()
-{
-	SetDrawBlendMode(DX_BLENDMODE_ADD, 255);
-	Effect::Draw();
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-}

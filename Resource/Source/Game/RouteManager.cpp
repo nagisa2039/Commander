@@ -293,7 +293,7 @@ void RouteManager::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPo
 
 		if (!coverCheck)
 		{
-			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
+			_moveDirList.emplace_front(MoveInf{ itr->dir, itr->attack, itr->mapPos });
 			continue;
 		}
 
@@ -303,7 +303,7 @@ void RouteManager::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPo
 			if (itr->prev->mapPos != mapPos && _mapCtrl.GetMapPosChar(itr->prev->mapPos) != nullptr) continue;
 
 			coverCheck = false;
-			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
+			_moveDirList.emplace_front(MoveInf{ itr->dir, itr->attack, itr->mapPos });
 			continue;
 		}
 
@@ -311,7 +311,7 @@ void RouteManager::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPo
 		if (_mapCtrl.GetMapPosChar(itr->mapPos) == nullptr)
 		{
 			coverCheck = false;
-			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
+			_moveDirList.emplace_front(MoveInf{ itr->dir, itr->attack, itr->mapPos });
 			continue;
 		}
 
@@ -343,9 +343,10 @@ void RouteManager::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPo
 		{
 			for (const auto& addResultPos : addResultPosList)
 			{
-				_moveDirList.emplace_front(MoveInf(addResultPos.dir, addResultPos.attack, addResultPos.mapPos));
+				_moveDirList.emplace_front(MoveInf{ addResultPos.dir, addResultPos.attack, addResultPos.mapPos });
 			}
-			_moveDirList.emplace_front(MoveInf(itr->dir, itr->attack, itr->mapPos));
+			_moveDirList.emplace_front(MoveInf{itr->dir, itr->attack, itr->mapPos
+		});
 
 			coverCheck = false;
 			continue;

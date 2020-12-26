@@ -1,29 +1,42 @@
 #include "FPSManager.h"
 #include <windows.h>
+#include "../Utility/Cast.h"
 
-FPSManager::FPSManager(const int fps): _fixedFPS(fps)
+FPSManager::FPSManager(const int fps): fixedFPS_(fps)
 {
-	_startTime = GetTickCount();
-	_prevFrameStartTime = 0;
-	_deltaTime = 0.0f;
+	startTime_ = 0;
+	prevFrameStartTime_ = Uint32(GetTickCount64());
+	deltaTime_ = 0.0f;
 }
 
 void FPSManager::Wait()
 {
-	int wait = GetTickCount() - _prevFrameStartTime;
-	int targetTime = 1000 / _fixedFPS;
-	Sleep(max(targetTime - wait,0));
-	wait = GetTickCount() - _prevFrameStartTime;
-	_prevFrameStartTime += wait;
-	_deltaTime = wait / 1000.0f;
+	auto tickCount = GetTickCount64();
+	int time = Int32(tickCount - prevFrameStartTime_);
+	int targetTime = 1000 / fixedFPS_;
+
+	if (time < targetTime)
+	{
+		Sleep(targetTime - time);
+	}
+
+	tickCount = GetTickCount64();
+	deltaTime_ = (tickCount - prevFrameStartTime_) / 1000.0f;
+
+	prevFrameStartTime_ = Uint32(GetTickCount64());
 }
 
 int FPSManager::FixedFPS()
 {
-	return _fixedFPS;
+	return fixedFPS_;
 }
 
 float FPSManager::GetFPS()
 {
-	return 1.0f / _deltaTime;
+	return 1.0f / deltaTime_;
+}
+
+float FPSManager::GetDeltaTime()
+{
+	return deltaTime_;
 }

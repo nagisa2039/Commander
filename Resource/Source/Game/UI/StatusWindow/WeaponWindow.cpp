@@ -11,6 +11,11 @@ namespace
 {
 	constexpr unsigned int WINDOW_SIZE_W = 250;
 	constexpr unsigned int WINDOW_SIZE_H = 250;
+
+	constexpr char STATUS_IMG1[]				= "Resource/Image/UI/statusWindow1.png";
+	constexpr char EQUIPMENT_FRAME_IMG[]		= "Resource/Image/UI/equipmentFrame.png";
+	constexpr char EQUIPMENT_STATUS_FRAME_IMG[]	= "Resource/Image/UI/equipmentStatusFrame.png";
+	constexpr char WEAPON_TEXT_FRAME_IMG[]		= "Resource/Image/UI/weaponTextFrame.png";
 }
 
 WeaponWindow::WeaponWindow(const uint8_t weaponId, std::deque<std::shared_ptr<UI>>* uiDeque):UI(uiDeque)
@@ -52,14 +57,14 @@ void WeaponWindow::DrawToWindow()
 	Rect rect = Rect(rectSize.ToVector2Int()*0.5f, rectSize);
 
 	auto& fileSystem = FileSystem::Instance();
-	rect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/statusWindow1.png"));
+	rect.DrawGraph(fileSystem.GetImageHandle(STATUS_IMG1));
 
 	auto choplin30 = fileSystem.GetFontHandle("choplin30edge");
 
 	// ïêäÌñºÇÃï`âÊ
 	Size nameRectSize = Size(250, 50);
 	auto weaponNameRect = Rect(Vector2Int(rect.center.x, rect.Top() + nameRectSize.h / 2), nameRectSize);
-	weaponNameRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/equipmentFrame.png"));
+	weaponNameRect.DrawGraph(fileSystem.GetImageHandle(EQUIPMENT_FRAME_IMG));
 
 	int spaceX = 5;
 	Size atributeIconSize(40, 40);
@@ -68,7 +73,7 @@ void WeaponWindow::DrawToWindow()
 	DrawStringToHandle(Vector2Int(weaponNameRect.center.x + (atributeIconSize.w + spaceX) / 2, weaponNameRect.center.y), Anker::center,
 		0xffffff, choplin30, weaponData.name.c_str());
 
-	int itemH = fileSystem.GetImageHandle("Resource/Image/UI/equipmentStatusFrame.png");
+	int itemH = fileSystem.GetImageHandle(EQUIPMENT_STATUS_FRAME_IMG);
 	Size itemSize = Size(125, 30);
 	Rect itemRect = Rect(Vector2Int(rect.Left() + itemSize.w / 2, weaponNameRect.Botton() + itemSize.h / 2), itemSize);
 	auto choplin20 = fileSystem.GetFontHandle("choplin20");
@@ -99,7 +104,7 @@ void WeaponWindow::DrawToWindow()
 
 	Size weaponTextSize = Size(250, 110);
 	auto weaponTextRect = Rect(Vector2Int(rect.center.x, rect.Botton() - weaponTextSize.h / 2), weaponTextSize);
-	weaponTextRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/weaponTextFrame.png"));
+	weaponTextRect.DrawGraph(fileSystem.GetImageHandle(WEAPON_TEXT_FRAME_IMG));
 
 	SetDrawScreen(currentScreen);
 }

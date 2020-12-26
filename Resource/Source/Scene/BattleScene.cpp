@@ -9,7 +9,6 @@
 #include <DxLib.h>
 #include "Effect/FlyText.h"
 #include "BattleCharactor.h"
-#include "UI/Experience.h"
 #include "SoundLoader.h"
 #include "CutIn.h"
 #include "PlayScene.h"
@@ -121,18 +120,6 @@ void BattleScene::RightHPAnim(const Input& input)
 	}
 }
 
-void BattleScene::ExpUpdate(const Input& input)
-{
-	_expUI->Update(input);
-	if (_expUI->GetDelete())
-	{
-		_expUI.reset();
-		// ’ÇŒ‚Ï‚Ý‚È‚Ì‚Åí“¬‚ðI—¹‚·‚é
-		_updater = &BattleScene::SceneEndAnim;
-		return;
-	}
-}
-
 bool BattleScene::PursuitAttack(const bool rightAttack)
 {
 	auto leftBattleStatus = _leftBC.GetCharacotr().GetBattleStatus();
@@ -208,8 +195,6 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 	_brightTL->AddKey(30, 0.0f);
 
 	_updater = &BattleScene::SceneStartAnim;
-
-	_expUI.reset();
 	
 	auto& soundLoader = SoundL;
 	if (_leftBC.GetCharacotr().GetBattleStatus().CheckHeal()
@@ -300,11 +285,6 @@ void BattleScene::Draw(void)
 	for (auto& effect : _effects)
 	{
 		effect->Draw();
-	}
-
-	if (_expUI)
-	{
-		_expUI->Draw();
 	}
 
 	if (_cutIn)

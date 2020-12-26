@@ -4,7 +4,6 @@
 
 class Charactor;
 class WeaponWindow;
-class ItemWindow;
 class PlayScene;
 
 class StatusWindow :
@@ -14,7 +13,6 @@ private:
 	const Charactor& _charactor;
 
 	std::unique_ptr<WeaponWindow> _weaponWindow;
-	std::unique_ptr<ItemWindow> _itemWindow;
 
 	std::unique_ptr<Track<float>> _animTrack;
 	void(StatusWindow::* _updater)(const Input& input);

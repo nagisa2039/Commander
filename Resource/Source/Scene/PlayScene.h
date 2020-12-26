@@ -124,7 +124,5 @@ public:
 	void On()override;
 	void Off()override;
 
-	void PushShopScene();
-
 	void SetFilter(const FilterType type);
 };

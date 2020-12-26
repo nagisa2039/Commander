@@ -48,13 +48,3 @@ BattleEffect::BattleEffect(BattleCharactor& self, BattleCharactor& target, std::
 BattleEffect::~BattleEffect()
 {
 }
-
-void BattleEffect::Update(const Input& input)
-{
-	Effect::Update(input);
-}
-
-void BattleEffect::Draw()
-{
-	Effect::Draw();
-}

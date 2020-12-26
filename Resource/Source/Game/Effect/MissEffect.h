@@ -3,24 +3,17 @@
 #include "FlyText.h"
 #include <memory>
 
-class MissEffect :
-	public Effect
-{
-private:
-	std::unique_ptr<Track<float>> _animPosYTrack;
-
-public:
-	MissEffect(const Vector2Int& pos, Camera& camera);
-	~MissEffect();
-
-	void Update(const Input& input)override;
-	void Draw()override;
-};
-
+/// <summary>
+/// 跳ねる失敗エフェクト
+/// </summary>
 class PopupMissEffect :
 	public PopupText
 {
 public:
+	/// <param name="pos">座標</param>
+	/// <param name="camera">カメラ</param>
+	/// <param name="cameraActive">カメラを考慮して描画するか</param>
+	/// <param name="critical">クリティカルフラグ</param>
 	PopupMissEffect(const Vector2Int& pos,
 		Camera& camera, bool cameraActive, bool critical = false);
 	~PopupMissEffect() = default;

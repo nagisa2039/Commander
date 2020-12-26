@@ -14,8 +14,3 @@ TerrainDamageEffect::TerrainDamageEffect(const Vector2Int& pos, Camera& camera):
 TerrainDamageEffect::~TerrainDamageEffect()
 {
 }
-
-void TerrainDamageEffect::Draw()
-{
-	Effect::Draw();
-}

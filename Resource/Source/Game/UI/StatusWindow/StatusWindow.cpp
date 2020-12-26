@@ -7,18 +7,29 @@
 #include "DataBase.h"
 #include "Input.h"
 #include "WeaponWindow.h"
-#include "ItemWindow.h"
 #include "SceneController.h"
 #include "PlayScene.h"
 #include "SoundLoader.h"
 
 using namespace std;
 
+namespace
+{
+	constexpr char OPEN_SE[]   = "Resource/Sound/SE/select05.mp3";
+	constexpr char SELECT_SE[] = "Resource/Sound/SE/select06.mp3";
+
+	constexpr char STATUS_IMG_1[] = "Resource/Image/UI/statusWindow1.png";
+	constexpr char STATUS_IMG_2[] = "Resource/Image/UI/statusWindow2.png";
+
+	constexpr char STATUS_FRAME_HORIZONTAL[] = "Resource/Image/UI/horizontalWindow.png";
+	constexpr char STATUS_FRAME_VERTICAL[]	 = "Resource/Image/UI/verticalWindow.png";
+}
+
 void StatusWindow::NormalUpdate(const Input& input)
 {
 	if (input.GetButtonDown("status") || input.GetButtonDown("back"))
 	{
-		SoundL.PlaySE("Resource/Sound/SE/select06.mp3");
+		SoundL.PlaySE(SELECT_SE);
 		_updater = &StatusWindow::ScaleUpdate;
 		_animTrack->SetReverse(true);
 		_animTrack->Reset();
@@ -46,7 +57,6 @@ void StatusWindow::ScaleUpdate(const Input& input)
 StatusWindow::StatusWindow(std::deque<std::shared_ptr<UI>>* uiDeque, const Charactor& charactor):UI(uiDeque), _charactor (charactor)
 {
 	_weaponWindow = make_unique<WeaponWindow>(_charactor.GetStatus().weaponId, nullptr);
-	_itemWindow = make_unique<ItemWindow>(nullptr);
 
 	_isOpen = true;
 	_animTrack = make_unique<Track<float>>();
@@ -57,7 +67,7 @@ StatusWindow::StatusWindow(std::deque<std::shared_ptr<UI>>* uiDeque, const Chara
 	_centerWindowSize = Size(450, 250);
 
 	_updater = &StatusWindow::ScaleUpdate;
-	SoundL.PlaySE("Resource/Sound/SE/select05.mp3");
+	SoundL.PlaySE(OPEN_SE);
 
 	_windowH = FileSystem::Instance().
 		MakeScreen("status_window", Size(_sideWindowSize.w *2+ _centerWindowSize.w, _sideWindowSize.h*2), true);
@@ -112,21 +122,21 @@ void StatusWindow::DrawToWindowScreen()
 	DrawBattleStatus(battleStatusRect);
 	DrawStatus(statusRect);
 	_weaponWindow->Draw(weaponRect.center);
-	_itemWindow->Draw(itemRect.center);
+	itemRect.DrawGraph(ImageHandle(STATUS_IMG_1));
 
 	SetDrawScreen(currentScreen);
 }
 
 void StatusWindow::DrawIcon(const Rect& iconRect)
 {
-	iconRect.DrawGraph(ImageHandle("Resource/Image/UI/statusWindow1.png"));
+	iconRect.DrawGraph(ImageHandle(STATUS_IMG_1));
 	_charactor.DrawCharactorIcon(iconRect);
 }
 
 void StatusWindow::DrawBaseInf(const Rect& levelRect)
 {
 	auto& fileSystem = FileSystem::Instance();
-	levelRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/statusWindow1.png"));
+	levelRect.DrawGraph(fileSystem.GetImageHandle(STATUS_IMG_1));
 
 	Size contentSize(250, 250 / 4);
 	Vector2Int center(levelRect.Left() + contentSize.w / 2, levelRect.Top() + contentSize.h / 2);
@@ -179,7 +189,7 @@ void StatusWindow::DrawBaseInf(const Rect& levelRect)
 void StatusWindow::DrawBattleStatus(const Rect& battleStatusRect)
 {
 	auto& fileSystem = FileSystem::Instance();
-	battleStatusRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/statusWindow2.png"));
+	battleStatusRect.DrawGraph(fileSystem.GetImageHandle(STATUS_IMG_2));
 
 	auto choplin30 = fileSystem.GetFontHandle("choplin30edge");
 
@@ -190,7 +200,7 @@ void StatusWindow::DrawBattleStatus(const Rect& battleStatusRect)
 
 	auto DrawContentVertical = [&](const string& name, const int num)
 	{
-		contentRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/verticalWindow.png"));
+		contentRect.DrawGraph(fileSystem.GetImageHandle(STATUS_FRAME_VERTICAL));
 		DrawStringToHandle(Vector2Int(contentRect.center.x, contentRect.center.y - static_cast<int>(contentRect.size.h * 0.25f)), 
 			Anker::center, 0xffffff, choplin30, name.c_str());
 		DrawStringToHandle(Vector2Int(contentRect.center.x, contentRect.center.y + static_cast<int>(contentRect.size.h * 0.25f)), 
@@ -199,7 +209,7 @@ void StatusWindow::DrawBattleStatus(const Rect& battleStatusRect)
 
 	auto DrawContentHorizontal = [&](const string& name, const int num)
 	{
-		contentRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/horizontalWindow.png"));
+		contentRect.DrawGraph(fileSystem.GetImageHandle(STATUS_FRAME_HORIZONTAL));
 		DrawStringToHandle(Vector2Int(contentRect.center.x - static_cast<int>(contentRect.size.w * 0.25f), contentRect.center.y), 
 			Anker::center, 0xffffff, choplin30, name.c_str());
 		DrawStringToHandle(Vector2Int(contentRect.center.x + static_cast<int>(contentRect.size.w * 0.25f), contentRect.center.y), 
@@ -235,7 +245,7 @@ void StatusWindow::DrawBattleStatus(const Rect& battleStatusRect)
 	contentRect.center.x += static_cast<int>(contentRect.size.w * 1.5f);
 	contentRect.size.w *= 2;
 
-	contentRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/horizontalWindow.png"));
+	contentRect.DrawGraph(fileSystem.GetImageHandle(STATUS_FRAME_HORIZONTAL));
 	DrawStringToHandle(Vector2Int(contentRect.center.x - static_cast<int>(contentRect.size.w * 0.25f), contentRect.center.y), 
 		Anker::center, 0xffffff, choplin30, "ŽË’ö");
 	DrawStringToHandle(Vector2Int(contentRect.center.x + static_cast<int>(contentRect.size.w * 0.25f), contentRect.center.y),
@@ -246,7 +256,7 @@ void StatusWindow::DrawBattleStatus(const Rect& battleStatusRect)
 void StatusWindow::DrawStatus(const Rect& statusRect)
 {
 	auto& fileSystem = FileSystem::Instance();
-	statusRect.DrawGraph(fileSystem.GetImageHandle("Resource/Image/UI/statusWindow2.png"));
+	statusRect.DrawGraph(fileSystem.GetImageHandle(STATUS_IMG_2));
 
 	auto choplin30 = fileSystem.GetFontHandle("choplin30edge");
 

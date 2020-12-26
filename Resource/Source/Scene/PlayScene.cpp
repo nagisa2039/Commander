@@ -17,7 +17,6 @@
 #include "Effect/FlyText.h"
 #include "TurnChangeAnim.h"
 #include "MapSelectScene.h"
-#include "ShopScene.h"
 #include "Tool.h"
 #include "SoundLoader.h"
 #include "UI/CheckWindow.h"
@@ -619,11 +618,6 @@ void PlayScene::On()
 void PlayScene::Off()
 {
 	_mapCtrl->GetMap()->StopBGM();
-}
-
-void PlayScene::PushShopScene()
-{
-	_controller.PushScene(make_shared<ShopScene>(_controller));
 }
 
 void PlayScene::SetFilter(const FilterType type)

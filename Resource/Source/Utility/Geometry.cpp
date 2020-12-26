@@ -1,5 +1,6 @@
 #include <cmath>
 #include "Geometry.h"
+#include "Cast.h"
 #include <DxLib.h>
 #include <algorithm>
 
@@ -544,7 +545,8 @@ Vector3 Vector3::Normalized() const
 
 DirectX::XMVECTOR Vector3::ToXMVECTOR() const
 {
-	return DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(x,y,z));
+	auto float3 = DirectX::XMFLOAT3(x, y, z);
+	return DirectX::XMLoadFloat3(&float3);
 }
 
 DirectX::XMFLOAT3 Vector3::ToXMFLOAT3() const
@@ -572,7 +574,7 @@ Vector3 ReflectionVector(const Vector3 & baseVector, const Vector3 & norm)
 Vector3 RefractionVector(const Vector3 & baseVector, const Vector3 & norm, float parsent)
 {
 	float vn = Dot(baseVector, norm);
-	float d = 1 - pow((1 + vn), 2) / pow(parsent,2);
+	float d = 1.0f - Float(pow((1 + vn), 2) / pow(parsent,2));
 	return norm * (-vn/parsent - sqrtf(d)) + baseVector * (1 / parsent);
 }
 

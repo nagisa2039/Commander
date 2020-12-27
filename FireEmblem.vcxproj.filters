@@ -73,12 +73,6 @@
     <Filter Include="ソース ファイル\Utility">
       <UniqueIdentifier>{e7df3acf-f9d6-4bda-9e57-f2f2ed6a7135}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Game\UI\UILIst">
-      <UniqueIdentifier>{e7f6386d-e774-4b59-911d-67d1acecf934}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Game\UI\UIList">
-      <UniqueIdentifier>{de754d78-5984-4327-a075-03d3375ef144}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Game\UI\StatusWindow">
       <UniqueIdentifier>{96c14c2c-fb34-498d-a7e0-49a41b992190}</UniqueIdentifier>
     </Filter>
@@ -204,9 +198,6 @@
     <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\RecoverEffect.cpp">
       <Filter>ソース ファイル\Game\Actor\Effect\BattleEffect</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Game\UI\Experience.cpp">
-      <Filter>ソース ファイル\Game\UI</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Source\Game\BattlePreparationCursor.cpp">
       <Filter>ソース ファイル\Game\Actor</Filter>
     </ClCompile>
@@ -252,18 +243,6 @@
     <ClCompile Include="Resource\Source\Utility\Geometry.cpp">
       <Filter>ソース ファイル\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Game\UI\UIList\UIList.cpp">
-      <Filter>ソース ファイル\Game\UI\UILIst</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Game\UI\UIList\UIListItem.cpp">
-      <Filter>ソース ファイル\Game\UI\UILIst</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Game\UI\UIList\WeaponList.cpp">
-      <Filter>ソース ファイル\Game\UI\UILIst</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Game\UI\UIList\WeaponListItem.cpp">
-      <Filter>ソース ファイル\Game\UI\UILIst</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Source\Game\WeaponData.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
@@ -276,26 +255,11 @@
     <ClCompile Include="Resource\Source\Game\UI\StatusWindow\WeaponWindow.cpp">
       <Filter>ソース ファイル\Game\UI\StatusWindow</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Game\UI\StatusWindow\ItemWindow.cpp">
-      <Filter>ソース ファイル\Game\UI\StatusWindow</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Game\UI\UIList\CharactorList.cpp">
-      <Filter>ソース ファイル\Game\UI\UILIst</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Source\Game\MapSelectCharactor.cpp">
       <Filter>ソース ファイル\Game\Actor</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\BattleCharactor.cpp">
       <Filter>ソース ファイル\Game\Actor</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Game\UI\UIList\CharactorListItem.cpp">
-      <Filter>ソース ファイル\Game\UI\UILIst</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Scene\ShopScene.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Source\Game\UI\MoneyUI.cpp">
-      <Filter>ソース ファイル\Game\UI</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Source\Game\Map.cpp">
       <Filter>ソース ファイル\Game</Filter>
@@ -473,9 +437,6 @@
     <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\MagicEffect.h">
       <Filter>ヘッダー ファイル\Game\Actor\Effect\BattleEffect</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Source\Game\UI\Experience.h">
-      <Filter>ヘッダー ファイル\Game\UI</Filter>
-    </ClInclude>
     <ClInclude Include="Resource\Source\Game\BattlePreparationCursor.h">
       <Filter>ヘッダー ファイル\Game\Actor</Filter>
     </ClInclude>
@@ -515,18 +476,6 @@
     <ClInclude Include="Resource\Source\System\SoundLoader.h">
       <Filter>ヘッダー ファイル\System</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Source\Game\UI\UIList\UIList.h">
-      <Filter>ヘッダー ファイル\Game\UI\UIList</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Game\UI\UIList\UIListItem.h">
-      <Filter>ヘッダー ファイル\Game\UI\UIList</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Game\UI\UIList\WeaponList.h">
-      <Filter>ヘッダー ファイル\Game\UI\UIList</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Game\UI\UIList\WeaponListItem.h">
-      <Filter>ヘッダー ファイル\Game\UI\UIList</Filter>
-    </ClInclude>
     <ClInclude Include="Resource\Source\Game\UI\SelectPen.h">
       <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
@@ -535,21 +484,6 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\UI\StatusWindow\WeaponWindow.h">
       <Filter>ヘッダー ファイル\Game\UI\StatusWindow</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Game\UI\StatusWindow\ItemWindow.h">
-      <Filter>ヘッダー ファイル\Game\UI\StatusWindow</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Game\UI\UIList\CharactorList.h">
-      <Filter>ヘッダー ファイル\Game\UI\UIList</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Game\UI\UIList\CharactorListItem.h">
-      <Filter>ヘッダー ファイル\Game\UI\UIList</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Scene\ShopScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Game\UI\MoneyUI.h">
-      <Filter>ヘッダー ファイル\Game\UI</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\SaveDataCharactor.h">
       <Filter>ヘッダー ファイル\Game</Filter>
@@ -586,6 +520,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\System\FPSManager.h">
       <Filter>ヘッダー ファイル\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Source\Utility\Cast.h">
+      <Filter>ヘッダー ファイル\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

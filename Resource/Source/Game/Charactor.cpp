@@ -204,8 +204,8 @@ BattleStatus Charactor::GetBattleStatus() const
 	const auto& dataBase = DataBase::Instance();
 	const auto& mapChipData = dataBase.GetMapChipData(_mapCtrl.GetMap()->GetMapData(GetMapPos()).mapChip);
 	const auto& weaponData = dataBase.GetWeaponData(_status.weaponId);
-
-	return BattleStatus(_status, weaponData, mapChipData.defense, mapChipData.avoidance);
+	
+	return BattleStatus{ _status, weaponData, dataBase.GetWeaponTypeData(weaponData.typeId), mapChipData.defense, mapChipData.avoidance };
 }
 
 bool Charactor::GetIsDying() const

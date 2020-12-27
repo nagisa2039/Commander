@@ -35,7 +35,7 @@ private:
 		// アニメーション名
 		std::string animName;
 		// 回転量
-		float angle;
+		float angle = 0.0f;
 	};
 
 	// キャラクタータイプ
@@ -203,10 +203,12 @@ public:
 	/// 移動可能かを返す
 	/// </summary>
 	bool GetCanMove()const;
+
 	/// <summary>
 	/// ユニットがアクティブ状態を表す
 	/// </summary>
 	bool GetMoveActive()const;
+
 	/// <summary>
 	/// 硬直状態か
 	/// </summary>
@@ -216,10 +218,12 @@ public:
 	/// 開始時のステータスを取得
 	/// </summary>
 	const Status& GetStartStatus()const;
+
 	/// <summary>
 	/// 現在のステータスを取得
 	/// </summary>
 	const Status& GetStatus()const;
+
 	/// <summary>
 	/// 戦闘時のステータス取得
 	/// </summary>
@@ -229,46 +233,57 @@ public:
 	/// 死にゆく状態か
 	/// </summary>
 	bool GetIsDying()const;
+
 	/// <summary>
 	/// 向きの取得
 	/// </summary>
 	Dir GetDir()const;
+
 	/// <summary>
 	/// 中心座標の取得
 	/// </summary>
 	Vector2 GetCenterPos()const override;
+
 	/// <summary>
 	/// 戦闘用キャラクターの取得
 	/// </summary>
 	BattleCharactor& GetBattleC()const;
+
 	/// <summary>
 	/// 移動アニメーション中か
 	/// </summary>
 	bool GetIsMoveAnim()const;
+
 	/// <summary>
 	/// 攻撃範囲の取得
 	/// </summary>
 	const Range& GetAttackRange()const;
+
 	/// <summary>
 	/// 名前の取得
 	/// </summary>
 	const std::string& GetName()const;
+
 	/// <summary>
 	/// グループ番号の取得
 	/// </summary>
 	unsigned int GetGroupNum()const;
+
 	/// <summary>
 	/// 最大体力から現在の体力を引いた値を返す
 	/// </summary>
 	const int GetHurtPoint()const;
+
 	/// <summary>
 	/// 移動済みか調べる
 	/// </summary>
 	bool GetMoved()const;
+
 	/// <summary>
 	/// キャラクタータイプの取得
 	/// </summary>
 	CharactorType GetCharactorType()const;
+
 	/// <summary>
 	/// 移動経路管理クラスの取得
 	/// </summary>
@@ -279,40 +294,48 @@ public:
 	/// </summary>
 	/// <param name="mapPos">マップ座標</param>
 	void InitmapPos(const Vector2Int& mapPos);
+
 	/// <summary>
 	/// 選択中かを設定
 	/// </summary>
 	/// <param name="select">選択中か</param>
 	void SetIsSelect(const bool select);
+
 	/// <summary>
 	/// 死にゆく状態にする
 	/// </summary>
 	void SetIsDying();
+
 	/// <summary>
 	/// 向きの設定
 	/// </summary>
 	/// <param name="dir">向き</param>
 	void SetDir(const Dir dir);
+
 	/// <summary>
 	/// ステータスを設定
 	/// </summary>
 	/// <param name="status">ステータス</param>
 	void SetStatus(const Status& status);
+
 	/// <summary>
 	/// ステータスの初期化
 	/// </summary>
 	/// <param name="status">ステータス</param>
 	void InitStatus(const Status& status);
+
 	/// <summary>
 	/// ユニットがアクティブ状態かを設定
 	/// </summary>
 	/// <param name="active">アクティブ状態か</param>
 	void SetMoveActive(const bool active);
+
 	/// <summary>
 	/// 待機フレーム数の設定
 	/// </summary>
 	/// <param name="time">待機フレーム数</param>
 	void SetMoveStandby(const int time);
+
 	/// <summary>
 	/// 移動を決定する
 	/// </summary>
@@ -334,10 +357,12 @@ public:
 	/// 移動経路検索
 	/// </summary>
 	void RouteSearch();
+
 	/// <summary>
 	/// ターンごとのリセット
 	/// </summary>
 	void TurnReset();
+
 	/// <summary>
 	/// 移動をキャンセルする
 	/// </summary>
@@ -360,6 +385,7 @@ public:
 	/// </summary>
 	/// <returns>成否</returns>
 	bool StartTerrainEffect();
+
 	/// <summary>
 	/// 地形エフェクトの再生が終わっているか
 	/// </summary>

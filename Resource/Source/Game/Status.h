@@ -3,60 +3,127 @@
 #include <string>
 #include "WeaponData.h"
 
+/// <summary>
+/// ステータス
+/// </summary>
 struct Status
 {
+	// レベル
 	uint8_t level;
+	// 体力
 	uint8_t health;
+	// 力
 	uint8_t power;
+	// 魔力
 	uint8_t magic_power;
-
+	// 守備
 	uint8_t defense;
+	// 魔防
 	uint8_t magic_defense;
+	// 速さ
 	uint8_t speed;
+	// 技
 	uint8_t skill;
-
+	// 幸運
 	uint8_t luck;
+	// 移動力
 	uint8_t move;
-
-	uint8_t exp;		// 経験値
-	uint8_t weaponId;	// 武器
-
-	Status() : level(1), health(1), power(1), magic_power(1), defense(1), magic_defense(1), speed(1), skill(1), luck(1), move(1), exp(0), weaponId(0) {};
-
-	Status(const uint8_t lv, const uint8_t he, const uint8_t pw, const uint8_t mp, const uint8_t df, const uint8_t md, const uint8_t sp, const uint8_t sk, const uint8_t lc, const uint8_t mv)
-		: level(lv), health(he), power(pw), magic_power(mp), defense(df), magic_defense(md), speed(sp), skill(sk), luck(lc), move(mv), exp(0), weaponId(0) {};
-
-	void AddStatus(const Status& addStatus);
+	// 経験値
+	uint8_t exp;
+	// 武器
+	uint8_t weaponId;
 };
 
 struct WeaponData;
 
+/// <summary>
+/// 戦闘時ステータス
+/// </summary>
 struct BattleStatus
 {
+	// 元となるステータス
 	const Status& status;
+	// 武器データ
 	const WeaponData& weaponData;
+	// 武器種データ
 	const WeaponTypeData& weaponTypeData;
-
-	int defenseCorrection;		// 守備力補正
-	int avoidanceCorrection;	// 回避力補正
-
-	BattleStatus(const Status& st, const WeaponData& wd, const int dc, const int ac)
-		: status(st), weaponData(wd), weaponTypeData(wd.GetTypeData()), defenseCorrection(dc), avoidanceCorrection(ac) {};
-
+	// 守備力補正
+	int defenseCorrection;
+	// 回避力補正
+	int avoidanceCorrection;	
+	
+	/// <summary>
+	/// 攻撃力取得
+	/// </summary>
 	int GetPower()const;
-	int GetDamage(const BattleStatus& target)const;	// ダメージ
-	int GetRecover();	// 回復量
-	int GetHitRate()const;	// 命中率
-	int GetHit(const BattleStatus& target)const;	// 相手を考慮した命中率
-	int GetCriticalRate()const;	// 必殺率
-	int GetCritical(const BattleStatus& target)const;	// 相手を考慮した必殺率
-	int GetAttackSpeed()const;	// 攻速
-	int GetDifense()const;		// 防御力(補正込みの守備力)
-	int GetMagicDifense()const;	// 耐魔(補正値込みの魔法守備力)
-	int GetAvoidance()const;	// 回避(補正値込みの回避力)
-	bool CheckHeal()const;		// 回復役か確認
-	bool CheckMagicAttack()const;	// 魔法攻撃か確認
 
-	bool CheckPursuit(const BattleStatus& target)const;	// 追撃が取れるか確認
+	/// <summary>
+	/// ダメージ
+	/// </summary>
+	/// <param name="target">戦闘相手のステータス</param>
+	int GetDamage(const BattleStatus& target)const;
+
+	/// <summary>
+	/// 回復量
+	/// </summary>
+	int GetRecover();
+
+	/// <summary>
+	/// 命中率
+	/// </summary>
+	int GetHitRate()const;
+
+	/// <summary>
+	/// 相手を考慮した命中率
+	/// </summary>
+	/// <param name="target">戦闘相手のステータス</param>
+	int GetHit(const BattleStatus& target)const;
+
+	/// <summary>
+	/// 必殺率
+	/// </summary>
+	int GetCriticalRate()const;
+
+	/// <summary>
+	/// 相手を考慮した必殺率
+	/// </summary>
+	/// <param name="target">戦闘相手のステータス</param>
+	int GetCritical(const BattleStatus& target)const;
+
+	/// <summary>
+	/// 攻速
+	/// </summary>
+	int GetAttackSpeed()const;
+
+	/// <summary>
+	/// 防御力(補正込みの守備力)
+	/// </summary>
+	int GetDifense()const;
+
+	/// <summary>
+	/// 耐魔(補正値込みの魔法守備力)
+	/// </summary>
+	int GetMagicDifense()const;
+
+	/// <summary>
+	/// 回避(補正値込みの回避力)
+	/// </summary>
+	int GetAvoidance()const;
+
+	/// <summary>
+	/// 回復役か確認
+	/// </summary>
+	bool CheckHeal()const;
+
+	/// <summary>
+	/// 魔法攻撃か確認
+	/// </summary>
+	bool CheckMagicAttack()const;
+
+	/// <summary>
+	/// 追撃が取れるか確認
+	/// </summary>
+	/// <param name="target">戦闘相手のステータス</param>
+	bool CheckPursuit(const BattleStatus& target)const;
 
 };

@@ -100,10 +100,8 @@ bool RouteManager::GetAttackStartPos(Vector2Int& attackStartPos, const Vector2In
 		int attackDistance = abs(sub.x) + abs(sub.y);
 		if (!targetAttackRange.Hit(attackDistance))
 		{
-			attackStartPos = itr->prev->mapPos;
 			return true;
 		}
-
 	}
 
 	return set;

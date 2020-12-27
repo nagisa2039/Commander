@@ -26,26 +26,57 @@ private:
 		Vector2Int mapPos;
 	};
 
+	// 経路配列
 	std::vector<std::vector<std::list<Astar::ResultPos>>> _resultPosListVec2;
+	// 移動方向配列
 	std::list<MoveInf> _moveDirList;
 
 	// 行動範囲内のキャラクターを格納
 	std::list<Charactor*> _inRangeCharactorList;
 
+	// 所有者のキャラクター
 	Charactor& _charactor;
+	// マップ管理クラス
 	MapCtrl& _mapCtrl;
+	// カメラ
 	Camera& _camera;
 
-	// 指定した座標に何のマスがあるか調べる	x=移動マス y=攻撃マス
+	/// <summary>
+	/// 指定した座標に何のマスがあるか調べる	
+	/// </summary>
+	/// <param name="mapPos">マス数</param>
+	/// <returns>x=移動マス y=攻撃マス</returns>
 	Vector2Int CheckMapPos(const Vector2Int& mapPos)const;
 
 public:
+	/// <param name="charactor">所有者のキャラクター</param>
+	/// <param name="mapCtrl">マップ管理クラス</param>
+	/// <param name="camera">カメラ</param>
 	RouteManager(Charactor& charactor, MapCtrl& mapCtrl, Camera& camera);
 	~RouteManager();
 
+	/// <summary>
+	/// 移動範囲の描画
+	/// </summary>
+	/// <param name="alpha">不透明度</param>
 	void DrawMovableMass(const uint8_t alpha)const;
+
+	/// <summary>
+	/// 指定した座標に攻撃可能なキャラクターがいるか確認
+	/// いた場合は攻撃開始座標を取得
+	/// </summary>
+	/// <param name="attackPos">攻撃開始座標を取得するための変数</param>
+	/// <param name="targetMapPos">確認する座標</param>
 	bool GetAttackStartPos(Vector2Int& attackPos, const Vector2Int& targetMapPos)const;
+
+	/// <summary>
+	/// 経路探索の結果を格納した配列取得
+	/// </summary>
 	std::vector<std::vector<std::list<Astar::ResultPos>>>& GetResutlPosListVec2();
+
+	/// <summary>
+	/// 移動方向配列の取得
+	/// </summary>
 	std::list<MoveInf>& GetMoveDirList();
 
 	// 指定した座標までの経路を描画する

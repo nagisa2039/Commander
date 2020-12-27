@@ -76,14 +76,3 @@ int BattleStatus::GetAttackSpeed()const
 {
 	return status.speed - (weaponData.weight - status.power / 5);
 }
-
-void Status::AddStatus(const Status& addStatus)
-{
-	level			+= addStatus.level;
-	health			+= addStatus.health;
-	power			+= addStatus.power;
-	defense			+= addStatus.defense;
-	magic_defense	+= addStatus.magic_defense;
-	skill			+= addStatus.skill;
-	speed			+= addStatus.speed;
-}

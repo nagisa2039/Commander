@@ -24,10 +24,6 @@
     <ClCompile Include="Resource\Source\Game\Effect\BattleEffect\BattleEffectFactory.cpp" />
     <ClCompile Include="Resource\Source\Game\CutIn.cpp" />
     <ClCompile Include="Resource\Source\Game\Map.cpp" />
-    <ClCompile Include="Resource\Source\Game\UI\MoneyUI.cpp" />
-    <ClCompile Include="Resource\Source\Game\UI\UIList\CharactorListItem.cpp" />
-    <ClCompile Include="Resource\Source\Game\UI\UIList\CharactorList.cpp" />
-    <ClCompile Include="Resource\Source\Game\UI\StatusWindow\ItemWindow.cpp" />
     <ClCompile Include="Resource\Source\Game\Actor.cpp" />
     <ClCompile Include="Resource\Source\Game\Animator.cpp" />
     <ClCompile Include="Resource\Source\Game\Astar.cpp" />
@@ -60,7 +56,6 @@
     <ClCompile Include="Resource\Source\Game\TurnChangeAnim.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\BattlePrediction.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\CheckWindow.cpp" />
-    <ClCompile Include="Resource\Source\Game\UI\Experience.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\Menu.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\MenuTopInf.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\MoveMenu.cpp" />
@@ -72,8 +67,6 @@
     <ClCompile Include="Resource\Source\Game\UI\StatusWindow\WeaponWindow.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\TerrainInf.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\UI.cpp" />
-    <ClCompile Include="Resource\Source\Game\UI\UIList\UIList.cpp" />
-    <ClCompile Include="Resource\Source\Game\UI\UIList\UIListItem.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\WarSituation.cpp" />
     <ClCompile Include="Resource\Source\Game\WeaponData.cpp" />
     <ClCompile Include="Resource\Source\Scene\BattleScene.cpp" />
@@ -93,10 +86,7 @@
     <ClCompile Include="Resource\Source\Utility\Geometry.cpp" />
     <ClCompile Include="Resource\Source\Utility\Input.cpp" />
     <ClCompile Include="Resource\Source\Utility\TimeLine.cpp" />
-    <ClCompile Include="Resource\Source\Game\UI\UIList\WeaponList.cpp" />
-    <ClCompile Include="Resource\Source\Game\UI\UIList\WeaponListItem.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\SelectPen.cpp" />
-    <ClCompile Include="Resource\Source\Scene\ShopScene.cpp" />
     <ClCompile Include="Resource\Source\Scene\TitleScene.cpp" />
     <ClCompile Include="Resource\Source\Game\RouteManager.cpp" />
   </ItemGroup>
@@ -107,10 +97,6 @@
     <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\BattleEffectFactory.h" />
     <ClInclude Include="Resource\Source\Game\Effect\BattleEffect\BattleEffectType.h" />
     <ClInclude Include="Resource\Source\Game\Map.h" />
-    <ClInclude Include="Resource\Source\Game\UI\MoneyUI.h" />
-    <ClInclude Include="Resource\Source\Game\UI\UIList\CharactorListItem.h" />
-    <ClInclude Include="Resource\Source\Game\UI\UIList\CharactorList.h" />
-    <ClInclude Include="Resource\Source\Game\UI\StatusWindow\ItemWindow.h" />
     <ClInclude Include="Resource\Source\Game\Actor.h" />
     <ClInclude Include="Resource\Source\Game\Animator.h" />
     <ClInclude Include="Resource\Source\Game\Astar.h" />
@@ -145,7 +131,6 @@
     <ClInclude Include="Resource\Source\Game\TurnChangeAnim.h" />
     <ClInclude Include="Resource\Source\Game\UI\BattlePrediction.h" />
     <ClInclude Include="Resource\Source\Game\UI\CheckWindow.h" />
-    <ClInclude Include="Resource\Source\Game\UI\Experience.h" />
     <ClInclude Include="Resource\Source\Game\UI\Menu.h" />
     <ClInclude Include="Resource\Source\Game\UI\MenuTopInf.h" />
     <ClInclude Include="Resource\Source\Game\UI\MoveMenu.h" />
@@ -157,8 +142,6 @@
     <ClInclude Include="Resource\Source\Game\UI\StatusWindow\WeaponWindow.h" />
     <ClInclude Include="Resource\Source\Game\UI\TerrainInf.h" />
     <ClInclude Include="Resource\Source\Game\UI\UI.h" />
-    <ClInclude Include="Resource\Source\Game\UI\UIList\UIList.h" />
-    <ClInclude Include="Resource\Source\Game\UI\UIList\UIListItem.h" />
     <ClInclude Include="Resource\Source\Game\UI\WarSituation.h" />
     <ClInclude Include="Resource\Source\Game\WeaponData.h" />
     <ClInclude Include="Resource\Source\Scene\BattleScene.h" />
@@ -174,15 +157,13 @@
     <ClInclude Include="Resource\Source\System\Loader.h" />
     <ClInclude Include="Resource\Source\System\SoundLoader.h" />
     <ClInclude Include="Resource\Source\Utility\AnkerCalculation.h" />
+    <ClInclude Include="Resource\Source\Utility\Cast.h" />
     <ClInclude Include="Resource\Source\Utility\Dir.h" />
     <ClInclude Include="Resource\Source\Utility\DxLibUtility.h" />
     <ClInclude Include="Resource\Source\Utility\Geometry.h" />
     <ClInclude Include="Resource\Source\Utility\Input.h" />
     <ClInclude Include="Resource\Source\Utility\TimeLine.h" />
-    <ClInclude Include="Resource\Source\Game\UI\UIList\WeaponList.h" />
-    <ClInclude Include="Resource\Source\Game\UI\UIList\WeaponListItem.h" />
     <ClInclude Include="Resource\Source\Game\UI\SelectPen.h" />
-    <ClInclude Include="Resource\Source\Scene\ShopScene.h" />
     <ClInclude Include="Resource\Source\Game\SaveDataCharactor.h" />
     <ClInclude Include="Resource\Source\Utility\Tool.h" />
     <ClInclude Include="Resource\Source\Scene\TitleScene.h" />

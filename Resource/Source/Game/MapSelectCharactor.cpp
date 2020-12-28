@@ -61,7 +61,7 @@ void MapSelectCharactor::Update(const Input& input)
 	if (!_isMove)
 	{
 		const char* downWalk = "DownWalk";
-		if (_animator->GetAnimName() != downWalk && --_fontChangeCnt <= 0)
+		if (_animator->GetAnimName() != downWalk && --_frontChangeCnt <= 0)
 		{
 			_animator->ChangeAnim(downWalk);
 		}
@@ -78,7 +78,7 @@ void MapSelectCharactor::Update(const Input& input)
 		{
 			SoundL.StopSound(_moveSEH);
 		}
-		_fontChangeCnt = FRONT_CHANGE_ITV;
+		_frontChangeCnt = FRONT_CHANGE_ITV;
 		return;
 	}
 

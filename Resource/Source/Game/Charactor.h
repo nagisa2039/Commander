@@ -111,16 +111,32 @@ private:
 	// 場面ごとの描画を行う
 	void(Charactor::* _drawer)();
 
-	// 通常時の更新
+	/// <summary>
+	/// 通常時の更新
+	/// </summary>
+	/// <param name="input">入力</param>
 	void NormalUpdate(const Input& input);
-	// 戦闘開始時
+
+	/// <summary>
+	/// 戦闘開始時
+	/// </summary>
+	/// <param name="input">入力</param>
 	void BattaleStartUpdate(const Input& input);
-	// 死亡時の更新
+
+	/// <summary>
+	/// 死亡時の更新
+	/// </summary>
+	/// <param name="input">入力</param>
 	void DyingUpdate(const Input& input);
 
-	// 通常時の描画
+	/// <summary>
+	/// 通常時の描画
+	/// </summary>
 	void NormalDraw();
-	// 死亡時の描画
+
+	/// <summary>
+	/// 死亡時の描画
+	/// </summary>
 	void DyingDraw();
 
 	/// <summary>

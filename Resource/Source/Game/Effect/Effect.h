@@ -14,10 +14,8 @@ class Effect :
 protected:
 	// アニメーション再生クラス
 	std::shared_ptr<Animator> _animator;
-
 	// エフェクトサイズ
 	Size _size;
-
 	// カメラを考慮して描画するか
 	bool _cameraActive;
 

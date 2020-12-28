@@ -5,10 +5,15 @@
 /// </summary>
 enum class BattleEffectType
 {
-	slash,		// ŽaŒ‚
-	magic,		// –‚–@
-	arrow,		// ‹|
-	recover,	// ‰ñ•œ
-	miss,		// Ž¸”s
+	// ŽaŒ‚
+	slash,		
+	// –‚–@
+	magic,		
+	// ‹|
+	arrow,		
+	// ‰ñ•œ
+	recover,	
+	// Ž¸”s
+	miss,		
 	max
 };

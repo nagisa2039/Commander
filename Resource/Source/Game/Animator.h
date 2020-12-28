@@ -4,6 +4,9 @@
 #include "../Utility/Geometry.h"
 #include <string>
 
+/// <summary>
+/// アニメーション管理クラス
+/// </summary>
 class Animator
 {
 public:

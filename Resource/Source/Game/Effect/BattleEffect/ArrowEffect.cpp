@@ -50,7 +50,7 @@ void ArrowEffect::Update(const Input& input)
 	_moveTrack->Update();
 	if (_moveTrack->GetEnd())
 	{
-		_self.AddGivenDamage(AddDamage());
+		_self.SetGivenDamage(AddDamage());
 		_delete = true;
 	}
 }

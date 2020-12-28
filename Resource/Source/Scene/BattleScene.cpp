@@ -85,7 +85,7 @@ void BattleScene::RightHPAnim(const Input& input)
 	_rightBC.UIAnimUpdate();
 	if (_rightBC.GetHPAnimEnd())
 	{
-		_rightBC.SetDamageType(BattleCharactor::damageType::none);
+		_rightBC.SetReceiveDamageType(BattleCharactor::damageType::none);
 		if (_leftBC.GetCharacotr().GetBattleStatus().CheckHeal())
 		{
 			StartExpUpdate();

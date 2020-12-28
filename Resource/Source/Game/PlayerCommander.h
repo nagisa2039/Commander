@@ -7,6 +7,9 @@
 class PlayerUI;
 class UI;
 
+/// <summary>
+/// プレイヤー指揮官
+/// </summary>
 class PlayerCommander :
 	public Commander
 {

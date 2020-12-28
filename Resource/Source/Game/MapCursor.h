@@ -98,4 +98,3 @@ public:
 	/// </summary>
 	Vector2 GetCenterPos()const override;
 };
-

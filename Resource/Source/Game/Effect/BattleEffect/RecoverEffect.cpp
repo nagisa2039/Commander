@@ -15,7 +15,7 @@ RecoverEffect::RecoverEffect(BattleCharactor& self, BattleCharactor& target, std
 	_animator->AddAnimDiv("normal", Rect(_size.ToVector2Int() * 0.5, _size), 9, 4, false, false);
 	_animator->ChangeAnim("normal");
 
-	_self.AddGivenDamage(AddDamage());
+	_self.SetGivenDamage(AddDamage());
 }
 
 RecoverEffect::~RecoverEffect()

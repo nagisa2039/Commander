@@ -14,7 +14,7 @@ SlashingEffect::SlashingEffect(BattleCharactor& self, BattleCharactor& target, s
 	_animator->ChangeAnim("normal");
 	_size = _animator->GetImageSize() / animCnt;
 
-	_self.AddGivenDamage(AddDamage());
+	_self.SetGivenDamage(AddDamage());
 }
 
 SlashingEffect::~SlashingEffect()

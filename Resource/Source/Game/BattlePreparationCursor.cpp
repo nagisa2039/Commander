@@ -100,7 +100,7 @@ void BattlePreparationCursor::Select()
 {
 	auto charactorChips = _mapCtrl.GetMap()->GetCharactorChipInf(_mapPos);
 
-	if(charactorChips.team != Team::player/* || charactorChips.type == CharactorType::max*/)return;
+	if(charactorChips.team != Team::player)return;
 
 	// キャラクターの選択
 	if (_selectMapPos.x == NONE_SELECT)

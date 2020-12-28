@@ -15,7 +15,9 @@ class Camera;
 class RouteManager
 {
 private:
-	// ˆÚ“®î•ñ
+	/// <summary>
+	/// ˆÚ“®î•ñ
+	/// </summary>
 	struct MoveInf
 	{
 		// •ûŒü

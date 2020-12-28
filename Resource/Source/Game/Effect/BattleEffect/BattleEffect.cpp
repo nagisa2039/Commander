@@ -15,12 +15,12 @@ unsigned int  BattleEffect::AddDamage()
 	if (selfBattleStatus.CheckHeal())
 	{
 		damage = -selfBattleStatus.GetRecover();
-		_target.SetDamageType(BattleCharactor::damageType::none);
+		_target.SetReceiveDamageType(BattleCharactor::damageType::none);
 	}
 	else
 	{
 		damage = selfBattleStatus.GetDamage(targetBattleStatus) * (_critical ? 3 : 1);
-		_target.SetDamageType(_critical ? BattleCharactor::damageType::critical : BattleCharactor::damageType::damage);
+		_target.SetReceiveDamageType(_critical ? BattleCharactor::damageType::critical : BattleCharactor::damageType::damage);
 	}
 
 	char damageText[10];

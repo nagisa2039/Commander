@@ -11,8 +11,8 @@ using namespace std;
 
 TurnChangeAnim::TurnChangeAnim()
 {
-	teamInfs[static_cast<size_t>(Team::player)] = TeamInf("PLAYER");
-	teamInfs[static_cast<size_t>(Team::enemy)]	= TeamInf("ENEMY");
+	teamInfs[static_cast<size_t>(Team::player)] = "PLAYER";
+	teamInfs[static_cast<size_t>(Team::enemy)]	= "ENEMY";
 
 	_currentTeam = Team::player;
 	_animEnd = false;
@@ -84,7 +84,7 @@ void TurnChangeAnim::Draw()
 
 	// –¼‘O•\Ž¦
 	char str[20];
-	sprintf_s(str, 20, "%s%s", teamInf.name, " TURN");
+	sprintf_s(str, 20, "%s%s", teamInf, " TURN");
 	Size strSize;
 	int lineCnt;
 	auto fontHandle = FontHandle("choplin100edge");

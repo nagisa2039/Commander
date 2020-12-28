@@ -186,7 +186,7 @@ void BattleCharactor::UIDraw()
 	windowRect.DrawGraph(fileSystem.GetImageHandle(path));
 
 	// パラメータ表示
-	DrawParameter(teamString, windowRect, fileSystem, paramWindowRect);
+	DrawParameter(teamString, fileSystem, paramWindowRect);
 
 	// HP表示
 	DrawHP(windowRect, fontHandle);
@@ -238,7 +238,7 @@ void BattleCharactor::DrawName(const char* teamString, Rect& nameWindowRect, Fil
 	DrawStringToHandle(nameWindowRect.center, Anker::center, 0xffffff, fontHandle, _selfChar.GetName().c_str());
 }
 
-void BattleCharactor::DrawParameter(const char* teamString, Rect& windowRect, FileSystem& fileSystem, Rect& paramWindowRect)
+void BattleCharactor::DrawParameter(const char* teamString, FileSystem& fileSystem, Rect& paramWindowRect)
 {
 	char path[_MAX_PATH];
 	sprintf_s(path, _MAX_PATH, "Resource/Image/Battle/battleParamWindow_%s.png", teamString);
@@ -462,7 +462,7 @@ void BattleCharactor::SetTargetCharactor(BattleCharactor* target)
 	_targetChar = target;
 }
 
-void BattleCharactor::SetDamageType(const damageType dt)
+void BattleCharactor::SetReceiveDamageType(const damageType dt)
 {
 	_receiveDamageType = dt;
 }
@@ -470,9 +470,4 @@ void BattleCharactor::SetDamageType(const damageType dt)
 void BattleCharactor::SetGivenDamage(const unsigned int value)
 {
 	_givenDamage = value;
-}
-
-void BattleCharactor::AddGivenDamage(const unsigned int value)
-{
-	_givenDamage += value;
 }

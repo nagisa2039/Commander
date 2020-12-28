@@ -2,6 +2,9 @@
 #include "Commander.h"
 #include <vector>
 
+/// <summary>
+/// “GwŠöŠ¯
+/// </summary>
 class EnemyCommander :
 	public Commander
 {

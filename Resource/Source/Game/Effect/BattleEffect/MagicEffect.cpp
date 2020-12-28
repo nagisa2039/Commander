@@ -14,7 +14,7 @@ MagicEffect::MagicEffect(BattleCharactor& self, BattleCharactor& target, std::ve
 	_animator->AddAnimDiv("normal", Rect(_size.ToVector2Int() * 0.5, _size), graphSize.w / graphSize.h, 4, false, false);
 	_animator->ChangeAnim("normal");
 
-	_self.AddGivenDamage(AddDamage());
+	_self.SetGivenDamage(AddDamage());
 }
 
 MagicEffect::~MagicEffect()

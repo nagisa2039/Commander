@@ -4,26 +4,47 @@
 
 class Input;
 
+/// <summary>
+/// UI基底クラス
+/// </summary>
 class UI
 {
 protected:
+	// UIの親子関係管理Deque
 	std::deque<std::shared_ptr<UI>>* _uiDeque;
+	// 削除判定
 	bool _delete;
+	// 開いている状態か
 	bool _isOpen;
 
 public:
+	/// <param name="uiDeque">UIの親子関係管理Deque</param>
 	UI(std::deque<std::shared_ptr<UI>>* uiDeque);
-	~UI();
+	virtual ~UI();
 
+	/// <summary>
+	/// 更新
+	/// </summary>
+	/// <param name="input">入力情報</param>
 	virtual void Update(const Input& input) = 0;
+
+	/// <summary>
+	/// 描画
+	/// </summary>
 	virtual void Draw() = 0;
 
-	// 削除していいか
+	/// <summary>
+	/// 削除していいか
+	/// </summary>
 	bool GetDelete()const;
 
-	// 開いているか(表示中)
+	/// <summary>
+	/// 開いているか(表示中)
+	/// </summary>
 	bool GetIsOpen()const;
 
-	// 最前面に表示するときなどに更新処理を走らせる
+	/// <summary>
+	/// 最前面に表示するときなどに更新処理を走らせる
+	/// </summary>
 	virtual void OnActive();
 };

@@ -198,7 +198,8 @@ void Menu::OpenDraw()
 		DrawContent(_contentInfs[idx].centerPos, idx);
 	}
 
-	_selectPen->Draw(_contentInfs[_selectIdx].centerPos - Vector2Int(_contentSize.w/2, 0));
+	_selectPen->SetPos(_contentInfs[_selectIdx].centerPos - Vector2Int(_contentSize.w / 2, 0));
+	_selectPen->Draw();
 }
 
 void Menu::CloseDraw()

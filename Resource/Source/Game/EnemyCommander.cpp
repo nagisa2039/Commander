@@ -30,7 +30,7 @@ void EnemyCommander::NormalUpdate(const Input& input)
 	auto setSelectCharactor = [this](std::shared_ptr<Charactor> charactor)
 	{
 		_selectChar = &*charactor;
-		_selectChar->SetMoveStandby(15);
+		_selectChar->SetRigit(15);
 		_camera.AddTargetActor(_selectChar);
 		_mapPos = _selectChar->GetMapPos();
 		_pos = (_mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToVector2();

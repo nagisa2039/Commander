@@ -18,7 +18,7 @@ public:
 	/// <param name="effects">エフェクト管理用配列</param>
 	/// <param name="critical">クリティカルフラグ</param>
 	/// <param name="camera">カメラ</param>
-	ArrowEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, 
+	ArrowEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects,
 		bool critical, Camera& camera);
 	~ArrowEffect();
 

@@ -25,11 +25,9 @@ using namespace std;
 
 void Charactor::NormalUpdate(const Input& input)
 {
-	if (_moveStandby)
+	if (GetMoveStandby())
 	{
 		if (--_rigid > 0)return;
-
-		_moveStandby = false; 
 
 		MoveMapPos(_routeManager->SearchMovePos());
 	}
@@ -186,7 +184,7 @@ bool Charactor::GetMoveActive() const
 
 bool Charactor::GetMoveStandby() const
 {
-	return _moveStandby;
+	return _rigid > 0;
 }
 
 const Status& Charactor::GetStartStatus() const
@@ -309,9 +307,8 @@ void Charactor::SetMoveActive(const bool active)
 	_moveActive = active;
 }
 
-void Charactor::SetMoveStandby(const int time)
+void Charactor::SetRigit(const int time)
 {
-	_moveStandby = true;
 	_rigid = time;
 }
 
@@ -345,7 +342,7 @@ void Charactor::StopMoveAnim()
 
 void Charactor::RouteSearch()
 {
-	_routeManager->RouteSearch(*this);
+	_routeManager->RouteSearch();
 }
 
 void Charactor::TurnReset()
@@ -442,7 +439,6 @@ Charactor::Charactor(const CharactorType type, const uint8_t level, const Vector
 	_terrainEffect->SetDelete(true);
 
 	_rigid = 0;
-	_moveStandby = false;
 	_mouveSEH = SoundHandle("Resource/Sound/SE/dash.mp3");
 
 	_routeManager = make_shared<RouteManager>(*this, _mapCtrl, _camera);

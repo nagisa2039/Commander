@@ -104,7 +104,7 @@ void PlayerUI::Update(const Input& input)
 	}
 }
 
-void PlayerUI::AddBattlePre()
+void PlayerUI::OpenBattlePrediction()
 {
 	auto self = _playerCommander.GetSelectCharactor();
 	if (self == nullptr)
@@ -128,11 +128,10 @@ void PlayerUI::AddBattlePre()
 		return;
 	}
 
-	_battlePre = make_shared<BattlePrediction>(*self, *charactor, nullptr, attackStartPos, 
-		_mapCtrl.GetMap()->GetMapData(attackStartPos).mapChip);
+	_battlePre = make_shared<BattlePrediction>(*self, *charactor, nullptr, attackStartPos);
 }
 
-void PlayerUI::ClearBattlePre()
+void PlayerUI::ClearBattlePrediction()
 {
 	_battlePre.reset();
 }

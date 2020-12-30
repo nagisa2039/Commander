@@ -58,7 +58,7 @@ struct BattleStatus
 	int GetPower()const;
 
 	/// <summary>
-	/// ダメージ
+	/// 与えるダメージ量取得
 	/// </summary>
 	/// <param name="target">戦闘相手のステータス</param>
 	int GetDamage(const BattleStatus& target)const;

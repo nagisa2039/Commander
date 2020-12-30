@@ -168,7 +168,7 @@ void PlayerCommander::BattlePredictionUpdate(const Input& input)
 void PlayerCommander::BackBattalePrediction()
 {
 	SoundL.PlaySE(_canselH);
-	_playerUI->ClearBattlePre();
+	_playerUI->ClearBattlePrediction();
 	_uniqueUpdater = &PlayerCommander::SelectUpdate;
 }
 
@@ -240,7 +240,7 @@ bool PlayerCommander::AttackPrePos(const Vector2Int& mapPos)
 	{
 		// í“¬‚ðs‚¤
 		_uniqueUpdater = &PlayerCommander::BattlePredictionUpdate;
-		_playerUI->AddBattlePre();
+		_playerUI->OpenBattlePrediction();
 		return true;
 	}
 	return false;
@@ -248,7 +248,7 @@ bool PlayerCommander::AttackPrePos(const Vector2Int& mapPos)
 
 void PlayerCommander::BattleStart()
 {
-	_playerUI->ClearBattlePre();
+	_playerUI->ClearBattlePrediction();
 	_camera.AddTargetActor(_selectChar);
 	_selectChar->MoveMapPos(_mapPos);
 	_uniqueUpdater = &PlayerCommander::BattaleUpdate;

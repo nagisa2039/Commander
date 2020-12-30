@@ -103,8 +103,6 @@ private:
 
 	// 硬直ｶｳﾝﾄ
 	int _rigid;
-	// 硬直が無くなったら移動を開始する
-	bool _moveStandby;
 
 	// 場面ごとの更新を行う
 	void(Charactor::* _updater)(const Input& input);
@@ -350,7 +348,7 @@ public:
 	/// 待機フレーム数の設定
 	/// </summary>
 	/// <param name="time">待機フレーム数</param>
-	void SetMoveStandby(const int time);
+	void SetRigit(const int time);
 
 	/// <summary>
 	/// 移動を決定する

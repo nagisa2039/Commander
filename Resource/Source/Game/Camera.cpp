@@ -132,9 +132,9 @@ void Camera::SetLimitRect(const Rect& rect)
 	_limitRect = rect;
 }
 
-void Camera::SetLooseFollow(bool lose)
+void Camera::SetLooseFollow(bool loose)
 {
-	_follower = lose ? &Camera::LooseFollow : &Camera::NormalFollow;
+	_follower = loose ? &Camera::LooseFollow : &Camera::NormalFollow;
 }
 
 const Rect& Camera::GetRect() const

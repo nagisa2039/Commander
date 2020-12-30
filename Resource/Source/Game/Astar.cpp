@@ -36,10 +36,10 @@ bool Astar::CheckSearchPosVec2Range(const Vector2Int& checkPos) const
 
 Astar::Astar()
 {
-	_dirTable[static_cast<size_t>(Dir::left)]		= Vector2Int(-1,  0);
+	_dirTable[static_cast<size_t>(Dir::left)]	= Vector2Int(-1,  0);
 	_dirTable[static_cast<size_t>(Dir::right)]	= Vector2Int( 1,  0);
 	_dirTable[static_cast<size_t>(Dir::up)]		= Vector2Int( 0, -1);
-	_dirTable[static_cast<size_t>(Dir::down)]		= Vector2Int( 0,  1);
+	_dirTable[static_cast<size_t>(Dir::down)]	= Vector2Int( 0,  1);
 }
 
 Astar::~Astar()
@@ -62,7 +62,7 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 	}
 
 	// 移動範囲の検索
-	AllMoveRouteSerch(startMapPos, move, mapData, resutlPosListVec2, team, true, heal, searchEnemy);
+	AllMoveRouteSerch(startMapPos, move, mapData, resutlPosListVec2, team, heal, searchEnemy);
 	
 	// 攻撃範囲のサーチ
 	std::list<Astar::ResultPos> attackResultPosList;
@@ -125,14 +125,14 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 							{
 								if (checkTeam == Team::max || (mapData[checkPos.y][checkPos.x].isHurt && checkTeam == team))
 								{
-									attackResultPosList.emplace_back(ResultPos(true, checkPos, &resutlPos, static_cast<Dir>(i), resutlPos.moveCnt));
+									attackResultPosList.emplace_back(ResultPos{ true, checkPos, &resutlPos, static_cast<Dir>(i), resutlPos.moveCnt});
 								}
 							}
 							else
 							{
 								if (checkTeam != team)
 								{
-									attackResultPosList.emplace_back(ResultPos(true, checkPos, &resutlPos, static_cast<Dir>(i), resutlPos.moveCnt));
+									attackResultPosList.emplace_back(ResultPos{ true, checkPos, &resutlPos, static_cast<Dir>(i), resutlPos.moveCnt});
 								}
 							}
 						}
@@ -187,7 +187,7 @@ bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const 
 
 	list<Astar::ResultPos> tmpList;
 	tmpList.clear();
-	tmpList.emplace_back(ResultPos(false, startMapPos, nullptr, Dir::max, 0));
+	tmpList.emplace_back(ResultPos{ false, startMapPos, nullptr, Dir::max, 0 });
 
 
 	auto seachIdxList = list<Vector2Int>();
@@ -244,7 +244,7 @@ bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const 
 			// 移動可能な距離か
 			if (moveCnt <= move)
 			{
-				tmpList.emplace_back(ResultPos(false, checkPos, &(*parentIt), static_cast<Dir>(i), moveCnt));
+				tmpList.emplace_back(ResultPos{ false, checkPos, &(*parentIt), static_cast<Dir>(i), moveCnt });
 				// キャラクターがいない
 				if (checkPosTeam == Team::max)
 				{
@@ -254,7 +254,7 @@ bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const 
 					}
 					return true;
 				}
-				_searchPosVec2Move[checkPos.y][checkPos.x] = SearchPos(checkPos, nowPos, Astar::SearchState::search, moveCnt);
+				_searchPosVec2Move[checkPos.y][checkPos.x] = SearchPos{ checkPos, nowPos, Astar::SearchState::search, moveCnt };
 				seachIdxList.emplace_back(checkPos);
 			}
 		}
@@ -265,9 +265,9 @@ bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const 
 }
 
 void Astar::AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, const std::vector<std::vector<MapData>>& mapData, 
-	std::vector<std::vector<std::list<Astar::ResultPos>>>& resutlPosListVec2, const Team team, const bool addThrough, const bool heal, const bool searchEnemy)
+	std::vector<std::vector<std::list<Astar::ResultPos>>>& resutlPosListVec2, const Team team, const bool heal, const bool searchEnemy)
 {
-	resutlPosListVec2[startMapPos.y][startMapPos.x].emplace_back(ResultPos(false, startMapPos, nullptr, Dir::max, 0));
+	resutlPosListVec2[startMapPos.y][startMapPos.x].emplace_back(ResultPos{ false, startMapPos, nullptr, Dir::max, 0 });
 
 	auto seachIdxList = list<Vector2Int>();
 	seachIdxList.clear();
@@ -280,7 +280,7 @@ void Astar::AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, con
 			searchPos.moveCost = 999;
 		}
 	}
-	_searchPosVec2Move[startMapPos.y][startMapPos.x] = SearchPos(startMapPos, startMapPos, Astar::SearchState::search, 0);
+	_searchPosVec2Move[startMapPos.y][startMapPos.x] = SearchPos{ startMapPos, startMapPos, Astar::SearchState::search, 0 };
 
 	int dirMax = static_cast<int>(Dir::max);
 	auto startTime = GetTickCount();
@@ -319,7 +319,7 @@ void Astar::AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, con
 			// 移動可能な距離か
 			if (moveCnt <= (searchEnemy ? 50 : move))
 			{
-				_searchPosVec2Move[checkPos.y][checkPos.x] = SearchPos(checkPos, nowPos, Astar::SearchState::search, moveCnt);
+				_searchPosVec2Move[checkPos.y][checkPos.x] = SearchPos{ checkPos, nowPos, Astar::SearchState::search, moveCnt };
 				seachIdxList.emplace_back(checkPos);
 				auto& nowResultPosList = resutlPosListVec2[nowPos.y][nowPos.x];
 				if (nowResultPosList.size() > 0)
@@ -327,11 +327,11 @@ void Astar::AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, con
 					auto it = find_if(nowResultPosList.begin(), nowResultPosList.end(), 
 						[moveCnt](const Astar::ResultPos& rp) {return rp.moveCnt < moveCnt; });
 					Astar::ResultPos* prev = (it == nowResultPosList.end() ? nullptr : &*it);
-					resutlPosListVec2[checkPos.y][checkPos.x].emplace_back(ResultPos(false, checkPos, prev, static_cast<Dir>(i), moveCnt));
+					resutlPosListVec2[checkPos.y][checkPos.x].emplace_back(ResultPos{ false, checkPos, prev, static_cast<Dir>(i), moveCnt });
 				}
 				else
 				{
-					resutlPosListVec2[checkPos.y][checkPos.x].emplace_back(ResultPos(false, checkPos, nullptr, static_cast<Dir>(i), moveCnt));
+					resutlPosListVec2[checkPos.y][checkPos.x].emplace_back(ResultPos{ false, checkPos, nullptr, static_cast<Dir>(i), moveCnt });
 				}
 			}
 		}
@@ -352,20 +352,4 @@ bool Astar::CheckMoved(const Vector2Int& checkPos, const Vector2Int& startMapPos
 		}
 	}
 	return false;
-}
-
-Astar::SearchPos::SearchPos()
-{
-	this->mapPos = Vector2Int();
-	this->parentPos = Vector2Int();
-	this->state = Astar::SearchState::non;
-	this->moveCost = 0;
-}
-
-Astar::SearchPos::SearchPos(const Vector2Int & mapPos, const Vector2Int & parent, const SearchState state, const int moveCnt)
-{
-	this->mapPos = mapPos;
-	this->parentPos = parent;
-	this->state = state;
-	this->moveCost = moveCnt;
 }

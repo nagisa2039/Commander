@@ -33,7 +33,7 @@ public:
 	/// <param name="critical">クリティカルフラグ</param>
 	/// <param name="camera">カメラ</param>
 	/// <param name="cameraActive">カメラを考慮した描画をするか</param>
-	BattleEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects, 
+	BattleEffect(BattleCharactor& self, BattleCharactor& target, std::vector<std::shared_ptr<Effect>>& effects,
 		bool critical, Camera& camera, bool cameraActive = false);
 	virtual ~BattleEffect();
 };

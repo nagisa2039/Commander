@@ -26,7 +26,7 @@ public:
 	/// XV
 	/// </summary>
 	/// <param name="input">“ü—Íî•ñ</param>
-	virtual void Update(const Input& input) = 0;
+	virtual void Update(const Input& input);
 
 	/// <summary>
 	/// •`‰æ

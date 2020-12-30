@@ -13,6 +13,7 @@ int BattlePrediction::GetChengePoint(const Dir& dir, bool rightAttack, BattleSta
 	int chengePoint = 0;
 	if (dir == Dir::left)
 	{
+
 		if (!selfStatus.CheckHeal() && rightAttack)
 		{
 			chengePoint = (targetStatus.CheckPursuit(selfStatus) ? 2 : 1) * targetStatus.GetDamage(selfStatus);
@@ -34,8 +35,8 @@ int BattlePrediction::GetChengePoint(const Dir& dir, bool rightAttack, BattleSta
 	return chengePoint;
 }
 
-BattlePrediction::BattlePrediction(const Charactor& self, const Charactor& target, std::deque<std::shared_ptr<UI>>* uiDeque, const Vector2Int& attackStartPos, const Map_Chip mapChip)
-	: _selfCharactor(self), _targetCharactor(target), _mapChip(mapChip), UI(uiDeque)
+BattlePrediction::BattlePrediction(const Charactor& self, const Charactor& target, std::deque<std::shared_ptr<UI>>* uiDeque, const Vector2Int& attackStartPos)
+	: _selfCharactor(self), _targetCharactor(target), UI(uiDeque)
 {
 	auto sub = _targetCharactor.GetMapPos() - attackStartPos;
 	_distance = abs(sub.x) + abs(sub.y);

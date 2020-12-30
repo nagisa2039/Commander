@@ -16,7 +16,7 @@ StatusInf::StatusInf(std::deque<std::shared_ptr<UI>>* uiDeque, const MapCtrl& ma
 	_moveAnimTrack->AddKey(0, 0.0f);
 	_moveAnimTrack->AddKey(15, 1.0f);
 
-	_targetPosList.clear();
+	_targetMapPos = _mapPos;
 }
 
 StatusInf::~StatusInf()
@@ -36,9 +36,9 @@ void StatusInf::Open()
 		_moveAnimTrack->Reset();
 	}
 
-	if (_targetPosList.size() <= 0 || *_targetPosList.begin() != _mapPos)
+	if (_targetMapPos != _mapPos)
 	{
-		_targetPosList.emplace_front(_mapPos);
+		_targetMapPos = _mapPos;
 		_moveAnimTrack->SetReverse(false);
 		_moveAnimTrack->Reset();
 	}
@@ -55,8 +55,7 @@ void StatusInf::Close()
 
 void StatusInf::Draw()
 {
-	if (_targetPosList.size() <= 0)return;
-	auto charactor = _mapCtrl.GetMapPosChar(*_targetPosList.begin());
+	auto charactor = _mapCtrl.GetMapPosChar(_targetMapPos);
 	if (charactor == nullptr)return;
 
 	auto fontH = FontHandle("choplin20edge");

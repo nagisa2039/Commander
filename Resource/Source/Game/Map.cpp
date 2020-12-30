@@ -45,17 +45,15 @@ void Map::DrawToMapScreen()
 	SetDrawScreen(currentScreen);
 }
 
-bool Map::DrawMapChip(const Vector2Int& mapPos, const Map_Chip mapChip, const Vector2Int& offset)
+void Map::DrawMapChip(const Vector2Int& mapPos, const Map_Chip mapChip, const Vector2Int& offset)
 {
-	auto drawData = DataBase::Instance().GetMapChipData(mapChip).drawData;
+	auto& drawData = DataBase::Instance().GetMapChipData(mapChip).drawData;
 
 	auto graphH = ImageHandle((imageFolderPath + drawData.path).c_str());
 	DrawRectExtendGraph(offset.x + _chipSize.w * mapPos.x, offset.y + _chipSize.h * mapPos.y,
 		offset.x + _chipSize.w * mapPos.x + _chipSize.w, offset.y + _chipSize.h * mapPos.y + _chipSize.h,
 		drawData.leftup.x, drawData.leftup.y, drawData.size.w, drawData.size.h,
 		graphH, true);
-
-	return true;
 }
 
 const std::string& Map::GetName() const

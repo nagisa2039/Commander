@@ -23,16 +23,17 @@ void SelectPen::Update(const Input& input)
 
 void SelectPen::Draw()
 {
-}
-
-void SelectPen::Draw(const Vector2Int& pos)
-{
 	auto& fileSystem = FileSystem::Instance();
 	auto penH = fileSystem.GetImageHandle("Resource/Image/UI/quillPen.png");
 	Size penSize;
 	GetGraphSize(penH, penSize);
 	Vector2Int penMove = penSize.ToVector2Int() * -0.2f;
 
-	Vector2Int penDrawPos = penMove * _penAnimTrack->GetValue() + pos + Vector2Int(10,-10);
+	Vector2Int penDrawPos = penMove * _penAnimTrack->GetValue() + _pos + Vector2Int(10, -10);
 	DrawGraph(GetDrawPos(penDrawPos, penSize, Anker::rightcenter), penH, true);
+}
+
+void SelectPen::SetPos(const Vector2Int& pos)
+{
+	_pos = pos;
 }

@@ -110,26 +110,23 @@ public:
 	/// <summary>
 	/// 移動可能なマスを探す
 	/// </summary>
-	/// <param name="charactor"></param>
-	void RouteSearch(Charactor& charactor);
+	void RouteSearch();
 
 	/// <summary>
 	/// 指定した移動力で行ける場所を探す
 	/// </summary>
-	/// <param name="startPos"></param>
-	/// <param name="move"></param>
-	/// <param name="resultPosList"></param>
-	/// <param name="team"></param>
-	/// <param name="excludeList"></param>
-	/// <returns></returns>
+	/// <param name="startPos">検索開始マス</param>
+	/// <param name="move">移動力</param>
+	/// <param name="resultPosList">結果格納変数</param>
+	/// <param name="team">チーム</param>
+	/// <param name="excludeList">除外するマスリスト</param>
+	/// <returns>存在するか</returns>
 	bool MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, 
 		std::list<Astar::ResultPos>& resultPosList, const Team team, const std::list<Astar::ResultPos>& excludeList);
 
 	/// <summary>
-	/// 指定キャラから視野範囲にいるキャラクターを返す
+	/// 
 	/// </summary>
-	/// <param name="charactor"></param>
-	/// <returns></returns>
 	Vector2Int SearchMovePos();
 };
 

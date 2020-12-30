@@ -37,9 +37,7 @@ PlayerMenu::PlayerMenu(std::deque<std::shared_ptr<UI>>* uiDeque, PlayerCommander
 		_contentList.emplace_back(idx);
 	}
 
-	_menuTopDeque.clear();
-	_menuTop = make_shared<MenuTopInf>(_mapCtrl, turnCnt, &_menuTopDeque);
-	_menuTopDeque.emplace_back(_menuTop);
+	_menuTop = std::make_shared<MenuTopInf>(_mapCtrl, turnCnt, nullptr);
 }
 
 PlayerMenu::~PlayerMenu()
@@ -57,17 +55,11 @@ void PlayerMenu::Update(const Input& input)
 	{
 		_menuTop->Close();
 	}
-	if (_menuTopDeque.size() > 0)
-	{
-		(*_menuTopDeque.begin())->Update(input);
-	}
+	_menuTop->Update(input);
 }
 
 void PlayerMenu::Draw()
 {
 	Menu::Draw();
-	for (auto rItr = _menuTopDeque.rbegin(); rItr != _menuTopDeque.rend(); rItr++)
-	{
-		(*rItr)->Draw();
-	}
+	_menuTop->Draw();
 }

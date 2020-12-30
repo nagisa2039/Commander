@@ -10,6 +10,10 @@ UI::~UI()
 {
 }
 
+void UI::Update(const Input& input)
+{
+}
+
 bool UI::GetDelete() const
 {
 	return _delete;

@@ -14,8 +14,9 @@ BattleEffectFactory::BattleEffectFactory()
 {
 	_createBattleEffectFuncs[Size_t(BattleEffectType::slash)] = [](BattleCharactor& self, BattleCharactor& target,
 		std::vector<std::shared_ptr<Effect>>& effects, bool critical, Camera& camera, bool cameraActive)
-	{
-		return std::make_shared<SlashingEffect>(self, target, effects, critical, camera); 
+	{ 
+		std::shared_ptr<SlashingEffect> effect(new SlashingEffect(self, target, effects, critical, camera));
+		return effect;
 	};
 
 	_createBattleEffectFuncs[Size_t(BattleEffectType::magic)] = [](BattleCharactor& self, BattleCharactor& target,

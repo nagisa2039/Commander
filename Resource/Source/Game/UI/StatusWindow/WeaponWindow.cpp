@@ -18,7 +18,8 @@ namespace
 	constexpr char WEAPON_TEXT_FRAME_IMG[]		= "Resource/Image/UI/weaponTextFrame.png";
 }
 
-WeaponWindow::WeaponWindow(const uint8_t weaponId, std::deque<std::shared_ptr<UI>>* uiDeque):UI(uiDeque)
+WeaponWindow::WeaponWindow(const uint8_t weaponId, const Vector2Int& drawPos, std::deque<std::shared_ptr<UI>>* uiDeque)
+	:UI(uiDeque), _drawPos(drawPos)
 {
 	_windowH = FileSystem::Instance().MakeScreen("weapon_window", Size(WINDOW_SIZE_W, WINDOW_SIZE_H), true);
 	SetWeaponId(weaponId);
@@ -28,22 +29,14 @@ WeaponWindow::~WeaponWindow()
 {
 }
 
+void WeaponWindow::Draw()
+{
+	Rect(_drawPos, GetSize()).DrawGraph(_windowH);
+}
+
 Size WeaponWindow::GetSize() const
 {
 	return Size(WINDOW_SIZE_W, WINDOW_SIZE_H);
-}
-
-void WeaponWindow::Update(const Input& input)
-{
-}
-
-void WeaponWindow::Draw()
-{
-}
-
-void WeaponWindow::Draw(const Vector2Int& pos)
-{
-	Rect(pos, GetSize()).DrawGraph(_windowH);
 }
 
 void WeaponWindow::DrawToWindow()

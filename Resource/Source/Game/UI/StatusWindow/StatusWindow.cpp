@@ -56,8 +56,6 @@ void StatusWindow::ScaleUpdate(const Input& input)
 
 StatusWindow::StatusWindow(std::deque<std::shared_ptr<UI>>* uiDeque, const Charactor& charactor):UI(uiDeque), _charactor (charactor)
 {
-	_weaponWindow = make_unique<WeaponWindow>(_charactor.GetStatus().weaponId, nullptr);
-
 	_isOpen = true;
 	_animTrack = make_unique<Track<float>>();
 	_animTrack->AddKey(0, 0.0f);
@@ -65,6 +63,11 @@ StatusWindow::StatusWindow(std::deque<std::shared_ptr<UI>>* uiDeque, const Chara
 
 	_sideWindowSize = Size(250, 250);
 	_centerWindowSize = Size(450, 250);
+
+	Rect iconRect(_sideWindowSize.ToVector2Int() * 0.5f, _sideWindowSize);
+	Rect battleStatusRect(Vector2Int(iconRect.Right() + static_cast<int>(_centerWindowSize.w * 0.5f), iconRect.center.y), _centerWindowSize);
+	Rect weaponRect(Vector2Int(battleStatusRect.Right() + _sideWindowSize.w / 2, battleStatusRect.Top() + _sideWindowSize.h / 2), _sideWindowSize);
+	_weaponWindow = make_unique<WeaponWindow>(_charactor.GetStatus().weaponId, weaponRect.center, nullptr);
 
 	_updater = &StatusWindow::ScaleUpdate;
 	SoundL.PlaySE(OPEN_SE);
@@ -114,14 +117,14 @@ void StatusWindow::DrawToWindowScreen()
 	Rect levelRect(iconRect.center + Vector2Int(0, _sideWindowSize.h), _sideWindowSize);
 	Rect battleStatusRect(Vector2Int(iconRect.Right() + static_cast<int>(_centerWindowSize.w * 0.5f), iconRect.center.y), _centerWindowSize);
 	Rect statusRect(Vector2Int(battleStatusRect.center.x, battleStatusRect.Botton() + static_cast<int>(_centerWindowSize.h * 0.5f)), _centerWindowSize);
-	Rect weaponRect(Vector2Int(battleStatusRect.Right() + _sideWindowSize.w/2, battleStatusRect.Top() + _sideWindowSize.h/2), _sideWindowSize);
+	Rect weaponRect(Vector2Int(battleStatusRect.Right() + _sideWindowSize.w / 2, battleStatusRect.Top() + _sideWindowSize.h / 2), _sideWindowSize);
 	Rect itemRect(weaponRect.center + Vector2Int(0, _sideWindowSize.h), _sideWindowSize);
 
 	DrawIcon(iconRect);
 	DrawBaseInf(levelRect);
 	DrawBattleStatus(battleStatusRect);
 	DrawStatus(statusRect);
-	_weaponWindow->Draw(weaponRect.center);
+	_weaponWindow->Draw();
 	itemRect.DrawGraph(ImageHandle(STATUS_IMG_1));
 
 	SetDrawScreen(currentScreen);

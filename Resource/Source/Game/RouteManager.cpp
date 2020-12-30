@@ -389,14 +389,14 @@ bool RouteManager::CheckInRageTarget()
 	return _inRangeCharactorList.size() > 0;
 }
 
-void RouteManager::RouteSearch(Charactor& charactor)
+void RouteManager::RouteSearch()
 {
 	std::vector<std::vector<Astar::MapData>> mapVec2;
-	_mapCtrl.CreateMapVec(mapVec2, charactor.GetTeam());
+	_mapCtrl.CreateMapVec(mapVec2, _charactor.GetTeam());
 
-	_mapCtrl.GetAstar().RouteSearch(charactor.GetMapPos(), charactor.GetStatus().move, charactor.GetAttackRange(),
-		mapVec2, charactor.GetRouteManager()->GetResutlPosListVec2(), charactor.GetTeam(),
-		DataBase::Instance().GetWeaponTypeDataFromWeaponId(charactor.GetStatus().weaponId).heal);
+	_mapCtrl.GetAstar().RouteSearch(_charactor.GetMapPos(), _charactor.GetStatus().move, _charactor.GetAttackRange(),
+		mapVec2, _charactor.GetRouteManager()->GetResutlPosListVec2(), _charactor.GetTeam(),
+		DataBase::Instance().GetWeaponTypeDataFromWeaponId(_charactor.GetStatus().weaponId).heal);
 
 	SearchRangeTarget();
 

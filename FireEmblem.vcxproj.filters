@@ -311,9 +311,6 @@
     <ClInclude Include="Resource\Source\System\FileSystem.h">
       <Filter>ヘッダー ファイル\System</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Source\Scene\MapEditScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Resource\Source\Game\MapCtrl.h">
       <Filter>ヘッダー ファイル\Game</Filter>
     </ClInclude>
@@ -484,9 +481,6 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\UI\StatusWindow\WeaponWindow.h">
       <Filter>ヘッダー ファイル\Game\UI\StatusWindow</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\Game\SaveDataCharactor.h">
-      <Filter>ヘッダー ファイル\Game</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Source\Game\Map.h">
       <Filter>ヘッダー ファイル\Game</Filter>

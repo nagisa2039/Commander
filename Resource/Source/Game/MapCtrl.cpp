@@ -50,7 +50,7 @@ void MapCtrl::Draw(const Camera& camera)
 
 bool MapCtrl::DrawSortieMass(const Vector2Int& offset, const CharactorChipInf& charactorChipInf, const unsigned int color, const unsigned int frameColor)
 {
-	if (charactorChipInf.team != Team::player/* || charactorChipInf.type == CharactorType::max*/)return false;
+	if (charactorChipInf.team != Team::player)return false;
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 192);
 	auto chipSize = _map->GetChipSize();
 	Vector2Int leftup = offset + charactorChipInf.mapPos * chipSize;
@@ -100,7 +100,7 @@ void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr
 	}
 }
 
-void MapCtrl::CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, const Team team)
+void MapCtrl::CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2)
 {
 	auto& mapData = _map->GetMapData();
 	auto& dataBase = DataBase::Instance();
@@ -110,7 +110,7 @@ void MapCtrl::CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2, co
 		mapVec2[y].resize(mapData[y].size());
 		for (int x = 0; x < mapVec2[y].size(); x++)
 		{
-			mapVec2[y][x] = Astar::MapData(dataBase.GetMapChipData(mapData[y][x].mapChip).moveCost, Team::max, false);
+			mapVec2[y][x] = Astar::MapData{ dataBase.GetMapChipData(mapData[y][x].mapChip).moveCost, Team::max, false };
 		}
 	}
 	for (const auto& charactor : _charactors)

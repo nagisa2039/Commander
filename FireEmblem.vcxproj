@@ -145,7 +145,6 @@
     <ClInclude Include="Resource\Source\Game\UI\WarSituation.h" />
     <ClInclude Include="Resource\Source\Game\WeaponData.h" />
     <ClInclude Include="Resource\Source\Scene\BattleScene.h" />
-    <ClInclude Include="Resource\Source\Scene\MapEditScene.h" />
     <ClInclude Include="Resource\Source\Scene\MapSelectScene.h" />
     <ClInclude Include="Resource\Source\Scene\PlayScene.h" />
     <ClInclude Include="Resource\Source\Scene\Scene.h" />
@@ -164,7 +163,6 @@
     <ClInclude Include="Resource\Source\Utility\Input.h" />
     <ClInclude Include="Resource\Source\Utility\TimeLine.h" />
     <ClInclude Include="Resource\Source\Game\UI\SelectPen.h" />
-    <ClInclude Include="Resource\Source\Game\SaveDataCharactor.h" />
     <ClInclude Include="Resource\Source\Utility\Tool.h" />
     <ClInclude Include="Resource\Source\Scene\TitleScene.h" />
     <ClInclude Include="Resource\Source\Game\RouteManager.h" />

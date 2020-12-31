@@ -1,20 +1,21 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "SaveDataCharactor.h"
 
-class Charactor;
-
+/// <summary>
+/// セーブデータ管理クラス
+/// </summary>
 class SaveData
 {
 private:
-	/// <summary>
-	/// 0未満なら未開放
-	/// 0なら開放済み、未クリア
-	/// 1以上ならクリアターン数
-	/// </summary>
+	// 0未満なら未開放
+	// 0なら開放済み、未クリア
+	// 1以上ならクリアターン数
 	std::vector<int> _clearMapDataVec;
 
+	/// <summary>
+	/// データ書き込み
+	/// </summary>
 	void WriteData();
 
 public:

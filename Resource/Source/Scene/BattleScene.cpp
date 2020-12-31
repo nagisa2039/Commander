@@ -52,7 +52,7 @@ void BattleScene::LeftHPAnim(const Input& input)
 		// 死んでいたら終わる
 		if (_leftBC.GetCharacotr().GetIsDying())
 		{
-			StartExpUpdate();
+			_updater = &BattleScene::SceneEndAnim;
 			return;
 		}
 
@@ -60,7 +60,7 @@ void BattleScene::LeftHPAnim(const Input& input)
 		if (_pursuit)
 		{
 			// 追撃済みなので戦闘を終了する
-			StartExpUpdate();
+			_updater = &BattleScene::SceneEndAnim;
 			return;
 		}
 		else
@@ -88,21 +88,21 @@ void BattleScene::RightHPAnim(const Input& input)
 		_rightBC.SetReceiveDamageType(BattleCharactor::damageType::none);
 		if (_leftBC.GetCharacotr().GetBattleStatus().CheckHeal())
 		{
-			StartExpUpdate();
+			_updater = &BattleScene::SceneEndAnim;
 			return;
 		}
 
 		// 死んでいたら終わる
 		if (_rightBC.GetCharacotr().GetIsDying())
 		{
-			StartExpUpdate();
+			_updater = &BattleScene::SceneEndAnim;
 			return;
 		}
 
 		// 追撃判定
 		if (_pursuit)
 		{
-			StartExpUpdate();
+			_updater = &BattleScene::SceneEndAnim;
 			return;
 		}
 
@@ -143,7 +143,7 @@ bool BattleScene::PursuitAttack(const bool rightAttack)
 	}
 
 	// 追撃不可なので終了
-	StartExpUpdate();
+	_updater = &BattleScene::SceneEndAnim;
 	return false;
 }
 
@@ -173,15 +173,15 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 	assert(_playScene);
 	_playScene->SetFilter(PlayScene::FilterType::gauss);
 
-	_floatY = _screenSize.h / 2.0f;
+	_groundY = _screenSize.h / 2.0f;
 	auto screenCenter = _screenSize.ToVector2Int() * 0.5f;
 
 	auto distance = 0;
 	auto mapPosSub = _leftBC.GetCharacotr().GetMapPos() - _rightBC.GetCharacotr().GetMapPos();
 	distance = abs(mapPosSub.x) + abs(mapPosSub.y) <= 1 ? 200 : 300;
 
-	_leftBC.Init(Vector2(static_cast<float>(screenCenter.x - distance), _floatY),  Dir::left,  &rightBC);
-	_rightBC.Init(Vector2(static_cast<float>(screenCenter.x + distance), _floatY), Dir::right, &leftBC);
+	_leftBC.Init(Vector2(static_cast<float>(screenCenter.x - distance), _groundY),  Dir::left,  &rightBC);
+	_rightBC.Init(Vector2(static_cast<float>(screenCenter.x + distance), _groundY), Dir::right, &leftBC);
 
 	_pursuit = false;
 
@@ -249,23 +249,6 @@ void BattleScene::Update(const Input& input)
 	}
 }
 
-void BattleScene::StartExpUpdate()
-{
-	/*if (_leftBC.GetCharacotr().GetTeam() == Team::player)
-	{
-		_expUI = make_shared<Experience>(_leftBC, _rightBC.GetCharacotr().GetIsDying(), nullptr);
-		_updater = &BattleScene::ExpUpdate;
-		return;
-	}
-	if (_rightBC.GetCharacotr().GetTeam() == Team::player && _rightBC.GetGivenDamage() > 0)
-	{
-		_expUI = make_shared<Experience>(_rightBC, _leftBC.GetCharacotr().GetIsDying(), nullptr);
-		_updater = &BattleScene::ExpUpdate;
-		return;
-	}*/
-	_updater = &BattleScene::SceneEndAnim;
-}
-
 void BattleScene::Draw(void)
 {
 	int currentScreen = GetDrawScreen();
@@ -314,7 +297,7 @@ void BattleScene::DrawFloor(Vector2Int& screenCenter)
 	if (abs(mapPosSub.x) + abs(mapPosSub.y) <= 1)
 	{
 		int floorH = ImageHandle("Resource/Image/Battle/floor_big.png");
-		DrawRotaGraph(Vector2Int(screenCenter.x, static_cast<int>(_floatY)), 1.0, 0.0, floorH, true);
+		DrawRotaGraph(Vector2Int(screenCenter.x, static_cast<int>(_groundY)), 1.0, 0.0, floorH, true);
 	}
 	else
 	{

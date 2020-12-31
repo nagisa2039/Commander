@@ -119,9 +119,9 @@ public:
 	CharactorChipInf GetCharactorChipInf(const Vector2Int& mapPos)const;
 
 	/// <summary>
-	///  指定した座標のキャラクター種を設定
+	///  指定した座標のキャラクターチップを設定
 	/// </summary>
-	/// <param name="charactorChipInf"></param>
+	/// <param name="charactorChipInf">キャラクターチップ</param>
 	/// <returns></returns>
 	bool SetCharactorChip(const CharactorChipInf& charactorChipInf);
 

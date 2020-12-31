@@ -21,47 +21,47 @@ class Map;
 class MapCtrl
 {
 private:
-	// 
+	// ルート検索クラス
 	std::unique_ptr<Astar> _astar;
-	// 
+	// マップ情報
 	std::shared_ptr<Map> _map;
 
-	// 
+	// 戦況確認画面ハンドル
 	int _warSituationH;
 
-	// 
+	// キャラクター管理配列
 	std::vector<std::shared_ptr<Charactor>>& _charactors;
 
 	/// <summary>
-	/// 
+	/// キャラクターの生成
 	/// </summary>
-	/// <param name="characotChipInf"></param>
-	/// <param name="initStatus"></param>
-	/// <param name="ctrl"></param>
-	/// <param name="effects"></param>
-	/// <param name="camera"></param>
+	/// <param name="characotChipInf">キャラクター情報</param>
+	/// <param name="initStatus">初期ステータス</param>
+	/// <param name="ctrl">シーン管理クラス</param>
+	/// <param name="effects">エフェクト管理配列</param>
+	/// <param name="camera">カメラ</param>
 	void CreateCharactor(const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
 
 public:
-	/// <param name="mapId"></param>
-	/// <param name="charactors"></param>
+	/// <param name="mapId">マップID</param>
+	/// <param name="charactors">キャラクター管理配列</param>
 	MapCtrl(const int mapId, std::vector<std::shared_ptr<Charactor>>& charactors);
 	~MapCtrl();
 
 	/// <summary>
-	/// 
+	/// 描画
 	/// </summary>
-	/// <param name="camera"></param>
+	/// <param name="camera">カメラ</param>
 	void Draw(const Camera& camera);
 
 	/// <summary>
-	/// 
+	/// 出撃可能マスの描画
 	/// </summary>
-	/// <param name="offset"></param>
-	/// <param name="charactorChipInf"></param>
-	/// <param name="color"></param>
-	/// <param name="frameColor"></param>
-	/// <returns></returns>
+	/// <param name="offset">描画オフセット</param>
+	/// <param name="charactorChipInf">キャラクターチップ情報</param>
+	/// <param name="color">色</param>
+	/// <param name="frameColor">フレーム色</param>
+	/// <returns>プレイヤーマスか</returns>
 	bool DrawSortieMass(const Vector2Int& offset, const CharactorChipInf& charactorChipInf, const unsigned int color = 0x00ffff, const unsigned int frameColor = 0x0000ff);
 
 	/// <summary>
@@ -71,23 +71,21 @@ public:
 	Charactor* GetMapPosChar(const Vector2Int mapPos)const;
 
 	/// <summary>
-	/// 
+	/// マップチップサイズの取得
 	/// </summary>
-	/// <returns></returns>
 	const Size& GetChipSize()const;
 
 	/// <summary>
-	/// 
+	/// マップチップ数の取得
 	/// </summary>
-	/// <returns></returns>
 	const Size& GetMapSize()const;
 
 	/// <summary>
-	/// 
+	/// キャラクターの生成
 	/// </summary>
-	/// <param name="ctrl"></param>
-	/// <param name="effects"></param>
-	/// <param name="camera"></param>
+	/// <param name="ctrl">シーン管理クラス</param>
+	/// <param name="effects">エフェクト管理配列</param>
+	/// <param name="camera">カメラ</param>
 	void CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera);
 
 	/// <summary>

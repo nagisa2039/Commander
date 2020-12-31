@@ -6,31 +6,44 @@ class Scene;
 class Input;
 class Fade;
 
+/// <summary>
+/// シーン管理クラス
+/// </summary>
 class SceneController
 {
-
 private:
+	// シーン管理配列
 	std::deque<std::shared_ptr<Scene>> _scene;
+	// フェード再生クラス
 	std::shared_ptr<Fade> _fade;
+	// Updateを加速するか
 	bool _quick;
 
 public:
 	SceneController();
 	~SceneController();
 
-	// シーンの更新
-	// @param input 入力の情報
+	/// <summary>
+	/// 更新
+	/// </summary>
+	/// <param name="input">入力情報</param>
 	void SceneUpdate(const Input& input);
 
-	// シーンを変更
-	// @param scene	遷移するシーンのunique_ptr
+	/// <summary>
+	/// シーンを変更
+	/// </summary>
+	/// <param name="scene">遷移するシーン</param>
 	void ChangeScene(std::shared_ptr<Scene> scene);
 
-	// シーンのスタック
-	// @param scene	スタックするシーンのunique_ptr
+	/// <summary>
+	/// シーンのスタック
+	/// </summary>
+	/// <param name="scene">遷移するシーン</param>
 	void PushScene(std::shared_ptr<Scene> scene);
 
-	// シーンのポップ
+	/// <summary>
+	/// 先頭シーンの削除
+	/// </summary>
 	void PopScene(void);
 
 	/// <summary>

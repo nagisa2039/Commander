@@ -24,7 +24,12 @@
 
 using namespace std;
 
-PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId, const bool ai):Scene(ctrl), _lastTurnCnt(100), _aiMode(ai)
+namespace
+{
+	constexpr unsigned int AUTO_SCENE_CHANGE_FRAME_CNT = 180;
+}
+
+PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId, const bool ai):Scene(ctrl), _limitTurnCnt(100), _aiMode(ai)
 {
 	_effects.clear();
 	_charactors.clear();
@@ -87,7 +92,7 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId, const boo
 
 	_autoSceneChangeTrack = make_unique<Track<int>>();
 	_autoSceneChangeTrack->AddKey(0, 0);
-	_autoSceneChangeTrack->AddKey(180, 0);
+	_autoSceneChangeTrack->AddKey(AUTO_SCENE_CHANGE_FRAME_CNT, 0);
 
 	_updater = &PlayScene::PreparationUpdate;
 	_drawer = &PlayScene::PreparationDraw;
@@ -134,10 +139,7 @@ void PlayScene::Update(const Input & input)
 	}
 	erase_if(_endUIDeque, [](const std::shared_ptr<UI>& endUI) {return endUI->GetDelete(); });
 
-	if (!(this->*_updater)(input))
-	{
-		return;
-	}
+	(this->*_updater)(input);
 
 	for (auto& effect : _effects)
 	{
@@ -145,17 +147,19 @@ void PlayScene::Update(const Input & input)
 	}
 	auto newEffectEnd = remove_if(_effects.begin(), _effects.end(),
 		[](const std::shared_ptr<Effect>& effect) { return effect->GetDelete(); });
-	_effects.erase(newEffectEnd, _effects.end());
-
+	if (newEffectEnd != _effects.end())
+	{
+		_effects.erase(newEffectEnd, _effects.end());
+	}
 }
 
-bool PlayScene::PreparationUpdate(const Input& input)
+void PlayScene::PreparationUpdate(const Input& input)
 {
 	(*_preparationDeque.begin())->Update(input);
 	if (_preparationUI->GetBackMapSelect())
 	{
 		StartFadeOut([this]() {ChengeMapSelect(); });
-		return false;
+		return;
 	}
 
 	// 戦闘開始
@@ -163,7 +167,7 @@ bool PlayScene::PreparationUpdate(const Input& input)
 	{
 		GameStart();
 	}
-	return true;
+	return;
 }
 
 void PlayScene::GameStart()
@@ -172,7 +176,7 @@ void PlayScene::GameStart()
 	_mapCtrl->GetMap()->StartBGM();
 }
 
-bool PlayScene::TurnChengeUpdate(const Input& input)
+void PlayScene::TurnChengeUpdate(const Input& input)
 {
 	_turnChangeAnim->Update(input);
 	if (_turnChangeAnim->GetAnimEnd())
@@ -206,30 +210,30 @@ bool PlayScene::TurnChengeUpdate(const Input& input)
 			}
 		}
 	}
-	return true;
+	return;
 }
 
-bool PlayScene::PlayerTurnUpdate(const Input& input)
+void PlayScene::PlayerTurnUpdate(const Input& input)
 {
-	if (BackSceneWindow(input))return false;
+	if (BackSceneWindow(input))return;
 
 	CharactorUpdate(input);
 	if (_playerCommander->GetBackMapSelect())
 	{
 		StartFadeOut([this]() {ChengeMapSelect(); });
-		return false;
+		return;
 	}
 
 	if (_playerCommander->CheckEnd())
 	{
 		StartEnemyTurn();
-		return true;
+		return;
 	}
 	_playerCommander->Update(input);
-	return true;
+	return;
 }
 
-bool PlayScene::CharactorUpdate(const Input& input)
+void PlayScene::CharactorUpdate(const Input& input)
 {
 	for (auto itr = _charactors.begin(); itr != _charactors.end(); itr++)
 	{
@@ -241,12 +245,12 @@ bool PlayScene::CharactorUpdate(const Input& input)
 			_updater = &PlayScene::CharactorDyingUpdate;
 		}
 	}
-	return true;
+	return;
 }
 
 void PlayScene::StartPlayerTurn()
 {
-	if (++_turnCnt >= _lastTurnCnt)
+	if (++_turnCnt >= _limitTurnCnt)
 	{
 		// ゲームオーバー
 		GameOver();
@@ -289,22 +293,22 @@ void PlayScene::StartEnemyTurn()
 	}
 }
 
-bool PlayScene::EnemyTurnUpdate(const Input& input)
+void PlayScene::EnemyTurnUpdate(const Input& input)
 {
-	if (BackSceneWindow(input))return false;
+	if (BackSceneWindow(input))return;
 
 	CharactorUpdate(input); 
 
 	_turnChangeAnim->Update(input);
-	if (!_turnChangeAnim->GetAnimEnd()) return true;
+	if (!_turnChangeAnim->GetAnimEnd()) return;
 
 	if (_enemyCommander->CheckEnd())
 	{
 		StartPlayerTurn();
-		return true;
+		return;
 	}
 	_enemyCommander->Update(input);
-	return true;
+	return;
 }
 
 bool PlayScene::BackSceneWindow(const Input& input)
@@ -324,14 +328,14 @@ bool PlayScene::BackSceneWindow(const Input& input)
 	return false;
 }
 
-bool PlayScene::CharactorDyingUpdate(const Input& input)
+void PlayScene::CharactorDyingUpdate(const Input& input)
 {
 	// dyingが終わっているか確認
 	if (!(*_dyingCharItr)->GetDelete())
 	{
 		// 終わっていないので更新する
 		(*_dyingCharItr)->Update(input);
-		return true;
+		return;
 	}
 
 	// 削除処理
@@ -357,19 +361,19 @@ bool PlayScene::CharactorDyingUpdate(const Input& input)
 		{
 			// ゲームオーバー
 			GameOver();
-			return true;
+			return;
 		}
 		else
 		{
 			// ゲームクリア
 			GameClear();
-			return true;
+			return;
 		}
 	}
 
 	_mapCtrl->AllCharactorRouteSearch();
 	_updater = _updaterOld;
-	return true;
+	return;
 }
 
 void PlayScene::GameClear()
@@ -390,32 +394,32 @@ void PlayScene::GameOver()
 	StartFadeOut([this]() {ChangeGameOver(); });
 }
 
-bool PlayScene::GameClearUpdate(const Input& input)
+void PlayScene::GameClearUpdate(const Input& input)
 {
 	_clearAnimTrack->Update();
-	if (!_clearAnimTrack->GetEnd())return true;
+	if (!_clearAnimTrack->GetEnd())return;
 
 	_autoSceneChangeTrack->Update();
 	if(input.GetButtonDown("ok") || _autoSceneChangeTrack->GetEnd())
 	{
 		SoundL.PlaySE("Resource/Sound/SE/ok2.mp3");
 		StartFadeOut([this]() {_aiMode ? ChengeTitle() : ChengeMapSelect(); }, 0, &PlayScene::GameClearDraw);
-		return false;
+		return;
 	}
 
-	return true;
+	return;
 }
 
-bool PlayScene::GameOverUpdate(const Input& input)
+void PlayScene::GameOverUpdate(const Input& input)
 {
 	_autoSceneChangeTrack->Update();
 	if (input.GetButtonDown("ok") || _autoSceneChangeTrack->GetEnd())
 	{
 		SoundL.PlaySE("Resource/Sound/SE/ok2.mp3");
 		StartFadeOut([this]() {_aiMode ? ChengeTitle() : ChengeMapSelect(); }, 0, &PlayScene::GameOverDraw);
-		return false;
+		return;
 	}
-	return true;
+	return;
 }
 
 void PlayScene::StartFadeIn(std::function<void()> funcP, const unsigned int color, void(PlayScene::* nextDrawer)())
@@ -436,7 +440,7 @@ void PlayScene::StartFadeOut(std::function<void()> funcP, const unsigned int col
 	_UIDrawer = &PlayScene::NoneUIDraw;
 }
 
-bool PlayScene::FadeUpdate(const Input& input)
+void PlayScene::FadeUpdate(const Input& input)
 {
 	if (_controller.GetFade().GetEnd())
 	{
@@ -444,9 +448,9 @@ bool PlayScene::FadeUpdate(const Input& input)
 		{
 			_fadeEndFunc();
 		}
-		return false;
+		return;
 	}
-	return true;
+	return;
 }
 
 void PlayScene::PreparationDraw()

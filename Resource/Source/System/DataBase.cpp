@@ -6,6 +6,7 @@
 #include "FileSystem.h"
 #include "Map.h"
 #include "AdvanceLoader.h"
+#include "Cast.h"
 
 using namespace std;
 
@@ -113,19 +114,19 @@ void DataBase::Init()
 			int initSbeginIdx = 3;
 			auto To_uint8_t = [&data](const int& targetIdx)
 			{
-				return atoi(data[static_cast<int>(targetIdx)].c_str());
+				return Uint8(atoi(data[static_cast<int>(targetIdx)].c_str()));
 			};
 			charactorData.initialStatus =
-				Status(1, To_uint8_t(initSbeginIdx), To_uint8_t(initSbeginIdx + 1), To_uint8_t(initSbeginIdx + 2),
+				Status{ 1, To_uint8_t(initSbeginIdx), To_uint8_t(initSbeginIdx + 1), To_uint8_t(initSbeginIdx + 2),
 					To_uint8_t(initSbeginIdx + 3), To_uint8_t(initSbeginIdx + 4), To_uint8_t(initSbeginIdx + 5),
-					To_uint8_t(initSbeginIdx + 6), To_uint8_t(initSbeginIdx + 7), To_uint8_t(initSbeginIdx + 8));
+					To_uint8_t(initSbeginIdx + 6), To_uint8_t(initSbeginIdx + 7), To_uint8_t(initSbeginIdx + 8), 0, 0 };
 
 			// ステータス成長率
 			int growSbeginIdx = 12;
 			charactorData.statusGrowRate =
-				Status(1, To_uint8_t(growSbeginIdx), To_uint8_t(growSbeginIdx + 1), To_uint8_t(growSbeginIdx + 2),
+				Status{1, To_uint8_t(growSbeginIdx), To_uint8_t(growSbeginIdx + 1), To_uint8_t(growSbeginIdx + 2),
 					To_uint8_t(growSbeginIdx + 3), To_uint8_t(growSbeginIdx + 4), To_uint8_t(growSbeginIdx + 5),
-					To_uint8_t(growSbeginIdx + 6), To_uint8_t(growSbeginIdx + 7), 0);
+					To_uint8_t(growSbeginIdx + 6), To_uint8_t(growSbeginIdx + 7), 0, 0, 0};
 
 			// キャラクター画像パス
 			charactorData.imagePath = data[20];
@@ -222,20 +223,6 @@ void DataBase::Init()
 				Range(atoi(d[7].c_str()), atoi(d[8].c_str())), static_cast<unsigned int>(atoi(d[9].c_str())),
 				static_cast<BattleEffectType>(atoi(d[10].c_str())) };
 			_weaponDataTable.emplace_back(wd);
-		}
-	}
-
-	// キャラクターデータテーブルの読み込み
-	{
-		vector<vector<string>> data;
-		ReadData("Resource/DataBase/StartPlayerCharactor.data", data);
-		_saveDataCharactors.reserve(6);
-		for (int idx = 1; idx < data.size(); ++idx)
-		{
-			auto charactorType = static_cast<CharactorType>(atoi(data[idx][1].c_str()));
-			auto status = GetLevelInitStatus(atoi(data[idx][2].c_str()), charactorType);
-			status.weaponId = atoi(data[idx][3].c_str());
-			_saveDataCharactors.emplace_back(charactorType, status);
 		}
 	}
 
@@ -363,11 +350,6 @@ const WeaponData& DataBase::GetWeaponData(const unsigned int weaponId) const
 const std::vector<WeaponData>& DataBase::GetWeaponDataTable() const
 {
 	return _weaponDataTable;
-}
-
-const std::vector<SaveDataCharactor> DataBase::GetSaveDataCharactors() const
-{
-	return _saveDataCharactors;
 }
 
 const BattleEffectFactory& DataBase::GetBattleEffectFactory() const

@@ -392,7 +392,7 @@ bool RouteManager::CheckInRageTarget()
 void RouteManager::RouteSearch()
 {
 	std::vector<std::vector<Astar::MapData>> mapVec2;
-	_mapCtrl.CreateMapVec(mapVec2, _charactor.GetTeam());
+	_mapCtrl.CreateMapVec(mapVec2);
 
 	_mapCtrl.GetAstar().RouteSearch(_charactor.GetMapPos(), _charactor.GetStatus().move, _charactor.GetAttackRange(),
 		mapVec2, _charactor.GetRouteManager()->GetResutlPosListVec2(), _charactor.GetTeam(),
@@ -408,7 +408,7 @@ bool RouteManager::MoveRouteSearch(const Vector2Int& startPos, const unsigned in
 	if (move <= 0)return false;
 
 	std::vector<std::vector<Astar::MapData>> mapVec2;
-	_mapCtrl.CreateMapVec(mapVec2, team);
+	_mapCtrl.CreateMapVec(mapVec2);
 
 	return _mapCtrl.GetAstar().MoveRouteSerch(startPos, move, mapVec2, resutlPosList, team, excludeList);
 }
@@ -416,7 +416,7 @@ bool RouteManager::MoveRouteSearch(const Vector2Int& startPos, const unsigned in
 Vector2Int RouteManager::SearchMovePos()
 {
 	std::vector<std::vector<Astar::MapData>> mapVec2;
-	_mapCtrl.CreateMapVec(mapVec2, _charactor.GetTeam());
+	_mapCtrl.CreateMapVec(mapVec2);
 	auto battleStatus = _charactor.GetBattleStatus();
 	auto& resultPosListVec2 = _charactor.GetRouteManager()->GetResutlPosListVec2();
 

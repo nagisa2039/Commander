@@ -7,7 +7,7 @@
 #include "Team.h"
 #include "MapChip.h"
 #include "WeaponData.h"
-#include "SaveDataCharactor.h"
+#include "Status.h"
 
 class BattleEffectFactory;
 class Map;
@@ -48,21 +48,13 @@ private:
 	{
 		std::string name;
 		uint8_t weaponType = 0;
-		Status initialStatus;
-		Status statusGrowRate;
+		Status initialStatus = {};
+		Status statusGrowRate = {};
 		std::string imagePath;
 		std::string iconImagePath;
 
 		void DrawIcon(const Rect& rect, const Team team)const;
 	};
-
-	//struct ExpData
-	//{
-	//	unsigned int maxPoint;	// 必要量
-	//	unsigned int getPoint;	// 取得量
-	//	ExpData() :maxPoint(0), getPoint(0) {};
-	//	ExpData(unsigned int m, unsigned int g) :maxPoint(m), getPoint(g) {};
-	//};
 
 	struct AttributeData
 	{
@@ -83,8 +75,6 @@ private:
 
 	std::vector<DataBase::MapChipData> _mapChipDataTable;
 
-	//std::vector<ExpData> _expDataTable;
-
 	std::vector<AttributeData> _attributeDataTable;
 	std::vector<std::vector<float>> _attributeRateTable;
 
@@ -92,8 +82,6 @@ private:
 	std::vector<WeaponData> _weaponDataTable;
 
 	std::vector<std::shared_ptr<Map>> _mapTable;
-
-	std::vector<SaveDataCharactor> _saveDataCharactors;	// セーブデータ生成用
 
 	std::vector<BattleEffectData> _battleEffectDataTable;
 	std::unique_ptr<BattleEffectFactory> _battleEffectFactory;
@@ -156,9 +144,6 @@ public:
 	const WeaponData& GetWeaponData(const unsigned int weaponId)const;
 	// weaponDataの配列取得
 	const std::vector<WeaponData>& GetWeaponDataTable()const;
-
-	// 初期のセーブデータ作成用配列の取得
-	const std::vector<SaveDataCharactor> GetSaveDataCharactors()const;
 
 	/// <summary>
 	/// 攻撃エフェクト生成クラスを取得

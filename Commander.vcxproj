@@ -170,7 +170,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{AFAE9C0D-668C-4B69-A510-DED2C8429F9B}</ProjectGuid>
-    <RootNamespace>FireEmblem</RootNamespace>
+    <RootNamespace>Commander</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>Commander</ProjectName>
   </PropertyGroup>

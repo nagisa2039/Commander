@@ -10,6 +10,7 @@
 #include "DataBase.h"
 #include "Tool.h"
 #include "PlayScene.h"
+#include "Cast.h"
 
 namespace
 {
@@ -27,7 +28,7 @@ void TitleScene::NormalUpdate(const Input& input)
 		_fadeEndFunc = [&controller = _controller]()
 		{
 			auto mapMax = DataBase::Instance().GetMapDataTable().size();
-			controller.ChangeScene(std::make_shared<PlayScene>(controller, mt()% mapMax, true));
+			controller.ChangeScene(std::make_shared<PlayScene>(controller, Uint32(mt()% mapMax), true));
 		};
 		_controller.GetFade().StartFadeOut();
 		_updater = &TitleScene::FadeUpdate;
@@ -123,7 +124,7 @@ void TitleScene::CharactorUpdate()
 			charInf.active = true;
 			charInf.team = static_cast<Team>(mt() % static_cast<int>(Team::max));
 			charInf.type = static_cast<CharactorType>(mt() % charTypeMax);
-			charInf.pos = Vector2(static_cast<float>(mt() % wsize.w), -200.0);
+			charInf.pos = Vector2{ static_cast<float>(mt() % wsize.w), -200.0 };
 			charInf.angle = (mt() % 360) * DX_PI_F / 180.0f;
 			break;
 		}
@@ -138,13 +139,13 @@ void TitleScene::Draw(void)
 {
 	auto wsize = Application::Instance().GetWindowSize();
 	auto& dataBase = DataBase::Instance();
-	auto drawObject = [&wsize, &charInfVec = _charInfVec, &dataBase, titleH = _titleH](const Vector2Int& offset = Vector2Int(0,0))
+	auto drawObject = [&wsize, &charInfVec = _charInfVec, &dataBase, titleH = _titleH](const Vector2Int& offset = Vector2Int{0,0})
 	{
 		for (auto& charInf : charInfVec)
 		{
 			if (!charInf.active)continue;
 			auto handle = dataBase.GetCharactorImageHandle(charInf.type, charInf.team);
-			DrawRectRotaGraph(charInf.pos.ToVector2Int() + offset, Vector2Int(32, 0), Size(32, 32), 5.0, charInf.angle, handle, true);
+			DrawRectRotaGraph(charInf.pos.ToVector2Int() + offset, Vector2Int{ 32, 0 }, Size{ 32, 32 }, 5.0, charInf.angle, handle, true);
 			DrawRotaGraph(wsize.ToVector2Int() * 0.5f + offset, 1.0, 0.0, titleH, true);
 		}
 	};
@@ -152,7 +153,7 @@ void TitleScene::Draw(void)
 	SetDrawBright(32, 32, 32);
 	DrawGraph(0,0,_bgH, false);
 
-	auto offset = Vector2Int(20, 20);
+	auto offset = Vector2Int{20,20};
 	SetDrawBright(0, 0, 0);
 	SetDrawMode(DX_DRAWMODE_NEAREST);
 	drawObject(offset);
@@ -160,7 +161,7 @@ void TitleScene::Draw(void)
 	drawObject();
 	SetDrawMode(DX_DRAWMODE_BILINEAR);
 
-	Vector2Int center = Vector2Int(wsize.w / 2, wsize.h - 150);
+	Vector2Int center = Vector2Int{ wsize.w / 2, wsize.h - 150 };
 	SetDrawBlendMode(DX_BLENDMODE_ADD, static_cast<int>(_animTrack->GetValue() * 255));
 	SetDrawBright(10, 10, 255);
 	DrawRotaGraph(center, 1.5, 0.0, _start_bksH, true);

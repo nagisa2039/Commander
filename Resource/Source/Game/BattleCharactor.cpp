@@ -14,14 +14,15 @@
 #include "Tool.h"
 #include "Effect/BattleEffect/BattleEffectFactory.h"
 #include "ImageLoader.h"
+#include "Cast.h"
 
 using namespace std;
 
 BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Camera& camera)
-	: _selfChar(charactor), _size(128, 128), _camera(camera)
+	: _selfChar(charactor), _size{ 128, 128 }, _camera(camera)
 {
 	auto wsize = Application::Instance().GetWindowSize();
-	SetStartPos(Vector2());
+	SetStartPos(Vector2{0,0});
 	_animator = make_shared<Animator>();
 
 	_targetChar = nullptr;
@@ -39,7 +40,7 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 
 	_gaveDamageType = damageType::none;
 	_receiveDamageType = damageType::none;
-	const Size divSize = Size(32, 32);
+	const Size divSize = Size{ 32, 32 };
 	_animator->SetImageHandle(imageHandle);
 
 	int cnt = 0;
@@ -54,13 +55,13 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 	std::vector<Rect> animRectVec;
 	animRectVec.clear();
 
-	animRectVec.emplace_back(Rect(Vector2Int(16, 16 + 32 * 1), divSize));
-	animRectVec.emplace_back(Rect(Vector2Int(16 + divSize.w * 2, 16 + 32 * 1), divSize));
+	animRectVec.emplace_back(Rect{ Vector2Int{16, 16 + 32 * 1}, divSize });
+	animRectVec.emplace_back(Rect{ Vector2Int{ 16 + divSize.w * 2, 16 + 32 * 1 }, divSize });
 	_animator->AddAnim("LeftWalk", animRectVec, 30, true);
 	animRectVec.clear();
 
-	animRectVec.emplace_back(Rect(Vector2Int(16, 16 + 32 * 2), divSize));
-	animRectVec.emplace_back(Rect(Vector2Int(16 + divSize.w * 2, 16 + 32 * 2), divSize));
+	animRectVec.emplace_back(Rect{ Vector2Int{ 16, 16 + 32 * 2}, divSize });
+	animRectVec.emplace_back(Rect{ Vector2Int{ 16 + divSize.w * 2, 16 + 32 * 2}, divSize });
 	_animator->AddAnim("RightWalk", animRectVec, 30, true);
 
 	_waitT = make_unique<Track<int>>();
@@ -69,7 +70,7 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 
 	_waitNextUpdater = &BattleCharactor::NormalUpdate;
 
-	_attackEffectFuncs[Size_t(damageType::none)] = [this](BattleScene& battleScene, const Vector2Int center)
+	_attackEffectFuncs[Uint64(damageType::none)] = [this](BattleScene& battleScene, const Vector2Int center)
 	{
 		auto& dataBase = DataBase::Instance();
 		auto effect = dataBase.GetBattleEffectFactory().
@@ -77,7 +78,7 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 		battleScene.GetEffectVec().emplace_back(effect);
 	};
 
-	_attackEffectFuncs[Size_t(damageType::damage)] = [this](BattleScene& battleScene, const Vector2Int center)
+	_attackEffectFuncs[Uint64(damageType::damage)] = [this](BattleScene& battleScene, const Vector2Int center)
 	{
 		auto& dataBase = DataBase::Instance();
 		auto type = dataBase.GetWeaponData(_selfChar.GetStatus().weaponId).effectType;
@@ -86,7 +87,7 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 		battleScene.GetEffectVec().emplace_back(_attackEffect);
 	};
 
-	_attackEffectFuncs[Size_t(damageType::critical)] = [this](BattleScene& battleScene, const Vector2Int center)
+	_attackEffectFuncs[Uint64(damageType::critical)] = [this](BattleScene& battleScene, const Vector2Int center)
 	{
 		auto& dataBase = DataBase::Instance();
 		auto type = dataBase.GetWeaponData(_selfChar.GetStatus().weaponId).effectType;
@@ -158,26 +159,26 @@ void BattleCharactor::UIDraw()
 	auto fontHandle = fileSystem.GetFontHandle("choplin40edge");
 	
 	// UIの左上の座標
-	Rect windowRect(Vector2Int(0,0), Size(wsize.w / 2, 200));
-	Rect paramWindowRect(Vector2Int(0,0), Size(windowRect.size.w / 3, 120));
-	Rect nameWindowRect(Vector2Int(0, 0), Size(300,50));
-	Rect weaponNameRect(Vector2Int(0, 0), Size(windowRect.size.w / 3 * 2, 100));
+	Rect windowRect{ Vector2Int{0,0}, Size{wsize.w / 2, 200} };
+	Rect paramWindowRect{ Vector2Int{ 0,0}, Size{windowRect.size.w / 3, 120}};
+	Rect nameWindowRect{ Vector2Int{ 0, 0}, Size{300,50} };
+	Rect weaponNameRect{ Vector2Int{ 0, 0}, Size{windowRect.size.w / 3 * 2, 100}};
 
 	const char* teamString = _selfChar.GetTeam() == Team::player ? "player" : "enemy";
 
 	if (_dir == Dir::left)
 	{
-		windowRect.center = Vector2Int(wsize.w / 2 - windowRect.size.w/2, wsize.h - windowRect.size.h /2);
-		paramWindowRect.center = Vector2Int(paramWindowRect.size.w/2, windowRect.center.y - paramWindowRect.size.h/2);
+		windowRect.center = Vector2Int{ wsize.w / 2 - windowRect.size.w/2, wsize.h - windowRect.size.h /2 };
+		paramWindowRect.center = Vector2Int{ paramWindowRect.size.w/2, windowRect.center.y - paramWindowRect.size.h/2 };
 		nameWindowRect.center = nameWindowRect.size.ToVector2Int() * 0.5f;
-		weaponNameRect.center = Vector2Int(wsize.w / 2 - weaponNameRect.size.w / 2, windowRect.center.y - weaponNameRect.size.h/2);
+		weaponNameRect.center = Vector2Int{ wsize.w / 2 - weaponNameRect.size.w / 2, windowRect.center.y - weaponNameRect.size.h/2 };
 	}
 	else
 	{
-		windowRect.center = Vector2Int(wsize.w / 2 + windowRect.size.w / 2, wsize.h - windowRect.size.h / 2);
-		paramWindowRect.center = Vector2Int(wsize.w - paramWindowRect.size.w / 2, windowRect.center.y - paramWindowRect.size.h / 2);
-		nameWindowRect.center = Vector2Int(wsize.w, 0) + Vector2Int(-nameWindowRect.size.w, nameWindowRect.size.h) * 0.5f;
-		weaponNameRect.center = Vector2Int(wsize.w / 2 + weaponNameRect.size.w / 2, windowRect.center.y - weaponNameRect.size.h / 2);
+		windowRect.center = Vector2Int{ wsize.w / 2 + windowRect.size.w / 2, wsize.h - windowRect.size.h / 2 };
+		paramWindowRect.center = Vector2Int{ wsize.w - paramWindowRect.size.w / 2, windowRect.center.y - paramWindowRect.size.h / 2 };
+		nameWindowRect.center = Vector2Int{ wsize.w, 0 } + Vector2Int{ -nameWindowRect.size.w, nameWindowRect.size.h } *0.5f;
+		weaponNameRect.center = Vector2Int{ wsize.w / 2 + weaponNameRect.size.w / 2, windowRect.center.y - weaponNameRect.size.h / 2 };
 	}
 
 	// 画面下UIの領域描画
@@ -211,11 +212,11 @@ void BattleCharactor::NormalUpdate(BattleScene& battleScene)
 {
 	_attackAnimX->Update();
 	auto dir = _dir == Dir::left ? 1 : -1;
-	_pos = _startPos + Vector2(static_cast<float>(_attackAnimX->GetValue() * dir), 0);
+	_pos = _startPos + Vector2{static_cast<float>(_attackAnimX->GetValue() * dir), 0};
 
 	if (_attackAnimX->GetFrame() == 15)
 	{
-		_attackEffectFuncs[Size_t(_gaveDamageType)](battleScene, _targetChar->GetCenterPos());
+		_attackEffectFuncs[Uint64(_gaveDamageType)](battleScene, _targetChar->GetCenterPos());
 	}
 }
 
@@ -255,17 +256,17 @@ void BattleCharactor::DrawParameter(const char* teamString, FileSystem& fileSyst
 	auto drawParam = [&](const int itemNum, const int fontH, const unsigned int color, const char* string, const int num)
 	{
 		int drawY = paramWindowRect.center.y + (itemNum - (ITEM_MAX - 2)) * 40;
-		DrawStringToHandle(Vector2Int(paramWindowRect.Left() + 10, drawY), Anker::leftcenter, color, fontH, string);
+		DrawStringToHandle(Vector2Int{ paramWindowRect.Left() + 10, drawY }, Anker::leftcenter, color, fontH, string);
 		// 攻撃できるか
 		if (_selfChar.GetAttackRange().Hit(distance) && (!battleSelfStatus.CheckHeal() || _dir == Dir::left))
 		{
 			char numStr[10];
 			sprintf_s(numStr, 10, "%d", num);
-			DrawStringToHandle(Vector2Int(paramWindowRect.Right() - 10, drawY), Anker::rightcenter, color, fontH, numStr);
+			DrawStringToHandle(Vector2Int{ paramWindowRect.Right() - 10, drawY }, Anker::rightcenter, color, fontH, numStr);
 		}
 		else
 		{
-			DrawStringToHandle(Vector2Int(paramWindowRect.Right() - 10, drawY), Anker::rightcenter, color, fontH, "--");
+			DrawStringToHandle(Vector2Int{ paramWindowRect.Right() - 10, drawY }, Anker::rightcenter, color, fontH, "--");
 		}
 	};
 
@@ -295,31 +296,31 @@ void BattleCharactor::DrawParameter(const char* teamString, FileSystem& fileSyst
 void BattleCharactor::DrawHP(Rect& windowRect, int fontHandle)
 {
 	// 被ダメージ時の揺れ用オフセット
-	Vector2Int hpBerOffset(0,0);
-	Vector2Int hpNumOffset(0,0);
+	Vector2Int hpBerOffset{ 0, 0 };
+	Vector2Int hpNumOffset{0, 0};
 	if (_receiveDamageType == damageType::damage || _receiveDamageType == damageType::critical)
 	{
 		int range = _receiveDamageType == damageType::damage ? 3 : 8;
-		hpBerOffset = Vector2Int(rand() % range, rand() % range);
-		hpNumOffset = Vector2Int(rand() % range, rand() % range);
+		hpBerOffset = Vector2Int{ rand() % range, rand() % range };
+		hpNumOffset = Vector2Int{ rand() % range, rand() % range };
 	}
 
 	// HPの数値表示
 	auto startHealth = _selfChar.GetStartStatus().health;
 	auto health = _animHealth;
-	auto hpDrawPos = Vector2Int(windowRect.Left(), windowRect.center.y) + Vector2Int(20, 20);
+	auto hpDrawPos = Vector2Int{ windowRect.Left(), windowRect.center.y } + Vector2Int{ 20, 20 };
 	DrawFormatStringToHandle(hpDrawPos.x + hpNumOffset.x, hpDrawPos.y + hpNumOffset.y, 0xffffff, fontHandle, "%d", health);
 
-	Size hpPerDot(10, 30);
+	Size hpPerDot{ 10, 30 };
 	int linePerHp = 40;
 	int berCnt = static_cast<int>(ceil(startHealth / 40.0f));
 
 
-	auto hpBerDrawPos = GetDrawPos(hpDrawPos + Vector2Int(100, 30), Size(0, berCnt * hpPerDot.h), Anker::leftcenter) + hpBerOffset;
+	auto hpBerDrawPos = GetDrawPos(hpDrawPos + Vector2Int{ 100, 30 }, Size{ 0, berCnt * hpPerDot.h }, Anker::leftcenter) + hpBerOffset;
 	for (int idx = 0; idx < berCnt; idx++)
 	{
-		Size startSize = Size(min((startHealth - linePerHp * (berCnt - idx - 1)), linePerHp), 1) * hpPerDot;
-		Size currentSize = Size(min((health - linePerHp * (berCnt - idx - 1)), linePerHp), 1) * hpPerDot;
+		Size startSize = Size{ min((startHealth - linePerHp * (berCnt - idx - 1)), linePerHp), 1 } *hpPerDot;
+		Size currentSize = Size{ min((health - linePerHp * (berCnt - idx - 1)), linePerHp), 1 } *hpPerDot;
 		DrawBox(hpBerDrawPos, hpBerDrawPos + startSize, 0x888888, true);
 		if (currentSize.w > 0)
 		{
@@ -404,7 +405,7 @@ Size BattleCharactor::GetSize() const
 
 Vector2Int BattleCharactor::GetCenterPos() const
 {
-	return Vector2Int(_pos.ToVector2Int() - Vector2Int(0, _size.h / 2));
+	return Vector2Int{_pos.ToVector2Int() - Vector2Int{ 0, _size.h / 2 }};
 }
 
 Vector2Int BattleCharactor::GetPos() const

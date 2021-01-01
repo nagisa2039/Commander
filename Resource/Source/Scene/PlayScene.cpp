@@ -21,6 +21,7 @@
 #include "SoundLoader.h"
 #include "UI/CheckWindow.h"
 #include "TitleScene.h"
+#include "Cast.h"
 
 using namespace std;
 
@@ -41,11 +42,11 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId, const boo
 	_turnCnt = 0;
 
 	_mapCtrl = make_unique<MapCtrl>(mapId, _charactors);
-	_camera = make_unique<Camera>(Rect(Vector2Int(), wsize));
+	_camera = make_unique<Camera>(Rect{ Vector2Int(), wsize });
 	_turnChangeAnim = make_unique<TurnChangeAnim>();
 
 	auto mapSize = _mapCtrl->GetMapSize() * _mapCtrl->GetChipSize();
-	_camera->SetLimitRect(Rect(mapSize.ToVector2Int() * 0.5, mapSize));
+	_camera->SetLimitRect(Rect{ mapSize.ToVector2Int() * 0.5, mapSize });
 
 	_mapCtrl->CreateCharactor(ctrl, _effects, *_camera);
 
@@ -69,7 +70,7 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId, const boo
 	_mapCtrl->CreateWarSituation();
 
 	bool getCursorMapPos = false;
-	Vector2Int cursorMapPos = Vector2Int(0, 0);
+	Vector2Int cursorMapPos = Vector2Int{ 0, 0 };
 	for (auto& charactor : _charactors)
 	{
 		charactor->RouteSearch();
@@ -84,7 +85,7 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId, const boo
 	_preparationDeque.emplace_back(_preparationUI);
 
 	Vector2 cameraPos2D = (cursorMapPos * _mapCtrl->GetChipSize()).ToVector2();
-	_camera->SetPos(Vector3(cameraPos2D.x, cameraPos2D.y, 0));
+	_camera->SetPos(Vector2{ cameraPos2D.x, cameraPos2D.y});
 
 	_clearAnimTrack = make_unique<Track<float>>();
 	_clearAnimTrack->AddKey(0, 0.0f);
@@ -101,8 +102,8 @@ PlayScene::PlayScene(SceneController & ctrl, const unsigned int mapId, const boo
 
 
 	_filterType = FilterType::none;
-	_filterFuncs[Size_t(FilterType::none)] = []() {};
-	_filterFuncs[Size_t(FilterType::gauss)] = [&graphH = _gameH]() 
+	_filterFuncs[Uint64(FilterType::none)] = []() {};
+	_filterFuncs[Uint64(FilterType::gauss)] = [&graphH = _gameH]()
 	{GraphFilter(graphH, DX_GRAPH_FILTER_GAUSS, 16, 1000); };
 
 	if (_aiMode)
@@ -141,16 +142,18 @@ void PlayScene::Update(const Input & input)
 
 	(this->*_updater)(input);
 
+	if (_effects.size() <= 0)
+	{
+		return;
+	}
+
 	for (auto& effect : _effects)
 	{
 		effect->Update(input);
 	}
 	auto newEffectEnd = remove_if(_effects.begin(), _effects.end(),
 		[](const std::shared_ptr<Effect>& effect) { return effect->GetDelete(); });
-	if (newEffectEnd != _effects.end())
-	{
-		_effects.erase(newEffectEnd, _effects.end());
-	}
+	_effects.erase(newEffectEnd, _effects.end());
 }
 
 void PlayScene::PreparationUpdate(const Input& input)
@@ -590,7 +593,7 @@ void PlayScene::Draw(void)
 	(this->*_drawer)();
 	SetDrawScreen(DX_SCREEN_BACK);
 
-	_filterFuncs[Size_t(_filterType)]();
+	_filterFuncs[Uint64(_filterType)]();
 
 	DrawGraph(0, 0, _gameH, true);
 
@@ -599,7 +602,7 @@ void PlayScene::Draw(void)
 	if (_aiMode)
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(_demoAnimTrack->GetValue() * 255));
-		Rect demoRect(Vector2Int(220, 45), Size(400,50));
+		Rect demoRect{ Vector2Int{ 220, 45 }, Size{ 400, 50 } };
 		demoRect.DrawGraph(ImageHandle("Resource/Image/UI/checkWindowSelect.png"));
 		DrawStringToHandle(demoRect.center, Anker::center, 0xffffff, FontHandle("choplin20edge"), "デモプレイ中  F1で終了");
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);

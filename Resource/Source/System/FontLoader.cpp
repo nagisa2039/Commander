@@ -1,20 +1,12 @@
 #include "FontLoader.h"
 #include <DxLib.h>
+#include <cassert>
 
 FontLoader::FontLoader()
 {
 }
 
 FontLoader::~FontLoader()
-{
-}
-
-bool FontLoader::Load(const char* path, Data& data)
-{
-	return false;
-}
-
-void FontLoader::Unload(const char* path)
 {
 }
 

@@ -161,8 +161,8 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 {
 	auto wsize = Application::Instance().GetWindowSize();
 	auto cameraPos = wsize.ToVector2Int() * 0.5;
-	_camera = make_shared<Camera>(Rect(cameraPos, wsize));
-	_camera->SetPos(Vector3((cameraPos).ToVector2()));
+	_camera = make_shared<Camera>(Rect{ cameraPos, wsize });
+	_camera->SetPos(Vector2{ (cameraPos).ToVector2() });
 
 	_screenH = FileSystem::Instance().
 		MakeScreen("battle_scene_screen", _screenSize, true);
@@ -180,8 +180,8 @@ BattleScene::BattleScene(BattleCharactor& leftBC, BattleCharactor& rightBC, Scen
 	auto mapPosSub = _leftBC.GetCharacotr().GetMapPos() - _rightBC.GetCharacotr().GetMapPos();
 	distance = abs(mapPosSub.x) + abs(mapPosSub.y) <= 1 ? 200 : 300;
 
-	_leftBC.Init(Vector2(static_cast<float>(screenCenter.x - distance), _groundY),  Dir::left,  &rightBC);
-	_rightBC.Init(Vector2(static_cast<float>(screenCenter.x + distance), _groundY), Dir::right, &leftBC);
+	_leftBC.Init(Vector2{ static_cast<float>(screenCenter.x - distance), _groundY }, Dir::left, &rightBC);
+	_rightBC.Init(Vector2{ static_cast<float>(screenCenter.x + distance), _groundY }, Dir::right, &leftBC);
 
 	_pursuit = false;
 
@@ -260,7 +260,7 @@ void BattleScene::Draw(void)
 	// è∞ÇÃï`âÊ
 	DrawFloor(screenCenter);
 
-	auto charSize = Size(128, 128);
+	auto charSize = Size{ 128, 128 };
 
 	_leftBC.Draw();
 	_rightBC.Draw();
@@ -281,10 +281,10 @@ void BattleScene::Draw(void)
 	SetDrawScreen(currentScreen);
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>((exRateValue * 128)));
-	DrawBox(Vector2Int(0, 0), wsize.ToVector2Int(), 0x000000);
+	DrawBox(Vector2Int{ 0, 0 }, wsize.ToVector2Int(), 0x000000);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
-	DrawRotaGraph(Lerp(_startPos, Vector2Int(wsize.w / 2, wsize.h / 2), exRateValue), exRateValue, exRateValue * 4.0 * DX_PI, _screenH, true);
+	DrawRotaGraph(Lerp(_startPos, Vector2Int{ wsize.w / 2, wsize.h / 2 }, exRateValue), exRateValue, exRateValue * 4.0 * DX_PI, _screenH, true);
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>((1.0f - _brightTL->GetValue()) * 255));
 	DrawBox(0,0, wsize.w, wsize.h, 0x000000, true);
@@ -297,7 +297,7 @@ void BattleScene::DrawFloor(Vector2Int& screenCenter)
 	if (abs(mapPosSub.x) + abs(mapPosSub.y) <= 1)
 	{
 		int floorH = ImageHandle("Resource/Image/Battle/floor_big.png");
-		DrawRotaGraph(Vector2Int(screenCenter.x, static_cast<int>(_groundY)), 1.0, 0.0, floorH, true);
+		DrawRotaGraph(Vector2Int{ screenCenter.x, static_cast<int>(_groundY) }, 1.0, 0.0, floorH, true);
 	}
 	else
 	{

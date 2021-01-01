@@ -78,14 +78,12 @@
     <ClCompile Include="Resource\Source\System\FileSystem.cpp" />
     <ClCompile Include="Resource\Source\System\FontLoader.cpp" />
     <ClCompile Include="Resource\Source\System\ImageLoader.cpp" />
-    <ClCompile Include="Resource\Source\System\Loader.cpp" />
     <ClCompile Include="Resource\Source\System\main.cpp" />
     <ClCompile Include="Resource\Source\System\SoundLoader.cpp" />
     <ClCompile Include="Resource\Source\Utility\AnkerCalculation.cpp" />
     <ClCompile Include="Resource\Source\Utility\DxLibUtility.cpp" />
     <ClCompile Include="Resource\Source\Utility\Geometry.cpp" />
     <ClCompile Include="Resource\Source\Utility\Input.cpp" />
-    <ClCompile Include="Resource\Source\Utility\TimeLine.cpp" />
     <ClCompile Include="Resource\Source\Game\UI\SelectPen.cpp" />
     <ClCompile Include="Resource\Source\Scene\TitleScene.cpp" />
     <ClCompile Include="Resource\Source\Game\RouteManager.cpp" />
@@ -153,7 +151,6 @@
     <ClInclude Include="Resource\Source\System\FileSystem.h" />
     <ClInclude Include="Resource\Source\System\FontLoader.h" />
     <ClInclude Include="Resource\Source\System\ImageLoader.h" />
-    <ClInclude Include="Resource\Source\System\Loader.h" />
     <ClInclude Include="Resource\Source\System\SoundLoader.h" />
     <ClInclude Include="Resource\Source\Utility\AnkerCalculation.h" />
     <ClInclude Include="Resource\Source\Utility\Cast.h" />

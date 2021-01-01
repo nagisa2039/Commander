@@ -124,11 +124,11 @@ void Animator::AddAnimDiv(const std::string& animName, const Vector2Int& animCnt
 	animInfo.rectVec.reserve(animCnt.x * animCnt.y);
 
 	auto graphSize = GetImageSize();
-	auto rectSize = Size(graphSize.w / animCnt.x, graphSize.h / animCnt.y);
+	auto rectSize = Size{ graphSize.w / animCnt.x, graphSize.h / animCnt.y };
 	auto rectCenter = rectSize.ToVector2Int() * 0.5;
 	for (int i = 0; i < animCnt.x * animCnt.y; i++)
 	{
-		animInfo.rectVec.emplace_back(Rect(rectCenter, rectSize));
+		animInfo.rectVec.emplace_back(Rect{ rectCenter, rectSize });
 		if (i % animCnt.x == animCnt.x-1)
 		{
 			rectCenter.x = (rectSize.ToVector2Int() * 0.5f).x;

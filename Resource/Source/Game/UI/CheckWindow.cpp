@@ -93,7 +93,7 @@ void PopupWindow::DrawToWindow()
 	SetDrawScreen(_messageImageH);
 	ClsDrawScreen();
 
-	Size space(50, 10);
+	Size space{ 50, 10 };
 
 	auto& fileSystem = FileSystem::Instance();
 	int messageH = fileSystem.GetImageHandle("Resource/Image/UI/checkWindow.png");
@@ -119,12 +119,12 @@ CheckWindow::CheckWindow(const std::string& messageStr, std::deque<std::shared_p
 	Size selectSize;
 	GetGraphSize(selectH, selectSize);
 
-	Size space(50, 10);
+	Size space{ 50, 10 };
 	int offsetX = (space.w + selectSize.w);
 	int drawY = (wsize.h + messageSize.h + selectSize.h + space.h) / 2;
 
-	_yesSelectRect	= Rect(Vector2Int((wsize.w - offsetX) / 2, drawY), selectSize);
-	_noSelectRect	= Rect(Vector2Int((wsize.w + offsetX) / 2, drawY), selectSize);
+	_yesSelectRect	= Rect{ Vector2Int{(wsize.w - offsetX) / 2, drawY}, selectSize };
+	_noSelectRect	= Rect{ Vector2Int{(wsize.w + offsetX) / 2, drawY}, selectSize };
 
 	_select = Select::yes;
 
@@ -143,7 +143,7 @@ void CheckWindow::NormalUpdate(const Input& input)
 {
 	_selectExRateTrack->Update();
 	bool click = input.GetButtonDown("ok");
-	auto mouseRect = Rect(input.GetMousePos(), Size(1, 1));
+	auto mouseRect = Rect{ input.GetMousePos(), Size{1, 1 }};
 
 	auto decision = [this]() 
 	{

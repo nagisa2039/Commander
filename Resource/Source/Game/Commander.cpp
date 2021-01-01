@@ -9,7 +9,7 @@ Commander::Commander(std::vector<std::shared_ptr<Charactor>>& charactors, MapCtr
 	:_charactors(charactors), _ctrlTeam(ctrlTeam), MapCursor(mapCtrl, camera)
 {
 	_selectChar = nullptr;
-	_pos = Vector2();
+	_pos = Vector2{};
 	_animCnt = 0;
 	_rigid = 0;
 	_end = false;

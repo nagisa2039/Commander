@@ -31,7 +31,7 @@ void Effect::Update(const Input& input)
 
 void Effect::Draw()
 {
-	auto offset = _cameraActive ? _camera.GetCameraOffset() : Vector2Int(0,0);
+	auto offset = _cameraActive ? _camera.GetCameraOffset() : Vector2Int{ 0,0 };
 	_animator->Draw(offset + _pos.ToVector2Int() - _size.ToVector2Int()*0.5f, _size);
 }
 

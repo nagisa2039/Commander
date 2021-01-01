@@ -1,14 +1,6 @@
 #include <Dxlib.h>
+#include <cassert>
 #include "SoundLoader.h"
-
-bool SoundLoader::Load(const char* path, Data& data)
-{
-	return false;
-}
-
-void SoundLoader::Unload(const char* path)
-{
-}
 
 int SoundLoader::GetSoundHandle(const char* path)
 {

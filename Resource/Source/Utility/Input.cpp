@@ -135,24 +135,24 @@ const Vector2Int& Input::GetMousePos()const
 
 bool Input::GetButton(const char keycode)const
 {
-	return _keystate[_currentInputStateIdx][keycode];
+	return _keystate[_currentInputStateIdx][keycode] != 0;
 }
 
 bool Input::GetButtonDown(const char keycode)const
 {
 	size_t lastIdx = (_currentInputStateIdx - 1 + INPUT_RECORD_SIZE) % INPUT_RECORD_SIZE;
-	return _keystate[_currentInputStateIdx][keycode] && !_keystate[lastIdx][keycode];
+	return _keystate[_currentInputStateIdx][keycode] != 0 && _keystate[lastIdx][keycode] == 0;
 }
 
 bool Input::GetButtonUp(const char keycode)const
 {
 	size_t lastIdx = (_currentInputStateIdx - 1 + INPUT_RECORD_SIZE) % INPUT_RECORD_SIZE;
-	return !_keystate[_currentInputStateIdx][keycode] && _keystate[lastIdx][keycode];
+	return _keystate[_currentInputStateIdx][keycode] == 0 && _keystate[lastIdx][keycode] != 0;
 }
 
 bool Input::GetAnyMouseInput() const
 {
-	return static_cast<bool>(_mouseState[_currentInputStateIdx]) || GetMouseMove() != Vector2Int(0,0);
+	return static_cast<bool>(_mouseState[_currentInputStateIdx]) || GetMouseMove() != Vector2Int{ 0,0 };
 }
 
 bool Input::GetAnyKeybordInput() const

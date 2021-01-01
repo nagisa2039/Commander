@@ -19,7 +19,7 @@ MapSelectCharactor::MapSelectCharactor(Camera& camera, const CharactorType& char
 	: Actor(camera), _begin(begin)
 {
 	_animator = make_unique<Animator>();
-	const Size divSize = Size(32, 32);
+	const Size divSize = Size{ 32, 32 };
 	_animator->SetImageHandle(DataBase::Instance().GetCharactorImageHandle(charactorType, Team::player));
 
 	auto nextRectCenterOffset = [&](std::vector<Rect>& animRectVec)
@@ -30,8 +30,8 @@ MapSelectCharactor::MapSelectCharactor(Camera& camera, const CharactorType& char
 		}
 	};
 	std::vector<Rect> animRectVec;
-	animRectVec.emplace_back(Rect(Vector2Int(16, 16), divSize));
-	animRectVec.emplace_back(Rect(Vector2Int(16 + divSize.w * 2, 16), divSize));
+	animRectVec.emplace_back(Rect{ Vector2Int{ 16, 16 }, divSize });
+	animRectVec.emplace_back(Rect{ Vector2Int{ 16 + divSize.w * 2, 16 }, divSize });
 
 	nextRectCenterOffset(animRectVec);
 	_animator->AddAnim("LeftWalk", animRectVec, 30, true);
@@ -40,7 +40,7 @@ MapSelectCharactor::MapSelectCharactor(Camera& camera, const CharactorType& char
 	nextRectCenterOffset(animRectVec);
 	_animator->AddAnim("UpWalk", animRectVec, 30, true);
 	animRectVec.clear();
-	animRectVec.emplace_back(Rect(Vector2Int(static_cast<int>(divSize.w * 1.5f), static_cast<int>(divSize.h * 0.5f)), divSize));
+	animRectVec.emplace_back(Rect{ Vector2Int{ static_cast<int>(divSize.w * 1.5f), static_cast<int>(divSize.h * 0.5f) }, divSize });
 	_animator->AddAnim("DownWalk", animRectVec, 30, false);
 
 	_animator->ChangeAnim("DownWalk");
@@ -97,7 +97,7 @@ void MapSelectCharactor::Update(const Input& input)
 
 void MapSelectCharactor::Draw()
 {
-	auto size = Size(100, 100);
+	auto size = Size{ 100, 100 };
 	_animator->Draw(_camera.GetCameraOffset() + _pos.ToVector2Int() - (size * 0.5f).ToVector2Int(), size);
 }
 

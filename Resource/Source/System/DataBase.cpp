@@ -36,7 +36,7 @@ namespace
 	}
 }
 
-bool DataBase::ReadData(const char* path, std::vector<std::vector<std::string>>& outstrVec2)
+void DataBase::ReadData(const char* path, std::vector<std::vector<std::string>>& outstrVec2)
 {
 	int fileH = FileRead_open(path);
 	assert(fileH != 0);
@@ -67,7 +67,6 @@ bool DataBase::ReadData(const char* path, std::vector<std::vector<std::string>>&
 	FileRead_close(fileH);
 
 	assert(outstrVec2.size() > 0);
-	return true;
 }
 
 DataBase::DataBase()
@@ -151,9 +150,9 @@ void DataBase::Init()
 			// パス
 			mapChipData.drawData.path = data[2];
 			// 画像の左上座標
-			mapChipData.drawData.leftup = Vector2Int(atoi(data[3].c_str()), atoi(data[4].c_str()));
+			mapChipData.drawData.leftup = Vector2Int{ atoi(data[3].c_str()), atoi(data[4].c_str()) };
 			// 画像のサイズ
-			mapChipData.drawData.size = Size(atoi(data[5].c_str()), atoi(data[6].c_str()));
+			mapChipData.drawData.size = Size{ atoi(data[5].c_str()), atoi(data[6].c_str()) };
 			// 簡略化色
 			mapChipData.simpleColor = atoi(data[7].c_str());
 			// 移動コスト
@@ -220,7 +219,7 @@ void DataBase::Init()
 				static_cast<uint8_t>(atoi(d[1].c_str())), d[2],
 				static_cast<uint8_t>(atoi(d[3].c_str())), static_cast<uint8_t>(atoi(d[4].c_str())),
 				static_cast<uint8_t>(atoi(d[5].c_str())), static_cast<uint8_t>(atoi(d[6].c_str())),
-				Range(atoi(d[7].c_str()), atoi(d[8].c_str())), static_cast<unsigned int>(atoi(d[9].c_str())),
+				Range{atoi(d[7].c_str()), atoi(d[8].c_str())}, static_cast<unsigned int>(atoi(d[9].c_str())),
 				static_cast<BattleEffectType>(atoi(d[10].c_str())) };
 			_weaponDataTable.emplace_back(wd);
 		}
@@ -374,7 +373,7 @@ void DataBase::CharactorData::DrawIcon(const Rect& rect, const Team team)const
 	stringstream ss;
 	ss << imagePath << "_" << (Team::player == team ? "player" : "enemy") << ".png";
 	auto handle = ImageHandle(ss.str().c_str());
-	rect.DrawRectGraph(Vector2Int(32, 0), Size(32, 32), handle);
+	rect.DrawRectGraph(Vector2Int{ 32, 0 }, Size{ 32, 32 }, handle);
 	SetDrawMode(DX_DRAWMODE_BILINEAR);
 	
 }

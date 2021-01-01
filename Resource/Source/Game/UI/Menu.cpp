@@ -36,12 +36,12 @@ void Menu::Init(const size_t contentNum, const int frameH)
 	_contentInfs.resize(contentNum);
 
 	auto wsize = Application::Instance().GetWindowSize();
-	Vector2Int offset(-30, 60);
+	Vector2Int offset{ -30, 60 };
 
 	// sŠÔ
 	int lineSpace = 30;
 	GetGraphSize(frameH, _contentSize);
-	Vector2Int center = Vector2Int(offset.x + wsize.w - _contentSize.w / 2, offset.y + _contentSize.h / 2);
+	Vector2Int center = Vector2Int{ offset.x + wsize.w - _contentSize.w / 2, offset.y + _contentSize.h / 2 };
 
 	for (auto& contentInf : _contentInfs)
 	{
@@ -118,11 +118,11 @@ void Menu::OpenUpdate(const Input& input)
 	_selectPen->Update(input);
 	if (input.GetAnyMouseInput())
 	{
-		auto mouseRect = Rect(input.GetMousePos(), Size(1, 1));
+		auto mouseRect = Rect{ input.GetMousePos(), Size{1, 1} };
 		auto click = input.GetButtonDown("ok");
 		for (int idx = 0; idx < _contentList.size(); ++idx)
 		{
-			if (Rect(_contentInfs[idx].centerPos, _contentSize).IsHit(mouseRect))
+			if (Rect{ _contentInfs[idx].centerPos, _contentSize }.IsHit(mouseRect))
 			{
 				if (_selectIdx != idx)
 				{
@@ -198,7 +198,7 @@ void Menu::OpenDraw()
 		DrawContent(_contentInfs[idx].centerPos, idx);
 	}
 
-	_selectPen->SetPos(_contentInfs[_selectIdx].centerPos - Vector2Int(_contentSize.w / 2, 0));
+	_selectPen->SetPos(_contentInfs[_selectIdx].centerPos - Vector2Int{ _contentSize.w / 2, 0 });
 	_selectPen->Draw();
 }
 
@@ -214,7 +214,7 @@ void Menu::OpenAnimDraw()
 
 	auto GetCenterPos = [&](const unsigned int idx)
 	{
-		return Lerp(Vector2Int(_contentInfs[idx].centerPos.x, -menuFrameSize.h / 2), _contentInfs[idx].centerPos, _openAnimTrack->GetValue());
+		return Lerp(Vector2Int{ _contentInfs[idx].centerPos.x, -menuFrameSize.h / 2 }, _contentInfs[idx].centerPos, _openAnimTrack->GetValue());
 	};
 
 	for (int idx = 0; idx < _contentList.size(); idx++)
@@ -232,7 +232,7 @@ void Menu::CloseAnimDraw()
 
 	auto GetCenterPos = [&](const unsigned int idx)
 	{
-		return Lerp(_contentInfs[idx].centerPos, Vector2Int(wsize.w + menuFrameSize.w / 2, _contentInfs[idx].centerPos.y), _closeAnimTrack->GetValue());
+		return Lerp(_contentInfs[idx].centerPos, Vector2Int{ wsize.w + menuFrameSize.w / 2, _contentInfs[idx].centerPos.y }, _closeAnimTrack->GetValue());
 	};
 
 	for (int idx = 0; idx < _contentList.size(); idx++)
@@ -246,6 +246,6 @@ void Menu::DrawContent(const Vector2Int& drawCenterPos, const unsigned int idx)
 	auto& fileSystem = FileSystem::Instance();
 	int choplin30 = fileSystem.GetFontHandle("choplin30edge");
 	auto menuFrameH = fileSystem.GetImageHandle("Resource/Image/UI/menuFrame.png");
-	Rect(drawCenterPos, _contentSize).DrawGraph(menuFrameH);
+	Rect{ drawCenterPos, _contentSize }.DrawGraph(menuFrameH);
 	DrawStringToHandle(drawCenterPos, Anker::center, 0xffffff, choplin30, _contentInfs[_contentList[idx]].name.c_str());
 }

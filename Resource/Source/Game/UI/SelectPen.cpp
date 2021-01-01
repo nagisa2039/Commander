@@ -29,7 +29,7 @@ void SelectPen::Draw()
 	GetGraphSize(penH, penSize);
 	Vector2Int penMove = penSize.ToVector2Int() * -0.2f;
 
-	Vector2Int penDrawPos = penMove * _penAnimTrack->GetValue() + _pos + Vector2Int(10, -10);
+	Vector2Int penDrawPos = penMove * _penAnimTrack->GetValue() + _pos + Vector2Int{ 10, -10 };
 	DrawGraph(GetDrawPos(penDrawPos, penSize, Anker::rightcenter), penH, true);
 }
 

@@ -41,13 +41,13 @@ void Camera::LooseFollow()
 
 Camera::Camera(const Rect& rect) :_rect(rect)
 {
-	_pos = Vector2(0,0);
+	_pos = Vector2{ 0,0 };
 
 	// size.w == 0 ÇÕêßå¿Ç»Çµ
 	_limitRect.size.w = 0;
 
 	_follower = &Camera::NormalFollow;
-	_offset = Vector2(0.0f, 0.0f);
+	_offset = Vector2{ 0.0f, 0.0f };
 }
 
 Camera::~Camera()
@@ -74,15 +74,15 @@ void Camera::Update()
 		(this->*_follower)();
 	}
 
-	_rect.center = Vector2Int(static_cast<int>(_pos.x), static_cast<int>(_pos.y));
+	_rect.center = Vector2Int{ static_cast<int>(_pos.x), static_cast<int>(_pos.y) };
 
 	// size.w == 0 ÇÕêßå¿Ç»Çµ
 	if (_limitRect.Width() != 0)
 	{
 		// îÕàÕêßå‰
-		_rect.center = Clamp(_rect.center, 
-			Vector2Int(_limitRect.Left()  + _rect.Width() / 2, _limitRect.Top() + _rect.Height() / 2),
-			Vector2Int(_limitRect.Right() - _rect.Width() / 2, _limitRect.Botton() - _rect.Height() / 2));
+		_rect.center = Clamp(_rect.center,
+			Vector2Int{ _limitRect.Left() + _rect.Width() / 2, _limitRect.Top() + _rect.Height() / 2 },
+			Vector2Int{_limitRect.Right() - _rect.Width() / 2, _limitRect.Botton() - _rect.Height() / 2});
 	}
 }
 
@@ -119,10 +119,10 @@ Vector2Int Camera::GetCameraOffset() const
 {
 	auto wsize = Application::Instance().GetWindowSize();
 	auto offsetInt = _offset.ToVector2Int();
-	return Vector2Int(wsize.w/2 - _rect.center.x - offsetInt.x, wsize.h/2 - _rect.center.y - offsetInt.y);
+	return Vector2Int{ wsize.w / 2 - _rect.center.x - offsetInt.x, wsize.h / 2 - _rect.center.y - offsetInt.y };
 }
 
-void Camera::SetPos(const Vector3& pos)
+void Camera::SetPos(const Vector2& pos)
 {
 	_pos = pos;
 }

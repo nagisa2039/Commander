@@ -31,10 +31,10 @@ void Map::DrawToMapScreen()
 	{
 		for (int x = 0; const auto& mapData : mapDataVec)
 		{
-			DrawMapChip(Vector2Int(x, y), MAP_CHIP_NONE);
+			DrawMapChip(Vector2Int{x,y}, MAP_CHIP_NONE);
 			if (_mapDataVec2[y][x].mapChip > MAP_CHIP_NONE && _mapDataVec2[y][x].mapChip < MapChipMax)
 			{
-				DrawMapChip(Vector2Int(x, y), _mapDataVec2[y][x].mapChip);
+				DrawMapChip(Vector2Int{ x,y }, _mapDataVec2[y][x].mapChip);
 			}
 			x++;
 		}
@@ -134,7 +134,7 @@ bool Map::LoadMapData()
 }
 
 Map::Map(const int mapId, std::string& name, std::string& fileName, std::string& bgmName)
-	:_mapId(mapId), _mapSize(MAP_CHIP_CNT_W, MAP_CHIP_CNT_H), _chipSize(CHIP_SIZE_W, CHIP_SIZE_H),
+	:_mapId(mapId), _mapSize{ MAP_CHIP_CNT_W, MAP_CHIP_CNT_H }, _chipSize{ CHIP_SIZE_W, CHIP_SIZE_H },
 	imageFolderPath("Resource/Image/MapChip/"), _name(name), _fileName(fileName),_bgmName(bgmName)
 {
 	std::stringstream ss;

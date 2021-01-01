@@ -41,7 +41,7 @@ void RouteManager::DrawMovableMass(const uint8_t alpha) const
 			if (resultPosList.size() <= 0)continue;
 
 			Vector2Int mapPos = resultPosList.begin()->mapPos;
-			Rect box(offset + (mapPos * chipSize.ToVector2Int() + chipSize * 0.5) + -1, chipSize);
+			Rect box{ offset + (mapPos * chipSize.ToVector2Int() + chipSize * 0.5) + -1, chipSize };
 
 			const int HEAL_SCR_X = 64;
 			const int ATTACK_SCR_X = 32;
@@ -61,7 +61,7 @@ void RouteManager::DrawMovableMass(const uint8_t alpha) const
 					scrX = heal ? HEAL_SCR_X : ATTACK_SCR_X;
 				}
 			}
-			box.DrawRectGraph(Vector2Int(scrX, 0), Size(32, 32), graphH);
+			box.DrawRectGraph(Vector2Int{ scrX, 0 }, Size{ 32, 32 }, graphH);
 		}
 	}
 
@@ -70,7 +70,7 @@ void RouteManager::DrawMovableMass(const uint8_t alpha) const
 
 Vector2Int RouteManager::CheckMapPos(const Vector2Int& mapPos) const
 {
-	Vector2Int ret(0, 0);
+	Vector2Int ret{ 0, 0 };
 	for (const auto& resutlPos : _resultPosListVec2[mapPos.y][mapPos.x])
 	{
 		resutlPos.attack ? ret.y++ : ret.x++;
@@ -218,7 +218,7 @@ std::list<Astar::ResultPos> RouteManager::CreateResultPosList(const Vector2Int& 
 			// ˆê•û“I‚ÉUŒ‚‚Å‚«‚é‹——£
 			Range criticalRange = _charactor.GetAttackRange().GetCriticalRange(targetRange);
 			// ˆê•û“I‚ÉUŒ‚‚Å‚«‚é‹——£‚ª‚ ‚é‚©
-			if (criticalRange != Range(0, 0))
+			if (criticalRange != Range{ 0, 0 })
 			{
 				for (const auto& targetPos : _resultPosListVec2[mapPos.y][mapPos.x])
 				{
@@ -545,7 +545,7 @@ Vector2Int RouteManager::SearchMovePos()
 				}
 			}
 		}
-		return Vector2Int(-1, -1);
+		return Vector2Int{ -1, -1 };
 	}
 
 	if (outRangeCharactorList.size() > 0)
@@ -558,5 +558,5 @@ Vector2Int RouteManager::SearchMovePos()
 		auto targetCharactor = *outRangeCharactorList.begin();
 		return targetCharactor.charactor->GetMapPos();
 	}
-	return Vector2Int(-1, -1);
+	return Vector2Int{ -1, -1 };
 }

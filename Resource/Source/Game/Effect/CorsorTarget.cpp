@@ -33,9 +33,9 @@ void CorsorTarget::Update(const Input& input)
 
 void CorsorTarget::Draw()
 {
-	Vector2Int offset = _cameraActive ? _camera.GetCameraOffset() : Vector2Int(0, 0);
+	Vector2Int offset = _cameraActive ? _camera.GetCameraOffset() : Vector2Int{ 0, 0 };
 	auto center = offset + _pos.ToVector2Int();
-	Rect drawRect(center, _chipSize * _exRateTrack->GetValue());
+	Rect drawRect{ center, _chipSize * _exRateTrack->GetValue() };
 
 	DrawExtendGraph(drawRect.Left(), drawRect.Top(), drawRect.Right(), drawRect.Botton(), _animator->GetImageH(), true);
 }

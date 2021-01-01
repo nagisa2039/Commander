@@ -51,9 +51,7 @@ FileSystem::~FileSystem()
 
 int FileSystem::GetImageHandle(const char * path)
 {
-	ImageData imageData;
-	_imageLoader->Load(path,imageData);
-	return imageData.GetHandle();
+	return _imageLoader->GetImageHandle(path);
 }
 
 int FileSystem::MakeScreen(const char* name, const Size& screenSize, const bool alpha)
@@ -96,22 +94,4 @@ std::string FileSystem::GetFolderPass(std::string path)
 	// imgFilePath‚Ì‡¬‚Æ“Ç‚İ‚İ
 	auto slash = path.find_last_of('/');
 	return path.substr(0, slash + 1);
-}
-
-std::string FileSystem::GetFilePath(const std::string path, const bool reverse)
-{
-#ifdef _DEBUG
-	if (reverse)
-	{
-		return "../" + path;
-	}
-	return path;
-#else
-	if (reverse)
-	{
-		return path;
-	}
-	auto slash = path.find_first_of('/');
-	return path.substr(slash + 1);
-#endif
 }

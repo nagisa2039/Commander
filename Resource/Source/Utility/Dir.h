@@ -1,5 +1,8 @@
 #pragma once
 
+/// <summary>
+/// •ûŒü
+/// </summary>
 enum class Dir
 {
 	left,

@@ -14,6 +14,7 @@
 #include "SoundLoader.h"
 #include "Map.h"
 #include "UI/CheckWindow.h"
+#include "Cast.h"
 
 using namespace std;
 
@@ -34,7 +35,7 @@ void MapSelectScene::NormalUpdate(const Input& input)
 		auto offset = _camera->GetCameraOffset();
 		auto& clearMapDataVec = Application::Instance().GetSaveData().GetClearMapDataVec();
 		
-		if (Rect(_contentPosVec[_selectIdx] + offset, _contentSize).IsHit(Rect(mousePos, Size(1, 1)))
+		if (Rect{ _contentPosVec[_selectIdx] + offset, _contentSize }.IsHit(Rect{ mousePos, Size{ 1, 1 } })
 			&& clearMapDataVec[_selectIdx] >= 0)
 		{
 			Decide(debug);
@@ -94,12 +95,12 @@ void MapSelectScene::FadeUpdate(const Input& input)
 	}
 }
 
-MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller), _contentSize(450,300)
+MapSelectScene::MapSelectScene(SceneController& controller) :Scene(controller), _contentSize({ 450,300 })
 {
 	auto screenSize = Application::Instance().GetWindowSize();
 	auto screenCenter = screenSize.ToVector2Int() * 0.5f;
 
-	_camera = make_unique<Camera>(Rect(screenCenter, screenSize));
+	_camera = make_unique<Camera>(Rect{ screenCenter, screenSize });
 	_moveStartTrack = make_unique<Track<int>>();
 	_moveStartTrack->AddKey(0, 0);
 	_moveStartTrack->AddKey(10, 0);
@@ -118,7 +119,7 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller), _
 	int space = 700;
 	for (const auto& mapData : DataBase::Instance().GetMapDataTable())
 	{
-		_contentPosVec.emplace_back(screenCenter + Vector2Int(space * idx, 0));
+		_contentPosVec.emplace_back(screenCenter + Vector2Int{ space * idx, 0 });
 		idx++;
 	}
 	assert(_contentPosVec.size() > 0);
@@ -130,10 +131,10 @@ MapSelectScene::MapSelectScene(SceneController& controller):Scene(controller), _
 		(*_mapSelectCharactors.rbegin())->SetPos(_contentPosVec.at(_selectIdx).ToVector2());
 		(*_mapSelectCharactors.rbegin())->SetTargetPos(_contentPosVec.at(_selectIdx));
 	}
-	_camera->SetPos(Vector3(_contentPosVec.at(_selectIdx).ToVector2()));
+	_camera->SetPos(Vector2{ _contentPosVec.at(_selectIdx).ToVector2() });
 
 	_camera->AddTargetActor(&**_mapSelectCharactors.begin());
-	_camera->SetOffset(Vector2(0, -100));
+	_camera->SetOffset(Vector2{ 0, -100 });
 
 	_dir = 1;
 	_charactorIdx = 0;
@@ -207,7 +208,7 @@ void MapSelectScene::MapSelectCharactorUpdate()
 	{
 		int charactorSpace = 50;
 		_mapSelectCharactors[_charactorIdx]->SetTargetPos(
-			_contentPosVec[_selectIdx] + Vector2Int(charactorSpace * _charactorIdx, 0) * static_cast<float>(_dir));
+			_contentPosVec[_selectIdx] + Vector2Int{ charactorSpace * Int32(_charactorIdx), 0 } *static_cast<float>(_dir));
 		_charactorIdx++;
 		_moveStartTrack->Reset();
 	}
@@ -222,7 +223,7 @@ void MapSelectScene::CursorMove(const Input& input)
 	auto wsize = Application::Instance().GetWindowSize();
 	float range = 0.1f;
 
-	bool mouseMove = input.GetMouseMove() != Vector2Int(0,0);
+	bool mouseMove = input.GetMouseMove() != Vector2Int{ 0,0 };
 	if (input.GetButton("right") || (mousePos.x >= wsize.w*(1.0f - range) && mouseMove))
 	{
 		auto nextIdx = static_cast<size_t>(_selectIdx) + 1;
@@ -248,7 +249,6 @@ void MapSelectScene::Draw()
 
 	auto offset = _camera->GetCameraOffset();
 	auto wsize = Application::Instance().GetWindowSize();
-	//DrawBox(Vector2Int(0,0), wsize.ToVector2Int(), 0x364364);
 	DrawGraph(0,0,ImageHandle("Resource/Image/UI/mapSelectBG.jpg"), false);
 
 	auto& mapDataVec = DataBase::Instance().GetMapDataTable();
@@ -256,10 +256,10 @@ void MapSelectScene::Draw()
 	int fontH = FontHandle("choplin30edge");
 	int clearH = ImageHandle("Resource/Image/UI/clear.png");
 	auto& cameraRect = _camera->GetRect();
-	Vector2Int shadowOffset = Vector2Int(10, 10);
+	Vector2Int shadowOffset = Vector2Int{ 10, 10 };
 	for (size_t idx = 0; auto& map : mapDataVec)
 	{
-		auto contentRect = Rect(_contentPosVec[idx], _contentSize * (idx == _selectIdx ? _selectAnimTrack->GetValue() : 1.0f));
+		auto contentRect = Rect{ _contentPosVec[idx], _contentSize * (idx == _selectIdx ? _selectAnimTrack->GetValue() : 1.0f) };
 
 		if (!contentRect.IsHit(cameraRect))
 		{
@@ -274,13 +274,11 @@ void MapSelectScene::Draw()
 		float frameScale = 1.1f;
 		contentRect.Draw(offset + shadowOffset, 0);
 		contentRect.DrawGraph(map->GetMapGraphH(), offset);
-		//contentRect.Draw(offset, 0x000000, false);
 		SetDrawBright(255, 255, 255);
 
 		if (clearMapDataVec[idx] > 0)
 		{
 			contentRect.DrawGraph(clearH, offset);
-			//DrawStringToHandle(offset + contentRect.center, Anker::center, 0xffffff, fontH, map->GetName().c_str());
 		}
 		idx++;
 	}
@@ -290,7 +288,7 @@ void MapSelectScene::Draw()
 		(*rItr)->Draw();
 	}
 
-	auto uiRect = Rect(Vector2Int(wsize.w / 2, 150), Size(600, 100));
+	auto uiRect = Rect{ Vector2Int{ wsize.w / 2, 150 }, Size{ 600, 100 } };
 	uiRect.Draw(shadowOffset, 0, true);
 	uiRect.DrawGraph(_uiH);
 	DrawStringToHandle(uiRect.center, Anker::center, 0xffffff, 
@@ -299,7 +297,7 @@ void MapSelectScene::Draw()
 	if (clearMapDataVec[_selectIdx] > 0)
 	{
 		fontH = FontHandle("choplin20edge");
-		DrawStringToHandle(uiRect.Rightcenter() + Vector2Int(-100, 30), Anker::rightcenter, 0xffffff,
+		DrawStringToHandle(uiRect.Rightcenter() + Vector2Int{ -100, 30 }, Anker::rightcenter, 0xffffff,
 			fontH, "クリアターン数%02d", clearMapDataVec[_selectIdx]);
 	}
 

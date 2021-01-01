@@ -11,69 +11,83 @@ class SaveData;
 class AnkerCalculation;
 class FPSManager;
 
-// アプリケーション全体を
-// 制御するシングルトンクラス
+/// <summary>
+/// アプリケーション全体を
+/// 制御するシングルトンクラス
+/// </summary>
 class Application
 {
-public:
-	class Configure 
-	{
-	private:
-		Size _winSize;
-	public:
-		Configure();
-		const Size& GetWindowSize()const 
-		{
-			return _winSize;
-		}
-	};
-
-	~Application();
-
-	// シングルトン実体を返す
-	static Application& Instance()
-	{
-		static Application instance;
-		return instance;
-	}
-	// アプリケーションを初期化する
-	bool Initialize();
-
-	void KeySetUp();
-
-	// アプリケーションを実行する
-	// 実質、中身にゲームループが入る
-	void Run();
-
-	// 終了処理
-	void Terminate();
-
-
-	// Configureを参照で返す
-	Configure& GetConfigure (void);
-
-	// 画面サイズを参照で返す
-	const Size& GetWindowSize(void);
-
-	SaveData& GetSaveData();
-
-	const AnkerCalculation& GetAnkerCalculation()const;
-	SceneController& GetSceneController()const;
-
 private:
 	Application();
 	Application(const Application&) = delete;
 	Application& operator=(const Application&) = delete;
 
+	// 入力情報管理クラス
 	std::unique_ptr<Input> _input;
+	// シーン管理クラス
 	std::unique_ptr<SceneController> _sceneController;
 
-	std::vector<Vector2Int> _poss;
-
-	std::unique_ptr<Configure> _configure;
+	// セーブデータ管理クラス
 	std::unique_ptr<SaveData> _saveData;
 
+	// アンカーを使用した描画座標計算クラス
 	std::unique_ptr<AnkerCalculation> _ankerCalculation;
+	// FPS管理クラス
 	std::unique_ptr<FPSManager> _fpsManager;
+	// ウィンドウサイズ
+	Size _winSize;
+
+	/// <summary>
+	/// 入力情報のセットアップ
+	/// </summary>
+	void KeySetUp();
+
+public:
+	~Application();
+
+	/// <summary>
+	/// シングルトン実体を返す
+	/// </summary>
+	static Application& Instance()
+	{
+		static Application instance;
+		return instance;
+	}
+	
+	/// <summary>
+	/// アプリケーションを初期化する
+	/// </summary>
+	bool Initialize();
+
+	/// <summary>
+	/// アプリケーションを実行する
+	/// 実質、中身にゲームループが入る
+	/// </summary>
+	void Run();
+
+	/// <summary>
+	/// 終了処理
+	/// </summary>
+	void Terminate();
+
+	/// <summary>
+	/// 画面サイズを参照で返す
+	/// </summary>
+	const Size& GetWindowSize(void);
+
+	/// <summary>
+	/// セーブデータの取得
+	/// </summary>
+	SaveData& GetSaveData();
+
+	/// <summary>
+	/// アンカーを使用した描画座標計算クラスを取得
+	/// </summary>
+	const AnkerCalculation& GetAnkerCalculation()const;
+
+	/// <summary>
+	/// シーン管理クラスの取得
+	/// </summary>
+	SceneController& GetSceneController()const;
 };
 

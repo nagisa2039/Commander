@@ -32,14 +32,9 @@ Application::~Application()
 {
 }
 
-Application::Configure & Application::GetConfigure(void)
-{
-	return *_configure;
-}
-
 const Size & Application::GetWindowSize(void)
 {
-	return _configure->GetWindowSize();
+	return _winSize;
 }
 
 SaveData& Application::GetSaveData()
@@ -60,8 +55,8 @@ SceneController& Application::GetSceneController() const
 
 bool Application::Initialize()
 {
+	_winSize = { default_window_size_wide, default_window_size_hight };
 	_fpsManager.reset(new FPSManager(FPS));
-	_configure = make_unique<Configure>();
 	_ankerCalculation = make_unique<AnkerCalculation>();
 	// Dxlibの初期化
 	ChangeWindowMode(TRUE);
@@ -84,8 +79,6 @@ bool Application::Initialize()
 	KeySetUp();
 
 	_sceneController = make_unique<SceneController>();
-	//_sceneController->ChangeScene(make_unique<PlayScene>(*_sceneController));
-	//_sceneController->ChangeScene(make_unique<MapEditScene>(*_sceneController));
 	_sceneController->ChangeScene(make_unique<TitleScene>(*_sceneController));
 
 	return true;
@@ -124,9 +117,9 @@ void Application::KeySetUp()
 	_input->AddCommand("right", pad, PAD_INPUT_RIGHT);
 	_input->AddCommand("left", pad, PAD_INPUT_LEFT);
 	_input->AddCommand("pause", pad, PAD_INPUT_START);
-	_input->AddCommand("ok", pad, PAD_INPUT_1);		// Aボタン
+	_input->AddCommand("ok", pad, PAD_INPUT_1);			// Aボタン
 	_input->AddCommand("back", pad, PAD_INPUT_2);		// Bボタン
-	_input->AddCommand("status", pad, PAD_INPUT_4);	// Yボタン
+	_input->AddCommand("status", pad, PAD_INPUT_4);		// Yボタン
 }
 
 void Application::Run()
@@ -147,9 +140,4 @@ void Application::Run()
 
 void Application::Terminate()
 {
-}
-
-Application::Configure::Configure()
-{
-	_winSize = { default_window_size_wide, default_window_size_hight };
 }

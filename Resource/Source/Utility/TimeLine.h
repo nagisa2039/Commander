@@ -6,21 +6,31 @@
 #include <string>
 #include "Geometry.h"
 
+/// <summary>
+/// アニメーション用トラック
+/// </summary>
+/// <typeparam name="T">遷移させる型</typeparam>
 template<typename T>
 class Track
 {
 private:
+	// 現在のフレーム数
 	uint32_t _frame;
 	using key = std::pair<uint32_t, T>;
+	// キーデータ配列
 	std::vector<key> _keys;
+	// ループ
 	bool _loop;
+	// 終了
 	bool _end;
+	// 反転
 	bool _reverse;
 
+	// 更新関数ポインタ
 	void (Track::* _updater)();
 
 public:
-
+	/// <param name="loop">ループ</param>
 	inline Track(const bool loop = false)
 	{
 		_frame = 0;
@@ -36,6 +46,9 @@ public:
 	{
 	}
 
+	/// <summary>
+	/// 最初の更新時に呼ばれる
+	/// </summary>
 	inline void InitUpdate()
 	{
 		auto fuc = [](const key& l, const key& r)
@@ -47,34 +60,54 @@ public:
 		_updater = &Track::NormalUpdate;
 	}
 
+	/// <summary>
+	/// 通常更新
+	/// </summary>
 	inline void NormalUpdate()
 	{
 		_frame++;
 		_end = _frame >= _keys.rbegin()->first;
 	}
 
+	/// <summary>
+	/// 更新
+	/// </summary>
 	inline void Update()
 	{
 		(this->*_updater)();
 	}
 
+	/// <summary>
+	/// リセット
+	/// </summary>
 	inline void Reset()
 	{
 		_frame = 0;
 		_end = false;
 	}
 
+	/// <summary>
+	/// キーの追加
+	/// </summary>
+	/// <param name="frame">フレーム数</param>
+	/// <param name="value">値</param>
 	inline void AddKey(const uint32_t frame, const T value)
 	{
 		_keys.emplace_back(std::make_pair(frame, value));
 
 	}
 
+	/// <summary>
+	/// キーデータの削除
+	/// </summary>
 	inline void ClearKey()
 	{
 		_keys.clear();
 	}
 
+	/// <summary>
+	/// 値の取得
+	/// </summary>
 	inline T GetValue()
 	{
 		if (_keys.size() <= 0)
@@ -117,31 +150,53 @@ public:
 		return static_cast<T>(currnet->second + (next->second - currnet->second) * parsent);
 	}
 
+	/// <summary>
+	/// 終了判定
+	/// </summary>
+	/// <returns></returns>
 	inline bool GetEnd()const
 	{
 		return _end;
 	}
 
+	/// <summary>
+	/// ループ
+	/// </summary>
+	/// <returns></returns>
 	inline bool GetLoop()const
 	{
 		return _loop;
 	}
 
+	/// <summary>
+	/// 反転設定
+	/// </summary>
+	/// <param name="value">反転</param>
 	inline void SetReverse(const bool value)
 	{
 		_reverse = value;
 	}
 
+	/// <summary>
+	/// 反転状態か
+	/// </summary>
 	inline bool GetReverse()const
 	{
 		return _reverse;
 	}
 
+	/// <summary>
+	/// フレーム数の取得
+	/// </summary>
+	/// <returns></returns>
 	inline uint32_t GetFrame()const
 	{
 		return _frame;
 	}
 
+	/// <summary>
+	/// 終了させる
+	/// </summary>
 	inline void End()
 	{
 		_frame = _keys.rbegin()->first;
@@ -154,32 +209,3 @@ using Track_i		= Track<int>;
 using Track_vec2	= Track<Vector2>;
 using Track_vec2Int = Track<Vector2Int>;
 using Track_vec3	= Track<Vector3>;
-
-class TimeLine
-{
-private:
-	std::map < std::string, std::unique_ptr<Track_f>>	_floatTrackMap;
-	std::map < std::string, std::unique_ptr<Track_vec2>> _vector2TrackMap;
-	std::map < std::string, std::unique_ptr<Track_vec3>> _vector3TrackMap;
-
-	bool _loop;
-	bool _end;
-
-public:
-	TimeLine();
-	~TimeLine();
-
-	void AddFloatTrack(const std::string& key, const uint32_t frame, const float value);
-	void AddVector2Track(const std::string& key, const uint32_t frame, const Vector2 value);
-	void AddVector3Track(const std::string& key, const uint32_t frame, const Vector3 value);
-
-	void Update();
-	void Clear();
-
-	void Reset();
-	bool GetEnd()const;
-	
-	float GetFloatVelue(const std::string& key)const;
-	Vector2 GetVector2Velue(const std::string& key)const;
-	Vector3 GetVector3Velue(const std::string& key)const;
-};

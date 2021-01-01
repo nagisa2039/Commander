@@ -90,18 +90,18 @@ void Charactor::NormalDraw()
 
 	// ƒAƒCƒRƒ“‚Ì•`‰æ
 	float sizeRate = 0.3f;
-	auto iconRect= Rect(_camera.GetCameraOffset() + _pos.ToVector2Int() + chipSize * Vector2(sizeRate / 2.0f, sizeRate / 2.0f), 
-		(chipSize * sizeRate).ToSize());
+	auto iconRect = Rect{ _camera.GetCameraOffset() + _pos.ToVector2Int() + chipSize * Vector2{ sizeRate / 2.0f, sizeRate / 2.0f },
+		(chipSize * sizeRate).ToSize() };
 	DataBase::Instance().GetWeaponData(_startStatus.weaponId).GetTypeData().DrawWeaponIcon(iconRect);
 
 	// HPBer‚Ì•`‰æ
-	Size hpberSize = (chipSize * Vector2(0.8f, 0.1f)).ToSize();
-	Vector2Int hpLeftup		= drawPos + chipSize * Vector2(0.1f, 0.8f);
+	Size hpberSize = (chipSize * Vector2{ 0.8f, 0.1f }).ToSize();
+	Vector2Int hpLeftup = drawPos + chipSize * Vector2{ 0.1f, 0.8f };
 	Vector2Int hpRightdown	= hpLeftup + hpberSize;
 	DrawBox(hpLeftup + Vector2Int::One() * -2, hpRightdown + Vector2Int::One() * +2, 0xffffff);
 	DrawBox(hpLeftup + Vector2Int::One() * -1, hpRightdown + Vector2Int::One() * +1, 0xaaaaaa);
 	float berLength = max(min(static_cast<float>(_status.health) / static_cast<float>(_startStatus.health), 1.0f), 0.0f);
-	DrawBox(hpLeftup, hpLeftup + hpberSize.ToVector2Int() * Vector2(berLength, 1.0f), GetTeamColor());
+	DrawBox(hpLeftup, hpLeftup + hpberSize.ToVector2Int() * Vector2 { berLength, 1.0f }, GetTeamColor());
 }
 
 void Charactor::DyingDraw()
@@ -149,7 +149,7 @@ void Charactor::Move()
 	}
 
 	_pos += (_dirTable[static_cast<size_t>(it->dir)].moveVec * static_cast<float>(_moveSpeed)).ToVector2();
-	if (_pos.ToVector2Int() % _mapCtrl.GetChipSize().ToVector2Int() == Vector2Int(0, 0))
+	if (_pos.ToVector2Int() % _mapCtrl.GetChipSize().ToVector2Int() == Vector2Int{ 0, 0 })
 	{
 		_routeManager->GetMoveDirList().pop_front();
 		if (moveDirList.size() <= 0)
@@ -465,7 +465,7 @@ void Charactor::Draw()
 
 void Charactor::InitAnim()
 {
-	const Size divSize = Size(32, 32);
+	const Size divSize = Size{ 32, 32 };
 
 	int cnt = 0;
 	auto nextRectCenterOffset = [&](std::vector<Rect>& animRectVec, int cnt)
@@ -477,8 +477,8 @@ void Charactor::InitAnim()
 	};
 
 	std::vector<Rect> animRectVec;
-	animRectVec.emplace_back(Rect(Vector2Int(16, 16), divSize));
-	animRectVec.emplace_back(Rect(Vector2Int(16 + divSize.w * 2, 16), divSize));
+	animRectVec.emplace_back(Rect{Vector2Int{ 16, 16 }, divSize});
+	animRectVec.emplace_back(Rect{Vector2Int{ 16 + divSize.w * 2, 16 }, divSize });
 
 	_animator->AddAnim("DownWalk", animRectVec, 30, true);
 	nextRectCenterOffset(animRectVec, ++cnt);
@@ -490,10 +490,10 @@ void Charactor::InitAnim()
 
 	_animator->ChangeAnim("DownWalk");
 
-	_dirTable[static_cast<size_t>(Dir::left)]	= { Vector2Int(-1, 0),	"LeftWalk",		static_cast<float>(270.0f * DX_PI / 180.0f) };
-	_dirTable[static_cast<size_t>(Dir::right)]	= { Vector2Int(1, 0),	"RightWalk",	static_cast<float>(90.0f  * DX_PI / 180.0f) };
-	_dirTable[static_cast<size_t>(Dir::up)]		= { Vector2Int(0, -1),	"UpWalk",		static_cast<float>(0.0f	  * DX_PI / 180.0f) };
-	_dirTable[static_cast<size_t>(Dir::down)]	= { Vector2Int(0, 1),	"DownWalk",		static_cast<float>(180.0f * DX_PI / 180.0f) };
+	_dirTable[static_cast<size_t>(Dir::left)]	= { Vector2Int{-1, 0},	"LeftWalk",		static_cast<float>(270.0f * DX_PI / 180.0f) };
+	_dirTable[static_cast<size_t>(Dir::right)]	= { Vector2Int{1, 0},	"RightWalk",	static_cast<float>(90.0f  * DX_PI / 180.0f) };
+	_dirTable[static_cast<size_t>(Dir::up)]		= { Vector2Int{0, -1},	"UpWalk",		static_cast<float>(0.0f	  * DX_PI / 180.0f) };
+	_dirTable[static_cast<size_t>(Dir::down)]	= { Vector2Int{0, 1},	"DownWalk",		static_cast<float>(180.0f * DX_PI / 180.0f) };
 
 	_dir = Dir::down;
 }

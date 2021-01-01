@@ -36,10 +36,10 @@ bool Astar::CheckSearchPosVec2Range(const Vector2Int& checkPos) const
 
 Astar::Astar()
 {
-	_dirTable[static_cast<size_t>(Dir::left)]	= Vector2Int(-1,  0);
-	_dirTable[static_cast<size_t>(Dir::right)]	= Vector2Int( 1,  0);
-	_dirTable[static_cast<size_t>(Dir::up)]		= Vector2Int( 0, -1);
-	_dirTable[static_cast<size_t>(Dir::down)]	= Vector2Int( 0,  1);
+	_dirTable[static_cast<size_t>(Dir::left)]	= Vector2Int{ -1,  0 };
+	_dirTable[static_cast<size_t>(Dir::right)]	= Vector2Int{ 1,  0 };
+	_dirTable[static_cast<size_t>(Dir::up)]		= Vector2Int{ 0, -1 };
+	_dirTable[static_cast<size_t>(Dir::down)]	= Vector2Int{ 0,  1 };
 }
 
 Astar::~Astar()

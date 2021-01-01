@@ -32,7 +32,7 @@ CutIn::CutIn(const CharactorType type, const Team team, const Dir dir, std::func
 
 	_end = false;
 	_animCnt = 0;
-	_backImageSize = Size(640, 240);
+	_backImageSize = Size{ 640, 240 };
 
 	_graphH = DataBase::Instance().GetCharactorImageHandle(type, team);
 	SoundL.PlaySE("Resource/Sound/SE/catin.mp3");
@@ -61,23 +61,23 @@ void CutIn::Update()
 void CutIn::Draw()
 {
 	auto& wsize = Application::Instance().GetWindowSize();
-	Size charSize(200, 200);
+	Size charSize{ 200, 200 };
 	auto center = wsize.ToVector2Int() * 0.5f;
 	float animValue = _animTrack->GetValue();
-	Rect catinRect(center, Size(wsize.w, static_cast<int>(Lerp(0.0f, static_cast<float>(charSize.h), animValue))+ BAND_SIZE_H * 2));
+	Rect catinRect{ center, Size{wsize.w, static_cast<int>(Lerp(0.0f, static_cast<float>(charSize.h), animValue)) + BAND_SIZE_H * 2} };
 	catinRect.Draw(0x000000);
 	catinRect.size.h -= BAND_SIZE_H * 2;
-	catinRect.DrawRectGraph(Vector2Int(0,(_animCnt% BACK_ANIM_CNT) * _backImageSize.h), _backImageSize, _bgH);
+	catinRect.DrawRectGraph(Vector2Int{ 0,(_animCnt % BACK_ANIM_CNT) * _backImageSize.h }, _backImageSize, _bgH);
 	auto moveValue = _moveTrack->GetValue();
-	Rect charRect(Vector2Int(Lerp(_dir == Dir::left ? -charSize.w : wsize.w + charSize.w, center.x, moveValue), center.y), 
-		Size(charSize.w, Lerp(0, charSize.h, animValue)));
+	Rect charRect{ Vector2Int{ Lerp(_dir == Dir::left ? -charSize.w : wsize.w + charSize.w, center.x, moveValue), center.y },
+		Size{charSize.w, Lerp(0, charSize.h, animValue)} };
 	int srcY = (_dir == Dir::left ? SRC_RECT_SIZE*2 : SRC_RECT_SIZE);
 	int h = Lerp(0, SRC_CUT_HEIGHT, animValue);
 
 	SetDrawMode(DX_DRAWMODE_NEAREST);
 	charRect.DrawRectGraph(
-		Vector2Int(SRC_RECT_SIZE + SRC_RECT_SIZE/2 - (SRC_CUT_HEIGHT/2), srcY + SRC_CUT_HEIGHT /2 - h/2), 
-		Size(SRC_CUT_HEIGHT, h), _graphH);
+		Vector2Int{ SRC_RECT_SIZE + SRC_RECT_SIZE / 2 - (SRC_CUT_HEIGHT / 2), srcY + SRC_CUT_HEIGHT / 2 - h / 2 },
+		Size{SRC_CUT_HEIGHT, h}, _graphH);
 	SetDrawMode(DX_DRAWMODE_BILINEAR);
 }
 

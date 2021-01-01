@@ -5,11 +5,12 @@ struct Vector2;
 struct Vector3;
 struct Size;
 
+/// <summary>
+/// 整数2次元ベクトル
+/// </summary>
 struct Vector2Int
 {
 	int x, y;
-	Vector2Int() :x(0), y(0) {}
-	Vector2Int(int x, int y) :x(x), y(y) {}
 	void operator*=(const float scale);
 
 	void operator=(const Vector2& pos);
@@ -41,17 +42,20 @@ Vector2Int operator+(const Vector2Int& lval, const Size& rval);
 Vector2Int operator*(const Vector2Int& lval, const Size& rval);
 Vector2Int operator*(const Vector2Int& lval, const Vector2& rval);
 
-Vector2Int Lerp(const Vector2Int& start, const Vector2Int& end, const float parsent);
+/// <summary>
+/// 入力した値を一定範囲に収める
+/// </summary>
+/// <param name="in">元の値</param>
+/// <param name="min">下限</param>
+/// <param name="max">上限</param>
 Vector2Int Clamp(const Vector2Int& in, const Vector2Int& min, const Vector2Int& max);
 
+/// <summary>
+/// 2次元ベクトル
+/// </summary>
 struct Vector2
 {
 	float x, y;
-	Vector2():x(0),y(0) {}
-	Vector2(const float x, const float y) :x(x), y(y) {}
-	Vector2(const DirectX::XMFLOAT2& xy): x(xy.x), y(xy.y){}
-	Vector2(const Vector3& vec3);
-
 	Vector2 operator-(void);
 
 	void operator+=(const Vector2& pos);
@@ -71,7 +75,19 @@ struct Vector2
 	DirectX::XMFLOAT2 ToXMFLOAT2()const;
 };
 
+/// <summary>
+/// 内積
+/// </summary>
+/// <param name="lval">ベクトルA</param>
+/// <param name="rval">ベクトルB</param>
 float Dot(const Vector2 &lval, const Vector2& rval);
+
+/// <summary>
+/// 外積
+/// </summary>
+/// <param name="lval">ベクトルA</param>
+/// <param name="rval">ベクトルB</param>
+/// <returns></returns>
 float Cross(const Vector2 &lval, const Vector2& rval);
 
 Vector2 operator+(const Vector2 &lval, const Vector2& rval);
@@ -84,88 +100,25 @@ Vector2 operator-(const Vector2 &lval, const float& rval);
 Vector2 operator*(const Vector2 &lval, const float& rval);
 Vector2 operator/(const Vector2 &lval, const float& rval);
 
-Vector2 Lerp(const Vector2& start, const Vector2& end, const float parsent);
-
-struct Vector3
-{
-	float x, y, z;
-	Vector3():x(0),y(0),z(0) {}
-	Vector3(const float x, const float y, const float z) :x(x), y(y), z(z) {}
-	Vector3(const DirectX::XMFLOAT3& xyz):x(xyz.x), y(xyz.y), z(xyz.z) {}
-	Vector3(const DirectX::XMFLOAT4& xyzw) :x(xyzw.x), y(xyzw.y), z(xyzw.z) {}
-	Vector3(const Vector2& vec2): x(vec2.x), y(vec2.y), z(0) {}
-
-	Vector3 operator-(void)const;
-
-	void operator+=(const Vector3& val);
-	void operator-=(const Vector3& val);
-	void operator*=(const Vector3& val);
-	void operator/=(const Vector3& val);
-
-	void operator+=(float scale);
-	void operator-=(float scale);
-	void operator*=(float scale);
-	void operator/=(float scale);
-
-	float Length()const;
-	Vector3 Normalize();
-	Vector3 Normalized()const;
-
-	DirectX::XMVECTOR ToXMVECTOR()const;
-	DirectX::XMFLOAT3 ToXMFLOAT3()const;
-};
-
-float Dot(const Vector3 &lval, const Vector3& rval);
-Vector3 Cross(const Vector3 &lval, const Vector3& rval);
-
-// 反射ベクトルを作る
-Vector3 ReflectionVector(const Vector3& baseVector, const Vector3& norm);
-
-// 屈折ベクトルを作る
-Vector3 RefractionVector(const Vector3& baseVector, const Vector3& norm, float parsent);
-
-// 線形補完
-Vector3 Lerp(const Vector3& start, const Vector3& end, const float parsent);
-
-Vector3 operator+(const Vector3 &lval, const Vector3& rval);
-Vector3 operator-(const Vector3 &lval, const Vector3& rval);
-Vector3 operator*(const Vector3 &lval, const Vector3& rval);
-Vector3 operator/(const Vector3 &lval, const Vector3& rval);
-
-Vector3 operator+(const Vector3 &lval, const float& rval);
-Vector3 operator-(const Vector3 &lval, const float& rval);
-Vector3 operator*(const Vector3 &lval, const float& rval);
-Vector3 operator/(const Vector3 &lval, const float& rval);
-
-Vector3 operator+(const Vector3& lval, const Vector2& rval);
-
-Vector3 RotateVector(const Vector3& baseVector, const Vector3& rotate);
-
-Vector3 XMVECTORtoVec3(DirectX::XMVECTOR& vec);
-
+/// <summary>
+/// 線型補完
+/// </summary>
+/// <typeparam name="T">補完する型</typeparam>
+/// <param name="lval">始点</param>
+/// <param name="rval">終点</param>
+/// <param name="parsent">割合</param>
 template <typename T>
 inline T Lerp(const T lval, const T rval, const float parsent)
 {
 	return static_cast<T>(lval + (rval - lval) * parsent);
 }
 
-DirectX::XMFLOAT2 Lerp(const DirectX::XMFLOAT2 lval, const DirectX::XMFLOAT2 rval, const float parsent);
-
-// 三角形の面積の算出
-float TriangleArea(const Vector3& p0, const Vector3& p1, const Vector3& p2);
-
-struct Vector4
-{
-	float x, y, z, w;
-	Vector4() :x(0), y(0), z(0), w(0) {};
-	Vector4(const float x, const float y, const float z, const float w) :x(x), y(y), z(z), w(w){}
-};
-
+/// <summary>
+/// サイズ
+/// </summary>
 struct Size
 {
 	int w, h;
-	Size() :w(0), h(0) {}
-	Size(const int w, const int h) :w(w), h(h) {}
 	Vector2Int ToVector2Int()const;
 	Vector2 ToVector2()const;
 	Size operator-(const Size& size); 
@@ -183,13 +136,15 @@ Size operator*(const Size& lval, const float& rval);
 
 bool operator==(const Size & lval, const Size& rval);
 
+/// <summary>
+/// 矩形
+/// </summary>
 struct Rect 
 {
+	// 
 	Vector2Int center;
+	// 
 	Size size;
-	Rect();
-	Rect(const int x, const int y, const int w, const int h);
-	Rect(const Vector2Int& pos, const Size& sz);
 
 	const int Left()const;
 	const int Top() const;
@@ -208,54 +163,88 @@ struct Rect
 	Vector2Int Rightcenter();
 	Vector2Int Rightdown();
 
+	/// <summary>
+	/// 描画
+	/// </summary>
+	/// <param name="color">色</param>
+	/// <param name="fill">塗りつぶすか</param>
 	void Draw(const unsigned int color = 0xffffff, const bool fill = true)const;
-	void Draw(const Vector2Int& offset, const int color = 0xffffff, const bool fill = true)const;
-	void DrawGraph(const int graphH, const Vector2Int& offset = Vector2Int(0,0))const;
-	void DrawRectGraph(const Vector2Int& leftup, const Size& rectSize, const int graphH, const Vector2Int& offset = Vector2Int(0, 0))const;
-	void DrawExtendGraph(const Vector2Int& leftup, const Vector2Int& rightdown, const int graphH, const Vector2Int& offset = Vector2Int(0, 0))const;
 
+	/// <summary>
+	/// 描画
+	/// </summary>
+	/// <param name="offset">描画オフセット</param>
+	/// <param name="color">色</param>
+	/// <param name="fill">塗りつぶすか</param>
+	void Draw(const Vector2Int& offset, const int color = 0xffffff, const bool fill = true)const;
+
+	/// <summary>
+	/// 画像描画
+	/// </summary>
+	/// <param name="graphH">画像ハンドル</param>
+	/// <param name="offset">描画オフセット</param>
+	void DrawGraph(const int graphH, const Vector2Int& offset = Vector2Int{0,0})const;
+
+	/// <summary>
+	/// 矩形描画
+	/// </summary>
+	/// <param name="leftup">切り抜き矩形左上</param>
+	/// <param name="rectSize">切り抜き矩形サイズ</param>
+	/// <param name="graphH">画像ハンドル</param>
+	/// <param name="offset">描画オフセット</param>
+	void DrawRectGraph(const Vector2Int& leftup, const Size& rectSize, const int graphH, const Vector2Int& offset = Vector2Int{ 0,0 })const;
+
+	/// <summary>
+	/// 自身を切り抜き矩形として使い指定した範囲に描画
+	/// </summary>
+	/// <param name="leftup">描画左上座標</param>
+	/// <param name="rightdown">描画右上座標</param>
+	/// <param name="graphH">画像ハンドル</param>
+	/// <param name="offset">描画オフセット</param>
+	void DrawExtendGraph(const Vector2Int& leftup, const Vector2Int& rightdown, const int graphH, const Vector2Int& offset = Vector2Int{ 0,0 })const;
+
+	/// <summary>
+	/// 矩形同士の当たり判定
+	/// </summary>
+	/// <param name="rect">相手の矩形</param>
 	bool IsHit(const Rect& rect);
+
+	/// <summary>
+	/// 矩形同士の当たり判定
+	/// </summary>
+	/// <param name="aRect">矩形A</param>
+	/// <param name="bRect">矩形B</param>
 	static const bool IsHit(const Rect& aRect, const Rect& bRect);
+
+	/// <summary>
+	/// 矩形同士の重なっている量
+	/// </summary>
+	/// <param name="aRect">矩形A</param>
+	/// <param name="bRect">矩形B</param>
 	static const Size OverlapSize(const Rect& aRect, const Rect& bRect);
 };
 
-struct Circle
-{
-	Vector2 centor;
-	float radius;
-	Circle();
-	Circle(const float x, const float y, const float r);
-	Circle(const Vector2& centor, const float r);
-
-	void Draw(int color = 0xffffff);
-};
-
-struct Segment 
-{
-	Vector2 posA;
-	Vector2 posB;
-	Segment();
-	Segment(const Vector2& posA, const Vector2& posB);
-	Segment(const float ax, const float ay, const float bx, const float by);
-	void Draw(unsigned int color = 0xffffff);
-	float Grad(void)const;
-};
-
-
-// 値を最大値と最小値を考慮した値に加工する
-float Clamp(const float in, const float min = 0.0f, const float max = 1.0f);
-
-Vector3 Clamp(const Vector3& in, const float min = 0.0f, const float max = 1.0f);
-
+/// <summary>
+/// 範囲
+/// </summary>
 struct Range
 {
+	// 最小値
 	int min;
+	// 最大値
 	int max;
 
-	Range();
-	Range(const int min, const int max);
-
+	/// <summary>
+	/// 指定した値が範囲内か
+	/// </summary>
+	/// <param name="value">値</param>
 	bool Hit(const int value)const;
+
+	/// <summary>
+	/// ターゲットに対して範囲外Rangeを取得
+	/// 攻撃するときに一方的に殴れる範囲
+	/// </summary>
+	/// <param name="target">ターゲットの攻撃範囲</param>
 	Range GetCriticalRange(const Range& target)const;
 };
 bool operator==(const Range& lv, const Range& rv);

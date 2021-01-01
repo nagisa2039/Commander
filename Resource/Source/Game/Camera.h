@@ -78,7 +78,7 @@ public:
 	/// À•W‚Ìİ’è
 	/// </summary>
 	/// <param name="pos">À•W</param>
-	void SetPos(const Vector3& pos);
+	void SetPos(const Vector2& pos);
 
 	/// <summary>
 	/// ˆÚ“®§ŒÀ‚Ìİ’è

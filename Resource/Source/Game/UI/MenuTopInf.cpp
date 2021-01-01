@@ -23,8 +23,8 @@ MenuTopInf::MenuTopInf(const MapCtrl& mapCtrl, const unsigned char& turnCnt, std
 	GetGraphSize(turnCntFrameH, turnCntSize);
 
 	_moveAnimTrack = make_unique<Track<Vector2Int>>();
-	_moveAnimTrack->AddKey(0, Vector2Int(-nameFrameSize.w - turnCntSize.w, static_cast<int>(nameFrameSize.h * 0.5f) + spaceY));
-	_moveAnimTrack->AddKey(30, Vector2Int(static_cast<int>(nameFrameSize.w * 0.5f), static_cast<int>(nameFrameSize.h * 0.5f) + spaceY));
+	_moveAnimTrack->AddKey(0, Vector2Int{ -nameFrameSize.w - turnCntSize.w, static_cast<int>(nameFrameSize.h * 0.5f) + spaceY });
+	_moveAnimTrack->AddKey(30, Vector2Int{ static_cast<int>(nameFrameSize.w * 0.5f), static_cast<int>(nameFrameSize.h * 0.5f) + spaceY });
 	_moveAnimTrack->SetReverse(true);
 	_moveAnimTrack->End();
 }
@@ -51,8 +51,8 @@ void MenuTopInf::Draw()
 	Size turnCntSize;
 	GetGraphSize(turnCntFrameH, turnCntSize);
 
-	Rect nameFrameRect(_moveAnimTrack->GetValue(), nameFrameSize);
-	Rect turnCntFrameRect(Vector2Int(nameFrameRect.Right() + static_cast<int>(turnCntSize.w * 0.5f), nameFrameRect.center.y), turnCntSize);
+	Rect nameFrameRect{ _moveAnimTrack->GetValue(), nameFrameSize };
+	Rect turnCntFrameRect{ Vector2Int{nameFrameRect.Right() + static_cast<int>(turnCntSize.w * 0.5f), nameFrameRect.center.y}, turnCntSize };
 
 	nameFrameRect.DrawGraph(nameFrameH);
 	turnCntFrameRect.DrawGraph(turnCntFrameH);
@@ -62,8 +62,8 @@ void MenuTopInf::Draw()
 		DataBase::Instance().GetMapData(_mapCtrl.GetMap()->GetMapID())->GetName().c_str());
 
 	// åoâﬂÉ^Å[ÉìêîÇÃï`âÊ
-	DrawStringToHandle(turnCntFrameRect.center - Vector2Int(0, 15), Anker::center, 0xffffff, choplin20, "TURN");
-	DrawStringToHandle(turnCntFrameRect.center + Vector2Int(0, 15), Anker::center, 0xffffff, choplin20, "%d", _turnCnt);
+	DrawStringToHandle(turnCntFrameRect.center - Vector2Int{ 0, 15 }, Anker::center, 0xffffff, choplin20, "TURN");
+	DrawStringToHandle(turnCntFrameRect.center + Vector2Int{ 0, 15 }, Anker::center, 0xffffff, choplin20, "%d", _turnCnt);
 }
 
 void MenuTopInf::Open()

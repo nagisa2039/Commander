@@ -10,8 +10,8 @@ MagicEffect::MagicEffect(BattleCharactor& self, BattleCharactor& target, std::ve
 	_pos = _target.GetCenterPos().ToVector2();
 	_animator->SetImage("Resource/Image/Effect/magicEffect.png");
 	auto graphSize = _animator->GetImageSize();
-	_size = Size(graphSize.h, graphSize.h);
-	_animator->AddAnimDiv("normal", Rect(_size.ToVector2Int() * 0.5, _size), graphSize.w / graphSize.h, 4, false, false);
+	_size = Size{ graphSize.h, graphSize.h };
+	_animator->AddAnimDiv("normal", Rect{ _size.ToVector2Int() * 0.5, _size }, graphSize.w / graphSize.h, 4, false, false);
 	_animator->ChangeAnim("normal");
 
 	_self.SetGivenDamage(AddDamage());

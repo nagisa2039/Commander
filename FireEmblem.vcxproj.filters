@@ -87,9 +87,6 @@
     <ClCompile Include="Resource\Source\System\ImageLoader.cpp">
       <Filter>ソース ファイル\System</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\System\Loader.cpp">
-      <Filter>ソース ファイル\System</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Source\Scene\PlayScene.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
@@ -231,9 +228,6 @@
     <ClCompile Include="Resource\Source\Utility\Input.cpp">
       <Filter>ソース ファイル\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Source\Utility\TimeLine.cpp">
-      <Filter>ソース ファイル\Utility</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Source\Utility\AnkerCalculation.cpp">
       <Filter>ソース ファイル\Utility</Filter>
     </ClCompile>
@@ -301,9 +295,6 @@
     </ClInclude>
     <ClInclude Include="Resource\Source\Scene\SceneController.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Source\System\Loader.h">
-      <Filter>ヘッダー ファイル\System</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Source\System\ImageLoader.h">
       <Filter>ヘッダー ファイル\System</Filter>

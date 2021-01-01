@@ -35,10 +35,10 @@ void MapCursor::KeybordMove(const Input& input)
 	};
 
 	bool move = false;
-	move |= Move("up", Vector2Int(0, -1));
-	move |= Move("down", Vector2Int(0, 1));
-	move |= Move("left", Vector2Int(-1, 0));
-	move |= Move("right", Vector2Int(1, 0));
+	move |= Move("up", Vector2Int{ 0, -1 });
+	move |= Move("down", Vector2Int{ 0, 1 });
+	move |= Move("left", Vector2Int{ -1, 0 });
+	move |= Move("right", Vector2Int{ 1, 0 });
 
 	if (move)
 	{
@@ -132,8 +132,8 @@ bool MapCursor::PutCheck(const Input& input, const std::string& key)
 
 MapCursor::MapCursor(MapCtrl& mapCtrl, Camera& camera):_mapCtrl(mapCtrl), _moveItvMax(30), _putItvMax(30), Actor(camera)
 {
-	_pos = Vector2();
-	_mapPos = Vector2Int();
+	_pos = Vector2{};
+	_mapPos = Vector2Int{};
 
 	_moveItv = 0;
 	_moveItvCurrentMax = _moveItvMax;

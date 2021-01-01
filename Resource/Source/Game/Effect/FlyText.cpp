@@ -16,7 +16,7 @@ namespace
 
 FlyText::FlyText(const string& str, const Vector2Int& pos, const int lifeCnt, 
 	Camera& camera, const bool cameraActive, const bool critical)
-	:TextEffect(_str, pos, camera, cameraActive), _anker(Anker::centerdown), _move(0, -50), _critical(critical)
+	:TextEffect(_str, pos, camera, cameraActive), _anker(Anker::centerdown), _move{ 0, -50 }, _critical(critical)
 {
 	_moveTrack = make_unique<Track<float>>();
 	_moveTrack->AddKey(0, 0.0f);
@@ -99,7 +99,7 @@ PopupText::PopupText(const std::string& str, const Vector2Int& pos, Camera& came
 		GetDrawStringSizeToHandle(&out.w, &out.h, &line, &num, 1, fontH);
 	};
 
-	Vector2Int currentCenterDown = Vector2Int(pos.x - strSize.w/2, pos.y - strSize.h/2);
+	Vector2Int currentCenterDown = Vector2Int{ pos.x - strSize.w / 2, pos.y - strSize.h / 2 };
 	for (int i = 0; i < str.size(); ++i)
 	{
 		Size charSize;
@@ -160,7 +160,7 @@ void PopupText::Draw()
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(255 * _alphaTrack->GetValue()));
 	for (const auto& charInf : _charInfs)
 	{
-		DrawStringToHandle(Vector2Int(charInf.startPos.x, static_cast<int>(charInf.currentY)), 
+		DrawStringToHandle(Vector2Int{ charInf.startPos.x, static_cast<int>(charInf.currentY) },
 			Anker::centerdown, _color, _fontHandle, "%c",charInf.c);
 	}
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);

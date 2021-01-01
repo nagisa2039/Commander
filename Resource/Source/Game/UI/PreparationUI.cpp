@@ -48,13 +48,13 @@ void PreparationUI::OpenUpdate(const Input& input)
 		_selectExRateTrack->Reset();
 	};
 
-	if(input.GetAnyMouseInput())
+	if (input.GetAnyMouseInput())
 	{
-		auto mouseRect = Rect(input.GetMousePos(), Size(1,1));
+		auto mouseRect = Rect{ input.GetMousePos(), Size{1,1 }};
 		auto click = input.GetButtonDown("ok");
 		for (int idx = 0; idx < _contentInfTable.size(); ++idx)
 		{
-			if (Rect(_contentInfTable[idx].pos, _contentSize).IsHit(mouseRect))
+			if (Rect{ _contentInfTable[idx].pos, _contentSize }.IsHit(mouseRect))
 			{
 				select(static_cast<Content>(idx));
 				if (click)
@@ -165,7 +165,7 @@ PreparationUI::PreparationUI(std::deque<std::shared_ptr<UI>>* uiDeque, Camera& c
 	const int spaceY = 120;
 	int currentScreen = GetDrawScreen();
 	auto& fileSystem = FileSystem::Instance();
-	Vector2Int currentDrawPos = screenCenter - Vector2Int(0, static_cast<int>((static_cast<int>(Content::max)-1) / 2.0f * spaceY));
+	Vector2Int currentDrawPos = screenCenter - Vector2Int{ 0, static_cast<int>((static_cast<int>(Content::max) - 1) / 2.0f * spaceY) };
 	int windowH = fileSystem.GetImageHandle("Resource/Image/UI/window0.png");
 	GetGraphSize(windowH, _contentSize);
 	int fontH = fileSystem.GetFontHandle("choplin40edge");
@@ -228,7 +228,7 @@ void PreparationUI::Draw()
 	{
 		auto exRate = idx == static_cast<int>(_selectContent) ? _selectExRateTrack->GetValue() : 0.9f;
 		DrawRotaGraph(
-			Lerp(Vector2Int(-_contentSize.w, _contentInfTable[idx].pos.y), _contentInfTable[idx].pos, _openAnimTrack->GetValue()), 
+			Lerp(Vector2Int{ -_contentSize.w, _contentInfTable[idx].pos.y }, _contentInfTable[idx].pos, _openAnimTrack->GetValue()),
 			exRate, 0.0f, _contentInfTable[idx].graphH, true);
 	}
 }

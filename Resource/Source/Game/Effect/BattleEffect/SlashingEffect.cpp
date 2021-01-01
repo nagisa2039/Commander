@@ -8,7 +8,7 @@ SlashingEffect::SlashingEffect(BattleCharactor& self, BattleCharactor& target, s
 	:BattleEffect(self, target, effects, critical, camera)
 {
 	_pos = _target.GetCenterPos().ToVector2();
-	Vector2Int animCnt(9, 1);
+	Vector2Int animCnt{ 9, 1 };
 	_animator->SetImage("Resource/Image/Effect/slashingEffect.png");
 	_animator->AddAnimDiv("normal", animCnt, 2, false);
 	_animator->ChangeAnim("normal");

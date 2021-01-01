@@ -21,9 +21,11 @@ namespace
 	constexpr unsigned int WAR_SITUATION_CHIP_SIZE = 20;
 }
 
-void MapCtrl::CreateCharactor(const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
+void MapCtrl::CreateCharactor(const CharactorChipInf& characotChipInf, const Status& initStatus, SceneController& ctrl, 
+	std::vector<std::shared_ptr<Effect>>& effects, Camera& camera)
 {
-	auto charactor = make_shared<Charactor>(characotChipInf.type, characotChipInf.level, characotChipInf.mapPos, characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
+	auto charactor = make_shared<Charactor>(characotChipInf.type, characotChipInf.level, characotChipInf.mapPos, 
+		characotChipInf.team, characotChipInf.groupNum, *this, ctrl, effects, camera);
 	charactor->SetMoveActive(characotChipInf.active);
 	charactor->InitStatus(initStatus);
 	_charactors.emplace_back(charactor);
@@ -161,7 +163,7 @@ void MapCtrl::CreateWarSituation()const
 	// キャラクターの描画
 	for (const auto& charactor : _charactors)
 	{
-		DrawCircle(charactor->GetMapPos() * WAR_SITUATION_CHIP_SIZE + Vector2Int(WAR_SITUATION_CHIP_SIZE/2, WAR_SITUATION_CHIP_SIZE / 2),
+		DrawCircle(charactor->GetMapPos() * WAR_SITUATION_CHIP_SIZE + Vector2Int{ WAR_SITUATION_CHIP_SIZE / 2, WAR_SITUATION_CHIP_SIZE / 2 },
 			static_cast<int>(WAR_SITUATION_CHIP_SIZE*0.3f), GetTeamColor(charactor->GetTeam()));
 	}
 
@@ -185,7 +187,7 @@ void MapCtrl::DrawWarSituatin(const Vector2Int center)const
 {
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
 
-	Vector2Int space(50, 50);
+	Vector2Int space{50,50};
 	Size graphSize;
 	GetGraphSize(_warSituationH, graphSize);
 
@@ -198,10 +200,10 @@ void MapCtrl::DrawWarSituatin(const Vector2Int center)const
 
 Vector2Int MapCtrl::GetCharactorCnt()const
 {
-	Vector2Int charactorCnt(0,0);
+	Vector2Int charactorCnt{};
 	for (const auto& charactor : _charactors)
 	{
-		charactorCnt += charactor->GetTeam() == Team::player ?Vector2Int(1,0) : Vector2Int(0,1);
+		charactorCnt += charactor->GetTeam() == Team::player ? Vector2Int{ 1,0 } : Vector2Int{ 0, 1 };
 	}
 	return charactorCnt;
 }

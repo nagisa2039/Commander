@@ -1,7 +1,7 @@
 #include <DxLib.h>
 #include "ImageLoader.h"
-
-
+#include <cassert>
+#include "Geometry.h"
 
 ImageLoader::ImageLoader()
 {
@@ -16,26 +16,24 @@ ImageLoader::~ImageLoader()
 	}
 }
 
-bool ImageLoader::Load(const char * path, Data & data)
+int ImageLoader::GetImageHandle(const char* path)
 {
-	ImageData& img = dynamic_cast<ImageData&>(data);
 	if (_table.contains(path))
 	{
-		img._handle = _table[path];
-		return true;
+		return _table[path];
 	}
 	else
 	{
-		img._handle = LoadGraph(path);
-		if (img._handle == -1)
+		int handle = LoadGraph(path);
+		if (handle == -1)
 		{
 			assert(false);
-			return false;
+			return handle;
 		}
 		else
 		{
-			_table.emplace(path, img._handle);
-			return true;
+			_table.emplace(path, handle);
+			return handle;
 		}
 	}
 }
@@ -63,8 +61,4 @@ int ImageLoader::MakeScreen(const char* name, const Size& screenSize, bool alpha
 		_table[name] = DxLib::MakeScreen(screenSize.w, screenSize.h, alpha);
 	}
 	return _table[name];
-}
-
-void ImageLoader::Unload(const char * path)
-{
 }

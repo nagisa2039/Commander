@@ -23,7 +23,7 @@ namespace
 
 BattlePreparationCursor::BattlePreparationCursor(MapCtrl& mapCtrl, Camera& camera):MapCursor(mapCtrl, camera)
 {
-	_selectMapPos = Vector2Int(NONE_SELECT, NONE_SELECT);
+	_selectMapPos = Vector2Int{ NONE_SELECT, NONE_SELECT };
 	_end = false;
 
 	_exRateTrack = std::make_unique<Track<float>>(true);
@@ -146,8 +146,8 @@ void BattlePreparationCursor::Draw()
 	Size graphSize;
 	GetGraphSize(handle, graphSize);
 
-	DrawRectRotaGraph(offset + _mapPos * chipSize + chipSize * 0.5, Vector2Int(0, 0), graphSize,
-		static_cast<double>(_exRateTrack->GetValue() * (chipSize.w / static_cast<float>(graphSize.w))), 
+	DrawRectRotaGraph(offset + _mapPos * chipSize + chipSize * 0.5, Vector2Int{ 0, 0 }, graphSize,
+		static_cast<double>(_exRateTrack->GetValue()) * (chipSize.w / static_cast<float>(graphSize.w)), 
 		0.0f, handle);
 
 	auto dequeDraw = [](std::shared_ptr<UI> ui)

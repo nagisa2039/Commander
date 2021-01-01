@@ -60,18 +60,18 @@ void BattlePrediction::Update(const Input& input)
 void BattlePrediction::Draw()
 {
 	auto wsize = Application::Instance().GetWindowSize();
-	Rect windowRect(wsize.ToVector2Int()*0.5f, Size(600, 600));
+	Rect windowRect{ wsize.ToVector2Int() * 0.5f, Size{600, 600} };
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
 	windowRect.Draw(0x000000);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
-	Size iconSize(200, 200);
+	Size iconSize{ 200, 200 };
 	int drawY = windowRect.Top() + iconSize.h/2 + 50;
 	auto& fileSystem = FileSystem::Instance();
 	int fontH = fileSystem.GetFontHandle("choplin20edge");
-	_selfCharactor.DrawCharactorIcon(	Rect(Vector2Int(windowRect.center.x - iconSize.w / 2, drawY), iconSize));
-	_targetCharactor.DrawCharactorIcon(	Rect(Vector2Int(windowRect.center.x + iconSize.w / 2, drawY), iconSize));
+	_selfCharactor.DrawCharactorIcon(Rect{ Vector2Int{windowRect.center.x - iconSize.w / 2, drawY}, iconSize });
+	_targetCharactor.DrawCharactorIcon(Rect{ Vector2Int{windowRect.center.x + iconSize.w / 2, drawY}, iconSize });
 	drawY += iconSize.h / 2 + 50;
 
 	auto selfBattleStatus	= _selfCharactor.GetBattleStatus();
@@ -88,34 +88,34 @@ void BattlePrediction::Draw()
 	DrawHPBer(drawY, windowRect, rightAttack, fontH);
 
 	int distance = 250;
-	auto DrawContent = [&](const char* name, const bool healDisplay, int leftValue, const int rightValue, 
+	auto DrawContent = [&](const char* name, const bool healDisplay, int leftValue, const int rightValue,
 		const unsigned int leftColor = 0xffffff, const unsigned int rightColor = 0xffffff)
 	{
 		if (selfBattleStatus.CheckHeal())
 		{
 			if (healDisplay)
 			{
-				DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, leftColor, fontH, "%d", leftValue);
+				DrawStringToHandle(Vector2Int{ windowRect.center.x - distance / 2, drawY }, Anker::center, leftColor, fontH, "%d", leftValue);
 			}
 			else
 			{
-				DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, leftColor, fontH, "-");
+				DrawStringToHandle(Vector2Int{ windowRect.center.x - distance / 2, drawY }, Anker::center, leftColor, fontH, "-");
 			}
-			DrawStringToHandle(Vector2Int(windowRect.center.x + distance / 2, drawY), Anker::center, 0xffffff, fontH, "-");
+			DrawStringToHandle(Vector2Int{ windowRect.center.x + distance / 2, drawY }, Anker::center, 0xffffff, fontH, "-");
 		}
 		else
 		{
-			DrawStringToHandle(Vector2Int(windowRect.center.x - distance / 2, drawY), Anker::center, leftColor, fontH, "%d", leftValue);
+			DrawStringToHandle(Vector2Int{ windowRect.center.x - distance / 2, drawY }, Anker::center, leftColor, fontH, "%d", leftValue);
 			if (rightAttack)
 			{
-				DrawStringToHandle(Vector2Int(windowRect.center.x + distance / 2, drawY), Anker::center, rightColor, fontH, "%d", rightValue);
+				DrawStringToHandle(Vector2Int{ windowRect.center.x + distance / 2, drawY }, Anker::center, rightColor, fontH, "%d", rightValue);
 			}
 			else
 			{
-				DrawStringToHandle(Vector2Int(windowRect.center.x + distance / 2, drawY), Anker::center, 0xffffff, fontH, "-");
+				DrawStringToHandle(Vector2Int{ windowRect.center.x + distance / 2, drawY }, Anker::center, 0xffffff, fontH, "-");
 			}
 		}
-		Rect nameRect(Vector2Int(windowRect.center.x, drawY), Size(100,30));
+		Rect nameRect{Vector2Int{ windowRect.center.x, drawY }, Size{ 100, 30 }};
 		DrawExtendGraph(nameRect.Left(), nameRect.Top(), nameRect.Right(), nameRect.Botton(), window1Handle, true);
 		DrawStringToHandle(nameRect.center, Anker::center, 0xffffff, fontH, name);
 	};
@@ -157,8 +157,8 @@ void BattlePrediction::Draw()
 		int tag_enemyHandle = fileSystem.GetImageHandle("Resource/Image/UI/tag_enemy.png");
 		Size graphSize;
 		GetGraphSize(tag_playerHandle, graphSize);
-		auto leftCenter = Vector2Int(windowRect.center.x - (distance/2 - 50), drawY);
-		auto rightCenter = Vector2Int(windowRect.center.x + (distance/2 - 50), drawY);
+		auto leftCenter = Vector2Int{ windowRect.center.x - (distance / 2 - 50), drawY };
+		auto rightCenter = Vector2Int{ windowRect.center.x + (distance / 2 - 50), drawY };
 		if (selfBattleStatus.CheckPursuit(targetBattleStatus))
 		{
 			DrawGraph(GetDrawPos(leftCenter, graphSize, Anker::center), tag_playerHandle);
@@ -185,8 +185,8 @@ void BattlePrediction::Draw()
 
 void BattlePrediction::DrawHPBer(int& drawY, const Rect& windowRect, bool rightAttack, int fontH)
 {
-	Size hpSize(200, 30);
-	Size hpOutSize(250, 50);
+	Size hpSize{ 200, 30 };
+	Size hpOutSize{ 250, 50 };
 	drawY += hpOutSize.h / 2;
 	auto& FileSystem = FileSystem::Instance();
 	auto fukidashiH = FileSystem.GetImageHandle("Resource/Image/UI/fukidashi.png");
@@ -205,10 +205,10 @@ void BattlePrediction::DrawHPBer(int& drawY, const Rect& windowRect, bool rightA
 		auto targetBattleStatus = target.GetBattleStatus();
 
 		// HP台紙
-		auto drawPos = GetDrawPos(Vector2Int(windowRect.center.x, drawY), hpOutSize, anker);
+		auto drawPos = GetDrawPos(Vector2Int{ windowRect.center.x, drawY }, hpOutSize, anker);
 		DrawBox(drawPos, drawPos + hpOutSize, 0xffffff);
 		// HPの背景
-		drawPos = GetDrawPos(Vector2Int(windowRect.center.x, drawY), hpSize, anker);
+		drawPos = GetDrawPos(Vector2Int{ windowRect.center.x, drawY }, hpSize, anker);
 		DrawBox(drawPos, drawPos + hpSize, 0x888888);
 		// HPの変動分
 		int chengePoint = GetChengePoint(dir, rightAttack, selfBattleStatus, targetBattleStatus);
@@ -216,40 +216,40 @@ void BattlePrediction::DrawHPBer(int& drawY, const Rect& windowRect, bool rightA
 		int affterHealth = min(max(self.GetStatus().health - chengePoint, 0), self.GetStartStatus().health);
 		float affter = affterHealth / static_cast<float>(self.GetStartStatus().health);
 
-		Size subSize(static_cast<int>(hpSize.w * (abs(before - affter)) + 2), hpSize.h);
+		Size subSize{ static_cast<int>(hpSize.w * (abs(before - affter)) + 2), hpSize.h };
 		float sing = (dir == Dir::left ? -1.0f : 1.0f);
 		float sizeRate = (before + affter) / 2.0f * sing;
-		drawPos = GetDrawPos(Vector2Int(windowRect.center.x + static_cast<int>(sizeRate * hpSize.w), drawY), subSize, Anker::center);
+		drawPos = GetDrawPos(Vector2Int{ windowRect.center.x + static_cast<int>(sizeRate * hpSize.w), drawY }, subSize, Anker::center);
 
 		auto hpAnimValue = _hpAnimTrack->GetValue();
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(hpAnimValue * 128));
 		DrawBox(drawPos, drawPos + subSize, teamColor);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
-		Size currentSize(static_cast<int>(hpSize.w * (targetBattleStatus.CheckHeal() ? before : affter)), hpSize.h);
+		Size currentSize{ static_cast<int>(hpSize.w * (targetBattleStatus.CheckHeal() ? before : affter)), hpSize.h };
 		// 残りHPの吹き出し表示
 		if (chengePoint != 0)
 		{
-			Vector2Int fukidashiDrawPos = Vector2Int(windowRect.center.x + currentSize.w * (static_cast<int>(dir == Dir::left)*-2+1),
-				drawY- hpSize.h/2 -fukisashiSize.h / 2 - static_cast<int>(fukisashiSize.h/5 * hpAnimValue));
+			Vector2Int fukidashiDrawPos = Vector2Int{ windowRect.center.x + currentSize.w * (static_cast<int>(dir == Dir::left) * -2 + 1),
+				drawY - hpSize.h / 2 - fukisashiSize.h / 2 - static_cast<int>(fukisashiSize.h / 5 * hpAnimValue) };
 			DrawRotaGraph(fukidashiDrawPos, fukidashiScale, 0.0f, fukidashiH, true);
 			DrawStringToHandle(fukidashiDrawPos, Anker::center, 0x000000, choplin30, "%d", affterHealth);
 		}
 
 		// HPの残量
-		drawPos = GetDrawPos(Vector2Int(windowRect.center.x, drawY), currentSize, anker);
+		drawPos = GetDrawPos(Vector2Int{ windowRect.center.x, drawY }, currentSize, anker);
 		DrawBox(drawPos, drawPos + currentSize, teamColor);
 
 		char str[256];
 		sprintf_s(str, 256, "%d", self.GetStatus().health);
-		DrawStringToHandle(Vector2Int(windowRect.center.x + (dir == Dir::left ? -1 : 1) * (hpSize.w + 20), drawY), Anker::center, 0xffffff, fontH, str);
+		DrawStringToHandle(Vector2Int{ windowRect.center.x + (dir == Dir::left ? -1 : 1) * (hpSize.w + 20), drawY }, Anker::center, 0xffffff, fontH, str);
 	};
 
 	DrawHP(Dir::left, _selfCharactor, _targetCharactor);
 	DrawHP(Dir::right, _targetCharactor, _selfCharactor);
 	
 	// 項目名表示
-	auto center = Vector2Int(windowRect.center.x, drawY);
+	auto center = Vector2Int{ windowRect.center.x, drawY };
 	DrawRotaGraph(center, 1.1, 0.0f, ImageHandle("Resource/Image/UI/window3.png"), true);
 	DrawStringToHandle(center, Anker::center, 0xffffff, fontH, "HP");
 	drawY += hpOutSize.h / 2;

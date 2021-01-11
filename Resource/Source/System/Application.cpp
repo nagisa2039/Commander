@@ -13,6 +13,7 @@
 #include "SaveData.h"
 #include "AnkerCalculation.h"
 #include "FPSManager.h"
+#include "SoundLoader.h"
 
 using namespace std;
 
@@ -26,6 +27,7 @@ namespace
 
 Application::Application()
 {
+	_winSize = { default_window_size_wide, default_window_size_hight };
 }
 
 Application::~Application()
@@ -55,7 +57,6 @@ SceneController& Application::GetSceneController() const
 
 bool Application::Initialize()
 {
-	_winSize = { default_window_size_wide, default_window_size_hight };
 	_fpsManager.reset(new FPSManager(FPS));
 	_ankerCalculation = make_unique<AnkerCalculation>();
 	// DxlibÇÃèâä˙âª

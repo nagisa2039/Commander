@@ -18,6 +18,14 @@
 
 using namespace std;
 
+namespace
+{
+	// 攻撃アニメーションカウント最大数
+	constexpr int ATTACK_ANIM_CNT_MAX	= 30;
+	// 待機カウント最大数
+	constexpr int WAIT_CNT_MAX			= 30;
+}
+
 BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Camera& camera)
 	: _selfChar(charactor), _size{ 128, 128 }, _camera(camera)
 {
@@ -29,8 +37,12 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 
 	_attackAnimX = make_unique<Track<int>>();
 	_attackAnimX->AddKey(0, 0);
-	_attackAnimX->AddKey(15, 50);
-	_attackAnimX->AddKey(30, 0);
+	_attackAnimX->AddKey(ATTACK_ANIM_CNT_MAX / 2, 50);
+	_attackAnimX->AddKey(ATTACK_ANIM_CNT_MAX, 0);
+
+	_waitT = make_unique<Track<int>>();
+	_waitT->AddKey(0, 0);
+	_waitT->AddKey(WAIT_CNT_MAX, 0);
 
 	_attackEffect = nullptr;
 
@@ -64,9 +76,6 @@ BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Ca
 	animRectVec.emplace_back(Rect{ Vector2Int{ 16 + divSize.w * 2, 16 + 32 * 2}, divSize });
 	_animator->AddAnim("RightWalk", animRectVec, 30, true);
 
-	_waitT = make_unique<Track<int>>();
-	_waitT->AddKey(0, 0);
-	_waitT->AddKey(60, 0);
 
 	_waitNextUpdater = &BattleCharactor::NormalUpdate;
 

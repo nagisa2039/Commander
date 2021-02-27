@@ -91,6 +91,11 @@ public:
 	void ChangeMasterVolume(const int volume);
 
 	/// <summary>
+	/// ミュートのスイッチング
+	/// </summary>
+	void MuteSwitching();
+
+	/// <summary>
 	/// ハンドルの再生状況を取得
 	/// </summary>
 	/// <param name="handle">音ハンドル</param>

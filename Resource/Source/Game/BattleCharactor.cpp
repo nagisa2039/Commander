@@ -23,7 +23,9 @@ namespace
 	// 攻撃アニメーションカウント最大数
 	constexpr int ATTACK_ANIM_CNT_MAX	= 30;
 	// 待機カウント最大数
-	constexpr int WAIT_CNT_MAX			= 30;
+	constexpr int WAIT_CNT_MAX			= 10;
+	//HPアニメーション間隔
+	constexpr int HP_ANIM_ITV			= 3;
 }
 
 BattleCharactor::BattleCharactor(Charactor& charactor, const int imageHandle, Camera& camera)
@@ -147,7 +149,7 @@ void BattleCharactor::UIAnimUpdate()
 		return;
 	}
 
-	if (_animHealthCnt++ % 3 == 0)
+	if (_animHealthCnt++ % HP_ANIM_ITV == 0)
 	{
 		int sub = statusHp - _animHealth;
 		_animHealth += sub /abs(sub);
@@ -223,7 +225,7 @@ void BattleCharactor::NormalUpdate(BattleScene& battleScene)
 	auto dir = _dir == Dir::left ? 1 : -1;
 	_pos = _startPos + Vector2{static_cast<float>(_attackAnimX->GetValue() * dir), 0};
 
-	if (_attackAnimX->GetFrame() == 15)
+	if (_attackAnimX->GetFrame() == ATTACK_ANIM_CNT_MAX/2)
 	{
 		_attackEffectFuncs[Uint64(_gaveDamageType)](battleScene, _targetChar->GetCenterPos());
 	}

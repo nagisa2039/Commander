@@ -101,8 +101,8 @@ private:
 	// 地形効果エフェクト
 	std::shared_ptr<Effect> _terrainEffect;
 
-	// 硬直ｶｳﾝﾄ
-	int _rigid;
+	// 移動待ちカウンド
+	int _moveStandbyCnt;
 
 	// 場面ごとの更新を行う
 	void(Charactor::* _updater)(const Input& input);
@@ -348,7 +348,7 @@ public:
 	/// 待機フレーム数の設定
 	/// </summary>
 	/// <param name="time">待機フレーム数</param>
-	void SetRigit(const int time);
+	void SetMoveStandby(const int time);
 
 	/// <summary>
 	/// 移動を決定する

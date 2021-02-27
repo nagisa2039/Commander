@@ -8,15 +8,22 @@
 
 using namespace std;
 
+namespace
+{
+	// キャラクター選択後の移動待ちフレーム数
+	constexpr int CHARACTOR_SELECT_MOVE_STANDBY = 15;
+}
+
 void EnemyCommander::NormalUpdate(const Input& input)
 {
 	// 硬直
 	_rigid = max(_rigid - 1, 0);
 	if (_rigid > 0)  return;
 
-	// 選択中のキャラが移動中なら選択を無効にする
+	// キャラ選択中
 	if (_selectChar != nullptr)
 	{
+		// 選択中のキャラが移動中なら選択を無効にする
 		if (_selectChar->GetIsMoveAnim() || _selectChar->GetMoveStandby())
 		{
 			return;
@@ -30,7 +37,8 @@ void EnemyCommander::NormalUpdate(const Input& input)
 	auto setSelectCharactor = [this](std::shared_ptr<Charactor> charactor)
 	{
 		_selectChar = &*charactor;
-		_selectChar->SetRigit(15);
+		// 移動を開始させる
+		_selectChar->SetMoveStandby(CHARACTOR_SELECT_MOVE_STANDBY);
 		_camera.AddTargetActor(_selectChar);
 		_mapPos = _selectChar->GetMapPos();
 		_pos = (_mapPos * _mapCtrl.GetChipSize().ToVector2Int()).ToVector2();

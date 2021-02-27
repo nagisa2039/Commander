@@ -17,6 +17,11 @@ int BattleStatus::GetDamage(const BattleStatus& target)const
 	return max( static_cast<int>((GetPower() - (weaponTypeData.magicAttack ? target.status.magic_defense : target.status.defense))  * rate) - target.defenseCorrection, 0);
 }
 
+float BattleStatus::GetDamageEvaluation(const BattleStatus& target)
+{
+	return GetDamage(target) * GetHit(target) / 100.0f;
+}
+
 int BattleStatus::GetRecover()
 {
 	return status.magic_power/2 + weaponData.power;

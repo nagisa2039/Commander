@@ -8,8 +8,25 @@
 #include "DxLibUtility.h"
 #include <algorithm>
 #include "Astar.h"
+#include "Cast.h"
+#include "DataBase.h"
+#include "Map.h"
 
 using namespace std;
+
+namespace
+{
+	//評価値付け用の係数
+
+	// 範囲外攻撃時の係数
+	constexpr float OUT_RANGE_ATTACK_RATE	= 10.0f;
+	// 与えるダメージ量の係数
+	constexpr float ATTACK_RATE				= 2.0f;
+	// 食らうダメージ量の係数
+	constexpr float DAMAGE_RATE				= -2.0f;
+	// 相手との距離の係数
+	constexpr float DISTANCE_RATE			= 0.0f;
+}
 
 RouteManager::RouteManager(Charactor& charactor, MapCtrl& mapCtrl, Camera& camera)
 	:_charactor(charactor), _mapCtrl(mapCtrl), _camera(camera)
@@ -177,7 +194,11 @@ std::list<Vector2Int> RouteManager::GetAttackPosList() const
 		{
 			for (const auto& resultPos : resultPosList)
 			{
-				if (resultPos.mapPos == mapPos || _mapCtrl.GetMapPosChar(resultPos.mapPos) == nullptr) continue;
+				// 自身(所有者)の座標 || そのマスにキャラクターがいない ならとばす
+				if (resultPos.mapPos == mapPos || _mapCtrl.GetMapPosChar(resultPos.mapPos) == nullptr)
+				{
+					continue;
+				}
 				attackPosList.emplace_back(resultPos.mapPos);
 			}
 		}
@@ -422,13 +443,12 @@ Vector2Int RouteManager::SearchMovePos()
 
 	struct TargetCharactor
 	{
-		Charactor* charactor;
-		int distance;
-		Astar::ResultPos resultPos;
-
-		TargetCharactor() :charactor(nullptr), distance(1), resultPos(Astar::ResultPos()) {};
-		TargetCharactor(Charactor* ch, const int di, const Astar::ResultPos& rp) :charactor(ch), distance(di), resultPos(rp) {};
+		Charactor* charactor = nullptr;
+		int distance = 0;
+		Astar::ResultPos resultPos = {};
+		float evaluation = 0.0f;
 	};
+
 	// 範囲内の敵を格納するリスト
 	list<TargetCharactor> targetCharactorList;
 
@@ -459,15 +479,14 @@ Vector2Int RouteManager::SearchMovePos()
 			bool inRange = resultPos.moveCnt <= battleStatus.status.move && (prevChar == nullptr || prevChar == &_charactor);
 			if (inRange&& in)
 			{
-				targetCharactorList.emplace_back(TargetCharactor(mapCharactor, distance, resultPos));
+				targetCharactorList.emplace_back(TargetCharactor{ mapCharactor, distance, resultPos, 0.0f });
 				continue;
 			}
 			if (!inRange && !in)
 			{
-				targetCharactorList.emplace_back(TargetCharactor(mapCharactor, distance, resultPos));
+				targetCharactorList.emplace_back(TargetCharactor{ mapCharactor, distance, resultPos, 0.0f });
 				continue;
 			}
-
 		}
 	};
 
@@ -477,6 +496,7 @@ Vector2Int RouteManager::SearchMovePos()
 		addTargetCharactor(resultPosListVec2[mapPos.y][mapPos.x], targetCharactorList, true);
 	}
 
+	// 回復役なら
 	if (battleStatus.CheckHeal())
 	{
 		if (targetCharactorList.size() > 0)
@@ -490,34 +510,53 @@ Vector2Int RouteManager::SearchMovePos()
 		}
 	}
 
+	const auto& dataBase = DataBase::Instance();
+
 	// 選別
-	for (const auto& targetCharactor : targetCharactorList)
+	for (auto& targetCharactor : targetCharactorList)
 	{
-		// 敵の攻撃範囲外からの攻撃か？
-		if (!targetCharactor.charactor->GetAttackRange().Hit(targetCharactor.distance)
-			|| targetCharactor.charactor->GetBattleStatus().CheckHeal())
+		auto selfBattleStatus = battleStatus;
+		auto targetBattleStatus = targetCharactor.charactor->GetBattleStatus();
+
+		// 移動先の地形を考慮する
+		if (targetCharactor.resultPos.prev != nullptr)
 		{
-			return targetCharactor.charactor->GetMapPos();
+			Vector2Int attackStartPos = targetCharactor.resultPos.prev->mapPos;
+			const auto& mapChipData = dataBase.GetMapChipData(_mapCtrl.GetMap()->GetMapData(attackStartPos).mapChip);
+			selfBattleStatus.defenseCorrection = mapChipData.defense;
+			selfBattleStatus.avoidanceCorrection = mapChipData.avoidance;
 		}
+
+		// 敵の攻撃範囲外からの攻撃か || 敵が回復役か
+		bool outrange = (!targetCharactor.charactor->GetAttackRange().Hit(targetCharactor.distance)
+			|| targetCharactor.charactor->GetBattleStatus().CheckHeal());
+
+		// 範囲外からの攻撃
+		targetCharactor.evaluation += Float(outrange) * OUT_RANGE_ATTACK_RATE;
+		// 与えるダメージ量
+		targetCharactor.evaluation += selfBattleStatus.GetDamageEvaluation(targetBattleStatus) * ATTACK_RATE;
+		// 食らうダメージ量
+		targetCharactor.evaluation += targetBattleStatus.GetDamageEvaluation(selfBattleStatus) * DAMAGE_RATE;
+		// 距離
+		float maxDistance = selfBattleStatus.status.move + selfBattleStatus.weaponData.range.max;
+		targetCharactor.evaluation += (maxDistance - targetCharactor.distance) / maxDistance * DISTANCE_RATE;
 	}
 
-	// 敵の攻撃範囲外から攻撃できないので最初に見つけた敵の場所に向かう
 	if (targetCharactorList.size() > 0)
 	{
-		// 最もダメージを与えられるキャラクターを探す
+		// 評価値の最も高いターゲットを選ぶ
 		targetCharactorList.sort([&battleStatus](const TargetCharactor& left, const TargetCharactor& right)
-			{
-				return battleStatus.GetDamage(left.charactor->GetBattleStatus()) > battleStatus.GetDamage(right.charactor->GetBattleStatus());
-			});
+		{
+			return left.evaluation > right.evaluation;
+		});
 		return targetCharactorList.begin()->charactor->GetMapPos();
 	}
 
-	//----------------------------------------------------------------------------------------------------------------------
-	// 範囲内に敵がいないので範囲外から探す
+	// 範囲内に敵がいないので範囲外から探す----------------------------------------------------------------------------------------------------------------------
 	_mapCtrl.GetAstar().RouteSearch(_charactor.GetMapPos(), battleStatus.status.move, battleStatus.weaponData.range,
 		mapVec2, resultPosListVec2, _charactor.GetTeam(), battleStatus.CheckHeal(), _charactor.GetMoveActive());
 
-	// 派以外の敵を格納するリスト
+	// 範囲外の敵を格納するリスト
 	list<TargetCharactor> outRangeCharactorList;
 	
 	for (const auto& resultPosListVec : resultPosListVec2)
@@ -534,9 +573,9 @@ Vector2Int RouteManager::SearchMovePos()
 		{
 			// 一番近いキャラクターを採用する
 			outRangeCharactorList.sort([](const TargetCharactor& lval, const TargetCharactor& rval)
-				{
-					return lval.resultPos.moveCnt < rval.resultPos.moveCnt;
-				});
+			{
+				return lval.resultPos.moveCnt < rval.resultPos.moveCnt;
+			});
 			for (auto& targetCharactor : outRangeCharactorList)
 			{
 				if (targetCharactor.charactor->GetHurtPoint() > 0)

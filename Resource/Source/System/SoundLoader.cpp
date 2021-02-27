@@ -6,7 +6,7 @@
 
 SoundLoader::SoundLoader()
 {
-	_masterVolume = 0.0f;
+	_masterVolume = 1.0f;
 }
 
 int SoundLoader::GetSoundHandle(const char* path)
@@ -34,6 +34,7 @@ bool SoundLoader::PlayBGM(const int handle, const int volume, const bool playTop
 	//Ä¶’†‚È‚ç‰½‚à‚µ‚È‚¢
 	if (PlayCheck(handle))return false;
 	ChangeVolume(handle, volume);
+	_handleInfTable[handle].play = true;
 	return PlaySoundMem(handle, DX_PLAYTYPE_LOOP, playTop) != -1;
 }
 
@@ -46,13 +47,15 @@ bool SoundLoader::PlaySE(const int handle, const int volume)
 {
 	PlayCheck(handle);
 	ChangeVolume(handle, volume);
+	_handleInfTable[handle].play = true;
 	return PlaySoundMem(handle, DX_PLAYTYPE_BACK, true) != -1;
 }
 
 void SoundLoader::ChangeVolume(const int handle, const int volume)
 {
+	int v = Int32(volume * _masterVolume);
 	_handleInfTable[handle].volume = volume;
-	ChangeVolumeSoundMem(Int32(volume * _masterVolume), handle);
+	ChangeVolumeSoundMem(v, handle);
 }
 
 bool SoundLoader::StopSound(const int handle)
@@ -87,13 +90,17 @@ void SoundLoader::ChangeMasterVolume(const int volume)
 	}
 }
 
+void SoundLoader::MuteSwitching()
+{
+	ChangeMasterVolume(255 - Int32(_masterVolume > 0.0f) * 255);
+}
+
 bool SoundLoader::PlayCheck(const int handle)
 {
-	if (!_handleInfTable[handle].play)
+	if (_handleInfTable[handle].play)
 	{
-		return false;
+		bool play = CheckSoundMem(handle) == 1;
+		_handleInfTable[handle].play = play;
 	}
-	bool play = CheckSoundMem(handle) == 1;
-	_handleInfTable[handle].play = play;
-	return play;
+	return _handleInfTable[handle].play;
 }

@@ -172,7 +172,8 @@ void Astar::RouteSearch(const Vector2Int& startMapPos, const int move, const Ran
 	return;
 }
 
-bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const std::vector<std::vector<MapData>>& mapData, std::list<Astar::ResultPos>& resutlPosList, const Team team, const std::list<Astar::ResultPos>& excludeList)
+bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const std::vector<std::vector<MapData>>& mapData, 
+	std::list<Astar::ResultPos>& resutlPosList, const Team team, const std::list<Astar::ResultPos>& excludeList)
 {
 	ResetSerchPosVec2D(mapData);
 	_searchPosVec2Move[startMapPos.y][startMapPos.x].moveCost = 0;
@@ -196,10 +197,10 @@ bool Astar::MoveRouteSerch(const Vector2Int& startMapPos, const int move, const 
 	seachIdxList.emplace_front(startMapPos);
 
 	int dirMax = static_cast<int>(Dir::max);
-	auto startTime = GetTickCount();
+	auto startTime = GetTickCount64();
 	for (auto it = seachIdxList.begin(); it != seachIdxList.end();)
 	{
-		if (GetTickCount() - startTime > SEARCH_LIMIT_TIME)
+		if (GetTickCount64() - startTime > SEARCH_LIMIT_TIME)
 		{
 			assert(false);
 			break;

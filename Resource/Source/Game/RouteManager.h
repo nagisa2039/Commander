@@ -125,7 +125,7 @@ public:
 		std::list<Astar::ResultPos>& resultPosList, const Team team, const std::list<Astar::ResultPos>& excludeList);
 
 	/// <summary>
-	/// 
+	/// ˆÚ“®æ‚ğŒŸõ
 	/// </summary>
 	Vector2Int SearchMovePos();
 };

@@ -27,8 +27,9 @@ void Charactor::NormalUpdate(const Input& input)
 {
 	if (GetMoveStandby())
 	{
-		if (--_rigid > 0)return;
+		if (--_moveStandbyCnt > 0)return;
 
+		// ˆÚ“®‚ðŠJŽn‚·‚é
 		MoveMapPos(_routeManager->SearchMovePos());
 	}
 
@@ -184,7 +185,7 @@ bool Charactor::GetMoveActive() const
 
 bool Charactor::GetMoveStandby() const
 {
-	return _rigid > 0;
+	return _moveStandbyCnt > 0;
 }
 
 const Status& Charactor::GetStartStatus() const
@@ -307,9 +308,9 @@ void Charactor::SetMoveActive(const bool active)
 	_moveActive = active;
 }
 
-void Charactor::SetRigit(const int time)
+void Charactor::SetMoveStandby(const int time)
 {
-	_rigid = time;
+	_moveStandbyCnt = time;
 }
 
 void Charactor::MoveDecision()
@@ -438,7 +439,7 @@ Charactor::Charactor(const CharactorType type, const uint8_t level, const Vector
 	_terrainEffect = make_shared<FlyText>("damage", Vector2Int(), 120, _camera, true);
 	_terrainEffect->SetDelete(true);
 
-	_rigid = 0;
+	_moveStandbyCnt = 0;
 	_mouveSEH = SoundHandle("Resource/Sound/SE/dash.mp3");
 
 	_routeManager = make_shared<RouteManager>(*this, _mapCtrl, _camera);

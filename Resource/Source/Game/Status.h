@@ -64,6 +64,12 @@ struct BattleStatus
 	int GetDamage(const BattleStatus& target)const;
 
 	/// <summary>
+	/// ダメージの評価値を取得(命中率考慮)
+	/// </summary>
+	/// <param name="target">戦闘相手のステータス</param>
+	float GetDamageEvaluation(const BattleStatus& target);
+
+	/// <summary>
 	/// 回復量
 	/// </summary>
 	int GetRecover();

@@ -8,20 +8,33 @@ class FPSManager
 {
 	friend Application;
 
-private:
+public:
+	~FPSManager() = default;
+
 	/// <summary>
-	/// FPS管理クラス
+	/// 固定したフレーム数を取得
 	/// </summary>
+	const unsigned int FixedFPS()const;
+
+	/// <summary>
+	/// 現在のフレーム数の取得
+	/// </summary>
+	const float GetFPS()const;
+
+	/// <summary>
+	/// 1フレーム内の経過時間の取得
+	/// </summary>
+	const float GetDeltaTime()const;
+
+private:
 	/// <param name="fps">固定したいフレーム数
-	/// 負の値なら無制限</param>
-	FPSManager(const int fps);
+	/// 0なら無制限</param>
+	FPSManager(const unsigned int fps = 60);
+
 	FPSManager(const FPSManager&) = delete;
 	FPSManager& operator=(const FPSManager&) = delete;
 
-	// 固定するFPS
-	const int fixedFPS_;
-	// 1フレームにかかった時間
-	float deltaTime_;
+	const unsigned int fixedFPS_;
 
 	/// <summary>
 	/// 開始ミリ秒
@@ -33,27 +46,12 @@ private:
 	/// </summary>
 	unsigned int prevFrameStartTime_;
 
+	float deltaTime_;
+
 	/// <summary>
 	/// 指定したフレーム数になるまで待つ
 	/// </summary>
 	void Wait();
 
-public:
-	~FPSManager() = default;
-
-	/// <summary>
-	/// 固定したフレーム数を取得
-	/// </summary>
-	int FixedFPS();
-
-	/// <summary>
-	/// 現在のフレーム数の取得
-	/// </summary>
-	float GetFPS();
-
-	/// <summary>
-	/// 1フレーム内の経過時間の取得
-	/// </summary>
-	float GetDeltaTime();
 };
 

@@ -538,7 +538,7 @@ Vector2Int RouteManager::SearchMovePos()
 		// 食らうダメージ量
 		targetCharactor.evaluation += targetBattleStatus.GetDamageEvaluation(selfBattleStatus) * DAMAGE_RATE;
 		// 距離
-		float maxDistance = selfBattleStatus.status.move + selfBattleStatus.weaponData.range.max;
+		int maxDistance = selfBattleStatus.status.move + selfBattleStatus.weaponData.range.max;
 		targetCharactor.evaluation += (maxDistance - targetCharactor.distance) / maxDistance * DISTANCE_RATE;
 	}
 

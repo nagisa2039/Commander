@@ -11,7 +11,7 @@ namespace
 		double unit = 1000.0 / frequency.QuadPart;
 		LARGE_INTEGER cnt;
 		QueryPerformanceCounter(&cnt);
-		return cnt.QuadPart * unit;
+		return static_cast<unsigned int>(cnt.QuadPart * unit);
 	}
 }
 

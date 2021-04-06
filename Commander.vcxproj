@@ -26,7 +26,7 @@
     <ClCompile Include="Resource\Source\Game\Map.cpp" />
     <ClCompile Include="Resource\Source\Game\Actor.cpp" />
     <ClCompile Include="Resource\Source\Game\Animator.cpp" />
-    <ClCompile Include="Resource\Source\Game\Astar.cpp" />
+    <ClCompile Include="Resource\Source\Game\RouteSearch.cpp" />
     <ClCompile Include="Resource\Source\Game\BattleCharactor.cpp" />
     <ClCompile Include="Resource\Source\Game\BattlePreparationCursor.cpp" />
     <ClCompile Include="Resource\Source\Game\Camera.cpp" />
@@ -89,6 +89,7 @@
     <ClCompile Include="Resource\Source\Game\RouteManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Resource\Source\Game\RouteSearchData.h" />
     <ClInclude Include="Resource\Source\System\FPSManager.h" />
     <ClInclude Include="Resource\Source\System\AdvanceLoader.h" />
     <ClInclude Include="Resource\Source\Game\CutIn.h" />
@@ -97,7 +98,7 @@
     <ClInclude Include="Resource\Source\Game\Map.h" />
     <ClInclude Include="Resource\Source\Game\Actor.h" />
     <ClInclude Include="Resource\Source\Game\Animator.h" />
-    <ClInclude Include="Resource\Source\Game\Astar.h" />
+    <ClInclude Include="Resource\Source\Game\RouteSearch.h" />
     <ClInclude Include="Resource\Source\Game\BattleCharactor.h" />
     <ClInclude Include="Resource\Source\Game\BattlePreparationCursor.h" />
     <ClInclude Include="Resource\Source\Game\Camera.h" />

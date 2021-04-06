@@ -8,7 +8,6 @@
 #include "TimeLine.h"
 #include "Status.h"
 #include "CharactorType.h"
-#include "Astar.h"
 
 class Animator;
 class MapCtrl;

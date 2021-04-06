@@ -3,7 +3,7 @@
 #include <list>
 #include "Dir.h"
 #include "Geometry.h"
-#include "Astar.h"
+#include "RouteSearchData.h"
 
 class Charactor;
 class MapCtrl;
@@ -29,7 +29,7 @@ private:
 	};
 
 	// 経路配列
-	std::vector<std::vector<std::list<Astar::ResultPos>>> _resultPosListVec2;
+	SearchData::RouteSearchData _resultPosListVec2;
 	// 移動方向配列
 	std::list<MoveInf> _moveDirList;
 
@@ -74,7 +74,7 @@ public:
 	/// <summary>
 	/// 経路探索の結果を格納した配列取得
 	/// </summary>
-	std::vector<std::vector<std::list<Astar::ResultPos>>>& GetResutlPosListVec2();
+	SearchData::RouteSearchData& GetResutlPosListVec2();
 
 	/// <summary>
 	/// 移動方向配列の取得
@@ -89,13 +89,13 @@ public:
 	/// <summary>
 	/// 指定したマスまでのResultPosListを取得する
 	/// </summary>
-	std::list<Astar::ResultPos> CreateResultPosList(const Vector2Int& mapPos)const;
+	SearchData::ResultList CreateResultPosList(const Vector2Int& mapPos)const;
 
 	/// <summary>
 	/// resultPosListからMoveDirListを作成する
 	/// </summary>
 	/// <param name="resultPosList">基にするResultPosList</param>
-	void CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosList);
+	void CreateMoveDirList(const SearchData::ResultList& resultPosList);
 
 	/// <summary>
 	/// 範囲内のターゲットキャラクターを集める
@@ -122,7 +122,7 @@ public:
 	/// <param name="excludeList">除外するマスリスト</param>
 	/// <returns>存在するか</returns>
 	bool MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, 
-		std::list<Astar::ResultPos>& resultPosList, const Team team, const std::list<Astar::ResultPos>& excludeList);
+		SearchData::ResultList& resultPosList, const Team team, SearchData::ResultList& excludeList);
 
 	/// <summary>
 	/// 移動先を検索

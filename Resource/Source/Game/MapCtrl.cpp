@@ -13,8 +13,10 @@
 #include "Effect/Effect.h"
 #include "Map.h"
 #include "RouteManager.h"
+#include "RouteSearch.h"
 
 using namespace std;
+using namespace SearchData;
 
 namespace
 {
@@ -33,7 +35,7 @@ void MapCtrl::CreateCharactor(const CharactorChipInf& characotChipInf, const Sta
 
 MapCtrl::MapCtrl(const int mapId, std::vector<std::shared_ptr<Charactor>>& charactors) : _charactors(charactors)
 {
-	_astar = make_unique<Astar>();
+	_routeSearch = make_unique<RouteSearch>();
 	_map = DataBase::Instance().GetMapData(mapId);
 
 	auto& mapSize = _map->GetMapSize();
@@ -102,7 +104,7 @@ void MapCtrl::CreateCharactor(SceneController& ctrl, std::vector<std::shared_ptr
 	}
 }
 
-void MapCtrl::CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2)
+void MapCtrl::CreateMapVec(SearchMapData& mapVec2)
 {
 	auto& mapData = _map->GetMapData();
 	auto& dataBase = DataBase::Instance();
@@ -112,7 +114,7 @@ void MapCtrl::CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2)
 		mapVec2[y].resize(mapData[y].size());
 		for (int x = 0; x < mapVec2[y].size(); x++)
 		{
-			mapVec2[y][x] = Astar::MapData{ dataBase.GetMapChipData(mapData[y][x].mapChip).moveCost, Team::max, false };
+			mapVec2[y][x] = MapChipData{ dataBase.GetMapChipData(mapData[y][x].mapChip).moveCost, Team::max, false };
 		}
 	}
 	for (const auto& charactor : _charactors)
@@ -251,7 +253,7 @@ std::shared_ptr<Map> MapCtrl::GetMap()const
 	return _map;
 }
 
-Astar& MapCtrl::GetAstar()
+RouteSearch& MapCtrl::GetRouteSerch()
 {
-	return *_astar;
+	return *_routeSearch;
 }

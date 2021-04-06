@@ -7,12 +7,13 @@
 #include <DxLib.h>
 #include "DxLibUtility.h"
 #include <algorithm>
-#include "Astar.h"
+#include "RouteSearch.h"
 #include "Cast.h"
 #include "DataBase.h"
 #include "Map.h"
 
 using namespace std;
+using namespace SearchData;
 
 namespace
 {
@@ -124,7 +125,7 @@ bool RouteManager::GetAttackStartPos(Vector2Int& attackStartPos, const Vector2In
 	return set;
 }
 
-std::vector<std::vector<std::list<Astar::ResultPos>>>& RouteManager::GetResutlPosListVec2()
+RouteSearchData& RouteManager::GetResutlPosListVec2()
 {
 	return _resultPosListVec2;
 }
@@ -206,16 +207,16 @@ std::list<Vector2Int> RouteManager::GetAttackPosList() const
 	return attackPosList;
 }
 
-std::list<Astar::ResultPos> RouteManager::CreateResultPosList(const Vector2Int& mapPos) const
+ResultList RouteManager::CreateResultPosList(const Vector2Int& mapPos) const
 {
-	std::list<Astar::ResultPos> routeList;
+	ResultList routeList;
 	routeList.clear();
 	// 移動可能なルートが無い
 	if (_resultPosListVec2[mapPos.y][mapPos.x].size() <= 0)return routeList;
 
 	auto selfMapPos = _charactor.GetMapPos();
 
-	Astar::ResultPos startResultPos = *_resultPosListVec2[mapPos.y][mapPos.x].begin();
+	ResultPos startResultPos = *_resultPosListVec2[mapPos.y][mapPos.x].begin();
 	auto targetCharactor = _mapCtrl.GetMapPosChar(mapPos);
 	if (targetCharactor != nullptr)
 	{
@@ -294,7 +295,7 @@ std::list<Astar::ResultPos> RouteManager::CreateResultPosList(const Vector2Int& 
 	return routeList;
 }
 
-void RouteManager::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPosList)
+void RouteManager::CreateMoveDirList(const ResultList& resultPosList)
 {
 	_moveDirList.clear();
 
@@ -343,10 +344,10 @@ void RouteManager::CreateMoveDirList(const std::list<Astar::ResultPos>& resultPo
 
 		// 移動先にほかのキャラクターがいるのでルートの再検索を行う
 		Size mapSize = _mapCtrl.GetMapSize();
-		list<Astar::ResultPos> addResultPosList;
+		ResultList addResultPosList;
 		addResultPosList.clear();
 
-		list<Astar::ResultPos> excludeList;
+		ResultList excludeList;
 		excludeList.clear();
 		auto exAddItr = itr;
 		exAddItr++;
@@ -412,10 +413,10 @@ bool RouteManager::CheckInRageTarget()
 
 void RouteManager::RouteSearch()
 {
-	std::vector<std::vector<Astar::MapData>> mapVec2;
+	SearchMapData mapVec2;
 	_mapCtrl.CreateMapVec(mapVec2);
 
-	_mapCtrl.GetAstar().RouteSearch(_charactor.GetMapPos(), _charactor.GetStatus().move, _charactor.GetAttackRange(),
+	_mapCtrl.GetRouteSerch().Search(_charactor.GetMapPos(), _charactor.GetStatus().move, _charactor.GetAttackRange(),
 		mapVec2, _charactor.GetRouteManager()->GetResutlPosListVec2(), _charactor.GetTeam(),
 		DataBase::Instance().GetWeaponTypeDataFromWeaponId(_charactor.GetStatus().weaponId).heal);
 
@@ -424,19 +425,20 @@ void RouteManager::RouteSearch()
 	return;
 }
 
-bool RouteManager::MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, std::list<Astar::ResultPos>& resutlPosList, const Team team, const std::list<Astar::ResultPos>& excludeList)
+bool RouteManager::MoveRouteSearch(const Vector2Int& startPos, const unsigned int move, 
+	ResultList& resultPosList, const Team team, ResultList& excludeList)
 {
 	if (move <= 0)return false;
 
-	std::vector<std::vector<Astar::MapData>> mapVec2;
+	SearchMapData mapVec2;
 	_mapCtrl.CreateMapVec(mapVec2);
 
-	return _mapCtrl.GetAstar().MoveRouteSerch(startPos, move, mapVec2, resutlPosList, team, excludeList);
+	return _mapCtrl.GetRouteSerch().MoveRouteSerch(startPos, move, mapVec2, resultPosList, team, excludeList);
 }
 
 Vector2Int RouteManager::SearchMovePos()
 {
-	std::vector<std::vector<Astar::MapData>> mapVec2;
+	SearchMapData mapVec2;
 	_mapCtrl.CreateMapVec(mapVec2);
 	auto battleStatus = _charactor.GetBattleStatus();
 	auto& resultPosListVec2 = _charactor.GetRouteManager()->GetResutlPosListVec2();
@@ -445,14 +447,14 @@ Vector2Int RouteManager::SearchMovePos()
 	{
 		Charactor* charactor = nullptr;
 		int distance = 0;
-		Astar::ResultPos resultPos = {};
+		ResultPos resultPos = {};
 		float evaluation = 0.0f;
 	};
 
 	// 範囲内の敵を格納するリスト
 	list<TargetCharactor> targetCharactorList;
 
-	auto addTargetCharactor = [this, &battleStatus](const std::list<Astar::ResultPos> resultPosList,
+	auto addTargetCharactor = [this, &battleStatus](const ResultList& resultPosList,
 		list<TargetCharactor>& targetCharactorList, bool in)
 	{
 		for (const auto& resultPos : resultPosList)
@@ -553,7 +555,7 @@ Vector2Int RouteManager::SearchMovePos()
 	}
 
 	// 範囲内に敵がいないので範囲外から探す----------------------------------------------------------------------------------------------------------------------
-	_mapCtrl.GetAstar().RouteSearch(_charactor.GetMapPos(), battleStatus.status.move, battleStatus.weaponData.range,
+	_mapCtrl.GetRouteSerch().Search(_charactor.GetMapPos(), battleStatus.status.move, battleStatus.weaponData.range,
 		mapVec2, resultPosListVec2, _charactor.GetTeam(), battleStatus.CheckHeal(), _charactor.GetMoveActive());
 
 	// 範囲外の敵を格納するリスト

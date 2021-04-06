@@ -1,48 +1,13 @@
 #pragma once
-#include <list>
-#include <vector>
 #include <array>
-#include <map>
-#include "../Utility/Geometry.h"
-#include "../Utility/Dir.h"
-#include "Team.h"
+#include "RouteSearchData.h"
 
 /// <summary>
 /// ルート検索
 /// </summary>
-class Astar
+class RouteSearch
 {
-public:
-	/// <summary>
-	/// マスごとの検索結果
-	/// </summary>
-	struct ResultPos
-	{
-		// 攻撃マスか
-		bool attack;
-		// マップ座標
-		Vector2Int mapPos;
-		// スタートからたどった時の親
-		ResultPos* prev;
-		// スタートからたどった時の移動方向
-		Dir dir;
-		// 消費する移動量
-		int moveCnt;
-	};
-
-	// マップ情報
-	struct MapData
-	{
-		// 移動コスト
-		int moveCost;
-		// どのチームのキャラクターがいるか
-		Team team;
-		// ダメージを受けているか
-		bool isHurt;
-	};
-
 private:
-
 	/// <summary>
 	/// 検索状況
 	/// </summary>
@@ -82,7 +47,7 @@ private:
 	/// マップデータを基に検索情報をリセット
 	/// </summary>
 	/// <param name="mapData"></param>
-	void ResetSerchPosVec2D(const std::vector<std::vector<MapData>>& mapData);
+	void ResetSerchPosVec2D(const SearchData::SearchMapData& mapData);
 
 	/// <summary>
 	/// マップ範囲外ではないか確認
@@ -96,12 +61,13 @@ private:
 	/// <param name="startMapPos">開始座標</param>
 	/// <param name="move">移動力</param>
 	/// <param name="mapData">マップデータ</param>
-	/// <param name="resutlPosListVec2">結果格納変数</param>
+	/// <param name="RouteSearchData">結果格納変数</param>
 	/// <param name="team">チーム</param>
 	/// <param name="heal">回復役か</param>
 	/// <param name="searchEnemy">敵を探すか</param>
 	void AllMoveRouteSerch(const Vector2Int& startMapPos, const int move, 
-		const std::vector<std::vector<MapData>>& mapData, std::vector<std::vector<std::list<Astar::ResultPos>>>& resutlPosListVec2, const Team team, const bool heal, const bool searchEnemy = false);
+		const SearchData::SearchMapData& mapData, SearchData::RouteSearchData& routeSearchData, const Team team,
+		const bool heal, const bool searchEnemy = false);
 
 	/// <summary>
 	/// _serchPosVec2MoveとcheckPosを基に移動済みのマスか確認する
@@ -112,8 +78,8 @@ private:
 	bool CheckMoved(const Vector2Int& checkPos, const Vector2Int& startMapPos, const Vector2Int& nowPos);
 
 public:
-	Astar();
-	~Astar();
+	RouteSearch();
+	~RouteSearch();
 
 	/// <summary>
 	/// 開始位置から終端位置までのマスをリストに格納して返す。見つからなかった場合はリストを空にして返す
@@ -122,12 +88,13 @@ public:
 	/// <param name="move">移動力</param>
 	/// <param name="attackRange">攻撃範囲</param>
 	/// <param name="mapData">マップデータ</param>
-	/// <param name="resutlPosListVec2">検索結果格納用配列</param>
+	/// <param name="RouteSearchData">検索結果格納用配列</param>
 	/// <param name="team">チーム</param>
 	/// <param name="heal">回復役か</param>
 	/// <param name="searchEnemy">移動範囲外の敵を探すか</param>
-	void RouteSearch(const Vector2Int& startMapPos, const int move, const Range& attackRange, 
-		const std::vector<std::vector<MapData>>& mapData, std::vector<std::vector<std::list<Astar::ResultPos>>>& resutlPosListVec2, const Team team, const bool heal, const bool searchEnemy = false);
+	void Search(const Vector2Int& startMapPos, const int move, const Range& attackRange, 
+		const SearchData::SearchMapData& mapData, SearchData::RouteSearchData& routeSearchData,
+		const Team team, const bool heal, const bool searchEnemy = false);
 
 	/// <summary>
 	/// 一つのルートを見つける
@@ -139,6 +106,7 @@ public:
 	/// <param name="team">チーム</param>
 	/// <param name="excludeList">除外するマスリスト</param>
 	/// <returns>存在するか</returns>
-	bool MoveRouteSerch(const Vector2Int& startMapPos, const int move, const std::vector<std::vector<MapData>>& mapData, std::list<Astar::ResultPos>& resutlPosList, const Team team, const std::list<Astar::ResultPos>& excludeList);
+	bool MoveRouteSerch(const Vector2Int& startMapPos, const int move, const SearchData::SearchMapData& mapData,
+		SearchData::ResultList& resutlPosList, const Team team, const SearchData::ResultList& excludeList);
 };
 

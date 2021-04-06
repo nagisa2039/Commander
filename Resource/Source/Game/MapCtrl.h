@@ -4,16 +4,17 @@
 #include <array>
 #include "MapChip.h"
 #include <memory>
-#include "Astar.h"
 #include <functional>
 #include "DataBase.h"
 #include <windows.h>
+#include "RouteSearchData.h"
 
 class Camera;
 class Charactor;
 class SceneController;
 class Effect;
 class Map;
+class RouteSearch;
 
 /// <summary>
 /// マップ管理クラス
@@ -22,7 +23,7 @@ class MapCtrl
 {
 private:
 	// ルート検索クラス
-	std::unique_ptr<Astar> _astar;
+	std::unique_ptr<RouteSearch> _routeSearch;
 	// マップ情報
 	std::shared_ptr<Map> _map;
 
@@ -92,7 +93,7 @@ public:
 	/// ルート検索用マップデータの取得
 	/// </summary>
 	/// <param name="mapVec2">結果格納用ルート検索用マップデータ</param>
-	void CreateMapVec(std::vector<std::vector<Astar::MapData>>& mapVec2);
+	void CreateMapVec(SearchData::SearchMapData& mapVec2);
 
 	/// <summary>
 	/// 戦況確認用の画像を生成する(更新する)
@@ -141,6 +142,6 @@ public:
 	/// <summary>
 	/// ルート検索オブジェクトの取得
 	/// </summary>
-	Astar& GetAstar();
+	RouteSearch& GetRouteSerch();
 };
 

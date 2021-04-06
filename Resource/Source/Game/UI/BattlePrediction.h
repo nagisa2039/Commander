@@ -1,10 +1,10 @@
 #pragma once
 #include "UI.h"
-#include "Astar.h"
 #include "TimeLine.h"
 #include <memory>
 #include "Status.h"
 #include "MapChip.h"
+#include "Dir.h"
 
 class Charactor;
 
